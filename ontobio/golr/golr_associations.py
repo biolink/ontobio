@@ -397,6 +397,10 @@ def search_associations(subject_category=None,
         to the slimmed-up value(s) from the direct objects.
         If fetch_objects is passed, this will be populated with slimmed IDs.
 
+    evidence: String
+
+        Evidence class from ECO. Inference is used.
+
     exclude_automatic_annotations : bool
 
         If true, then any annotations with evidence of ECO:0000501 or
@@ -442,11 +446,14 @@ def search_associations(subject_category=None,
             subject_taxon = None
 
     if invert_subject_object is None:
+        # TODO: consider placing in a separate lookup
         p = (subject_category,object_category)
         if p == ('disease','gene'):
             invert_subject_object = True
-        else:
+        elif p == ('disease','model'):
             invert_subject_object = True
+        else:
+            invert_subject_object = False
         if invert_subject_object:
             logging.info("Inferred that subject/object should be inverted for {}".format(p))
             
@@ -499,7 +506,12 @@ def search_associations(subject_category=None,
     if 'id' in kwargs:
         fq['id'] = kwargs['id']
     if 'evidence' in kwargs and kwargs['evidence'] is not None:
-        fq['evidence_object_closure'] = kwargs['evidence']
+        e = kwargs['evidence']
+        if e.startswith("-"):
+            fq['-evidence_object_closure'] = e.replace("-","")
+        else:
+            fq['evidence_object_closure'] = e
+            
     if 'exclude_automatic_assertions' in kwargs and kwargs['exclude_automatic_assertions']:
         fq['-evidence_object_closure'] = 'ECO:0000501'
     if 'pivot_subject_object' in kwargs and kwargs['pivot_subject_object']:
@@ -779,6 +791,62 @@ def bulk_fetch(subject_category, object_category, taxon, rows=MAX_ROWS, **kwargs
                                        rows=rows,
                                        iterative=True,
                                        **kwargs)
+
+def pivot_query(facet=None, facet_pivot_fields=[], **kwargs):
+    """
+    Pivot query
+    """
+    results = search_associations(rows=0,
+                                  facet_fields=[facet],
+                                  #facet_pivot_fields=facet_pivot_fields + [facet],
+                                  facet_pivot_fields=facet_pivot_fields,
+                                  **kwargs)
+    return results
+
+def pivot_query_as_matrix(facet=None, facet_pivot_fields=[], **kwargs):
+    """
+    Pivot query
+    """
+    fp = search_associations(rows=0,
+                             facet_fields=[facet],
+                             facet_pivot_fields=facet_pivot_fields,
+                             **kwargs)['facet_pivot']
+
+    # we assume only one
+    results = list(fp.items())[0][1]
+    tups = []
+    xtype=None
+    ytype=None
+    xlabels=set()
+    ylabels=set()
+
+    
+    for r in results:
+        logging.info("R={}".format(r))
+        xtype=r['field']
+        rv = r['value']
+        xlabels.add(rv)
+        for piv in r['pivot']:
+            ytype=piv['field']
+            pv = piv['value']
+            ylabels.add(pv)
+            tups.append( (rv,pv,piv['count']) )
+
+    z = [ [0] * len(xlabels) for i1 in range(len(ylabels)) ]
+
+    xlabels=list(xlabels)
+    ylabels=list(ylabels)
+    xmap = dict([x[::-1] for x in enumerate(xlabels)])
+    ymap = dict([x[::-1] for x in enumerate(ylabels)])
+    for t in tups:
+        z[ymap[t[1]]][xmap[t[0]]] = t[2]
+    m = {'xtype':xtype,
+         'ytype':ytype,
+         'xaxis':xlabels,
+         'yaxis':ylabels,
+         'z':z}
+    return m
+         
 
 
 def solr_quotify(v):

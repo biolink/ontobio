@@ -49,6 +49,8 @@ def main():
                         help='Output to (tree, dot, ...)')
     parser.add_argument('-d', '--direction', type=str, default='u', required=False,
                         help='u = up, d = down, ud = up and down')
+    parser.add_argument('-e', '--evidence', type=str, required=False,
+                        help='ECO class')
     parser.add_argument('-p', '--properties', nargs='*', type=str, required=False,
                         help='Properties')
     parser.add_argument('-s', '--search', type=str, default='', required=False,
@@ -130,6 +132,7 @@ def main():
     aset = afactory.create(ontology=ont,
                            subject_category=subject_category,
                            object_category=object_category,
+                           evidence=args.evidence,
                            taxon=args.taxon)
     
     
@@ -153,7 +156,7 @@ def run_query(ont, aset, args):
 def run_query_associations(ont, aset, args):
     import plotly.plotly as py
     import plotly.graph_objs as go
-    tups = aset.query_associations(args.subjects)
+    tups = aset.query_associations(subjects=args.subjects)
     for (s,c) in tups:
         print("{} {}".format(s, c))
     z, xaxis, yaxis = tuple_to_matrix(tups)
