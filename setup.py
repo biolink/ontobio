@@ -32,7 +32,7 @@ setuptools.setup(
     version=version,
     author='Chris Mungall',
     author_email='cmungall@gmail.com',
-    url='https://github.com/biolink-api/ontobio',
+    url='https://github.com/biolink/ontobio',
     description='Library for working with OBO Library Ontologies and associations',
     long_description=long_description,
     license='BSD',
