@@ -63,6 +63,13 @@ class OntologyFactory():
 def create_ontology(handle=None):
     ont = None
     logging.info("Determining strategy to load '{}' into memory...".format(handle))
+
+    if handle.find("+") > -1:
+        handles = handle.split("+")
+        onts = [create_ontology(ont) for ont in handles]
+        ont = onts.pop()
+        ont.merge(onts)
+        return ont
     
     if handle.find(".") > 0 and os.path.isfile(handle):
         logging.info("Fetching obograph-json file from filesystem")

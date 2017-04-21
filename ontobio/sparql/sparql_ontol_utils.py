@@ -50,6 +50,15 @@ def get_digraph(ont, relations=None, writecache=False):
         digraph.add_node(n, attr_dict={'label':label})
     return digraph
 
+def get_xref_graph(ont):
+    """
+    Creates a basic graph object corresponding to a remote ontology
+    """
+    g = networkx.MultiGraph()
+    for (c,x) in fetchall_xrefs(ont):
+        g.add_edge(c,x,source=c)
+    return g
+
 
 @cachier(stale_after=SHELF_LIFE)
 def get_edges(ont):
@@ -192,6 +201,23 @@ def fetchall_syns(ont):
     """.format(q=queryBody, g=namedGraph)
     bindings = run_sparql(query)
     rows = [(r['c']['value'], r['r']['value'], r['l']['value']) for r in bindings]
+    return rows
+
+@cachier(stale_after=SHELF_LIFE)
+def fetchall_xrefs(ont):
+    """
+    fetch all xrefs for an ontology
+    """
+    logging.info("fetching xrefs for: "+ont)
+    namedGraph = get_named_graph(ont)
+    query = """
+    prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+    SELECT * WHERE {{
+    GRAPH <{g}>  {{ ?c oboInOwl:hasDbXref ?x }}
+    }}
+    """.format(g=namedGraph)
+    bindings = run_sparql(query)
+    rows = [(r['c']['value'], r['x']['value']) for r in bindings]
     return rows
 
 def querybody_isa():

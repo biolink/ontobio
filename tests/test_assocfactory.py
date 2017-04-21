@@ -50,4 +50,22 @@ def test_remote_go():
     [match] = [x for x in enr if x['c'] == NUCLEUS]
     print("ENRICHMENT (tf) for NUCLEUS: {}".format(match))
     assert match['p'] < 0.00001
+
+HUMAN='NCBITaxon:9606'
+PD = 'DOID:14330'
+
+def test_remote_disease():
+    """
+    factory test
+    """
+    ofactory = OntologyFactory()
+    afactory = AssociationSetFactory()
+    ont = ofactory.create('doid')
+    aset = afactory.create(ontology=ont,
+                           subject_category='disease',
+                           object_category='phenotype',
+                           taxon=HUMAN)
+    
+    rs = aset.query_associations([PD])
+    print("Gene Assocs to PD: {} {}".format(rs, len(rs)))
     

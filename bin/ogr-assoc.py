@@ -78,6 +78,11 @@ def main():
     parser_n.add_argument('-q', '--query',nargs='*', help='positive classes')
     parser_n.add_argument('-N', '--negative',type=str, help='negative classes')
     parser_n.set_defaults(function=run_query)
+    
+    # QUERY ASSOCIATIONS
+    parser_n = subparsers.add_parser('associations', help='Query for association pairs')
+    parser_n.add_argument('subjects',nargs='*', help='subject ids')
+    parser_n.set_defaults(function=run_query_associations)
 
     # INTERSECTIONS
     parser_n = subparsers.add_parser('intersections', help='Query intersections')
@@ -145,6 +150,53 @@ def run_query(ont, aset, args):
     for s in subjects:
         print("{} {}".format(s, str(aset.label(s))))
 
+def run_query_associations(ont, aset, args):
+    import plotly.plotly as py
+    import plotly.graph_objs as go
+    tups = aset.query_associations(args.subjects)
+    for (s,c) in tups:
+        print("{} {}".format(s, c))
+    z, xaxis, yaxis = tuple_to_matrix(tups)
+    logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
+    trace = go.Heatmap(z=z,
+                       x=xaxis,
+                       y=yaxis)
+    data=[trace]
+    py.plot(data, filename='labelled-heatmap')
+    #plot_dendrogram(z, xaxis, yaxis)
+
+def tuple_to_matrix(tups):
+    import numpy as np
+    xset = set()
+    yset = set()
+    for (x,y) in tups:
+        xset.add(x)
+        yset.add(y)
+
+    xset = list(xset)
+    yset = list(yset)
+    xmap = {}
+    xi = 0
+    for x in xset:
+        xmap[x] = xi
+        xi = xi+1
+        
+    ymap = {}
+    yi = 0
+    for y in yset:
+        ymap[y] = yi
+        yi = yi+1
+
+    logging.info("Making {} x {}".format(len(xset), len(yset)))
+    z = [ [0] * len(xset) for i1 in range(len(yset)) ]
+        
+    for (x,y) in tups:
+        z[ymap[y]][xmap[x]] = 2
+    z = np.array(z)
+    #z = -z
+    return (z, xset, yset)
+
+        
 def create_intersection_matrix(ont, aset, args):
     xterms = args.xterms
     yterms = args.yterms
@@ -155,8 +207,8 @@ def create_intersection_matrix(ont, aset, args):
     logging.info("X={} Y={}".format(xterms,yterms))
     ilist = aset.query_intersections(x_terms=xterms, y_terms=yterms)
     z, xaxis, yaxis = aset.intersectionlist_to_matrix(ilist, xterms, yterms)
-    xaxis = mk_axis(xaxis, ont, args)
-    yaxis = mk_axis(yaxis, ont, args)
+    xaxis = mk_axis(xaxis, aset, args)
+    yaxis = mk_axis(yaxis, aset, args)
     return (z, xaxis, yaxis)
 
 def plot_intersections(ont, aset, args):
@@ -279,7 +331,7 @@ def plot_dendrogram(z, xaxis, yaxis):
     py.plot(figure, filename='dendrogram_with_labels')
     
 def mk_axis(terms, kb, args):
-    return [label_or_id(x).replace(" ","<br>") for x in terms]
+    return [label_or_id(x, kb).replace(" ","<br>") for x in terms]
 
 def label_or_id(x, kb):
     label = kb.label(x)

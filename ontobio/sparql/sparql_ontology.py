@@ -6,7 +6,7 @@ import networkx as nx
 import logging
 import ontobio.ontol
 from ontobio.ontol import Ontology, Synonym
-from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, run_sparql, fetchall_syns, fetchall_labels
+from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_labels
 
 
 class RemoteSparqlOntology(Ontology):
@@ -104,6 +104,7 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         logging.info("Graph:"+str(g))
         self.graph = g
         self.graph_name = get_named_graph(handle)
+        self.xref_graph = get_xref_graph(handle)
         logging.info("Graph "+str(self.graph))
 
     def __str__(self):
