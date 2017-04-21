@@ -12,3 +12,4 @@ pytest>=0.0
 pytest_logging>=0.0
 pydotplus>=0.0
 cachier>=0.1.26
+plotly>0.0

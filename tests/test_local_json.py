@@ -15,7 +15,7 @@ def test_local_json_parse():
     """
     factory = OntologyFactory()
     print("Creating ont")
-    ont = factory.create('ontobio/tests/resources/pato.json')
+    ont = factory.create('tests/resources/pato.json')
 
     ploidy = ont.node(PLOIDY)
     print("PLOIDY: {}".format(ploidy))
@@ -58,7 +58,7 @@ def test_graph():
     """
     factory = OntologyFactory()
     print("Creating ont")
-    ont = factory.create('ontobio/tests/resources/nucleus.json')
+    ont = factory.create('tests/resources/nucleus.json')
 
     icp = ont.node(INTRACELLULAR_PART)
     print("ICP: {}".format(icp))

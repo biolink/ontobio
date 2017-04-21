@@ -185,14 +185,25 @@ def translate_obj(d,fname):
 
     return obj
 
-def map_doc(d, field_mapping):
-    for (k,v) in field_mapping.items():
-        if v is not None and k is not None:
-            #logging.debug("TESTING FOR:"+v+" IN "+str(d))
-            if v in d:
-                #logging.debug("Setting field {} to {} // was in {}".format(k,d[v],v))
-                d[k] = d[v]
+def map_doc(d, field_mapping, invert_subject_object=False):
+    if field_mapping is not None:
+        for (k,v) in field_mapping.items():
+            if v is not None and k is not None:
+                #logging.debug("TESTING FOR:"+v+" IN "+str(d))
+                if v in d:
+                    #logging.debug("Setting field {} to {} // was in {}".format(k,d[v],v))
+                    d[k] = d[v]
+    if invert_subject_object:
+        flip(d,M.SUBJECT,M.OBJECT)
+        flip(d,M.SUBJECT_LABEL,M.OBJECT_LABEL)
+        flip(d,M.SUBJECT_CATEGORY,M.OBJECT_CATEGORY)
     return d
+
+def flip(d, x, y):
+    dx = d.get(x)
+    dy = d.get(y)
+    d[x] = dy
+    d[y] = dx
 
 def translate_doc(d, field_mapping=None, map_identifiers=None, **kwargs):
     """
@@ -240,15 +251,14 @@ def translate_docs(ds, **kwargs):
     return [translate_doc(d, **kwargs) for d in ds]
 
 
-def translate_docs_compact(ds, field_mapping=None, slim=None, map_identifiers=None, **kwargs):
+def translate_docs_compact(ds, field_mapping=None, slim=None, map_identifiers=None, invert_subject_object=False, **kwargs):
     """
     Translate golr association documents to a compact representation
     """
     amap = {}
     logging.info("Translating docs to compact form. Slim={}".format(slim))
     for d in ds:
-        if field_mapping is not None:
-            map_doc(d, field_mapping)
+        map_doc(d, field_mapping, invert_subject_object=invert_subject_object)
 
         subject = d[M.SUBJECT]
         subject_label = d[M.SUBJECT_LABEL]
@@ -329,7 +339,7 @@ def search_associations(subject_category=None,
                         subject_direct=False,
                         subject_taxon=None,
                         object_taxon=None,
-                        invert_subject_object=False,
+                        invert_subject_object=None,
                         use_compact_associations=False,
                         include_raw=False,
                         field_mapping=None,
@@ -426,6 +436,20 @@ def search_associations(subject_category=None,
         if subjects is not None:
             subjects = [make_gostyle_identifier(s) for s in subjects]
 
+    if subject_category is not None and subject_category == 'disease':
+        if subject_taxon is not None and subject_taxon=='NCBITaxon:9606':
+            logging.info("Unsetting taxon, until indexed correctly")
+            subject_taxon = None
+
+    if invert_subject_object is None:
+        p = (subject_category,object_category)
+        if p == ('disease','gene'):
+            invert_subject_object = True
+        else:
+            invert_subject_object = True
+        if invert_subject_object:
+            logging.info("Inferred that subject/object should be inverted for {}".format(p))
+            
     # typically information is stored one-way, e.g. model-disease;
     # sometimes we want associations from perspective of object
     if invert_subject_object:
@@ -607,9 +631,11 @@ def search_associations(subject_category=None,
 
     # TODO - check if truncated
 
-    logging.info("COMPACT="+str(use_compact_associations))
+    logging.info("COMPACT={} INV={}".format(use_compact_associations, invert_subject_object))
     if use_compact_associations:
-        payload['compact_associations'] = translate_docs_compact(results.docs, field_mapping=field_mapping, slim=slim, map_identifiers=map_identifiers, **kwargs)
+        payload['compact_associations'] = translate_docs_compact(results.docs, field_mapping=field_mapping,
+                                                                 slim=slim, invert_subject_object=invert_subject_object,
+                                                                 map_identifiers=map_identifiers, **kwargs)
     else:
         payload['associations'] = translate_docs(results.docs, field_mapping=field_mapping, map_identifiers=map_identifiers, **kwargs)
 

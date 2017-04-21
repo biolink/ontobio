@@ -48,7 +48,8 @@ class AssociationSet():
         logging.info("Created {}".format(self))
 
     def __str__(self):
-        return "AssocSet S->I: {}".format(len(self.subject_to_inferred_map.items()))
+        imap = self.subject_to_inferred_map
+        return "AssocSet |S|={} |S->I|={}".format(len(imap.keys()), len(imap.items()))
 
     def index(self):
         """
@@ -66,7 +67,7 @@ class AssociationSet():
             if n<5:
                 logging.info(" Indexed: {} -> {}".format(subj, ancs))
             elif n == 6:
-                logging.info("....")
+                logging.info("[TRUNCATING>5]....")
 
     def inferred_types(self, subj):
         """
@@ -105,10 +106,69 @@ class AssociationSet():
         for term in terms:
             ancs = ancs.union(self.ontology.ancestors(term))
         return ancs.union(set(terms))
+
+    def query_associations(self, subjects=[], infer_subjects=True, include_xrefs=True):
+        """
+        Query for a set of associations.
+
+        Note: only a minimal association model is stored, so all results are returned as (subject_id,class_id) tuples
+
+        Arguments:
+
+         subjects: list
+
+          list of subjects (e.g. genes, diseases) used to query associations. Any association to one of these subjects or
+          a descendant of these subjects (assuming infer_subjects=True) are returned.
+
+         infer_subjects: boolean (default true)
+
+          See above
+
+         include_xrefs: boolean (default true)
+
+          If true, then expand inferred subject set to include all xrefs of those subjects.
+
+        Example: if a high level disease node (e.g. DOID:14330 Parkinson disease) is specified, then the default behavior
+        (infer_subjects=True, include_xrefs=True) and the ontology includes DO, results will include associations from 
+        both descendant DOID classes, and all xrefs (e.g. OMIM)
+
+        """
+        mset = set()
+        if infer_subjects:
+            for subj in subjects:
+                mset.update(self.ontology.descendants(subj))
+        mset.update(set(subjects))
+        if include_xrefs:
+            xset = set()
+            for m in mset:
+                xrefs = self.ontology.xrefs(m, bidirectional=True)
+                if xrefs is not None:
+                    xset.update(xrefs)
+            mset.update(xset)
+        logging.debug("Matching subjects: {}".format(mset))
+        mset = mset.intersection(self.subjects)
+        logging.debug("Matching subjects with anns: {}".format(mset))
+        amap = self.association_map
+        results = []
+        for m in mset:
+            if m in amap:
+                for t in amap[m]:
+                    results.append( (m,t) )
+        return results
             
     def query(self, terms=[], negated_terms=[]):
         """
-        Basic boolean query, using inference
+        Basic boolean query, using inference.
+
+        Arguments:
+
+         - terms: list
+
+             list of class ids. Returns the set of subjects that have at least one inferred annotation to each of the specified classes.
+
+         - negated_terms: list
+
+             list of class ids. Filters the set of subjects so that there are no inferred annotations to any of the specified classes
         """
 
         if terms is None:
@@ -188,7 +248,13 @@ class AssociationSet():
     def label(self, id):
         """
         return label for a subject id
+
+        Will make use of both the ontology and the association set
         """
+        if self.ontology is not None:
+            label = self.ontology.label(id)
+            if label is not None:
+                return label
         if self.subject_label_map is not None and id in self.subject_label_map:
             return self.subject_label_map[id]
         return None

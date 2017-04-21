@@ -94,7 +94,20 @@ class Ontology():
                 g.add_edge(x,y,attr_dict=d)
         logging.info("Filtered edges: {}".format(num_edges))
         return g
-    
+
+    def merge(self, ontologies):
+        """
+        TODO: incomplete
+        """
+        for ont in ontologies:
+            g = self.get_graph()
+            xg = ont.get_graph()
+            for n in xg.nodes():
+                g.add_node(n)
+            for (o,s,m) in xg.edges(data=True):
+                g.add_edge(o,s,attr_dict=m)
+            
+        
     def subgraph(self, nodes=[]):
         """
         Returns an induced subgraph
@@ -298,6 +311,8 @@ class Ontology():
         """
         if self.xref_graph is not None:
             xg = self.xref_graph
+            if nid not in xg:
+                return []
             if bidirectional:
                 return xg.neighbors(nid)
             else:
