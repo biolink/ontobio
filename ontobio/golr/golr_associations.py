@@ -347,6 +347,7 @@ def search_associations(subject_category=None,
                         select_fields=None,
                         fetch_objects=False,
                         fetch_subjects=False,
+                        fq={},
                         slim=[],
                         json_facet=None,
                         iterate=False,
@@ -401,9 +402,9 @@ def search_associations(subject_category=None,
 
         Evidence class from ECO. Inference is used.
 
-    exclude_automatic_annotations : bool
+    exclude_automatic_assertions : bool
 
-        If true, then any annotations with evidence of ECO:0000501 or
+        If true, then any annotations with evidence of ECO:0000501 (IEA) or
         subclasses will be excluded.
 
     use_compact_associations : bool
@@ -413,7 +414,6 @@ def search_associations(subject_category=None,
         consisting of objects with (subject, relation and objects)
 
     """
-    fq = {}
 
     # canonical form for MGI is a CURIE MGI:nnnn
     #if subject is not None and subject.startswith('MGI:MGI:'):
@@ -782,8 +782,19 @@ def map2slim(subjects, slim, **kwargs):
 
 def bulk_fetch(subject_category, object_category, taxon, rows=MAX_ROWS, **kwargs):
     """
-    Fetch associations for a species and pair of categories in bulk
+    Fetch associations for a species and pair of categories in bulk.
+
+    Arguments:
+
+     - subject_category: String (not None)
+     - object_category: String (not None)
+     - taxon: String
+     - rows: int
+
+    Additionally, any argument for search_associations can be passed
     """
+    assert subject_category is not None
+    assert object_category is not None
     time.sleep(1)
     return search_associations_compact(subject_category=subject_category,
                                        object_category=object_category,
@@ -807,6 +818,7 @@ def pivot_query_as_matrix(facet=None, facet_pivot_fields=[], **kwargs):
     """
     Pivot query
     """
+    logging.info("Additional args: {}".format(kwargs))
     fp = search_associations(rows=0,
                              facet_fields=[facet],
                              facet_pivot_fields=facet_pivot_fields,
