@@ -126,13 +126,18 @@ def main():
     ont = ofactory.create(handle)
     logging.info("ont: {}".format(ont))
 
+    evidence = args.evidence
+    if evidence is not None and evidence.lower() == 'noiea':
+        evidence = "-ECO:0000501"
+    
+    
     # Association Factory
     afactory = AssociationSetFactory()
     [subject_category, object_category] = args.category
     aset = afactory.create(ontology=ont,
                            subject_category=subject_category,
                            object_category=object_category,
-                           evidence=args.evidence,
+                           evidence=evidence,
                            taxon=args.taxon)
     
     
@@ -149,9 +154,22 @@ def run_enrichment_test(ont, aset, args):
         print("{:8.3g} {} {:40s}".format(r['p'],r['c'],str(r['n'])))
 
 def run_query(ont, aset, args):
+    import plotly.plotly as py
+    import plotly.graph_objs as go
     subjects = aset.query(args.query, args.negative)
     for s in subjects:
         print("{} {}".format(s, str(aset.label(s))))
+    tups = aset.query_associations(subjects=subjects)
+    z, xaxis, yaxis = tuple_to_matrix(tups)
+    spacechar = " "
+    xaxis = mk_axis(xaxis, aset, args, spacechar=" ")
+    yaxis = mk_axis(yaxis, aset, args, spacechar=" ")
+    logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
+    trace = go.Heatmap(z=z,
+                       x=xaxis,
+                       y=yaxis)
+    data=[trace]
+    py.plot(data, filename='labelled-heatmap')
 
 def run_query_associations(ont, aset, args):
     import plotly.plotly as py
@@ -194,7 +212,7 @@ def tuple_to_matrix(tups):
     z = [ [0] * len(xset) for i1 in range(len(yset)) ]
         
     for (x,y) in tups:
-        z[ymap[y]][xmap[x]] = 2
+        z[ymap[y]][xmap[x]] = 1
     z = np.array(z)
     #z = -z
     return (z, xset, yset)
@@ -333,8 +351,9 @@ def plot_dendrogram(z, xaxis, yaxis):
 
     py.plot(figure, filename='dendrogram_with_labels')
     
-def mk_axis(terms, kb, args):
-    return [label_or_id(x, kb).replace(" ","<br>") for x in terms]
+def mk_axis(terms, kb, args, spacechar="<br>"):
+    # TODO - more elegant solution to blank node hack
+    return [label_or_id(x, kb).replace(" ",spacechar).replace("some variant of ","") for x in terms]
 
 def label_or_id(x, kb):
     label = kb.label(x)

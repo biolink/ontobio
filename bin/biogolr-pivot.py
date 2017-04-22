@@ -26,6 +26,7 @@ from networkx.drawing.nx_pydot import write_dot
 from prefixcommons.curie_util import expand_uri
 from ontobio.slimmer import get_minimal_subgraph
 import yaml
+import json
 import logging
 import plotly.plotly as py
 import plotly.graph_objs as go
@@ -48,6 +49,10 @@ def main():
                         help='Path to output file')
     parser.add_argument('-f', '--facet', type=str, required=True,
                         help='Facet field to query')
+    parser.add_argument('-q', '--fq', type=json.loads, default={}, required=False,
+                        help='Facet query (solr fq) - should be json')
+    parser.add_argument('-Q', '--qargs', type=json.loads, default={}, required=False,
+                        help='Query to be passed directly to python golr_associations query')
     parser.add_argument('-P', '--pivot', nargs='*', type=str, required=False,
                         help='Pivot fields. E.f subject_category object_category, relation')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
@@ -62,9 +67,10 @@ def main():
         logging.basicConfig(level=logging.INFO)
     logging.info("Welcome!")
 
-
     r = pivot_query_as_matrix(facet=args.facet,
-                                    facet_pivot_fields=args.pivot)
+                              fq=args.fq,
+                              facet_pivot_fields=args.pivot,
+                              **args.qargs)
 
     print(str(r))
     trace = go.Heatmap(z=r['z'],
