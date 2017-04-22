@@ -173,6 +173,7 @@ class AssociationSet():
 
         if terms is None:
             terms=[]
+        matches_all = 'owl:Thing' in terms
         if negated_terms is None:
             negated_terms=[]
         termset = set(terms)
@@ -180,7 +181,7 @@ class AssociationSet():
         matches = []
         n_terms = len(termset)
         for subj in self.subjects:
-            if len(termset.intersection(self.inferred_types(subj))) == n_terms:
+            if matches_all or len(termset.intersection(self.inferred_types(subj))) == n_terms:
                 if len(negated_termset.intersection(self.inferred_types(subj))) == 0:
                     matches.append(subj)
         return matches
