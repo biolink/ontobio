@@ -31,6 +31,9 @@ class AssociationSetFactory():
         """
         creates an AssociationSet
 
+        Currently, this uses an eager binding to a ontobio.golr instance. All compact associations for the particular combination
+        of parameters are fetched.
+
         Arguments
         ---------
 

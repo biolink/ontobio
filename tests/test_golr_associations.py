@@ -1,42 +1,70 @@
-from ontobio.golr.golr_associations import search_associations, search_associations_compact, GolrFields, select_distinct_subjects, get_objects_for_subject, get_subjects_for_object
+from ontobio.golr.golr_associations import search_associations, search_associations_compact, select_distinct_subjects, get_objects_for_subject, get_subjects_for_object
 
-M=GolrFields()
 
 HUMAN_SHH = 'NCBIGene:6469'
 HOLOPROSENCEPHALY = 'HP:0001360'
 TWIST_ZFIN = 'ZFIN:ZDB-GENE-050417-357'
 DVPF = 'GO:0009953'
+LSD = 'DOID:9455'
+DANIO = 'NCBITaxon:7954'
 
 def test_select_distinct():
     results = select_distinct_subjects(subject_category='gene',
                                        object_category='phenotype',
                                        subject_taxon='NCBITaxon:9606')
+    print("DISTINCT SUBJECTS={}".format(results))
     assert len(results) > 0
 
 def test_go_assocs():
-    results = search_associations(subject=TWIST_ZFIN,
+    payload = search_associations(subject=TWIST_ZFIN,
                                   object_category='function'
     )
-    assert len(results) > 0
+    assocs = payload['associations']
+    assert len(assocs) > 0
 
 def test_go_assocs_compact():
     assocs = search_associations_compact(subject=TWIST_ZFIN,
                                           object_category='function'
     )
     assert len(assocs) == 1
+    a = assocs[0]
+    assert a['subject'] == TWIST_ZFIN
+    objs = a['objects']
+    assert 'GO:0002040' in objs
+
+    # test reciprocal query
+    for obj in objs:
+        print("TEST FOR {}".format(obj))
+        rassocs = search_associations_compact(object=obj,
+                                              subject_category='gene',
+                                              subject_taxon=DANIO,
+                                              rows=-1)
+        for a in rassocs:
+            print("  QUERY FOR {} -> {}".format(obj,a))
+        m = [a for a in rassocs if a['subject'] == TWIST_ZFIN]
+        assert len(m) == 1
     
     
 def test_pheno_assocs():
-    results = search_associations(subject=TWIST_ZFIN,
+    payload = search_associations(subject=TWIST_ZFIN,
                                   object_category='phenotype'
     )
-    assert len(results) > 0
+    assocs = payload['associations']
+    assert len(assocs) > 0
+    for a in assocs:
+        print(str(a))
+    assocs = [a for a in assocs if a['subject']['id'] == TWIST_ZFIN]
+    assert len(assocs) > 0
 
 def test_pheno_assocs_compact():
     assocs = search_associations_compact(subject=TWIST_ZFIN,
-                                          object_category='phenotype'
+                                         rows=1000,
+                                         object_category='phenotype'
     )
     assert len(assocs) == 1
+    a = assocs[0]
+    assert a['subject'] == TWIST_ZFIN
+    assert 'ZP:0007631' in a['objects']
     
 def test_pheno_objects():
     results = search_associations(subject=TWIST_ZFIN,
@@ -45,8 +73,10 @@ def test_pheno_objects():
                                   object_category='phenotype'
     )
     objs = results['objects']
+    print(str(objs))
     assert len(objs) > 1
-
+    assert 'ZP:0007631' in objs
+    
 def test_func_objects():
     results = search_associations(subject=TWIST_ZFIN,
                                   fetch_objects=True,
@@ -81,8 +111,29 @@ def test_pheno2gene():
     assert len(subjs) > 50
     
 def test_disease_assocs():
-    results = search_associations(subject=TWIST_ZFIN,
+    payload = search_associations(subject=HUMAN_SHH,
                                   object_category='disease'
     )
-    assert len(results) > 0
+    print(str(payload))
+    assocs = payload['associations']
+    assert len(assocs) > 0
+
+def test_disease2gene():
+    payload = search_associations(subject=LSD,
+                                  subject_category='disease',
+                                  object_category='gene')
+    assocs = payload['associations']
+    for a in assocs:
+        print(str(a))
+    assert len(assocs) > 0
+ 
+def test_species_facet():
+    payload = search_associations(subject_category='gene',
+                                  object_category='phenotype',
+                                  facet_fields=['subject_taxon', 'subject_taxon_label'],
+                                  rows=0)
+    fcs = payload['facet_counts']
+    print(str(fcs))
+    assert 'Homo sapiens' in fcs['subject_taxon_label'].keys()
+   
     
