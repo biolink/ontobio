@@ -9,3 +9,11 @@ subpackage_tests: $(patsubst %,test-%,$(PACKAGES))
 
 test:
 	pytest tests/*.py
+
+cleandist:
+	rm dist/*
+
+# TODO: bump.sh
+release: cleandist
+	python setup.py sdist bdist_wheel bdist_egg
+	twine upload dist/*
