@@ -1,6 +1,5 @@
 """
 A query wrapper for a Golr instance
----
 
 Intended to work with:
 
@@ -213,6 +212,55 @@ class GolrAssociationQuery():
     """
     A Query object providing a higher level of abstraction over either GO or Monarch Solr indexes
 
+    Fields
+    ------
+
+    All of these can be set when creating a new object
+
+    fetch_objects : bool
+
+        we frequently want a list of distinct association objects (in
+        the RDF sense).  for example, when querying for all phenotype
+        associations for a gene, it is convenient to get a list of
+        distinct phenotype terms. Although this can be obtained by
+        iterating over the list of associations, it can be expensive
+        to obtain all associations.
+
+        Results are in the 'objects' field
+
+   fetch_subjects : bool
+
+        This is the analog of the fetch_objects field. Note that due
+        to an inherent asymmetry by which the list of subjects can be
+        very large (e.g. all genes in all species for "metabolic
+        process" or "metabolic phenotype") it's necessary to combine
+        this with subject_category and subject_taxon filters
+
+        Results are in the 'subjects' field
+
+    slim : List
+
+        a list of either class ids (or in future subset ids), used to
+        map up (slim) objects in associations. This will populate
+        an additional 'slim' field in each association object corresponding
+        to the slimmed-up value(s) from the direct objects.
+        If fetch_objects is passed, this will be populated with slimmed IDs.
+
+    evidence: String
+
+        Evidence class from ECO. Inference is used.
+
+    exclude_automatic_assertions : bool
+
+        If true, then any annotations with evidence of ECO:0000501 (IEA) or
+        subclasses will be excluded.
+
+    use_compact_associations : bool
+
+        If true, then the associations list will be false, instead
+        compact_associations contains a more compact representation
+        consisting of objects with (subject, relation and objects)
+    
     
     """
     def __init__(self,
@@ -258,52 +306,6 @@ class GolrAssociationQuery():
 
         """Fetch a set of association objects based on a query.
 
-        Arguments
-        ---------
-
-        fetch_objects : bool
-
-        we frequently want a list of distinct association objects (in
-        the RDF sense).  for example, when querying for all phenotype
-        associations for a gene, it is convenient to get a list of
-        distinct phenotype terms. Although this can be obtained by
-        iterating over the list of associations, it can be expensive
-        to obtain all associations.
-
-        Results are in the 'objects' field
-
-        fetch_subjects : bool
-
-        This is the analog of the fetch_objects field. Note that due
-        to an inherent asymmetry by which the list of subjects can be
-        very large (e.g. all genes in all species for "metabolic
-        process" or "metabolic phenotype") it's necessary to combine
-        this with subject_category and subject_taxon filters
-
-        Results are in the 'subjects' field
-
-        slim : List
-
-        a list of either class ids (or in future subset ids), used to
-        map up (slim) objects in associations. This will populate
-        an additional 'slim' field in each association object corresponding
-        to the slimmed-up value(s) from the direct objects.
-        If fetch_objects is passed, this will be populated with slimmed IDs.
-
-        evidence: String
-
-        Evidence class from ECO. Inference is used.
-
-        exclude_automatic_assertions : bool
-
-        If true, then any annotations with evidence of ECO:0000501 (IEA) or
-        subclasses will be excluded.
-
-        use_compact_associations : bool
-
-        If true, then the associations list will be false, instead
-        compact_associations contains a more compact representation
-        consisting of objects with (subject, relation and objects)
 
         """
         self.subject_category=subject_category

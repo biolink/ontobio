@@ -1,7 +1,7 @@
 """
 Convenience wrapper for golr_query.py
 
-In general you should use the GolrAssociationQuery object directly. This module provide convenience non-OO functions that typically compose the creation of a GolrAssociationQuery object followed by the exec() method.
+In general you should use the `GolrAssociationQuery` object directly. This module provide convenience non-OO functions that typically compose the creation of a GolrAssociationQuery object followed by the `exec` method.
 
 """
 import logging
