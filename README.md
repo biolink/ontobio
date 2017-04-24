@@ -8,6 +8,10 @@ The ontologies and associations can either be local files or provided
 by remote services (currently the OntoBee SPARQL service for
 ontologies and a Monarch or GO Golr service for associations).
 
+# API Docs
+
+[ontobio](https://www.pydoc.io/pypi/ontobio-0.1.2/index.html) on pydoc.io
+
 # Ontologies
 
 There are two ways of initiating an ontology object:
@@ -163,3 +167,21 @@ E.g. terms ending neuron, to tree
 ```
 ogr -r cl %neuron -t tree
 ```
+
+## Release instructions
+
+This section is only relevant for project maintainers.
+To create a new release, do the following:
+
+1. Bump the `__version__` in [`ontobio/__init__.py`](ontobio/__init__.py).
+
+3. Run the following commands:
+    
+  ```sh
+  TAG=v`python setup.py --version`
+  git add ontobio/__init__.py
+  git commit --message="Upgrade to $TAG"
+  git push
+  git tag --annotate $TAG --message="Upgrade to $TAG"
+  git push --tags
+  ```

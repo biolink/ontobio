@@ -10,7 +10,8 @@ directory = os.path.dirname(os.path.abspath(__file__))
 init_path = os.path.join(directory, 'ontobio', '__init__.py')
 with open(init_path) as read_file:
     text = read_file.read()
-version = '0.1.2'
+pattern = re.compile(r"^__version__ = ['\"]([^'\"]*)['\"]", re.MULTILINE)
+version = pattern.search(text).group(1)
 
 # long_description
 readme_path = os.path.join(directory, 'README.md')
