@@ -209,7 +209,7 @@ class GolrServer():
     pass
 
 
-class GolrQuery():
+class GolrAssociationQuery():
     """
     A Query object providing a higher level of abstraction over either GO or Monarch Solr indexes
 
@@ -779,7 +779,7 @@ class GolrQuery():
     
         lf = M.label_field(fname)
     
-        gq = GolrQuery() ## TODO - make this a class method
+        gq = GolrAssociationQuery() ## TODO - make this a class method
         id = d[fname]
         id = self.make_canonical_identifier(id)
         #if id.startswith('MGI:MGI:'):

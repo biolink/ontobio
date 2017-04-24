@@ -1,7 +1,7 @@
 """
 Convenience wrapper for golr_query.py
 
-In general you should use the GolrQuery object directly. This module provide convenience non-OO functions that typically compose the creation of a GolrQuery object followed by the exec() method.
+In general you should use the GolrAssociationQuery object directly. This module provide convenience non-OO functions that typically compose the creation of a GolrAssociationQuery object followed by the exec() method.
 
 """
 import logging
@@ -29,7 +29,7 @@ def search_associations(**kwargs):
     Fetch a set of association objects based on a query.
     """
     logging.info("CREATING_GOLR_QUERY {}".format(kwargs))
-    q = GolrQuery(**kwargs)
+    q = GolrAssociationQuery(**kwargs)
     return q.exec()
 
 def get_objects_for_subject(subject=None,
