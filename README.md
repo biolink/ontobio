@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/biolink/ontobio.svg?branch=master)](https://travis-ci.org/biolink/ontobio)
+[![DOI](https://zenodo.org/badge/13996/biolink/ontobio.svg)](https://zenodo.org/badge/latestdoi/13996/biolink/ontobio)
+
 # ontobio - a python API for working with ontology graphs
 
 This module provides objects and utility methods for working with
