@@ -1,0 +1,200 @@
+!gpi-version: 1.2
+PomBase	SPBP4H10.11c	lcf2	long-chain-fatty-acid-CoA ligase		protein	taxon:4896			
+PomBase	SPBC3D6.15	rps2501	40S ribosomal protein S25 (predicted)	rps25-1	protein	taxon:4896			
+PomBase	SPBC947.08c	hip4	histone promoter control protein Hip4	hpc2	protein	taxon:4896			
+PomBase	SPBC3D6.12	dip2	U3 snoRNA associated protein Dip2 (predicted)		protein	taxon:4896			
+PomBase	SPBC3D6.10	apn2	AP-endonuclease Apn2		protein	taxon:4896			
+PomBase	SPBC6B1.06c	ubp14	ubiquitin C-terminal hydrolase Ubp14		protein	taxon:4896			
+PomBase	SPAC1F5.03c	SPAC1F5.03c	FAD-dependent oxidoreductase involved in late endosome to Golgi transport (predicted)		protein	taxon:4896			
+PomBase	SPBC12C2.03c	SPBC12C2.03c	methionine synthase reductase (predicted)		protein	taxon:4896			
+PomBase	SPAC323.07c	SPAC323.07c	MatE family transmembrane transporter (predicted)		protein	taxon:4896			
+PomBase	SPBC3D6.09	dpb4	DNA polymerase epsilon subunit Dpb4		protein	taxon:4896			
+PomBase	SPBC1348.08c	SPBC1348.08c	cell surface glycoprotein, adhesion molecule (predicted)		protein	taxon:4896			
+PomBase	SPBC3D6.07	gpi3	pig-A, phosphatidylinositol N-acetylglucosaminyltransferase subunit Gpi3 (predicted)		protein	taxon:4896			
+PomBase	SPBC3D6.05	ptp4	phosphatidate cytidylyltransferase Ptp4 (predicted)		protein	taxon:4896			
+PomBase	SPBC8D2.07c	sfc9	transcription factor TFIIIC complex subunit Sfc9 (predicted)		protein	taxon:4896			
+PomBase	SPBC21.07c	ppk24	serine/threonine protein kinase Ppk24		protein	taxon:4896			
+PomBase	SPBC6B1.05c	atg7	E1 Atg8 and Atg12 E1 activating enzyme Atg7		protein	taxon:4896			
+PomBase	SPCC1682.13	laf2	Clr6 associated factor 2, Laf2		protein	taxon:4896			
+PomBase	SPBC12C2.02c	ste20	Rictor homolog, Ste20	ste16	protein	taxon:4896			
+PomBase	SPBC1703.15c	vps33	HOPS/CORVET complex subunit, vacuolar sorting protein Vps33	SPBC2A9.01c	protein	taxon:4896			
+PomBase	SPBC1703.10	ypt1	GTPase Ypt1		protein	taxon:4896			
+PomBase	SPAC323.06c	uba5	NEDD8 activating enzyme E1-type Uba5 (predicted)		protein	taxon:4896			
+PomBase	SPAC17A2.07c	SPAC17A2.07c	Schizosaccharomyces specific protein		protein	taxon:4896			
+PomBase	SPAC26F1.13c	lrs1	cytoplasmic leucine-tRNA ligase Lrs1 (predicted)		protein	taxon:4896			
+PomBase	SPBC4B4.12c	SPBC4B4.12c	Schizosaccharomyces specific protein		protein	taxon:4896			
+PomBase	SPBC21.06c	cdc7	serine/threonine protein kinase Cdc7	pld1|its10	protein	taxon:4896			
+PomBase	SPBC12C2.01c	SPBC12C2.01c	Schizosaccharomyces specific protein	SPBC17F3.03c	protein	taxon:4896			
+PomBase	SPBC1703.14c	top1	DNA topoisomerase I		protein	taxon:4896			
+PomBase	SPAC323.05c	mtq2	eRF1 methyltransferase Mtq2 (predicted)		protein	taxon:4896			
+PomBase	SPBC1348.06c	SPBC1348.06c	conserved fungal family		protein	taxon:4896			
+PomBase	SPAC1565.04c	ste4	adaptor protein Ste4		protein	taxon:4896			
+PomBase	SPBC1773.11c	mug89	CDC50 domain protein, implicated in signal transduction (predicted)		protein	taxon:4896			
+PomBase	SPAC26F1.12c	hgh1	conserved eukaryotic protein, human HGH1 ortholog		protein	taxon:4896			
+PomBase	SPAC4C5.04	rad31	SUMO activating enzyme E1-type Rad31	uba4	protein	taxon:4896			
+PomBase	SPAC4C5.03	SPAC4C5.03	CTNS domain protein (SMART)		protein	taxon:4896			
+PomBase	SPBC8D2.05c	sfi1	spindle pole body protein Sfi1		protein	taxon:4896			
+PomBase	SPAC4C5.01	SPAC4C5.01	pseudouridine-5'-phosphatase (predicted)		protein	taxon:4896			
+PomBase	SPBC21.05c	ral2	Ras1-Scd pathway protein Ral2		protein	taxon:4896			
+PomBase	SPBC6B1.07	prp1	U4/U6 x U5 tri-snRNP complex subunit Prp1	zer1	protein	taxon:4896			
+PomBase	SPAP14E8.05c	SPAP14E8.05c	UPF0136 family mitochondrial protein, implicated in heme biosynthesis		protein	taxon:4896			
+PomBase	SPBC6B1.04	mde4	microtubule-site clamp monopolin complex subunit Mde4		protein	taxon:4896			
+PomBase	SPBC6B1.02	ppk30	Ark1/Prk1 family protein kinase Ppk30		protein	taxon:4896			
+PomBase	SPBC1703.13c	SPBC1703.13c	mitochondrial inorganic phosphate transmembrane transporter (predicted)		protein	taxon:4896			
+PomBase	SPAC9.08c	SPAC9.08c	steroid reductase (predicted)		protein	taxon:4896			
+PomBase	SPAC27E2.01	SPAC27E2.01	alpha-amylase homolog (predicted)		protein	taxon:4896			
+PomBase	SPAC27E2.02	yih1	IMPACT homolog, cytoplasmic translational regulator Yih1 (predicted)		protein	taxon:4896			
+PomBase	SPBC1685.16	vma9	V-type ATPase V0 subunit e (predicted)		protein	taxon:4896			
+PomBase	SPBC1685.13	fhn1	plasma membrane organization protein Fhn1		protein	taxon:4896			
+PomBase	SPBC1685.11	rlp1	RecA family ATPase Rlp1		protein	taxon:4896			
+PomBase	SPBC1685.10	rps27	40S ribosomal protein S27 (predicted)		protein	taxon:4896			
+PomBase	SPBC4B4.10c	atg5	autophagy associated protein Atg5	mug77	protein	taxon:4896			
+PomBase	SPAC25G10.03	zip1	transcription factor Zip1		protein	taxon:4896			
+PomBase	SPBC3E7.12c	cfh4	chitin synthase regulatory factor Cfh4 (predicted)		protein	taxon:4896			
+PomBase	SPAC222.05c	mss1	mitochondrial GTPase (predicted)		protein	taxon:4896			
+PomBase	SPAC30C2.06c	dml1	mitochondrial inheritance GTPase, tubulin-like (predicted)		protein	taxon:4896			
+PomBase	SPBC1685.09	rps29	40S ribosomal protein S29 (predicted)		protein	taxon:4896			
+PomBase	SPBC1685.08	cti6	histone deacetylase complex ubiquitin-like protein ligase subunit Cti6		protein	taxon:4896			
+PomBase	SPBC1685.06	cid11	poly(A) polymerase Cid11 (predicted)		protein	taxon:4896			
+PomBase	SPBC16A3.17c	SPBC16A3.17c	transmembrane transporter (predicted)		protein	taxon:4896			
+PomBase	SPBC1685.04	SPBC1685.04	Schizosaccharomyces specific protein		protein	taxon:4896			
+PomBase	SPBC1685.03	sec11	signal peptidase subunit Sec11 (predicted)	ppp69	protein	taxon:4896			
+PomBase	SPBC1685.01	pmp1	dual-specificity MAP kinase phosphatase Pmp1	dsp1	protein	taxon:4896			
+PomBase	SPAC26F1.10c	pyp1	tyrosine phosphatase Pyp1		protein	taxon:4896			
+PomBase	SPBC8D2.03c	hhf2	histone H4 h4.2	ams3|h4.2	protein	taxon:4896			
+PomBase	SPBC21.03c	SPBC21.03c	EVE domain (PUA-related) protein, bacterial S-adenosyl L-homocysteinhydrolase		protein	taxon:4896			
+PomBase	SPCPB1C11.03	SPCPB1C11.03	cysteine transmembrane transporter (predicted)		protein	taxon:4896			
+PomBase	SPAC9.06c	SPAC9.06c	5'-methylthioribulose-1-phosphate dehydratase, adducin (predicted)		protein	taxon:4896			
+PomBase	SPAC323.02c	pup2	20S proteasome complex subunit alpha 5, Pup2 (predicted)		protein	taxon:4896			
+PomBase	SPAC31G5.07	dni1	tetraspan protein Dni1		protein	taxon:4896			
+PomBase	SPAC4D7.14	new13	conserved fungal protein of unknown function		protein	taxon:4896			
+PomBase	SPBC1711.16	pwp1	WD repeat protein Pwp1 (predicted)		protein	taxon:4896			
+PomBase	SPBC8D2.02c	vps68	vacuolar sorting protein Vps68 (predicted)		protein	taxon:4896			
+PomBase	SPAC6B12.14c	SPAC6B12.14c	conserved fungal protein		protein	taxon:4896			
+PomBase	SPAC8C9.19	SPAC8C9.19	conserved fungal protein		protein	taxon:4896			
+PomBase	SPCC1259.02c	erm1	Endoplasmic Reticulum metallopeptidase Erm1 (predicted)	ppp61	protein	taxon:4896			
+PomBase	SPAC16A10.04	rho4	Rho family GTPase Rho4		protein	taxon:4896			
+PomBase	SPAC8C9.14	prr1	transcription factor Prr1		protein	taxon:4896			
+PomBase	SPAC16A10.02	sub1	transcription coactivator PC4		protein	taxon:4896			
+PomBase	SPAC16A10.01	SPAC16A10.01	ThrE amino acid transmembrane transporter family protein		protein	taxon:4896			
+PomBase	SPAC8C9.11	fra2	iron-sensor Fra2		protein	taxon:4896			
+PomBase	SPAC323.01c	pos5	mitochondrial NADH kinase Pos5 (predicted)		protein	taxon:4896			
+PomBase	SPCC338.11c	rrg1	protein-lysine N-methyltransferase Rrg1 (predicted)	uvi22	protein	taxon:4896			
+PomBase	SPBC16A3.15c	nda2	tubulin alpha 1		protein	taxon:4896			
+PomBase	SPCC320.13c	ark1	aurora-B kinase Ark1	aim1|SPCC330.16	protein	taxon:4896			
+PomBase	SPBC1718.04	sct1	glycerol-3-phosphate O-acyltransferase Sct1/Gpt1 (predicted)		protein	taxon:4896			
+PomBase	SPAC227.04	atg10	Atg12 conjugating activity Atg10		protein	taxon:4896			
+PomBase	SPAC1805.15c	pub2	HECT-type ubiquitin-protein ligase E3 Pub2		protein	taxon:4896			
+PomBase	SPAC8C9.08	rps5	40S ribosomal protein S5 (predicted)		protein	taxon:4896			
+PomBase	SPAC8C9.07	fyv7	rRNA processing protein Fyv7 (predicted)		protein	taxon:4896			
+PomBase	SPCC1259.01c	rps1802	40S ribosomal protein S18 (predicted)	rps18-2|SPCC825.06c	protein	taxon:4896			
+PomBase	SPAC227.09	fol3	folylpolyglutamate synthase Fol3 (predicted)		protein	taxon:4896			
+PomBase	SPAC8C9.04	SPAC8C9.04	Schizosaccharomyces specific protein		protein	taxon:4896			
+PomBase	SPAC8C9.03	cgs1	cAMP-dependent protein kinase regulatory subunit Cgs1		protein	taxon:4896			
+PomBase	SPBC530.16	ksh1	DUF1242 family protein, likely secretory pathway component Ksh1 (predicted)	new21	protein	taxon:4896			
+PomBase	SPAC227.15	reg1	protein phosphatase regulatory subunit Reg1 (predicted)		protein	taxon:4896			
+PomBase	SPMITTRNAMET.02	SPMITTRNAMET.02	tRNA Methionine, mitochondrial		tRNA	taxon:4896			
+PomBase	SPMITTRNAMET.01	SPMITTRNAMET.01	tRNA Methionine, mitochondrial		tRNA	taxon:4896			
+PomBase	SPAC9.03c	brr2	U5 snRNP complex subunit Brr2	spp41	protein	taxon:4896			
+PomBase	SPBPB10D8.01	SPBPB10D8.01	cysteine transmembrane transporter (predicted)		protein	taxon:4896			
+PomBase	SPCC970.11c	wtf9	wtf element Wtf9		protein	taxon:4896			
+PomBase	SPCC320.11c	nip7	RNA-binding protein involved in ribosome biogenesis Nip7 (predicted)	SPCC330.18	protein	taxon:4896			
+PomBase	SPAC22H12.03	SPAC22H12.03	mitochondrial hydrolase (predicted)		protein	taxon:4896			
+PomBase	SPAC22H12.02	tfg3	transcription factor TFIIF complex subunit Tfg3	taf14	protein	taxon:4896			
+PomBase	SPAC3G9.11c	pdc201	pyruvate decarboxylase (predicted)		protein	taxon:4896			
+PomBase	SPBP22H7.08	rps1002	40S ribosomal protein S10 (predicted)	rps10-2|rps10B	protein	taxon:4896			
+PomBase	SPBP22H7.07	prp5	WD repeat protein Prp5	cwf1	protein	taxon:4896			
+PomBase	SPBP22H7.06	nrk1	nicotinamide riboside kinase Nrk1 (predicted)		protein	taxon:4896			
+PomBase	SPAC1486.07c	mrpl19	mitochondrial ribosomal protein subunit L19 (predicted)	mrp19	protein	taxon:4896			
+PomBase	SPBP22H7.04	SPBP22H7.04	mitochondrial membrane protein, human TMEM186 ortholog		protein	taxon:4896			
+PomBase	SPBP22H7.03	sbg1	plasma membrane-actinomyosin ring linker protein Sbg1		protein	taxon:4896			
+PomBase	SPAC589.08c	dam1	DASH complex subunit Dam1		protein	taxon:4896			
+PomBase	SPAC17A5.18c	rec25	meiotic recombination protein Rec25	mug19	protein	taxon:4896			
+PomBase	SPAC9.02c	SPAC9.02c	polyamine N-acetyltransferase (predicted)		protein	taxon:4896			
+PomBase	SPCC970.10c	brl2	ubiquitin-protein ligase E3 Brl2	rfp1	protein	taxon:4896			
+PomBase	SPBC27.06c	mgr2	TIM23 translocase complex subunit Mgr2 (predicted)		protein	taxon:4896			
+PomBase	SPBC3B9.02c	cwf28	splicing factor Cwf28		protein	taxon:4896			
+PomBase	SPAC29B12.05c	SPAC29B12.05c	mitochondrial S-adenosylmethionine-dependent methyltransferase (predicted)		protein	taxon:4896			
+PomBase	SPAC1805.12c	uep1	ribosomal-ubiquitin fusion protein Ubi2	ubi2	protein	taxon:4896			
+PomBase	SPAC589.07c	atg1801	autophagy associated WD repeat protein Atg18a	atg18a|atg18	protein	taxon:4896			
+PomBase	SPAC24B11.09	mpc2	mitochondrial pyruvate transmembrane transporter Mpc2 (predicted)		protein	taxon:4896			
+PomBase	SPBC1778.01c	zuo1	zuotin (predicted)	mpp11|SPBC30D10.01	protein	taxon:4896			
+PomBase	SPAC1805.11c	rps2602	40S ribosomal protein S26 (predicted)	rps26-2	protein	taxon:4896			
+PomBase	SPAC589.06c	snd302	SRP-independent ER targeting protein Snd3b (predicted)		protein	taxon:4896			
+PomBase	SPCC61.04c	SPCC61.04c	Rab GTPase binding (predicted)		protein	taxon:4896			
+PomBase	SPBC11C11.10	pus4	tRNA pseudouridine synthase Pus4 (predicted)	SPBC3B8.13c	protein	taxon:4896			
+PomBase	SPBC146.03c	cut3	condensin complex SMC subunit Smc4	smc4	protein	taxon:4896			
+PomBase	SPAC589.05c	SPAC589.05c	tRNA queuosine modification protein		protein	taxon:4896			
+PomBase	SPAC17A5.15c	gus1	cytoplasmic glutamate-tRNA ligase gus1 (predicted)	ers1	protein	taxon:4896			
+PomBase	SPAC11D3.13	hsp3104	ThiJ domain protein		protein	taxon:4896			
+PomBase	SPBPB21E7.02c	SPBPB21E7.02c	phosphoglycerate mutase family	SPAPB21E7.02c	protein	taxon:4896			
+PomBase	SPBC32H8.07	git5	heterotrimeric G protein beta subunit Git5	gpb1	protein	taxon:4896			
+PomBase	SPBC11C11.08	srp1	SR family protein, human SRFS2 ortholog Srp1		protein	taxon:4896			
+PomBase	SPBC11C11.07	rpl1801	60S ribosomal protein L18	rpl18-1|rpl18	protein	taxon:4896			
+PomBase	SPBC11C11.05	SPBC11C11.05	KRE9 family cell wall 1,6-beta-glucan biosynthesis protein (predicted)		protein	taxon:4896			
+PomBase	SPBC11C11.03	ndc80	NMS complex subunit Ndc80	ndc10|tid3	protein	taxon:4896			
+PomBase	SPBC11C11.02	imp2	contractile ring protein Imp2		protein	taxon:4896			
+PomBase	SPBC11C11.01	SPBC11C11.01	U2-associated protein (predicted)	SPBC17D1.08	protein	taxon:4896			
+PomBase	SPBC543.10	get1	GET complex (ER membrane insertion) subunit Get1 (predicted)		protein	taxon:4896			
+PomBase	SPCPJ732.03	meu15	Schizosaccharomyces pombe specific protein Meu15		protein	taxon:4896			
+PomBase	SPCC794.15	SPCC794.15	Schizosaccharomyces pombe specific protein		protein	taxon:4896			
+PomBase	SPCPJ732.01	vps5	retromer complex subunit Vps5		protein	taxon:4896			
+PomBase	SPCC794.10	ugp1	UTP-glucose-1-phosphate uridylyltransferase-like Ugp1		protein	taxon:4896			
+PomBase	SPBC18H10.19	vps38	phophatidylinositol 3-kinase complex subunit Vps38		protein	taxon:4896			
+PomBase	SPBC18H10.16	can1	arginine transmembrane transporter Can1		protein	taxon:4896			
+PomBase	SPBC18H10.15	cdk11	serine/threonine protein kinase cdk11	ppk23	protein	taxon:4896			
+PomBase	SPBC18H10.14	rps1601	40S ribosomal protein S16 (predicted)	rps16-1	protein	taxon:4896			
+PomBase	SPBC18H10.13	rps1402	40S ribosomal protein S14 (predicted)	rps14-2	protein	taxon:4896			
+PomBase	SPAC22G7.11c	cum1	conserved fungal protein	SPAC4G8.01c	protein	taxon:4896			
+PomBase	SPAC926.10	new9	Schizosaccharomyces specific protein New9		protein	taxon:4896			
+PomBase	SPCC794.12c	mae2	malic enzyme, malate dehydrogenase (oxaloacetate decarboxylating), Mae2		protein	taxon:4896			
+PomBase	SPBC25D12.03c	mcm7	MCM complex subunit Mcm7		protein	taxon:4896			
+PomBase	SPBC2A9.12	orc6	origin recognition complex subunit Orc6	SPBC2D10.02	protein	taxon:4896			
+PomBase	SPBC2A9.10	SPBC2A9.10	Bin3 family, 7SK RNA methyltransferase (predicted)		protein	taxon:4896			
+PomBase	SPCC794.08	efr3	HEAT repeat protein, involved in protein localization to plasma membrane (predicted)		protein	taxon:4896			
+PomBase	SPCC794.07	lat1	dihydrolipoamide S-acetyltransferase E2, Lat1 (predicted)		protein	taxon:4896			
+PomBase	SPCC794.06	SPCC794.06	transmembrane transporter (predicted)		protein	taxon:4896			
+PomBase	SPCC794.03	SPCC794.03	amino acid permease (predicted)		protein	taxon:4896			
+PomBase	SPCC794.02	wtf5	wtf element Wtf5		protein	taxon:4896			
+PomBase	SPAC589.03c	SPAC589.03c	Schizosaccharomyces specific protein		protein	taxon:4896			
+PomBase	SPBC18H10.09	SPBC18H10.09	zf-CHY type zinc finger protein		protein	taxon:4896			
+PomBase	SPBC18H10.07	wbp4	WW domain-binding protein Wbp4 (predicted)		protein	taxon:4896			
+PomBase	SPBC18H10.05	SPBC18H10.05	WD repeat protein, human WDR44 family		protein	taxon:4896			
+PomBase	SPBC16D10.10	tad2	tRNA specific adenosine deaminase subunit Tad2		protein	taxon:4896			
+PomBase	SPBC18H10.02	lcf1	long-chain-fatty-acid-CoA ligase Lcf1		protein	taxon:4896			
+PomBase	SPAC926.03	rlc1	myosin II regulatory light chain Rlc1		protein	taxon:4896			
+PomBase	SPCC61.01c	str2	siderophore-iron transporter Str2	SPCC622.20c	protein	taxon:4896			
+PomBase	SPBC1703.12	ubp9	ubiquitin C-terminal hydrolase Ubp9		protein	taxon:4896			
+PomBase	SPCC794.11c	ent3	ENTH/VHS domain protein Ent3 (predicted)		protein	taxon:4896			
+PomBase	SPBC25D12.02c	dnt1	nucleolar protein Dnt1		protein	taxon:4896			
+PomBase	SPBC2A9.02	SPBC2A9.02	NAD dependent epimerase/dehydratase family protein		protein	taxon:4896			
+PomBase	SPAC4C5.02c	ryh1	GTPase Ryh1	hos1|sat7	protein	taxon:4896			
+PomBase	SPAC1B3.02c	SPAC1B3.02c	transcription elongation factor, Elf1 family (predicted)		protein	taxon:4896			
+PomBase	SPBC16D10.09	pcn1	PCNA	pcn	protein	taxon:4896			
+PomBase	SPAC589.02c	med13	mediator complex subunit Med13	spTrap240|srb9	protein	taxon:4896			
+PomBase	SPBC16D10.06	zrt1	ZIP zinc transmembrane transporter Zrt1		protein	taxon:4896			
+PomBase	SPBC16D10.05	mok13	alpha-1,3-glucan synthase Mok13		protein	taxon:4896			
+PomBase	SPBC16D10.03	pgp2	EKC/KEOPS complex ATPase subunit Pgp2		protein	taxon:4896			
+PomBase	SPBC16D10.02	trm11	tRNA (guanine-N2-)-methyltransferase catalytic subunit Trm11 (predicted)		protein	taxon:4896			
+PomBase	SPBC1734.13	atp3	F1-ATPase gamma subunit (predicted)		protein	taxon:4896			
+PomBase	SPBC1703.09	SPBC1703.09	Schizosaccharomyces specific protein		protein	taxon:4896			
+PomBase	SPBC1703.07	acl1	ATP citrate synthase subunit 1 (predicted)		protein	taxon:4896			
+PomBase	SPBC1703.06	pof10	F-box protein Pof10		protein	taxon:4896			
+PomBase	SPBC1703.05	rio2	protein kinase, RIO family Rio2 (predicted)		protein	taxon:4896			
+PomBase	SPBC1703.04	mlh1	MutL family protein Mlh1 (predicted)		protein	taxon:4896			
+PomBase	SPBC1703.02	rsc9	RSC complex subunit Rsc9		protein	taxon:4896			
+PomBase	SPAC23H3.13c	gpa2	heterotrimeric G protein alpha-2 subunit Gpa2	git8	protein	taxon:4896			
+PomBase	SPCC1020.07	SPCC1020.07	pseudouridine-5'-phosphatase (predicted)		protein	taxon:4896			
+PomBase	SPBTRNAPRO.07	SPBTRNAPRO.07	tRNA Proline		tRNA	taxon:4896			
+PomBase	SPBTRNAARG.07	SPBTRNAARG.07	tRNA Arginine		tRNA	taxon:4896			
+PomBase	SPBTRNAARG.06	SPBTRNAARG.06	tRNA arginine		tRNA	taxon:4896			
+PomBase	SPBTRNAARG.05	SPBTRNAARG.05	tRNA Arginine		tRNA	taxon:4896			
+PomBase	SPBTRNAARG.04	SPBTRNAARG.04	tRNA Arginine		tRNA	taxon:4896			
+PomBase	SPBC1289.16c	cao2	copper amine oxidase-like protein Cao2	SPBC8E4.06|spao2	protein	taxon:4896			
+PomBase	SPAC23H3.12c	SPAC23H3.12c	mitochondrial hydrogen/potassium transport system protein (predicted)		protein	taxon:4896			
+PomBase	SPAC16E8.04c	aro7	chorismate mutase Aro7 (predicted)		protein	taxon:4896			
+PomBase	SPAC11E3.09	pyp3	protein-tyrosine phosphatase Pyp3		protein	taxon:4896			
+PomBase	SPAC9.12c	atp12	mitochondrial F1-ATPase chaperone Atp12 (predicted)		protein	taxon:4896			
+PomBase	SPAC1002.14	itt1	ubiquitin-protein ligase E3 involved in regulation of cytoplasmic translational termination (predicted)		protein	taxon:4896			
+PomBase	SPAC20G4.09	SPAC20G4.09	Schizosaccharomyces pombe specific protein		protein	taxon:4896			
+PomBase	SPAC20G4.08	pdc1	P-body assembly protein	SPAC4F10.01	protein	taxon:4896			
