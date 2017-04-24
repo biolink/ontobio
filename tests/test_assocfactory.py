@@ -1,6 +1,7 @@
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.assocmodel import AssociationSet
+from ontobio.io.gafparser import GafParser
 import logging
 import random
 
@@ -68,4 +69,23 @@ def test_remote_disease():
     
     rs = aset.query_associations([PD])
     print("Gene Assocs to PD: {} {}".format(rs, len(rs)))
+
+
+POMBASE = "tests/resources/truncated-pombase.gaf"
+INTRACELLULAR='GO:0005622'
+G1 = 'PomBase:SPBC902.04'
+def test_gaf():
+    """
+    Test loading from gaf
+    """
+    ofactory = OntologyFactory()
+    afactory = AssociationSetFactory()
+    ont = ofactory.create('go')
+    aset = afactory.create_from_gaf(open(POMBASE,"r"),
+                                    ontology=ont)
+    print(str(aset))
+    genes = aset.query([INTRACELLULAR])
+    for g in genes:
+        print("G={} '{}'".format(g, aset.label(g)))
+    assert G1 in genes
     

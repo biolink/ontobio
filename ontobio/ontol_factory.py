@@ -110,6 +110,12 @@ def create_ontology(handle=None):
         #g = get_digraph(handle, None, True)
     return ont
 
+def create_ontology_from_obograph(og):
+    ont = None
+    g = obograph_util.convert_json_object(og)
+    ont = Ontology(handle=None, payload=g)
+    return ont
+
 def translate_file(handle, **args):
     if handle.endswith(".json"):
         return obograph_util.convert_json_file(handle, **args)

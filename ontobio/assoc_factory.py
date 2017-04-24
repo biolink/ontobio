@@ -13,6 +13,7 @@ from cachier import cachier
 import datetime
 from ontobio.golr.golr_associations import bulk_fetch
 from ontobio.assocmodel import AssociationSet, AssociationSetMetadata
+from ontobio.io.gafparser import GafParser
 
 SHELF_LIFE = datetime.timedelta(days=3)
 
@@ -27,22 +28,31 @@ class AssociationSetFactory():
         initializes based on an ontology name
         """
 
-    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None):
+    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None):
         """
         creates an AssociationSet
 
-        Currently, this uses an eager binding to a ontobio.golr instance. All compact associations for the particular combination
+        Currently, this uses an eager binding to a `ontobio.golr` instance. All compact associations for the particular combination
         of parameters are fetched.
 
         Arguments
         ---------
 
-        ontology:         an Ontology object
+        ontology:         an `Ontology` object
         subject_category: string representing category of subjects (e.g. gene, disease, variant)
         object_category: string representing category of objects (e.g. function, phenotype, disease)
         taxon:           string holding NCBITaxon:nnnn ID
         
         """
+        meta = AssociationSetMetadata(subject_category=subject_category,
+                                      object_category=object_category,
+                                      taxon=taxon)
+        
+        if file is not None:
+            return self.create_from_file(file,
+                                         ontology=ontology,
+                                         meta=meta)
+
         logging.info("Fetching assocs from store")
         assocs = bulk_fetch_cached(subject_category=subject_category,
                                    object_category=object_category,
@@ -60,26 +70,47 @@ class AssociationSetFactory():
             subj = a['subject']
             subject_label_map[subj] = a['subject_label']
             amap[subj] = a['objects']
-        meta = AssociationSetMetadata(subject_category=subject_category,
-                                      object_category=object_category,
-                                      taxon=taxon)
+
+            
         aset = AssociationSet(ontology=ontology,
                               meta=meta,
                               subject_label_map=subject_label_map,
                               association_map=amap)
         return aset
 
-    def create_from_file(self, file, format=None):
+    def create_from_tuples(self, tuples, **args):
         """
-        Creates from a file. Guesses format if not specified
+        Creates from a list of (subj,subj_name,obj) tuples
         """
-        pass
+        amap = {}
+        subject_label_map = {}
+        for a in tuples:
+            subj = a[0]
+            subject_label_map[subj] = a[1]
+            if subj not in amap:
+                amap[subj] = []
+            amap[subj].append(a[2])
+        
+        aset = AssociationSet(subject_label_map=subject_label_map, association_map=amap, **args)
+        return aset
+    
+    def create_from_file(self, file, format=None, **args):
+        """
+        Creates from a file. Guesses format if not specified.
 
-    def create_from_gaf(self, file):
+        NOTE: currently only GAF implemented
+        """
+        if isinstance(file,str):
+            file = open(file,"r")
+        return self.create_from_gaf(file, **args)
+
+    def create_from_gaf(self, file, **args):
         """
         Creates from a GAF file
         """
-        pass
+        p = GafParser()
+        results = p.skim(file)
+        return self.create_from_tuples(results, **args)
 
     def create_from_gpad(self, file):
         """
