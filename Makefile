@@ -13,7 +13,7 @@ test:
 cleandist:
 	rm dist/*
 
-# TODO: bump.sh
+# TODO: manually increment version, run . bump.sh, then this
 release: cleandist
 	python setup.py sdist bdist_wheel bdist_egg
 	twine upload dist/*
