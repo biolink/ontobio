@@ -6,6 +6,8 @@ Reconsitutes an ontology from SPARQL queries over a remote SPARQL server
  * the second time the same ontology is referenced, the disk cache will be used
  * if an ontology is referenced a second time in the same in-memory session, the disk cache is bypassed and in-memory (lru) cache is used
 
+Note: you should not need to use this directly. An `OntologyFactory` object will automatically use this if a sparql handle is passed.
+
 """
 
 from SPARQLWrapper import SPARQLWrapper, JSON
@@ -134,7 +136,6 @@ def curiefy(r):
             curies = contract_uri(v['value'])
             if len(curies)>0:
                 r[k]['value'] = curies[0]
-
                 
 def get_named_graph(ont):
     """
@@ -201,6 +202,25 @@ def fetchall_syns(ont):
     """.format(q=queryBody, g=namedGraph)
     bindings = run_sparql(query)
     rows = [(r['c']['value'], r['r']['value'], r['l']['value']) for r in bindings]
+    return rows
+
+@cachier(stale_after=SHELF_LIFE)
+def fetchall_text_defs(ont):
+    """
+    fetch all text defs for an ontology
+    """
+    logging.info("fetching text defs for: "+ont)
+    namedGraph = get_named_graph(ont)
+    query = """
+    prefix IAO: <http://purl.obolibrary.org/obo/IAO_>
+    SELECT * WHERE {{
+    GRAPH <{g}>  {{
+      ?c IAO:0000115 ?d
+    }}
+    }}
+    """.format(g=namedGraph)
+    bindings = run_sparql(query)
+    rows = [(r['c']['value'], r['d']['value']) for r in bindings]
     return rows
 
 @cachier(stale_after=SHELF_LIFE)

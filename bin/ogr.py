@@ -35,7 +35,7 @@ def main():
                         help='Path to output file')
     parser.add_argument('-t', '--to', type=str, required=False,
                         help='Output to (tree, dot, ...)')
-    parser.add_argument('-d', '--direction', type=str, default='u', required=False,
+    parser.add_argument('-d', '--direction', type=str, default='', required=False,
                         help='u = up, d = down, ud = up and down')
     parser.add_argument('-p', '--properties', nargs='*', type=str, required=False,
                         help='Properties')
@@ -71,6 +71,8 @@ def main():
 
     qids = []
     dirn = args.direction
+    if dirn == '' and args.to is not None:
+        dirn = 'u'
     searchp = args.search
     if args.level is not None:
         logging.info("Query for level: {}".format(args.level))

@@ -1,16 +1,15 @@
-from ontobio.io.gafparser import GafParser
-from ontobio.assoc_factory import AssociationSetFactory
+from ontobio.io.gafparser import GpadParser
 
-POMBASE = "tests/resources/truncated-pombase.gaf"
+POMBASE = "tests/resources/truncated-pombase.gpad"
 
 def test_skim():
-    p = GafParser()
+    p = GpadParser()
     results = p.skim(open(POMBASE,"r"))
     print(str(results))
 
     
 def test_parse():
-    p = GafParser()
+    p = GpadParser()
     results = p.parse(open(POMBASE,"r"))
     for r in results:
         print(str(r))

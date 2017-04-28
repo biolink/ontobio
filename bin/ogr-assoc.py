@@ -18,6 +18,7 @@ ogr-assoc -v -r go -T NCBITaxon:10090 -C gene function dendrogram GO:0003700 GO:
 
 ogr-assoc -v -r go -T NCBITaxon:10090 -C gene function simmatrix MGI:1890081 MGI:97487 MGI:106593 MGI:97250 MGI:2151057 MGI:1347473
 
+ogr-assoc -C gene function -T pombe -r go -f tests/resources/truncated-pombase.gaf query -q GO:0005622
 ```
 
 """
@@ -43,6 +44,8 @@ def main():
 
     parser.add_argument('-r', '--resource', type=str, required=False,
                         help='Name of ontology')
+    parser.add_argument('-f', '--file', type=str, required=False,
+                        help='Name of input file')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
     parser.add_argument('-t', '--to', type=str, required=False,
@@ -135,6 +138,7 @@ def main():
     afactory = AssociationSetFactory()
     [subject_category, object_category] = args.category
     aset = afactory.create(ontology=ont,
+                           file=args.file,
                            subject_category=subject_category,
                            object_category=object_category,
                            evidence=evidence,
