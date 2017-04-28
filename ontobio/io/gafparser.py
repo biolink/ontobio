@@ -1,10 +1,95 @@
+"""
+Parser for GAF and various TSVs
+"""
+import re
 
 class AssocParser():
 
     def pair_to_id(self, db, localid):
         return db + ":" + localid
 
+    def parse(self, file):
+        assocs = []
+        for line in file:
+            if line.startswith("!"):
+                continue
+            assocs = assocs + self.parse_line(line)
+        return assocs
 
+    def parse_class_expression(self, x):
+        ## E.g. exists_during(GO:0000753)
+        ## Atomic class expressions only
+        [(p,v)] = re.findall('(.*)\((.*)\)',x)
+        return {
+            'property':p,
+            'filler':v
+        }
+        
+    
+class GpadParser(AssocParser):
+    
+    def skim(self, file):
+        tuples = []
+        for line in file:
+            if line.startswith("!"):
+                continue
+            vals = line.split("\t")
+            rel = vals[2]
+            # TODO: not
+            id = self.pair_to_id(vals[0], vals[1])
+            t = vals[3]
+            tuples.append( (id,None,t) )
+        return tuples
+
+    def parse_line(self, line):            
+        vals = line.split("\t")
+        [db,
+         db_object_id,
+         relation,
+         goid,
+         reference,
+         evidence,
+         withfrom,
+         foo,
+         date,
+         assigned_by,
+         annotation_xp,
+         gene_product_isoform] = vals
+                
+        id = self.pair_to_id(db, db_object_id)
+
+        assocs = []
+        xp_ors = annotation_xp.split("|")
+        for xp_or in xp_ors:
+            xp_ands = xp_or.split(",")
+            extns = []
+            for xp_and in xp_ands:
+                if xp_and != "":
+                    extns.append(self.parse_class_expression(xp_and))
+            assoc = {
+                'gafline': line,
+                'subject': {
+                    'id':id
+                },
+                'object': {
+                    'id':id,
+                    'extensions': extns
+                },
+                'relation': {
+                    'id': relation
+                },
+                'evidence': {
+                    'type': evidence,
+                    'with_support_from': withfrom,
+                    'has_supporting_reference': reference
+                },
+                'provided_by': assigned_by,
+                'date': date,
+                
+            }
+            assocs.append(assoc)
+        return assocs
+    
 class GafParser(AssocParser):
     
     def skim(self, file):
@@ -21,13 +106,6 @@ class GafParser(AssocParser):
             tuples.append( (id,n,t) )
         return tuples
 
-    def parse(self, file):
-        assocs = []
-        for line in file:
-            if line.startswith("!"):
-                continue
-            assocs = assocs + self.parse_line(line)
-        return assocs
 
     def parse_line(self, line):            
         vals = line.split("\t")
@@ -100,5 +178,4 @@ class GafParser(AssocParser):
             assocs.append(assoc)
         return assocs
     
-    def parse_class_expression(self, x):
-        return None
+## TODO - HPOA parser

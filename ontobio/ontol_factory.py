@@ -119,6 +119,10 @@ def create_ontology_from_obograph(og):
 def translate_file(handle, **args):
     if handle.endswith(".json"):
         return obograph_util.convert_json_file(handle, **args)
+    elif handle.endswith(".ttl"):
+        from ontobio.sparql.rdf2nx import RdfMapper
+        m = RdfMapper()
+        return m.convert(handle,'ttl')
     else:
         if not (handle.endswith(".obo") or handle.endswith(".owl")):
             logging.info("Attempting to parse non obo or owl file with owltools: "+handle)

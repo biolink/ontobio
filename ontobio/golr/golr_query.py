@@ -207,6 +207,104 @@ def map_field(fn, m) :
 class GolrServer():
     pass
 
+class GolrSearchQuery():
+    """
+    Queries over a search document
+    """
+    def __init__(self,
+                 term=None,
+                 category=None,
+                 is_go=False,
+                 url=None,
+                 solr=None,
+                 hl=True,
+                 facet_fields=['category','taxon_label'],
+                 search_fields=dict(iri=3,id=3,label=2,definition=2,synonym=2),
+                 rows=100):
+        self.term = term
+        self.category = category
+        self.is_go = is_go
+        self.url = url
+        self.solr = solr
+        self.hl = hl
+        self.facet_fields = facet_fields
+        self.search_fields = search_fields
+        self.rows = rows
+
+    def solr_params(self):
+        #facet_fields = [ map_field(fn, self.field_mapping) for fn in self.facet_fields ]
+
+        fq = {}
+        if self.category is not None:
+            fq['category'] = self.category
+        
+        qf = []
+        suffixes = ['std','kw','eng']
+        if (self.is_go):
+            self.search_fields=dict(entity_label=3,general_blob=3)
+            self.hl = False
+            # TODO: formal mapping
+            if 'taxon_label' in self.facet_fields:
+                self.facet_fields.remove('taxon_label')
+            suffixes = ['searchable']
+            fq['document_category'] = "general"
+            if self.url is None:
+                self.url = 'http://golr.berkeleybop.org/'
+
+        if self.url is None:
+            self.url = 'https://solr-dev.monarchinitiative.org/solr/search'
+        self.solr = pysolr.Solr(self.url, timeout=2)
+        
+        for (f,relevancy) in self.search_fields.items():
+            fmt="{}_{}^{}"
+            for suffix in suffixes:
+                qf.append(fmt.format(f,suffix,relevancy))
+            
+        select_fields = ["*","score"]
+        params = {
+            'q': self.term,
+            "qt": "standard",
+            'facet': 'on',
+            'facet.field': self.facet_fields,
+            'facet.limit': 25,
+            'fl': ",".join(select_fields),
+            "defType": "edismax",
+            "qf": qf,
+            'rows': self.rows
+        }
+        if self.hl:
+            params['hl.simple.pre'] = "<em class=\"hilite\">"
+            params['hl.snippets'] = "1000"
+            params['hl'] = 'on'
+            
+        if fq is not None:
+            filter_queries = [ '{}:{}'.format(k,solr_quotify(v)) for (k,v) in fq.items()]
+            params['fq'] = filter_queries
+
+        return params
+
+    def exec(self, **kwargs):
+        """
+        Execute solr query         
+        """
+
+        params = self.solr_params()
+        logging.info("PARAMS="+str(params))
+        results = self.solr.search(**params)
+        n_docs = len(results.docs)
+        logging.info("Docs found: {}".format(results.hits))
+    
+        fcs = results.facets
+    
+        payload = {
+            'facet_counts': translate_facet_field(fcs),
+            'pagination': {},
+            'highlighting': results.highlighting,
+            'docs': results.docs
+        }
+    
+        return payload
+                 
 
 class GolrAssociationQuery():
     """
