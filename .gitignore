@@ -68,3 +68,6 @@ ENV/
 
 # old stuff
 *.old
+
+# Jupyter
+.ipynb_checkpoints
