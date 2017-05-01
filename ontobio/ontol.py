@@ -140,6 +140,65 @@ class Ontology():
         Wraps networkx by default
         """
         return self.get_graph().node[id]
+
+    def neighbors(self, node, relations=None):
+        return self.parents(node, relations=relations) + self.children(node, relations=relations)
+        
+    def parents(self, node, relations=None):
+        """
+        Returns all direct parents of specified node.
+
+        Wraps networkx by default.
+
+        Arguments
+        ---------
+
+        node: string
+
+           identifier for node in ontology
+
+        relations: list of strings
+
+           list of relation (object property) IDs used to filter
+
+        """
+        g = None
+        if relations is None:
+            g = self.get_graph()
+        else:
+            g = self.get_filtered_graph(relations)
+        if node in g:
+            return g.predecessors(node)
+        else:
+            return []
+    
+    def children(self, node, relations=None):
+        """
+        Returns all direct children of specified node.
+
+        Wraps networkx by default.
+
+        Arguments
+        ---------
+
+        node: string
+
+           identifier for node in ontology
+
+        relations: list of strings
+
+           list of relation (object property) IDs used to filter
+
+        """
+        g = None
+        if relations is None:
+            g = self.get_graph()
+        else:
+            g = self.get_filtered_graph(relations)
+        if node in g:
+            return g.successors(node)
+        else:
+            return []
     
     def ancestors(self, node, relations=None):
         """
@@ -350,6 +409,7 @@ class Ontology():
     def is_match(self, node, term, is_partial_match=False, is_regex=False, **args):
         label = node.get('label')
         if term == '%':
+            # always match if client passes '%'
             return True
         if label is None:
             label = ''

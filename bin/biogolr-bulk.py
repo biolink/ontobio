@@ -45,13 +45,15 @@ def main():
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
     parser.add_argument('-C', '--category', nargs=2, type=str, required=True,
-                        help='Category')
+                        help='Category pair. E.g. disease gene')
     parser.add_argument('-s', '--species', type=str, required=True,
                         help='NCBITaxon ID')
     parser.add_argument('-S', '--slim', nargs='*', type=str, required=False,
                         help='Slim IDs')
     parser.add_argument('-L', '--limit', type=int, default=100000, required=False,
                         help='Limit on number of rows')
+    parser.add_argument('-u', '--url', type=str, required=False,
+                        help='Solr URL. E.g. http://localhost:8983/solr/golr')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
@@ -71,7 +73,8 @@ def main():
                         object_category,
                         args.species,
                         rows=args.limit,
-                        slim=args.slim)
+                        slim=args.slim,
+                        url=args.url)
     
     for a in assocs:
         print("{}\t{}\t{}".format(a['subject'],

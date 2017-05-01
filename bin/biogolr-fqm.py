@@ -11,10 +11,15 @@ For instructions
 
 Examples:
 
+
+biogolr-search.py -vv -f relation -P subject_category object_category
+biogolr-search.py -vv -f relation -P subject_taxon object_category
+biogolr-search.py -vv -f relation -P subject_taxon is_defined_by
+
 """
 
 import argparse
-from ontobio.golr.golr_query import GolrSearchQuery
+from ontobio.golr.golr_associations import search_query_as_matrix
 import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from networkx.drawing.nx_pydot import write_dot
@@ -42,22 +47,19 @@ def main():
 
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
-    parser.add_argument('-f', '--facet', type=str, required=False,
+    parser.add_argument('-f', '--facet', type=str, required=True,
                         help='Facet field to query')
     parser.add_argument('-q', '--fq', type=json.loads, default={}, required=False,
                         help='Facet query (solr fq) - should be json')
     parser.add_argument('-Q', '--qargs', type=json.loads, default={}, required=False,
                         help='Query to be passed directly to python golr_associations query')
-    parser.add_argument('-l', '--legacy_solr', dest='legacy_solr', action='store_true', default=False,
-                        help='Set for legacy solr schema (solr3 golr)')
+    parser.add_argument('-P', '--search', nargs='*', type=str, required=False,
+                        help='Search fields. E.f subject_category object_category, relation')
     parser.add_argument('-u', '--url', type=str, required=False,
                         help='Solr URL. E.g. http://localhost:8983/solr/golr')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
-    parser.add_argument('search', type=str,
-                        help='Search terms')
-    
 
     args = parser.parse_args()
 
@@ -67,17 +69,18 @@ def main():
         logging.basicConfig(level=logging.INFO)
     logging.info("Welcome!")
 
-    q = GolrSearchQuery(args.search,
-                        is_go=args.legacy_solr,
-                        url=args.url)
-    
+    r = search_query_as_matrix(facet=args.facet,
+                               fq=args.fq,
+                               facet_search_fields=args.search,
+                               url=args.url,
+                               **args.qargs)
 
-    results = q.exec()
-    #print("RESULTS={}".format(results))
-    docs = results['docs']
-    print("RESULTS: {}".format(len(docs)))
-    for r in docs:
-        print(str(r))
+    print(str(r))
+    trace = go.Heatmap(z=r['z'],
+                       x=r['xaxis'],
+                       y=r['yaxis'])
+    data=[trace]
+    py.plot(data, filename='search-heatmap')
 
     
 if __name__ == "__main__":

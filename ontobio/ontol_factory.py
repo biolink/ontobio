@@ -39,7 +39,7 @@ class OntologyFactory():
         """
         self.handle = handle
 
-    def create(self, handle=None):
+    def create(self, handle=None, **args):
         """
         Creates an ontology based on a handle
 
@@ -57,10 +57,10 @@ class OntologyFactory():
                 default_ontology = create_ontology(default_ontology_handle)
             logging.info("Using default_ontology")                
             return default_ontology
-        return create_ontology(handle)
+        return create_ontology(handle, **args)
     
 #@cachier(stale_after=SHELF_LIFE)
-def create_ontology(handle=None):
+def create_ontology(handle=None, **args):
     ont = None
     logging.info("Determining strategy to load '{}' into memory...".format(handle))
 
@@ -73,8 +73,7 @@ def create_ontology(handle=None):
     
     if handle.find(".") > 0 and os.path.isfile(handle):
         logging.info("Fetching obograph-json file from filesystem")
-        g = translate_file(handle)
-        ont = Ontology(handle=handle, payload=g)
+        ont = translate_file_to_ontology(handle, **args)
     elif handle.startswith("obo:"):
         logging.info("Fetching from OBO PURL")
         if handle.find(".") == -1:
@@ -116,12 +115,14 @@ def create_ontology_from_obograph(og):
     ont = Ontology(handle=None, payload=g)
     return ont
 
-def translate_file(handle, **args):
+def translate_file_to_ontology(handle, **args):
     if handle.endswith(".json"):
-        return obograph_util.convert_json_file(handle, **args)
+        g = obograph_util.convert_json_file(handle, **args)
+        return Ontology(handle=handle, payload=g)
     elif handle.endswith(".ttl"):
         from ontobio.sparql.rdf2nx import RdfMapper
-        m = RdfMapper()
+        logging.info("RdfMapper: {}".format(args))
+        m = RdfMapper(**args)
         return m.convert(handle,'ttl')
     else:
         if not (handle.endswith(".obo") or handle.endswith(".owl")):
@@ -135,5 +136,6 @@ def translate_file(handle, **args):
             logging.info(cp)
         else:
             logging.info("using cached file: "+fn)
-        return obograph_util.convert_json_file(fn, **args)
+        g = obograph_util.convert_json_file(fn, **args)
+        return Ontology(handle=handle, payload=g)
     

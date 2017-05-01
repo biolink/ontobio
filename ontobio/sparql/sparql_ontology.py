@@ -87,7 +87,47 @@ class RemoteSparqlOntology(Ontology):
         """.format(s=searchterm, g=namedGraph)
         bindings = run_sparql(query)
         return [r['c']['value'] for r in bindings]
-            
+
+    def sparql(self, select='*', body=None, single_column=False):
+        """
+        Execute a SPARQL query.
+
+        The query is specified using `select` and `body` parameters.
+        The argument for the Named Graph is injected into the query.
+
+        The select parameter should be either '*' or a list of vars (not prefixed with '?').
+
+         - If '*' is passed, then the result is a list of dicts, { $var: {value: $val } }
+         - If a list of vars is passed, then the result is a list of lists
+         - Unless single_column=True, in which case the results are a simple list of values from the first var
+        
+        """
+        namedGraph = get_named_graph(self.handle)
+        cols = []
+        select_val = None
+        if select is None or select=='*':
+            cols=None
+            select_val='*'
+        else:
+            cols = select
+            select_val = ", ".join(['?'+c for c in select])
+        query = """
+        SELECT {s} WHERE {{
+        GRAPH <{g}>  {{
+        {b}
+        }}
+        }}
+        """.format(s=select_val, b=body, g=namedGraph)
+        bindings = run_sparql(query)
+        if cols == None:
+            return bindings
+        else:
+            if single_column:
+                c = cols[0]
+                return [r[c]['value'] for r in bindings]
+            else:
+                return [r[c]['value'] for c in cols for r in bindings]
+    
     
 class EagerRemoteSparqlOntology(RemoteSparqlOntology):
     """

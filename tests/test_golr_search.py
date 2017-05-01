@@ -23,7 +23,7 @@ def test_search_go_all():
     for r in docs:
         print(str(r))
     assert len(docs) > 0
-    print(str(results['facet_counts']
+    print(str(results['facet_counts']))
 
 def test_search_go_ontol():
     q = GolrSearchQuery("transport*", category='ontology_class', is_go=True)

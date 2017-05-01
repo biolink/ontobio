@@ -230,6 +230,8 @@ class GolrSearchQuery():
         self.facet_fields = facet_fields
         self.search_fields = search_fields
         self.rows = rows
+        # test if client explicitly passes a URL; do not override
+        self.is_explicit_url = url is not None
 
     def solr_params(self):
         #facet_fields = [ map_field(fn, self.field_mapping) for fn in self.facet_fields ]
@@ -251,6 +253,7 @@ class GolrSearchQuery():
             if self.url is None:
                 self.url = 'http://golr.berkeleybop.org/'
 
+        
         if self.url is None:
             self.url = 'https://solr-dev.monarchinitiative.org/solr/search'
         self.solr = pysolr.Solr(self.url, timeout=2)
@@ -379,7 +382,8 @@ class GolrAssociationQuery():
                  use_compact_associations=False,
                  include_raw=False,
                  field_mapping=None,
-                 solr=monarch_solr,
+                 solr=None,
+                 url=None,
                  select_fields=None,
                  fetch_objects=False,
                  fetch_subjects=False,
@@ -442,6 +446,9 @@ class GolrAssociationQuery():
         self.unselect_evidence=unselect_evidence
         self.max_rows=100000
         self.rows=rows
+        self.url = url
+        # test if client explicitly passes a URL; do not override
+        self.is_explicit_url = url is not None
 
     def adjust(self):
         pass
@@ -480,10 +487,17 @@ class GolrAssociationQuery():
             object_category = 'function'
             logging.info("Inferring Object category: {}".format(object_category))
 
+        if self.solr is None:
+            if self.url is None:
+                self.solr = monarch_solr
+            else:
+                self.solr = pysolr.Solr(self.url, timeout=5)
+                
         # URL to use for querying solr
         if object_category is not None and object_category == 'function':
-            go_golr_url = "http://golr.berkeleybop.org/solr/"
-            self.solr = pysolr.Solr(go_golr_url, timeout=5)
+            if self.url is None:
+                go_golr_url = "http://golr.berkeleybop.org/solr/"
+                self.solr = pysolr.Solr(go_golr_url, timeout=5)
             self.field_mapping=goassoc_fieldmap()
             fq['document_category'] = 'annotation'
             if subject is not None:
