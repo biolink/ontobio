@@ -2,20 +2,50 @@
 Parser for GAF and various TSVs
 """
 import re
+import requests
+import tempfile
+from contextlib import closing
+import subprocess
+import logging
 
 class AssocParser():
 
     def pair_to_id(self, db, localid):
         return db + ":" + localid
 
+    def _ensure_file(self, file):
+        if isinstance(file,str):
+            if file.startswith("ftp"):
+                f = tempfile.NamedTemporaryFile()
+                fn = f.name
+                cmd = ['wget',file,'-O',fn]
+                subprocess.run(cmd, check=True)
+                return open(fn,"r")
+            elif file.startswith("http") or file.startswith("ftp"):
+                url = file
+                with closing(requests.get(url, stream=False)) as resp:
+                    logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
+                    ok = resp.status_code == 200
+                    if ok:
+                        return io.StringIO(resp.text)
+                    else:
+                        return None
+            else:
+                 return open("myfile.txt", "r")
+        else:
+            return file
+            
     def parse(self, file):
+        file = self._ensure_file(file)
         assocs = []
         for line in file:
             if line.startswith("!"):
                 continue
             assocs = assocs + self.parse_line(line)
+        file.close()
         return assocs
 
+    
     def parse_class_expression(self, x):
         ## E.g. exists_during(GO:0000753)
         ## Atomic class expressions only
@@ -29,11 +59,14 @@ class AssocParser():
 class GpadParser(AssocParser):
     
     def skim(self, file):
+        file = self._ensure_file(file)
         tuples = []
         for line in file:
             if line.startswith("!"):
                 continue
             vals = line.split("\t")
+            if len(vals) < 15:
+                logging.error("Unexpected number of vals: {}".format(vals))
             rel = vals[2]
             # TODO: not
             id = self.pair_to_id(vals[0], vals[1])
@@ -93,11 +126,15 @@ class GpadParser(AssocParser):
 class GafParser(AssocParser):
     
     def skim(self, file):
+        file = self._ensure_file(file)
         tuples = []
         for line in file:
             if line.startswith("!"):
                 continue
             vals = line.split("\t")
+            if len(vals) < 15:
+                logging.error("Unexpected number of vals: {}".format(vals))
+
             if vals[3] != "":
                 continue
             id = self.pair_to_id(vals[0], vals[1])

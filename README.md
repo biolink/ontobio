@@ -21,7 +21,7 @@ See the README in the [bin](https://github.com/biolink/ontobio/tree/master/bin) 
 
 # Notebooks
 
-See the [Jupyter Notebooks](https://github.com/biolink/ontobio/tree/master/notebooks) for code examples
+See the [Jupyter Notebooks](http://nbviewer.jupyter.org/github/biolink/ontobio/tree/master/notebooks/) for code examples
 
 # Basics
 
