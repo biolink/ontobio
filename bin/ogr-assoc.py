@@ -19,6 +19,9 @@ ogr-assoc -v -r go -T NCBITaxon:10090 -C gene function dendrogram GO:0003700 GO:
 ogr-assoc -v -r go -T NCBITaxon:10090 -C gene function simmatrix MGI:1890081 MGI:97487 MGI:106593 MGI:97250 MGI:2151057 MGI:1347473
 
 ogr-assoc -C gene function -T pombe -r go -f tests/resources/truncated-pombase.gaf query -q GO:0005622
+
+# requires files from ftp://ftp.rgd.mcw.edu/pub/ontology/annotated_rgd_objects_by_ontology
+ogr-assoc  -T . -C gene disease -r doid -f homo_genes_do phenolog -R pw -F homo_genes_pw > PAIRS.txt
 ```
 
 """
@@ -45,7 +48,7 @@ def main():
     parser.add_argument('-r', '--resource', type=str, required=False,
                         help='Name of ontology')
     parser.add_argument('-f', '--file', type=str, required=False,
-                        help='Name of input file')
+                        help='Name of input file for associations - currently GAF is assumed')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
     parser.add_argument('-t', '--to', type=str, required=False,
@@ -77,6 +80,12 @@ def main():
     parser_n.add_argument('-H', '--hypotheses',nargs='*', help='list of classes to test against')
     parser_n.add_argument('subjects',nargs='*')
     parser_n.set_defaults(function=run_enrichment_test)
+
+    # PHENOLOG
+    parser_n = subparsers.add_parser('phenolog', help='Perform multiple enrichment tests')
+    parser_n.add_argument('-R', '--resource2',type=str, required=True, help='path to second GAF')
+    parser_n.add_argument('-F', '--file2',type=str, required=True, help='handle for second ontology')
+    parser_n.set_defaults(function=run_phenolog)
     
     # QUERY
     parser_n = subparsers.add_parser('query', help='Query based on positive and negative terms')
@@ -157,6 +166,31 @@ def run_enrichment_test(ont, aset, args):
     for r in enr:
         print("{:8.3g} {} {:40s}".format(r['p'],r['c'],str(r['n'])))
 
+def run_phenolog(ont, aset, args):
+    ofactory = OntologyFactory()
+    ont2 = ofactory.create(args.resource2)
+
+    afactory = AssociationSetFactory()
+    aset2 = afactory.create(ontology=ont2,
+                            file=args.file2)
+
+    common = set(aset.subjects).intersection(aset2.subjects)
+    num_common = len(common)
+    logging.info("Genes in common between two KBs: {}/\{} = {}".format(len(aset.subjects), len(aset2.subjects), num_common))
+    if num_common < 2:
+        logging.error("TOO FEW")
+        return None
+    for n in aset.ontology.nodes():
+        nl = ont.label(n, id_if_null=True)
+        genes = aset.query([n])
+        num_genes = len(genes)
+        if num_genes > 2:
+            logging.info("BASE: {} {} num={}".format(n,nl, num_genes))
+            enr = aset2.enrichment_test(subjects=genes, background=aset2.subjects, labels=True)
+            for r in enr:
+                print("{:8.3g} {} {:20s} <-> {} {:20s}".format(r['p'],n,nl,r['c'],str(r['n'])))
+
+        
 def run_query(ont, aset, args):
     import plotly.plotly as py
     import plotly.graph_objs as go
