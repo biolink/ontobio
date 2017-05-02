@@ -36,12 +36,11 @@ object for the intermediate entity.
 TODO
 """
 
-import logging
-
-import pysolr
 import json
 import logging
-import time
+import pysolr
+
+from ontobio.vocabulary.relations import HomologyTypes
 
 
 class GolrFields:
@@ -55,17 +54,21 @@ class GolrFields:
     OBJECT_CLOSURE='object_closure'
     SOURCE_CLOSURE_MAP='source_closure_map'
     SUBJECT_TAXON_CLOSURE_LABEL='subject_taxon_closure_label'
+    OBJECT_TAXON_CLOSURE_LABEL = 'object_taxon_closure_label'
     SUBJECT_GENE_CLOSURE_MAP='subject_gene_closure_map'
     EVIDENCE_OBJECT='evidence_object'
     SUBJECT_TAXON_LABEL_SEARCHABLE='subject_taxon_label_searchable'
+    OBJECT_TAXON_LABEL_SEARCHABLE = 'object_taxon_label_searchable'
     IS_DEFINED_BY='is_defined_by'
     SUBJECT_GENE_CLOSURE_LABEL='subject_gene_closure_label'
     EVIDENCE_OBJECT_CLOSURE_LABEL='evidence_object_closure_label'
     SUBJECT_TAXON_CLOSURE='subject_taxon_closure'
+    OBJECT_TAXON_CLOSURE = 'object_taxon_closure'
     OBJECT_LABEL='object_label'
     SUBJECT_CATEGORY='subject_category'
     SUBJECT_GENE_LABEL='subject_gene_label'
     SUBJECT_TAXON_CLOSURE_LABEL_SEARCHABLE='subject_taxon_closure_label_searchable'
+    OBJECT_TAXON_CLOSURE_LABEL_SEARCHABLE = 'object_taxon_closure_label_searchable'
     SUBJECT_GENE_CLOSURE='subject_gene_closure'
     SUBJECT_GENE_LABEL_SEARCHABLE='subject_gene_label_searchable'
     SUBJECT='subject'
@@ -78,11 +81,14 @@ class GolrFields:
     SUBJECT_CLOSURE_LABEL='subject_closure_label'
     SUBJECT_GENE='subject_gene'
     SUBJECT_TAXON='subject_taxon'
+    OBJECT_TAXON = 'object_taxon'
     OBJECT_LABEL_SEARCHABLE='object_label_searchable'
     OBJECT_CATEGORY='object_category'
     SUBJECT_TAXON_CLOSURE_MAP='subject_taxon_closure_map'
+    OBJECT_TAXON_CLOSURE_MAP = 'object_taxon_closure_map'
     QUALIFIER='qualifier'
     SUBJECT_TAXON_LABEL='subject_taxon_label'
+    OBJECT_TAXON_LABEL = 'object_taxon_label'
     SUBJECT_CLOSURE_MAP='subject_closure_map'
     SUBJECT_ORTHOLOG_CLOSURE='subject_ortholog_closure'
     EVIDENCE_GRAPH='evidence_graph'
@@ -183,6 +189,9 @@ def goassoc_fieldmap():
         M.OBJECT: 'annotation_class',
         M.OBJECT_CLOSURE: 'isa_partof_closure',
         M.OBJECT_LABEL: 'annotation_class_label',
+        M.OBJECT_TAXON: 'object_taxon',
+        M.OBJECT_TAXON_LABEL: 'object_taxon_label',
+        M.OBJECT_TAXON_CLOSURE: 'object_taxon_closure',
         M.SUBJECT_CATEGORY: None,
         M.OBJECT_CATEGORY: None,
         M.EVIDENCE_OBJECT_CLOSURE: 'evidence_subset_closure',
@@ -218,8 +227,8 @@ class GolrSearchQuery():
                  url=None,
                  solr=None,
                  hl=True,
-                 facet_fields=['category','taxon_label'],
-                 search_fields=dict(iri=3,id=3,label=2,definition=2,synonym=2),
+                 facet_fields=None,
+                 search_fields=None,
                  rows=100):
         self.term = term
         self.category = category
@@ -232,6 +241,13 @@ class GolrSearchQuery():
         self.rows = rows
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
+
+        if self.facet_fields is None:
+            self.facet_fields = ['category','taxon_label']
+
+        if self.search_fields is None:
+            self.search_fields = dict(iri=3, id=3, label=2,
+                                      definition=2, synonym=2)
 
     def solr_params(self):
         #facet_fields = [ map_field(fn, self.field_mapping) for fn in self.facet_fields ]
@@ -392,18 +408,16 @@ class GolrAssociationQuery():
                  json_facet=None,
                  iterate=False,
                  map_identifiers=None,
-                 facet_fields = [
-                     M.SUBJECT_TAXON_LABEL,
-                     M.OBJECT_CLOSURE
-                 ],
-                 facet_field_limits = None,
+                 facet_fields=None,
+                 facet_field_limits=None,
                  facet_limit=25,
                  facet_mincount=1,
-                 facet_pivot_fields = [],
+                 facet_pivot_fields=[],
                  facet_on = 'on',
                  pivot_subject_object=False,
                  unselect_evidence=False,
                  rows=10,
+                 homology_type=None,
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -446,9 +460,16 @@ class GolrAssociationQuery():
         self.unselect_evidence=unselect_evidence
         self.max_rows=100000
         self.rows=rows
+        self.homology_type = homology_type
         self.url = url
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
+
+        if self.facet_fields is None:
+            self.facet_fields = [
+                M.SUBJECT_TAXON_LABEL,
+                M.OBJECT_CLOSURE
+            ]
 
     def adjust(self):
         pass
@@ -587,6 +608,8 @@ class GolrAssociationQuery():
             fq['relation_closure'] = relation
         if subject_taxon is not None:
             fq['subject_taxon_closure'] = subject_taxon
+        if object_taxon is not None:
+            fq['object_taxon_closure'] = object_taxon
         if self.id is not None:
             fq['id'] = id
         if self.evidence is not None:
@@ -598,6 +621,17 @@ class GolrAssociationQuery():
                 
         if self.exclude_automatic_assertions:
             fq['-evidence_object_closure'] = 'ECO:0000501'
+
+        # Homolog service params
+        # TODO can we sync with argparse.choices?
+        if self.homology_type is not None:
+            if self.homology_type == 'O':
+                fq['relation_closure'] = HomologyTypes.Ortholog.value
+            elif self.homology_type == 'P':
+                fq['relation_closure'] = HomologyTypes.Paralog.value
+            elif self.homology_type == 'LDO':
+                fq['relation_closure'] = \
+            HomologyTypes.LeastDivergedOrtholog.value
 
             
         ## pivots
@@ -652,6 +686,8 @@ class GolrAssociationQuery():
                 M.RELATION_LABEL,
                 M.OBJECT,
                 M.OBJECT_LABEL,
+                M.OBJECT_TAXON,
+                M.OBJECT_TAXON_LABEL
             ]
             if not self.unselect_evidence:
                 select_fields += [
@@ -731,17 +767,15 @@ class GolrAssociationQuery():
         if self.iterate:
             docs = results.docs
             start = n_docs
-            while n_docs >= rows:
+            while n_docs >= self.rows:
                 logging.info("Iterating; start={}".format(start))
                 next_results = self.solr.search(**params, start=start)
                 next_docs = next_results.docs
                 n_docs = len(next_docs)
                 docs += next_docs
-                start += rows
+                start += self.rows
             results.docs = docs
-    
-    
-    
+
         fcs = results.facets
     
         payload = {
@@ -930,8 +964,8 @@ class GolrAssociationQuery():
         """
         if field_mapping is not None:
             self.map_doc(d, field_mapping)
-        subject = self.translate_obj(d,M.SUBJECT)
-    
+        subject = self.translate_obj(d, M.SUBJECT)
+        obj = self.translate_obj(d, M.OBJECT)
     
         # TODO: use a more robust method; we need equivalence as separate field in solr
         if map_identifiers is not None:
@@ -942,9 +976,11 @@ class GolrAssociationQuery():
     
         if M.SUBJECT_TAXON in d:
             subject['taxon'] = self.translate_obj(d,M.SUBJECT_TAXON)
+        if M.OBJECT_TAXON in d:
+            obj['taxon'] = self.translate_obj(d, M.OBJECT_TAXON)
         assoc = {'id':d.get(M.ID),
                  'subject': subject,
-                 'object': self.translate_obj(d,'object'),
+                 'object': obj,
                  'relation': self.translate_obj(d,M.RELATION),
                  'publications': self.translate_objs(d,M.SOURCE),  # note 'source' is used in the golr schema
         }
