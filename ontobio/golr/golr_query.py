@@ -175,6 +175,7 @@ def goassoc_fieldmap():
     return {
         M.SUBJECT: 'bioentity',
         M.SUBJECT_CLOSURE: 'bioentity',
+        M.SUBJECT_CATEGORY: 'type',
         M.SUBJECT_LABEL: 'bioentity_label',
         M.SUBJECT_TAXON: 'taxon',
         M.SUBJECT_TAXON_LABEL: 'taxon_label',
@@ -183,7 +184,6 @@ def goassoc_fieldmap():
         M.OBJECT: 'annotation_class',
         M.OBJECT_CLOSURE: 'isa_partof_closure',
         M.OBJECT_LABEL: 'annotation_class_label',
-        M.SUBJECT_CATEGORY: None,
         M.OBJECT_CATEGORY: None,
         M.EVIDENCE_OBJECT_CLOSURE: 'evidence_subset_closure',
         M.IS_DEFINED_BY: 'assigned_by'
@@ -298,7 +298,11 @@ class GolrSearchQuery():
         logging.info("Docs found: {}".format(results.hits))
     
         fcs = results.facets
-    
+
+        # map go-golr fields to standard
+        for d in results.docs:
+            d['id'] = d['entity']
+            d['label'] = d['entity_label']
         payload = {
             'facet_counts': translate_facet_field(fcs),
             'pagination': {},
@@ -668,8 +672,11 @@ class GolrAssociationQuery():
         if self.field_mapping is not None:
             logging.info("Applying field mapping to SELECT: {}".format(self.field_mapping))
             select_fields = [ map_field(fn, self.field_mapping) for fn in select_fields ]
-    
-    
+            if facet_pivot_fields is not None:
+                logging.info("Applying field mapping to PIV: {}".format(facet_pivot_fields))
+                facet_pivot_fields = [ map_field(fn, self.field_mapping) for fn in facet_pivot_fields ]
+                logging.info("APPLIED field mapping to PIV: {}".format(facet_pivot_fields))
+                
         facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
     
         ## true if iterate in windows of max_size until all results found
