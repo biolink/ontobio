@@ -317,8 +317,9 @@ class GolrSearchQuery():
 
         # map go-golr fields to standard
         for d in results.docs:
-            d['id'] = d['entity']
-            d['label'] = d['entity_label']
+            if 'entity' in d:
+                d['id'] = d['entity']
+                d['label'] = d['entity_label']
         payload = {
             'facet_counts': translate_facet_field(fcs),
             'pagination': {},
