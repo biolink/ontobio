@@ -120,12 +120,15 @@ def bulk_fetch(subject_category, object_category, taxon, rows=MAX_ROWS, **kwargs
     assert subject_category is not None
     assert object_category is not None
     time.sleep(1)
-    return search_associations_compact(subject_category=subject_category,
-                                       object_category=object_category,
-                                       subject_taxon=taxon,
-                                       rows=rows,
-                                       iterative=True,
-                                       **kwargs)
+    assocs = search_associations_compact(subject_category=subject_category,
+                                         object_category=object_category,
+                                         subject_taxon=taxon,
+                                         rows=rows,
+                                         iterative=True,
+                                         **kwargs)
+    if len(assocs) == 0:
+        logging.error("No associations returned for query: {} {} {}".format(subject_category, object_category, taxon))
+    return assocs
 
 def pivot_query(facet=None, facet_pivot_fields=[], **kwargs):
     """
