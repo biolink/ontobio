@@ -49,12 +49,16 @@ def main():
                         help='Path to output file')
     parser.add_argument('-f', '--facet', type=str, required=True,
                         help='Facet field to query')
+    parser.add_argument('-l', '--legacy_solr', dest='legacy_solr', action='store_true', default=False,
+                        help='Set for legacy solr schema (solr3 golr)')
     parser.add_argument('-q', '--fq', type=json.loads, default={}, required=False,
                         help='Facet query (solr fq) - should be json')
     parser.add_argument('-Q', '--qargs', type=json.loads, default={}, required=False,
                         help='Query to be passed directly to python golr_associations query')
     parser.add_argument('-P', '--pivot', nargs='*', type=str, required=False,
                         help='Pivot fields. E.f subject_category object_category, relation')
+    parser.add_argument('-u', '--url', type=str, required=False,
+                        help='Solr URL. E.g. http://localhost:8983/solr/golr')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
@@ -70,6 +74,8 @@ def main():
     r = pivot_query_as_matrix(facet=args.facet,
                               fq=args.fq,
                               facet_pivot_fields=args.pivot,
+                              url=args.url,
+                              is_go=args.legacy_solr,                              
                               **args.qargs)
 
     print(str(r))

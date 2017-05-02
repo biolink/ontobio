@@ -58,7 +58,6 @@ def main():
     parser.add_argument('search', type=str,
                         help='Search terms')
     
-
     args = parser.parse_args()
 
     if args.verbosity >= 2:
@@ -77,7 +76,7 @@ def main():
     docs = results['docs']
     print("RESULTS: {}".format(len(docs)))
     for r in docs:
-        print(str(r))
+        print(" {} '{}' {} // {}".format(r['id'],r['label'],r['score'], r['category']))
 
     
 if __name__ == "__main__":
