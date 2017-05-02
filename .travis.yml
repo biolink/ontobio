@@ -3,11 +3,12 @@ sudo: false
 language: python
 python:
   - "3.5"
-  - "3.6"
 
 # command to install dependencies
 install:
-  - "pip install -r requirements.txt"
+  - python setup.py install
+  - python setup.py sdist bdist_wheel
+#  - "pip install -r requirements.txt"
 
 addons:
   apt_packages:
@@ -15,7 +16,7 @@ addons:
  
 # command to run tests
 script: 
-  - make travis_test
+  - PYTHONPATH=. make travis_test
 
 #after_success:
 #  coveralls
