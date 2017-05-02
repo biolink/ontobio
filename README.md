@@ -13,7 +13,7 @@ ontologies and a Monarch or GO Golr service for associations).
 
 # API Docs
 
-[ontobio](https://www.pydoc.io/pypi/ontobio-0.1.2/index.html) on pydoc.io
+[ontobio](https://www.pydoc.io/pypi/ontobio-0.1.5/index.html) on pydoc.io
 
 # Ontologies
 
@@ -34,7 +34,7 @@ also the [obographs](https://github.com/geneontology/obographs) spec.
 
 # Associations
 
-See the ontobio.golr backage
+See the ontobio.golr package
 
 # Command Line Usage
 
