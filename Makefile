@@ -10,6 +10,10 @@ subpackage_tests: $(patsubst %,test-%,$(PACKAGES))
 test:
 	pytest tests/*.py
 
+# only run local tests
+travis_test:
+	pytest tests/*local*.py
+
 cleandist:
 	rm dist/*
 
