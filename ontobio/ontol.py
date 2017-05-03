@@ -116,7 +116,19 @@ class Ontology():
         but this may be overridden in specific implementations
         """
         return self.get_graph().subgraph(nodes)
-                
+
+    def subontology(self, nodes=[], minimal=False):
+        """
+        Returns a new ontology that is an extract of this one
+
+        """
+        g = self.get_graph().subgraph(nodes)
+        if minimal:
+            from ontobio.slimmer import get_minimal_subgraph
+            g = get_minimal_subgraph(self.get_graph(), nodes)
+        ont = Ontology(graph=g) # TODO - add metadata
+        return ont
+    
     def extract_subset(self, subset):
         """
         Find all nodes in a subset.
