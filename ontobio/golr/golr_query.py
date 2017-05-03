@@ -399,6 +399,7 @@ class GolrAssociationQuery():
                  invert_subject_object=None,
                  evidence=None,
                  exclude_automatic_assertions=False,
+                 q=None,
                  id=None,
                  use_compact_associations=False,
                  include_raw=False,
@@ -443,6 +444,7 @@ class GolrAssociationQuery():
         self.evidence=evidence
         self.exclude_automatic_assertions=exclude_automatic_assertions
         self.id=id
+        self.q=q
         self.use_compact_associations=use_compact_associations
         self.include_raw=include_raw
         self.field_mapping=field_mapping
@@ -675,6 +677,8 @@ class GolrAssociationQuery():
                         
         filter_queries = []
         qstr = "*:*"
+        if self.q is not None:
+            qstr = self.q
         filter_queries = [ '{}:{}'.format(k,solr_quotify(v)) for (k,v) in fq.items()]
     
         # unless caller specifies a field list, use default
