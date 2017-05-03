@@ -11,10 +11,16 @@ For instructions
 
 Examples:
 
+biogolr-search.py -f taxon Shh
+
+associations:
+
+biogolr-search.py -vvvv -A -f subject_taxon %
+
 """
 
 import argparse
-from ontobio.golr.golr_query import GolrSearchQuery
+from ontobio.golr.golr_query import GolrSearchQuery, GolrAssociationQuery
 import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from networkx.drawing.nx_pydot import write_dot
@@ -40,10 +46,12 @@ def main():
         """,
         formatter_class=argparse.RawTextHelpFormatter)
 
+    parser.add_argument('-A', '--associations', dest='associations', action='store_true', default=False,
+                        help='Path to output file')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
-    parser.add_argument('-f', '--facet', type=str, required=False,
-                        help='Facet field to query')
+    parser.add_argument('-f', '--facets', type=str, required=False,
+                        help='Facet fields: comma-delimited')
     parser.add_argument('-q', '--fq', type=json.loads, default={}, required=False,
                         help='Facet query (solr fq) - should be json')
     parser.add_argument('-Q', '--qargs', type=json.loads, default={}, required=False,
@@ -66,18 +74,50 @@ def main():
         logging.basicConfig(level=logging.INFO)
     logging.info("Welcome!")
 
-    q = GolrSearchQuery(args.search,
-                        is_go=args.legacy_solr,
-                        url=args.url)
+    facets = []
+    if args.facets is not None:
+        facets = args.facets.split(",")
+
+    results = None
+    if args.associations:
+        q = None
+        if args.search != '%':
+            q = args.search
+        q = GolrAssociationQuery(q=q,
+                                 is_go=args.legacy_solr,
+                                 fq=args.fq,
+                                 facet_fields=facets,
+                                 url=args.url)
     
-
-    results = q.exec()
-    #print("RESULTS={}".format(results))
-    docs = results['docs']
-    print("RESULTS: {}".format(len(docs)))
-    for r in docs:
-        print(" {} '{}' {} // {}".format(r['id'],r['label'],r['score'], r['category']))
-
+        results = q.exec()
+        #print("RESULTS={}".format(results))
+        docs = results['associations']
+        print("RESULTS: {}".format(len(docs)))
+        for r in docs:
+            print(str(r))
+    else:
+        q = GolrSearchQuery(args.search,
+                            is_go=args.legacy_solr,
+                            fq=args.fq,
+                            facet_fields=facets,
+                            url=args.url)
+    
+        results = q.exec()
+        #print("RESULTS={}".format(results))
+        docs = results['docs']
+        print("RESULTS: {}".format(len(docs)))
+        for r in docs:
+            print(" {} '{}' {} // {}".format(r['id'],r['label'],r['score'], r['category']))
+            
+    if len(facets) > 0:
+        #from collections import OrderedDict
+        fcs = results['facet_counts']
+        for f in facets:
+            d = fcs[f]
+            print(str(d))
+            print("## FACET: {}".format(f))
+            for k,v in sorted(d.items(), key=lambda t: -t[1]):
+                print("  {:5d}: {}".format(v,k))
     
 if __name__ == "__main__":
     main()

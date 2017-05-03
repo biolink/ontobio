@@ -36,7 +36,8 @@ def test_go_assocs_compact():
     for obj in objs:
         print("TEST FOR {}".format(obj))
         rassocs = search_associations_compact(object=obj,
-                                              subject_category='gene',
+                                              ##subject_category='gene',   # this is sometimes gene_product, protein.. in GO
+                                              object_category='function',
                                               subject_taxon=DANIO,
                                               rows=-1)
         for a in rassocs:

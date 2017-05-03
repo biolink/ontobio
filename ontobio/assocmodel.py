@@ -60,14 +60,17 @@ class AssociationSet():
         self.subjects = list(self.association_map.keys())
         logging.info("Indexing {} items".format(len(self.subjects)))
         n = 0
+        all_objs = set()
         for (subj,terms) in self.association_map.items():
             ancs = self.termset_ancestors(terms)
+            all_objs.update(ancs)
             self.subject_to_inferred_map[subj] = ancs
             n = n+1
             if n<5:
                 logging.info(" Indexed: {} -> {}".format(subj, ancs))
             elif n == 6:
                 logging.info("[TRUNCATING>5]....")
+        self.objects = all_objs
 
     def inferred_types(self, subj):
         """
@@ -245,7 +248,6 @@ class AssociationSet():
         logging.debug("Z={}".format(z))
         return (z,xterms,yterms)
 
-    
     def label(self, id):
         """
         return label for a subject id
@@ -259,6 +261,12 @@ class AssociationSet():
         if self.subject_label_map is not None and id in self.subject_label_map:
             return self.subject_label_map[id]
         return None
+
+    def subontology(self, minimal=False):
+        """
+        Generates a sub-ontology based on associations
+        """
+        return self.ontology.subontology(self.objects, minimal=minimal)
     
     def enrichment_test(self, subjects=[], background=None, hypotheses=None, threshold=0.05, labels=False, direction='greater'):
         """

@@ -13,7 +13,7 @@ ontologies and a Monarch or GO Golr service for associations).
 
 # API Docs
 
-[ontobio](https://www.pydoc.io/pypi/ontobio-0.1.5/index.html) on pydoc.io
+[ontobio](https://www.pydoc.io/pypi/ontobio-0.1.6/index.html) on pydoc.io
 
 # Command Line
 

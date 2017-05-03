@@ -22,379 +22,379 @@
 !URL: http://www.pombase.org/
 !Contact Email: helpdesk@pombase.org
 !
-PomBase	SPAC25B8.17	ypf1		GO:1990578	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	NCBITaxon:4896	20150305	PomBase		
-PomBase	SPAC977.10	nhe1		GO:1990578	PMID:19171118	IDA		C	plasma membrane sodium ion/proton antiporter Nhe1/Sod2	sod2	protein	NCBITaxon:4896	20151201	PomBase		
-PomBase	SPCC895.07	alp14		GO:0000942	PMID:11432827	IDA		C	TOG/XMAP14 family protein Alp14	mtc1	protein	NCBITaxon:4896	20150116	PomBase		
-PomBase	SPBC11C11.03	ndc80		GO:0000942	PMID:11553715	IDA		C	NMS complex subunit Ndc80	ndc10|tid3	protein	NCBITaxon:4896	20150122	PomBase		
-PomBase	SPBC16D10.09	pcn1		GO:0043626	PMID:8663159	IDA		C	PCNA	pcn	protein	NCBITaxon:4896	20150326	PomBase		
-PomBase	SPBC16D10.09	pcn1		GO:0043626	PMID:9563836	IDA		C	PCNA	pcn	protein	NCBITaxon:4896	20160129	PomBase		
-PomBase	SPAC29E6.07	SPAC29E6.07		GO:0009897	GO_REF:0000051	NAS		C	Schizosaccharomyces pombe specific protein	SPAC30.11	protein	NCBITaxon:4896	20060203	PomBase		
-PomBase	SPBP4G3.02	pho1		GO:0009897	GO_REF:0000051	NAS		C	acid phosphatase Pho1		protein	NCBITaxon:4896	20050416	PomBase		
-PomBase	SPAC750.06c	SPAC750.06c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 4		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPCC1450.09c	SPCC1450.09c		GO:0009897	GO_REF:0000111	IC	GO:0009277	C	phospholipase (predicted)		protein	NCBITaxon:4896	20041215	PomBase		
-PomBase	SPBPB2B2.07c	SPBPB2B2.07c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 7		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPBC1348.01	SPBC1348.01		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 5		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPCC1281.01	ags1		GO:0009897	PMID:17472966	TAS		C	alpha glucan synthase Ags1	mok1|SPCC338.01c|SPCC17A7.01	protein	NCBITaxon:4896	20070509	PomBase		
-PomBase	SPBCPT2R1.01c	SPBCPT2R1.01c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 9	SPBPB2B2.20c	protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPBC1348.07	SPBC1348.07		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 6		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPBCPT2R1.04c	SPBCPT2R1.04c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 10		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPBC428.03c	pho4		GO:0009897	GO_REF:0000051	NAS		C	thiamine-repressible acid phosphatase Pho4		protein	NCBITaxon:4896	20050416	PomBase		
-PomBase	SPBPB2B2.14c	SPBPB2B2.14c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 8		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPAC977.06	SPAC977.06		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 family protein 3		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPBC16A3.13	meu7		GO:0009897	GO_REF:0000050	ISM	Pfam:PF00128	C	alpha-amylase homolog Aah4	aah4	protein	NCBITaxon:4896	20050418	PomBase		
-PomBase	SPAC212.04c	SPAC212.04c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 family protein 1		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPBC21H7.03c	SPBC21H7.03c		GO:0009897	GO_REF:0000051	NAS		C	acid phosphatase (predicted)		protein	NCBITaxon:4896	20050416	PomBase		
-PomBase	SPAC212.01c	SPAC212.01c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 family protein 2		protein	NCBITaxon:4896	20060201	PomBase		
-PomBase	SPAC977.09c	SPAC977.09c		GO:0009897	GO_REF:0000111	IC	GO:0009277	C	phospholipase (predicted)		protein	NCBITaxon:4896	20041215	PomBase		
-PomBase	SPAC1A6.03c	SPAC1A6.03c		GO:0009897	GO_REF:0000111	IC	GO:0009277	C	lysophospholipase (predicted)		protein	NCBITaxon:4896	20041215	PomBase		
-PomBase	SPAC1A6.04c	plb1		GO:0009897	GO_REF:0000111	IC	GO:0009277	C	phospholipase B homolog Plb1		protein	NCBITaxon:4896	20041215	PomBase		
-PomBase	SPCC330.10	pcm1		GO:0070693	PMID:16428435	IDA		C	P-TEFb-cap methyltransferase Pcm1		protein	NCBITaxon:4896	20090712	PomBase		
-PomBase	SPBC32H8.10	cdk9		GO:0070693	PMID:16428435	IDA		C	P-TEFb-associated cyclin-dependent protein kinase Cdk9		protein	NCBITaxon:4896	20090712	PomBase		
-PomBase	SPAC27D7.13c	ssm4		GO:0005869	GO_REF:0000024	ISO	SGD:S000006095	C	dynactin microtubule-binding subunit, p150-Glued Ssm4	SPAC637.01c	protein	NCBITaxon:4896	20041101	PomBase		
-PomBase	SPBC1347.12	arp1		GO:0005869	GO_REF:0000024	ISO	SGD:S000001171	C	centractin family actin-like protein Arp1		protein	NCBITaxon:4896	20050510	PomBase		
-PomBase	SPCC11E10.03	mug1		GO:0005869	GO_REF:0000024	ISO	SGD:S000004908	C	dynactin complex subunit, dynamitin (predicted)		protein	NCBITaxon:4896	20050108	PomBase		
-PomBase	SPBC20F10.01	gar1		GO:0031429	GO_REF:0000024	ISO	SGD:S000001131	C	snoRNP pseudouridylase box H/ACA snoRNP complex protein Gar1	SPBC25H2.01c	protein	NCBITaxon:4896	20140814	PomBase		
-PomBase	SPAP27G11.13c	nop10		GO:0031429	GO_REF:0000024	ISO	SGD:S000007455	C	snoRNP pseudouridylase box H/ACA snoRNP complex protein (predicted)		protein	NCBITaxon:4896	20050414	PomBase		
-PomBase	SPSNORNA.20	snR30		GO:0031429	GO_REF:0000024	ISO	SGD:S000007497	C	small nucleolar RNA U17	snoU17	snoRNA	NCBITaxon:4896	20140815	PomBase		
-PomBase	SPAC29A4.04c	cbf5		GO:0031429	GO_REF:0000024	ISO	SGD:S000004165	C	pseudouridylate synthase Cbf5 (predicted)		protein	NCBITaxon:4896	20050422	PomBase		
-PomBase	SPAC1782.10c	nhp2		GO:0031429	PMID:10502409	IGI	SGD:S000002367	C	box H/ACA snoRNP complex subunit Nhp2		protein	NCBITaxon:4896	20050414	PomBase		
-PomBase	SPAC821.09	eng1		GO:0000936	PMID:20852022	IDA		C	endo-1,3-beta-glucanase Eng1		protein	NCBITaxon:4896	20150828	PomBase		
-PomBase	SPCC1840.02c	bgs4		GO:0000936	PMID:24165938	IDA		C	secondary septum 1,6 branched 1,3-beta-glucan synthase catalytic subunit Bgs4	orb11|cwg1|pbr1|sph1	protein	NCBITaxon:4896	20140303	PomBase		
-PomBase	SPCC830.03	grc3		GO:0097356	PMID:21385875	IDA		C	polynucleotide kinase Grc3 (predicted)		protein	NCBITaxon:4896	20120726	PomBase		
-PomBase	SPAC7D4.14c	iss10		GO:0016604	PMID:24713849	IDA		C	Mmi1-driven selective elimination factor Iss10	pir1	protein	NCBITaxon:4896	20140808	PomBase		
-PomBase	SPAC17H9.02	mtl1		GO:0016604	PMID:24210919	IDA		C	TRAMP/MTREC complex subunit, ATP-dependent RNA helicase (predicted)		protein	NCBITaxon:4896	20140326	PomBase		
-PomBase	SPAC1006.03c	red1		GO:0016604	PMID:24713849	IDA		C	RNA elimination defective protein Red1	iss3	protein	NCBITaxon:4896	20140808	PomBase		
-PomBase	SPAC7D4.14c	iss10		GO:0016604	PMID:24210919	IDA		C	Mmi1-driven selective elimination factor Iss10	pir1	protein	NCBITaxon:4896	20140326	PomBase		
-PomBase	SPAC17H9.02	mtl1		GO:0016604	PMID:24713849	IDA		C	TRAMP/MTREC complex subunit, ATP-dependent RNA helicase (predicted)		protein	NCBITaxon:4896	20140808	PomBase		
-PomBase	SPBC902.04	rmn1		GO:0016604	PMID:24210919	IDA		C	RNA-binding protein		protein	NCBITaxon:4896	20140326	PomBase		
-PomBase	SPBC725.08	pir2		GO:0016604	PMID:24713849	IDA		C	zf-C2H2 type zinc finger protein, implicated in RNAi (predicted)	ars2	protein	NCBITaxon:4896	20140808	PomBase		
-PomBase	SPBC902.04	rmn1		GO:0016604	PMID:24713849	IDA		C	RNA-binding protein		protein	NCBITaxon:4896	20140808	PomBase		
-PomBase	SPAC1006.03c	red1		GO:0016604	PMID:24210919	IDA		C	RNA elimination defective protein Red1	iss3	protein	NCBITaxon:4896	20140326	PomBase		
-PomBase	SPBC337.12	red5		GO:0016604	PMID:24713849	IDA		C	human ZC3H3 homolog		protein	NCBITaxon:4896	20140808	PomBase		
-PomBase	SPAC3A12.13c	hcr1		GO:0016282	GO_REF:0000024	ISO	SGD:S000004182	C	translation initiation factor eIF3j (p35)		protein	NCBITaxon:4896	20150327	PomBase		
-PomBase	SPBC646.09c	int6		GO:0016282	PMID:11071923	IDA		C	eIF3e subunit Int6	yin6	protein	NCBITaxon:4896	20121119	PomBase		
-PomBase	SPAC821.05	tif38		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3h (p40)	eif8	protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPBC646.09c	int6		GO:0016282	PMID:19061185	IDA		C	eIF3e subunit Int6	yin6	protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPAC1751.03	tif313		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3m	SPAC31A2.01	protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPAC4D7.05	sum1		GO:0016282	PMID:12006658	IPI	PomBase:SPBC646.09c	C	translation initiation factor eIF3i	tif34	protein	NCBITaxon:4896	20140218	PomBase		
-PomBase	SPAC4A8.16c	tif33		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3c	SPAC823.01c	protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPBC18H10.03	tif35		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3g		protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPAC4D7.05	sum1		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3i	tif34	protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPAC637.07	moe1		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3d Moe1		protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPBC17D11.05	tif32		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3a		protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPAC25G10.08	SPAC25G10.08		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3b (p84)	p116	protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPBC4C3.07	eif6		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3f		protein	NCBITaxon:4896	20140715	PomBase		
-PomBase	SPBC24C6.05	sec28		GO:0030126	GO_REF:0000024	ISO	SGD:S000001338	C	coatomer epsilon subunit (predicted)		protein	NCBITaxon:4896	20050413	PomBase		
-PomBase	SPAC57A7.10c	sec21		GO:0030126	GO_REF:0000024	ISO	SGD:S000005231	C	coatomer gamma subunit Sec21 (predicted)		protein	NCBITaxon:4896	20050426	PomBase		
-PomBase	SPBC16C6.13c	sec27		GO:0030126	GO_REF:0000024	ISO	SGD:S000003105	C	coatomer beta' subunit (predicted)		protein	NCBITaxon:4896	20050610	PomBase		
-PomBase	SPBPJ4664.04	cop1		GO:0030126	GO_REF:0000024	ISO	SGD:S000002304	C	coatomer alpha subunit Cop1 (predicted)		protein	NCBITaxon:4896	20050629	PomBase		
-PomBase	SPCC285.08	ret2		GO:0030126	GO_REF:0000024	ISO	SGD:S000001947	C	coatomer delta subunit Ret2 (predicted)		protein	NCBITaxon:4896	20050629	PomBase		
-PomBase	SPBC146.14c	sec26		GO:0030126	GO_REF:0000024	ISS	UniProtKB:P41810	C	coatomer beta subunit (predicted)	SPBC337.01c	protein	NCBITaxon:4896	20050105	PomBase		
-PomBase	SPCC576.07	ret3		GO:0030126	GO_REF:0000024	ISO	SGD:S000005931	C	coatomer zeta subunit (predicted)		protein	NCBITaxon:4896	20050419	PomBase		
-PomBase	SPAC22E12.17c	glo3		GO:0030126	GO_REF:0000024	ISO	SGD:S000000924	C	ARF GTPase activating protein (predicted)		protein	NCBITaxon:4896	20061026	PomBase		
-PomBase	SPAC3A11.14c	pkl1		GO:1990811	PMID:25987607	IDA		C	minus-end directed microtubule motor, kinesin Pkl1	klp1|SPAC3H5.03c	protein	NCBITaxon:4896	20150729	PomBase		
-PomBase	SPBC32H8.09	wdr8		GO:1990811	PMID:25987607	IDA		C	mitosis-specific spindle pole body WD repeat protein Wdr8		protein	NCBITaxon:4896	20150729	PomBase		
-PomBase	SPBC13E7.06	msd1		GO:1990811	PMID:25987607	IDA		C	microtubule-anchoring factor Msd1	mug172	protein	NCBITaxon:4896	20150729	PomBase		
-PomBase	SPBC4F6.14	nop4		GO:0005730	PMID:16823372	IDA		C	RNA-binding protein Nop4 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC23E6.07c	rfc1		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	DNA replication factor C complex subunit Rfc1		protein	NCBITaxon:4896	20170114	UniProt		
-PomBase	SPBC336.06c	rnh1		GO:0005730	PMID:16823372	IDA		C	ribonuclease H Rnh1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC17D1.03c	rrp43		GO:0005730	PMID:16823372	IDA		C	exosome subunit Rrp43		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC365.04c	SPBC365.04c		GO:0005730	PMID:16823372	IDA		C	RNA-binding protein, involved in ribosome biogenesis (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC16G5.10	rrp42		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	exosome subunit Rrp42		protein	NCBITaxon:4896	20170114	UniProt		
-PomBase	SPBC365.09c	kin17		GO:0005730	PMID:16823372	IDA		C	human KIN ortholog (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC25D12.02c	dnt1		GO:0005730	PMID:17538026	IDA		C	nucleolar protein Dnt1		protein	NCBITaxon:4896	20161006	PomBase		
-PomBase	SPBP4H10.06c	cut14		GO:0005730	PMID:18362178	IDA		C	condensin complex SMC subunit Smc2	smc2	protein	NCBITaxon:4896	20150213	PomBase		
-PomBase	SPBC776.17	rrp7		GO:0005730	PMID:16823372	IDA		C	rRNA processing protein Rrp7 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC28F2.11	hmo1		GO:0005730	PMID:24021628	IDA		C	HMG box protein Hmo1		protein	NCBITaxon:4896	20140522	PomBase		
-PomBase	SPBC2G2.05	rpl1603		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L13/L16 (predicted)	rpl16c	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC19C2.03	rpc10		GO:0005730	PMID:16823372	IDA		C	DNA-directed RNA polymerase I, II and III subunit Rpc10	rpb12	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC30D10.06	lsm4		GO:0005730	GO_REF:0000024	ISO	SGD:S000000914	C	U6 snRNP-associated protein Lsm4 (predicted)		protein	NCBITaxon:4896	20160822	PomBase		
-PomBase	SPBC18H10.13	rps1402		GO:0005730	PMID:16823372	IDA		C	40S ribosomal protein S14 (predicted)	rps14-2	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC17D1.04	acr1		GO:0005730	PMID:18362178	IDA		C	upstream activation factor complex subunit Acr1		protein	NCBITaxon:4896	20150311	PomBase		
-PomBase	SPBC9B6.05c	lsm3		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P57743	C	U6 snRNP-associated protein Lsm3 (predicted)		protein	NCBITaxon:4896	20050524	PomBase		
-PomBase	SPBC25D12.02c	dnt1		GO:0005730	PMID:22809626	IDA		C	nucleolar protein Dnt1		protein	NCBITaxon:4896	20131203	PomBase		
-PomBase	SPBC9B6.06	mrpl10		GO:0005730	PMID:16823372	IDA		C	mitochondrial ribosomal protein subunit L15 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC20F10.01	gar1		GO:0005730	PMID:7596817	IDA		C	snoRNP pseudouridylase box H/ACA snoRNP complex protein Gar1	SPBC25H2.01c	protein	NCBITaxon:4896	20050414	PomBase		
-PomBase	SPBC21H7.04	dbp7		GO:0005730	PMID:16823372	IDA		C	ATP-dependent RNA helicase Dbp7 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPCC757.08	rrp45		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	exosome subunit Rrp45		protein	NCBITaxon:4896	20170114	UniProt		
-PomBase	SPBC21H7.04	dbp7		GO:0005730	GO_REF:0000024	ISO	SGD:S000001732	C	ATP-dependent RNA helicase Dbp7 (predicted)		protein	NCBITaxon:4896	20050416	PomBase		
-PomBase	SPCC1235.03	cue2		GO:0005730	PMID:16823372	IDA		C	SMR domain protein, possibly involved in DNA repair and neddylation		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC9B6.07	nop52		GO:0005730	GO_REF:0000024	ISO	SGD:S000002494	C	nucleolar protein Nop52 family Rrp1 (predicted)		protein	NCBITaxon:4896	20050323	PomBase		
-PomBase	SPBC1539.10	nop16		GO:0005730	GO_REF:0000024	ISO	SGD:S000000804	C	ribosome biogenesis protein Nop16 (predicted)		protein	NCBITaxon:4896	20041004	PomBase		
-PomBase	SPBC9B6.07	nop52		GO:0005730	PMID:16823372	IDA		C	nucleolar protein Nop52 family Rrp1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC20F10.01	gar1		GO:0005730	PMID:8502556	IDA		C	snoRNP pseudouridylase box H/ACA snoRNP complex protein Gar1	SPBC25H2.01c	protein	NCBITaxon:4896	20140814	PomBase		
-PomBase	SPBC3E7.10	fma1		GO:0005730	PMID:16823372	IDA		C	methionine aminopeptidase Fma1 (predicted)	ppp23	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC1539.10	nop16		GO:0005730	PMID:16823372	IDA		C	ribosome biogenesis protein Nop16 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC8D2.13	shq1		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P40486	C	box H/ACA snoRNP assembly protein Shq1 (predicted)		protein	NCBITaxon:4896	20040923	PomBase		
-PomBase	SPBC543.06c	dbp8		GO:0005730	PMID:16823372	IDA		C	ATP-dependent RNA helicase Dbp8 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC1703.01c	pop4		GO:0005730	PMID:16823372	IDA		C	RNase P and RNase MRP subunit (predicted)	SPBP4H10.22c	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBP8B7.01c	pop7		GO:0005730	PMID:16823372	IDA		C	RNAseP RNAse MRP subunit Pop7 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC14C8.14c	pol5		GO:0005730	PMID:16823372	IDA		C	DNA polymerase phi		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPCC320.11c	nip7		GO:0005730	PMID:16823372	IDA		C	RNA-binding protein involved in ribosome biogenesis Nip7 (predicted)	SPCC330.18	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC14C8.14c	pol5		GO:0005730	GO_REF:0000024	ISO	SGD:S000000781	C	DNA polymerase phi		protein	NCBITaxon:4896	20051004	PomBase		
-PomBase	SPBC56F2.04	utp20		GO:0005730	GO_REF:0000024	ISO	SGD:S000000100	C	U3 snoRNP protein Utp20 (predicted)		protein	NCBITaxon:4896	20070723	PomBase		
-PomBase	SPBC28E12.05	esf2		GO:0005730	GO_REF:0000024	ISO	SGD:S000005337	C	U3 snoRNP-associated protein Esf2 (predicted)	SPBC3H7.17c	protein	NCBITaxon:4896	20050622	PomBase		
-PomBase	SPBP8B7.20c	nop2		GO:0005730	GO_REF:0000024	ISO	SGD:S000005005	C	RNA methyltransferase Nop2 (predicted)		protein	NCBITaxon:4896	20050715	PomBase		
-PomBase	SPBC28E12.05	esf2		GO:0005730	PMID:16823372	IDA		C	U3 snoRNP-associated protein Esf2 (predicted)	SPBC3H7.17c	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC16G5.11c	bag101		GO:0005730	PMID:16823372	IDA		C	BAG family molecular chaperone regulator Bag101 (predicted)	bag1-a|bag1	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC14C8.19	tam10		GO:0005730	GO_REF:0000024	ISS	UniProtKB:Q1ED39	C	small acidic protein (SMAP) domain containing protein		protein	NCBITaxon:4896	20140927	PomBase		
-PomBase	SPBC4C3.05c	nuc1		GO:0005730	PMID:2537310	IDA		C	DNA-directed RNA polymerase I complex large subunit Nuc1	rpa1|rpa190	protein	NCBITaxon:4896	20140814	PomBase		
-PomBase	SPBC8D2.16c	SPBC8D2.16c		GO:0005730	GO_REF:0000024	ISO	SGD:S000003515	C	SPOUT domain containing methyltransferase, implicated in chromosome segregation		protein	NCBITaxon:4896	20050629	PomBase		
-PomBase	SPBC1604.09c	rex4		GO:0005730	PMID:16823372	IDA		C	exoribonuclease Rex4 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC4F6.07c	mak5		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P38112	C	ATP-dependent RNA helicase Mak5 (predicted)		protein	NCBITaxon:4896	20050105	PomBase		
-PomBase	SPBC776.11	rpl2801		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L27/L28	rpl28-1	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC4F6.07c	mak5		GO:0005730	PMID:16823372	IDA		C	ATP-dependent RNA helicase Mak5 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC56F2.04	utp20		GO:0005730	PMID:16823372	IDA		C	U3 snoRNP protein Utp20 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC32H8.05	SPBC32H8.05		GO:0005730	PMID:16823372	IDA		C	conserved fungal protein		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPCC613.06	rpl902		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L9	rpl9-2	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC32H8.04c	fcf1		GO:0005730	PMID:16823372	IDA		C	rRNA processing protein Fcf1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC4B4.07c	usp102		GO:0005730	PMID:16823372	IDA		C	U1 snRNP-associated protein Usp102	mud1|U1A	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC32H8.04c	fcf1		GO:0005730	GO_REF:0000024	ISO	SGD:S000002747	C	rRNA processing protein Fcf1 (predicted)		protein	NCBITaxon:4896	20060611	PomBase		
-PomBase	SPBC887.03c	noc3		GO:0005730	PMID:16823372	IDA		C	Noc2p-Noc3p complex subunit Noc3		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC1A4.07c	sof1		GO:0005730	PMID:16823372	IDA		C	U3 snoRNP-associated protein Sof1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC776.08c	utp22		GO:0005730	PMID:16823372	IDA		C	small-subunit processome, UTP-C complex subunit Utp22 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC17G9.07	rps2402		GO:0005730	PMID:16823372	IDA		C	40S ribosomal protein S24 (predicted)	rps24-2	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC26H8.10	dis3		GO:0005730	PMID:20512112	IDA		C	3'-5' exoribonuclease subunit Dis3	rrp44	protein	NCBITaxon:4896	20150526	PomBase		
-PomBase	SPBC4F6.13c	erb1		GO:0005730	PMID:16823372	IDA		C	WD repeat/BOP1NT protein Erb1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC17D1.06	dbp3		GO:0005730	PMID:16823372	IDA		C	ATP-dependent RNA helicase Dbp3 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBP16F5.06	nop8		GO:0005730	GO_REF:0000024	ISS	UniProtKB:Q08287	C	ribosome biogenesis protein Nop8 (predicted)		protein	NCBITaxon:4896	20040930	PomBase		
-PomBase	SPBC543.06c	dbp8		GO:0005730	GO_REF:0000024	ISO	SGD:S000001212	C	ATP-dependent RNA helicase Dbp8 (predicted)		protein	NCBITaxon:4896	20060523	PomBase		
-PomBase	SPBP16F5.06	nop8		GO:0005730	PMID:16823372	IDA		C	ribosome biogenesis protein Nop8 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC3B8.09	utp3		GO:0005730	PMID:16823372	IDA		C	U3 snoRNP-associated protein Utp3 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC29A3.06	utp18		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	CGI-48 family Utp18 (predicted)		protein	NCBITaxon:4896	20170114	UniProt		
-PomBase	SPBC19F5.05c	ppp1		GO:0005730	PMID:16823372	IDA		C	pescadillo-family BRCT domain protein Ppp1 (predicted)	SPBC25D12.01c	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC4F6.14	nop4		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P37838	C	RNA-binding protein Nop4 (predicted)		protein	NCBITaxon:4896	20050113	PomBase		
-PomBase	SPBC1347.01c	rev1		GO:0005730	PMID:16823372	IDA		C	deoxycytidyl transferase Rev1 (predicted)	SPBC215.16c	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC16E9.12c	pab2		GO:0005730	PMID:20512112	IDA		C	poly(A) binding protein Pab2		protein	NCBITaxon:4896	20150526	PomBase		
-PomBase	SPBC1604.08c	imp1		GO:0005730	PMID:12237855	IDA		C	importin alpha		protein	NCBITaxon:4896	20040501	PomBase		
-PomBase	SPBP22H7.02c	mrd1		GO:0005730	PMID:16823372	IDA		C	RNA-binding protein Mrd1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC19F5.05c	ppp1		GO:0005730	GO_REF:0000024	ISO	SGD:S000003335	C	pescadillo-family BRCT domain protein Ppp1 (predicted)	SPBC25D12.01c	protein	NCBITaxon:4896	20040930	PomBase		
-PomBase	SPBC1711.16	pwp1		GO:0005730	PMID:16823372	IDA		C	WD repeat protein Pwp1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC20F10.09	lsm5		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P40089	C	U6 snRNP-associated protein Lsm5 (predicted)		protein	NCBITaxon:4896	20050519	PomBase		
-PomBase	SPBP22H7.02c	mrd1		GO:0005730	GO_REF:0000024	ISO	SGD:S000006316	C	RNA-binding protein Mrd1 (predicted)		protein	NCBITaxon:4896	20040813	PomBase		
-PomBase	SPBC776.08c	utp22		GO:0005730	GO_REF:0000024	ISO	SGD:S000003322	C	small-subunit processome, UTP-C complex subunit Utp22 (predicted)		protein	NCBITaxon:4896	20050316	PomBase		
-PomBase	SPBC1711.07	rrb1		GO:0005730	GO_REF:0000024	ISS	UniProtKB:Q04225	C	WD repeat protein Rrb1 (predicted)		protein	NCBITaxon:4896	20040930	PomBase		
-PomBase	SPSNRNA.01	snu1		GO:0005730	PMID:2192258	IDA		C	small nuclear RNA U1		snRNA	NCBITaxon:4896	20140620	PomBase		
-PomBase	SPBC336.02	SPBC336.02		GO:0005730	GO_REF:0000024	ISO	SGD:S000006187	C	18S rRNA dimethylase (predicted)		protein	NCBITaxon:4896	20050404	PomBase		
-PomBase	SPBC17D1.06	dbp3		GO:0005730	GO_REF:0000024	ISO	SGD:S000003046	C	ATP-dependent RNA helicase Dbp3 (predicted)		protein	NCBITaxon:4896	20060523	PomBase		
-PomBase	SPBC336.02	SPBC336.02		GO:0005730	PMID:16823372	IDA		C	18S rRNA dimethylase (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC1347.02	fkbp39		GO:0005730	GO_REF:0000024	ISO	SGD:S000004539	C	FKBP-type peptidyl-prolyl cis-trans isomerase (predicted)		protein	NCBITaxon:4896	20140929	PomBase		
-PomBase	SPBC16E9.10c	rix7		GO:0005730	GO_REF:0000024	ISO	SGD:S000003957	C	AAA family ATPase Rix7 (predicted)		protein	NCBITaxon:4896	20050107	PomBase		
-PomBase	SPBC1347.02	fkbp39		GO:0005730	PMID:16823372	IDA		C	FKBP-type peptidyl-prolyl cis-trans isomerase (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC21B10.10	rps402		GO:0005730	PMID:16823372	IDA		C	40S ribosomal protein S4 (predicted)	rps4-2	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC2D10.10c	fib1		GO:0005730	GO_REF:0000024	ISO	SGD:S000002172	C	fibrillarin, rRNA methyltransferase	fib|nop1	protein	NCBITaxon:4896	20050204	PomBase		
-PomBase	SPBC365.04c	SPBC365.04c		GO:0005730	GO_REF:0000024	ISS	UniProtKB:Q07623	C	RNA-binding protein, involved in ribosome biogenesis (predicted)		protein	NCBITaxon:4896	20040921	PomBase		
-PomBase	SPBC16C6.11	rpl3201		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L32	rpl32-1	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC1711.05	srp40		GO:0005730	PMID:16823372	IDA		C	nucleocytoplasmic transport chaperone Srp40 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC1861.01c	cnp3		GO:0005730	PMID:16823372	IDA		C	kinetochore protein, CENP-C ortholog Cnp3	SPBC56F2.13|mif2	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC1711.05	srp40		GO:0005730	GO_REF:0000024	ISO	SGD:S000001800	C	nucleocytoplasmic transport chaperone Srp40 (predicted)		protein	NCBITaxon:4896	20050630	PomBase		
-PomBase	SPNCRNA.445	snoR61		GO:0005730	GO_REF:0000024	ISO	SGD:S000006452	C	small nucleolar RNA snR61	SPNGAF57	snoRNA	NCBITaxon:4896	20091119	PomBase		
-PomBase	SPBC1921.01c	rpl35b		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L35a (predicted)	rpl37-1|rpl37	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC2D10.10c	fib1		GO:0005730	PMID:16823372	IDA		C	fibrillarin, rRNA methyltransferase	fib|nop1	protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC29B5.03c	rpl26		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L26 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC211.08c	mtr3		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	exosomal 3'-5' exoribonuclease, PH-like Mtr3		protein	NCBITaxon:4896	20170114	UniProt		
-PomBase	SPBC19G7.16	iws1		GO:0005730	PMID:16823372	IDA		C	transcription elongation factor complex subunit Iws1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC887.14c	pfh1		GO:0005730	PMID:18725402	IDA		C	5' to 3' DNA helicase, involved in DNA recombination and repair Pif1	pif1	protein	NCBITaxon:4896	20080901	PomBase		
-PomBase	SPBC11G11.03	mrt4		GO:0005730	PMID:16823372	IDA		C	mRNA turnover and ribosome assembly protein Mrt4 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC2D10.19c	alb1		GO:0005730	PMID:16823372	IDA		C	pre-60S shuttling factor Alb1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
-PomBase	SPBC83.17	mbf1		GO:0005730	PMID:16823372	IDA		C	transcriptional coactivator, multiprotein bridging factor Mbf1 (predicted)		protein	NCBITaxon:4896	20091111	PomBase		
+PomBase	SPAC25B8.17	ypf1		GO:1990578	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase		
+PomBase	SPAC977.10	nhe1		GO:1990578	PMID:19171118	IDA		C	plasma membrane sodium ion/proton antiporter Nhe1/Sod2	sod2	protein	taxon:4896	20151201	PomBase		
+PomBase	SPCC895.07	alp14		GO:0000942	PMID:11432827	IDA		C	TOG/XMAP14 family protein Alp14	mtc1	protein	taxon:4896	20150116	PomBase		
+PomBase	SPBC11C11.03	ndc80		GO:0000942	PMID:11553715	IDA		C	NMS complex subunit Ndc80	ndc10|tid3	protein	taxon:4896	20150122	PomBase		
+PomBase	SPBC16D10.09	pcn1		GO:0043626	PMID:8663159	IDA		C	PCNA	pcn	protein	taxon:4896	20150326	PomBase		
+PomBase	SPBC16D10.09	pcn1		GO:0043626	PMID:9563836	IDA		C	PCNA	pcn	protein	taxon:4896	20160129	PomBase		
+PomBase	SPAC29E6.07	SPAC29E6.07		GO:0009897	GO_REF:0000051	NAS		C	Schizosaccharomyces pombe specific protein	SPAC30.11	protein	taxon:4896	20060203	PomBase		
+PomBase	SPBP4G3.02	pho1		GO:0009897	GO_REF:0000051	NAS		C	acid phosphatase Pho1		protein	taxon:4896	20050416	PomBase		
+PomBase	SPAC750.06c	SPAC750.06c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 4		protein	taxon:4896	20060201	PomBase		
+PomBase	SPCC1450.09c	SPCC1450.09c		GO:0009897	GO_REF:0000111	IC	GO:0009277	C	phospholipase (predicted)		protein	taxon:4896	20041215	PomBase		
+PomBase	SPBPB2B2.07c	SPBPB2B2.07c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 7		protein	taxon:4896	20060201	PomBase		
+PomBase	SPBC1348.01	SPBC1348.01		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 5		protein	taxon:4896	20060201	PomBase		
+PomBase	SPCC1281.01	ags1		GO:0009897	PMID:17472966	TAS		C	alpha glucan synthase Ags1	mok1|SPCC338.01c|SPCC17A7.01	protein	taxon:4896	20070509	PomBase		
+PomBase	SPBCPT2R1.01c	SPBCPT2R1.01c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 9	SPBPB2B2.20c	protein	taxon:4896	20060201	PomBase		
+PomBase	SPBC1348.07	SPBC1348.07		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 6		protein	taxon:4896	20060201	PomBase		
+PomBase	SPBCPT2R1.04c	SPBCPT2R1.04c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 10		protein	taxon:4896	20060201	PomBase		
+PomBase	SPBC428.03c	pho4		GO:0009897	GO_REF:0000051	NAS		C	thiamine-repressible acid phosphatase Pho4		protein	taxon:4896	20050416	PomBase		
+PomBase	SPBPB2B2.14c	SPBPB2B2.14c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 protein family 8		protein	taxon:4896	20060201	PomBase		
+PomBase	SPAC977.06	SPAC977.06		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 family protein 3		protein	taxon:4896	20060201	PomBase		
+PomBase	SPBC16A3.13	meu7		GO:0009897	GO_REF:0000050	ISM	Pfam:PF00128	C	alpha-amylase homolog Aah4	aah4	protein	taxon:4896	20050418	PomBase		
+PomBase	SPAC212.04c	SPAC212.04c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 family protein 1		protein	taxon:4896	20060201	PomBase		
+PomBase	SPBC21H7.03c	SPBC21H7.03c		GO:0009897	GO_REF:0000051	NAS		C	acid phosphatase (predicted)		protein	taxon:4896	20050416	PomBase		
+PomBase	SPAC212.01c	SPAC212.01c		GO:0009897	GO_REF:0000051	NAS		C	S. pombe specific DUF999 family protein 2		protein	taxon:4896	20060201	PomBase		
+PomBase	SPAC977.09c	SPAC977.09c		GO:0009897	GO_REF:0000111	IC	GO:0009277	C	phospholipase (predicted)		protein	taxon:4896	20041215	PomBase		
+PomBase	SPAC1A6.03c	SPAC1A6.03c		GO:0009897	GO_REF:0000111	IC	GO:0009277	C	lysophospholipase (predicted)		protein	taxon:4896	20041215	PomBase		
+PomBase	SPAC1A6.04c	plb1		GO:0009897	GO_REF:0000111	IC	GO:0009277	C	phospholipase B homolog Plb1		protein	taxon:4896	20041215	PomBase		
+PomBase	SPCC330.10	pcm1		GO:0070693	PMID:16428435	IDA		C	P-TEFb-cap methyltransferase Pcm1		protein	taxon:4896	20090712	PomBase		
+PomBase	SPBC32H8.10	cdk9		GO:0070693	PMID:16428435	IDA		C	P-TEFb-associated cyclin-dependent protein kinase Cdk9		protein	taxon:4896	20090712	PomBase		
+PomBase	SPAC27D7.13c	ssm4		GO:0005869	GO_REF:0000024	ISO	SGD:S000006095	C	dynactin microtubule-binding subunit, p150-Glued Ssm4	SPAC637.01c	protein	taxon:4896	20041101	PomBase		
+PomBase	SPBC1347.12	arp1		GO:0005869	GO_REF:0000024	ISO	SGD:S000001171	C	centractin family actin-like protein Arp1		protein	taxon:4896	20050510	PomBase		
+PomBase	SPCC11E10.03	mug1		GO:0005869	GO_REF:0000024	ISO	SGD:S000004908	C	dynactin complex subunit, dynamitin (predicted)		protein	taxon:4896	20050108	PomBase		
+PomBase	SPBC20F10.01	gar1		GO:0031429	GO_REF:0000024	ISO	SGD:S000001131	C	snoRNP pseudouridylase box H/ACA snoRNP complex protein Gar1	SPBC25H2.01c	protein	taxon:4896	20140814	PomBase		
+PomBase	SPAP27G11.13c	nop10		GO:0031429	GO_REF:0000024	ISO	SGD:S000007455	C	snoRNP pseudouridylase box H/ACA snoRNP complex protein (predicted)		protein	taxon:4896	20050414	PomBase		
+PomBase	SPSNORNA.20	snR30		GO:0031429	GO_REF:0000024	ISO	SGD:S000007497	C	small nucleolar RNA U17	snoU17	snoRNA	taxon:4896	20140815	PomBase		
+PomBase	SPAC29A4.04c	cbf5		GO:0031429	GO_REF:0000024	ISO	SGD:S000004165	C	pseudouridylate synthase Cbf5 (predicted)		protein	taxon:4896	20050422	PomBase		
+PomBase	SPAC1782.10c	nhp2		GO:0031429	PMID:10502409	IGI	SGD:S000002367	C	box H/ACA snoRNP complex subunit Nhp2		protein	taxon:4896	20050414	PomBase		
+PomBase	SPAC821.09	eng1		GO:0000936	PMID:20852022	IDA		C	endo-1,3-beta-glucanase Eng1		protein	taxon:4896	20150828	PomBase		
+PomBase	SPCC1840.02c	bgs4		GO:0000936	PMID:24165938	IDA		C	secondary septum 1,6 branched 1,3-beta-glucan synthase catalytic subunit Bgs4	orb11|cwg1|pbr1|sph1	protein	taxon:4896	20140303	PomBase		
+PomBase	SPCC830.03	grc3		GO:0097356	PMID:21385875	IDA		C	polynucleotide kinase Grc3 (predicted)		protein	taxon:4896	20120726	PomBase		
+PomBase	SPAC7D4.14c	iss10		GO:0016604	PMID:24713849	IDA		C	Mmi1-driven selective elimination factor Iss10	pir1	protein	taxon:4896	20140808	PomBase		
+PomBase	SPAC17H9.02	mtl1		GO:0016604	PMID:24210919	IDA		C	TRAMP/MTREC complex subunit, ATP-dependent RNA helicase (predicted)		protein	taxon:4896	20140326	PomBase		
+PomBase	SPAC1006.03c	red1		GO:0016604	PMID:24713849	IDA		C	RNA elimination defective protein Red1	iss3	protein	taxon:4896	20140808	PomBase		
+PomBase	SPAC7D4.14c	iss10		GO:0016604	PMID:24210919	IDA		C	Mmi1-driven selective elimination factor Iss10	pir1	protein	taxon:4896	20140326	PomBase		
+PomBase	SPAC17H9.02	mtl1		GO:0016604	PMID:24713849	IDA		C	TRAMP/MTREC complex subunit, ATP-dependent RNA helicase (predicted)		protein	taxon:4896	20140808	PomBase		
+PomBase	SPBC902.04	rmn1		GO:0016604	PMID:24210919	IDA		C	RNA-binding protein		protein	taxon:4896	20140326	PomBase		
+PomBase	SPBC725.08	pir2		GO:0016604	PMID:24713849	IDA		C	zf-C2H2 type zinc finger protein, implicated in RNAi (predicted)	ars2	protein	taxon:4896	20140808	PomBase		
+PomBase	SPBC902.04	rmn1		GO:0016604	PMID:24713849	IDA		C	RNA-binding protein		protein	taxon:4896	20140808	PomBase		
+PomBase	SPAC1006.03c	red1		GO:0016604	PMID:24210919	IDA		C	RNA elimination defective protein Red1	iss3	protein	taxon:4896	20140326	PomBase		
+PomBase	SPBC337.12	red5		GO:0016604	PMID:24713849	IDA		C	human ZC3H3 homolog		protein	taxon:4896	20140808	PomBase		
+PomBase	SPAC3A12.13c	hcr1		GO:0016282	GO_REF:0000024	ISO	SGD:S000004182	C	translation initiation factor eIF3j (p35)		protein	taxon:4896	20150327	PomBase		
+PomBase	SPBC646.09c	int6		GO:0016282	PMID:11071923	IDA		C	eIF3e subunit Int6	yin6	protein	taxon:4896	20121119	PomBase		
+PomBase	SPAC821.05	tif38		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3h (p40)	eif8	protein	taxon:4896	20140715	PomBase		
+PomBase	SPBC646.09c	int6		GO:0016282	PMID:19061185	IDA		C	eIF3e subunit Int6	yin6	protein	taxon:4896	20140715	PomBase		
+PomBase	SPAC1751.03	tif313		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3m	SPAC31A2.01	protein	taxon:4896	20140715	PomBase		
+PomBase	SPAC4D7.05	sum1		GO:0016282	PMID:12006658	IPI	PomBase:SPBC646.09c	C	translation initiation factor eIF3i	tif34	protein	taxon:4896	20140218	PomBase		
+PomBase	SPAC4A8.16c	tif33		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3c	SPAC823.01c	protein	taxon:4896	20140715	PomBase		
+PomBase	SPBC18H10.03	tif35		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3g		protein	taxon:4896	20140715	PomBase		
+PomBase	SPAC4D7.05	sum1		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3i	tif34	protein	taxon:4896	20140715	PomBase		
+PomBase	SPAC637.07	moe1		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3d Moe1		protein	taxon:4896	20140715	PomBase		
+PomBase	SPBC17D11.05	tif32		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3a		protein	taxon:4896	20140715	PomBase		
+PomBase	SPAC25G10.08	SPAC25G10.08		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3b (p84)	p116	protein	taxon:4896	20140715	PomBase		
+PomBase	SPBC4C3.07	eif6		GO:0016282	PMID:19061185	IDA		C	translation initiation factor eIF3f		protein	taxon:4896	20140715	PomBase		
+PomBase	SPBC24C6.05	sec28		GO:0030126	GO_REF:0000024	ISO	SGD:S000001338	C	coatomer epsilon subunit (predicted)		protein	taxon:4896	20050413	PomBase		
+PomBase	SPAC57A7.10c	sec21		GO:0030126	GO_REF:0000024	ISO	SGD:S000005231	C	coatomer gamma subunit Sec21 (predicted)		protein	taxon:4896	20050426	PomBase		
+PomBase	SPBC16C6.13c	sec27		GO:0030126	GO_REF:0000024	ISO	SGD:S000003105	C	coatomer beta' subunit (predicted)		protein	taxon:4896	20050610	PomBase		
+PomBase	SPBPJ4664.04	cop1		GO:0030126	GO_REF:0000024	ISO	SGD:S000002304	C	coatomer alpha subunit Cop1 (predicted)		protein	taxon:4896	20050629	PomBase		
+PomBase	SPCC285.08	ret2		GO:0030126	GO_REF:0000024	ISO	SGD:S000001947	C	coatomer delta subunit Ret2 (predicted)		protein	taxon:4896	20050629	PomBase		
+PomBase	SPBC146.14c	sec26		GO:0030126	GO_REF:0000024	ISS	UniProtKB:P41810	C	coatomer beta subunit (predicted)	SPBC337.01c	protein	taxon:4896	20050105	PomBase		
+PomBase	SPCC576.07	ret3		GO:0030126	GO_REF:0000024	ISO	SGD:S000005931	C	coatomer zeta subunit (predicted)		protein	taxon:4896	20050419	PomBase		
+PomBase	SPAC22E12.17c	glo3		GO:0030126	GO_REF:0000024	ISO	SGD:S000000924	C	ARF GTPase activating protein (predicted)		protein	taxon:4896	20061026	PomBase		
+PomBase	SPAC3A11.14c	pkl1		GO:1990811	PMID:25987607	IDA		C	minus-end directed microtubule motor, kinesin Pkl1	klp1|SPAC3H5.03c	protein	taxon:4896	20150729	PomBase		
+PomBase	SPBC32H8.09	wdr8		GO:1990811	PMID:25987607	IDA		C	mitosis-specific spindle pole body WD repeat protein Wdr8		protein	taxon:4896	20150729	PomBase		
+PomBase	SPBC13E7.06	msd1		GO:1990811	PMID:25987607	IDA		C	microtubule-anchoring factor Msd1	mug172	protein	taxon:4896	20150729	PomBase		
+PomBase	SPBC4F6.14	nop4		GO:0005730	PMID:16823372	IDA		C	RNA-binding protein Nop4 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC23E6.07c	rfc1		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	DNA replication factor C complex subunit Rfc1		protein	taxon:4896	20170114	UniProt		
+PomBase	SPBC336.06c	rnh1		GO:0005730	PMID:16823372	IDA		C	ribonuclease H Rnh1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC17D1.03c	rrp43		GO:0005730	PMID:16823372	IDA		C	exosome subunit Rrp43		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC365.04c	SPBC365.04c		GO:0005730	PMID:16823372	IDA		C	RNA-binding protein, involved in ribosome biogenesis (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC16G5.10	rrp42		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	exosome subunit Rrp42		protein	taxon:4896	20170114	UniProt		
+PomBase	SPBC365.09c	kin17		GO:0005730	PMID:16823372	IDA		C	human KIN ortholog (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC25D12.02c	dnt1		GO:0005730	PMID:17538026	IDA		C	nucleolar protein Dnt1		protein	taxon:4896	20161006	PomBase		
+PomBase	SPBP4H10.06c	cut14		GO:0005730	PMID:18362178	IDA		C	condensin complex SMC subunit Smc2	smc2	protein	taxon:4896	20150213	PomBase		
+PomBase	SPBC776.17	rrp7		GO:0005730	PMID:16823372	IDA		C	rRNA processing protein Rrp7 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC28F2.11	hmo1		GO:0005730	PMID:24021628	IDA		C	HMG box protein Hmo1		protein	taxon:4896	20140522	PomBase		
+PomBase	SPBC2G2.05	rpl1603		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L13/L16 (predicted)	rpl16c	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC19C2.03	rpc10		GO:0005730	PMID:16823372	IDA		C	DNA-directed RNA polymerase I, II and III subunit Rpc10	rpb12	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC30D10.06	lsm4		GO:0005730	GO_REF:0000024	ISO	SGD:S000000914	C	U6 snRNP-associated protein Lsm4 (predicted)		protein	taxon:4896	20160822	PomBase		
+PomBase	SPBC18H10.13	rps1402		GO:0005730	PMID:16823372	IDA		C	40S ribosomal protein S14 (predicted)	rps14-2	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC17D1.04	acr1		GO:0005730	PMID:18362178	IDA		C	upstream activation factor complex subunit Acr1		protein	taxon:4896	20150311	PomBase		
+PomBase	SPBC9B6.05c	lsm3		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P57743	C	U6 snRNP-associated protein Lsm3 (predicted)		protein	taxon:4896	20050524	PomBase		
+PomBase	SPBC25D12.02c	dnt1		GO:0005730	PMID:22809626	IDA		C	nucleolar protein Dnt1		protein	taxon:4896	20131203	PomBase		
+PomBase	SPBC9B6.06	mrpl10		GO:0005730	PMID:16823372	IDA		C	mitochondrial ribosomal protein subunit L15 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC20F10.01	gar1		GO:0005730	PMID:7596817	IDA		C	snoRNP pseudouridylase box H/ACA snoRNP complex protein Gar1	SPBC25H2.01c	protein	taxon:4896	20050414	PomBase		
+PomBase	SPBC21H7.04	dbp7		GO:0005730	PMID:16823372	IDA		C	ATP-dependent RNA helicase Dbp7 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPCC757.08	rrp45		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	exosome subunit Rrp45		protein	taxon:4896	20170114	UniProt		
+PomBase	SPBC21H7.04	dbp7		GO:0005730	GO_REF:0000024	ISO	SGD:S000001732	C	ATP-dependent RNA helicase Dbp7 (predicted)		protein	taxon:4896	20050416	PomBase		
+PomBase	SPCC1235.03	cue2		GO:0005730	PMID:16823372	IDA		C	SMR domain protein, possibly involved in DNA repair and neddylation		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC9B6.07	nop52		GO:0005730	GO_REF:0000024	ISO	SGD:S000002494	C	nucleolar protein Nop52 family Rrp1 (predicted)		protein	taxon:4896	20050323	PomBase		
+PomBase	SPBC1539.10	nop16		GO:0005730	GO_REF:0000024	ISO	SGD:S000000804	C	ribosome biogenesis protein Nop16 (predicted)		protein	taxon:4896	20041004	PomBase		
+PomBase	SPBC9B6.07	nop52		GO:0005730	PMID:16823372	IDA		C	nucleolar protein Nop52 family Rrp1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC20F10.01	gar1		GO:0005730	PMID:8502556	IDA		C	snoRNP pseudouridylase box H/ACA snoRNP complex protein Gar1	SPBC25H2.01c	protein	taxon:4896	20140814	PomBase		
+PomBase	SPBC3E7.10	fma1		GO:0005730	PMID:16823372	IDA		C	methionine aminopeptidase Fma1 (predicted)	ppp23	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC1539.10	nop16		GO:0005730	PMID:16823372	IDA		C	ribosome biogenesis protein Nop16 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC8D2.13	shq1		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P40486	C	box H/ACA snoRNP assembly protein Shq1 (predicted)		protein	taxon:4896	20040923	PomBase		
+PomBase	SPBC543.06c	dbp8		GO:0005730	PMID:16823372	IDA		C	ATP-dependent RNA helicase Dbp8 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC1703.01c	pop4		GO:0005730	PMID:16823372	IDA		C	RNase P and RNase MRP subunit (predicted)	SPBP4H10.22c	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBP8B7.01c	pop7		GO:0005730	PMID:16823372	IDA		C	RNAseP RNAse MRP subunit Pop7 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC14C8.14c	pol5		GO:0005730	PMID:16823372	IDA		C	DNA polymerase phi		protein	taxon:4896	20091111	PomBase		
+PomBase	SPCC320.11c	nip7		GO:0005730	PMID:16823372	IDA		C	RNA-binding protein involved in ribosome biogenesis Nip7 (predicted)	SPCC330.18	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC14C8.14c	pol5		GO:0005730	GO_REF:0000024	ISO	SGD:S000000781	C	DNA polymerase phi		protein	taxon:4896	20051004	PomBase		
+PomBase	SPBC56F2.04	utp20		GO:0005730	GO_REF:0000024	ISO	SGD:S000000100	C	U3 snoRNP protein Utp20 (predicted)		protein	taxon:4896	20070723	PomBase		
+PomBase	SPBC28E12.05	esf2		GO:0005730	GO_REF:0000024	ISO	SGD:S000005337	C	U3 snoRNP-associated protein Esf2 (predicted)	SPBC3H7.17c	protein	taxon:4896	20050622	PomBase		
+PomBase	SPBP8B7.20c	nop2		GO:0005730	GO_REF:0000024	ISO	SGD:S000005005	C	RNA methyltransferase Nop2 (predicted)		protein	taxon:4896	20050715	PomBase		
+PomBase	SPBC28E12.05	esf2		GO:0005730	PMID:16823372	IDA		C	U3 snoRNP-associated protein Esf2 (predicted)	SPBC3H7.17c	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC16G5.11c	bag101		GO:0005730	PMID:16823372	IDA		C	BAG family molecular chaperone regulator Bag101 (predicted)	bag1-a|bag1	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC14C8.19	tam10		GO:0005730	GO_REF:0000024	ISS	UniProtKB:Q1ED39	C	small acidic protein (SMAP) domain containing protein		protein	taxon:4896	20140927	PomBase		
+PomBase	SPBC4C3.05c	nuc1		GO:0005730	PMID:2537310	IDA		C	DNA-directed RNA polymerase I complex large subunit Nuc1	rpa1|rpa190	protein	taxon:4896	20140814	PomBase		
+PomBase	SPBC8D2.16c	SPBC8D2.16c		GO:0005730	GO_REF:0000024	ISO	SGD:S000003515	C	SPOUT domain containing methyltransferase, implicated in chromosome segregation		protein	taxon:4896	20050629	PomBase		
+PomBase	SPBC1604.09c	rex4		GO:0005730	PMID:16823372	IDA		C	exoribonuclease Rex4 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC4F6.07c	mak5		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P38112	C	ATP-dependent RNA helicase Mak5 (predicted)		protein	taxon:4896	20050105	PomBase		
+PomBase	SPBC776.11	rpl2801		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L27/L28	rpl28-1	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC4F6.07c	mak5		GO:0005730	PMID:16823372	IDA		C	ATP-dependent RNA helicase Mak5 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC56F2.04	utp20		GO:0005730	PMID:16823372	IDA		C	U3 snoRNP protein Utp20 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC32H8.05	SPBC32H8.05		GO:0005730	PMID:16823372	IDA		C	conserved fungal protein		protein	taxon:4896	20091111	PomBase		
+PomBase	SPCC613.06	rpl902		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L9	rpl9-2	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC32H8.04c	fcf1		GO:0005730	PMID:16823372	IDA		C	rRNA processing protein Fcf1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC4B4.07c	usp102		GO:0005730	PMID:16823372	IDA		C	U1 snRNP-associated protein Usp102	mud1|U1A	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC32H8.04c	fcf1		GO:0005730	GO_REF:0000024	ISO	SGD:S000002747	C	rRNA processing protein Fcf1 (predicted)		protein	taxon:4896	20060611	PomBase		
+PomBase	SPBC887.03c	noc3		GO:0005730	PMID:16823372	IDA		C	Noc2p-Noc3p complex subunit Noc3		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC1A4.07c	sof1		GO:0005730	PMID:16823372	IDA		C	U3 snoRNP-associated protein Sof1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC776.08c	utp22		GO:0005730	PMID:16823372	IDA		C	small-subunit processome, UTP-C complex subunit Utp22 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC17G9.07	rps2402		GO:0005730	PMID:16823372	IDA		C	40S ribosomal protein S24 (predicted)	rps24-2	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC26H8.10	dis3		GO:0005730	PMID:20512112	IDA		C	3'-5' exoribonuclease subunit Dis3	rrp44	protein	taxon:4896	20150526	PomBase		
+PomBase	SPBC4F6.13c	erb1		GO:0005730	PMID:16823372	IDA		C	WD repeat/BOP1NT protein Erb1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC17D1.06	dbp3		GO:0005730	PMID:16823372	IDA		C	ATP-dependent RNA helicase Dbp3 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBP16F5.06	nop8		GO:0005730	GO_REF:0000024	ISS	UniProtKB:Q08287	C	ribosome biogenesis protein Nop8 (predicted)		protein	taxon:4896	20040930	PomBase		
+PomBase	SPBC543.06c	dbp8		GO:0005730	GO_REF:0000024	ISO	SGD:S000001212	C	ATP-dependent RNA helicase Dbp8 (predicted)		protein	taxon:4896	20060523	PomBase		
+PomBase	SPBP16F5.06	nop8		GO:0005730	PMID:16823372	IDA		C	ribosome biogenesis protein Nop8 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC3B8.09	utp3		GO:0005730	PMID:16823372	IDA		C	U3 snoRNP-associated protein Utp3 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC29A3.06	utp18		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	CGI-48 family Utp18 (predicted)		protein	taxon:4896	20170114	UniProt		
+PomBase	SPBC19F5.05c	ppp1		GO:0005730	PMID:16823372	IDA		C	pescadillo-family BRCT domain protein Ppp1 (predicted)	SPBC25D12.01c	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC4F6.14	nop4		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P37838	C	RNA-binding protein Nop4 (predicted)		protein	taxon:4896	20050113	PomBase		
+PomBase	SPBC1347.01c	rev1		GO:0005730	PMID:16823372	IDA		C	deoxycytidyl transferase Rev1 (predicted)	SPBC215.16c	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC16E9.12c	pab2		GO:0005730	PMID:20512112	IDA		C	poly(A) binding protein Pab2		protein	taxon:4896	20150526	PomBase		
+PomBase	SPBC1604.08c	imp1		GO:0005730	PMID:12237855	IDA		C	importin alpha		protein	taxon:4896	20040501	PomBase		
+PomBase	SPBP22H7.02c	mrd1		GO:0005730	PMID:16823372	IDA		C	RNA-binding protein Mrd1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC19F5.05c	ppp1		GO:0005730	GO_REF:0000024	ISO	SGD:S000003335	C	pescadillo-family BRCT domain protein Ppp1 (predicted)	SPBC25D12.01c	protein	taxon:4896	20040930	PomBase		
+PomBase	SPBC1711.16	pwp1		GO:0005730	PMID:16823372	IDA		C	WD repeat protein Pwp1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC20F10.09	lsm5		GO:0005730	GO_REF:0000024	ISS	UniProtKB:P40089	C	U6 snRNP-associated protein Lsm5 (predicted)		protein	taxon:4896	20050519	PomBase		
+PomBase	SPBP22H7.02c	mrd1		GO:0005730	GO_REF:0000024	ISO	SGD:S000006316	C	RNA-binding protein Mrd1 (predicted)		protein	taxon:4896	20040813	PomBase		
+PomBase	SPBC776.08c	utp22		GO:0005730	GO_REF:0000024	ISO	SGD:S000003322	C	small-subunit processome, UTP-C complex subunit Utp22 (predicted)		protein	taxon:4896	20050316	PomBase		
+PomBase	SPBC1711.07	rrb1		GO:0005730	GO_REF:0000024	ISS	UniProtKB:Q04225	C	WD repeat protein Rrb1 (predicted)		protein	taxon:4896	20040930	PomBase		
+PomBase	SPSNRNA.01	snu1		GO:0005730	PMID:2192258	IDA		C	small nuclear RNA U1		snRNA	taxon:4896	20140620	PomBase		
+PomBase	SPBC336.02	SPBC336.02		GO:0005730	GO_REF:0000024	ISO	SGD:S000006187	C	18S rRNA dimethylase (predicted)		protein	taxon:4896	20050404	PomBase		
+PomBase	SPBC17D1.06	dbp3		GO:0005730	GO_REF:0000024	ISO	SGD:S000003046	C	ATP-dependent RNA helicase Dbp3 (predicted)		protein	taxon:4896	20060523	PomBase		
+PomBase	SPBC336.02	SPBC336.02		GO:0005730	PMID:16823372	IDA		C	18S rRNA dimethylase (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC1347.02	fkbp39		GO:0005730	GO_REF:0000024	ISO	SGD:S000004539	C	FKBP-type peptidyl-prolyl cis-trans isomerase (predicted)		protein	taxon:4896	20140929	PomBase		
+PomBase	SPBC16E9.10c	rix7		GO:0005730	GO_REF:0000024	ISO	SGD:S000003957	C	AAA family ATPase Rix7 (predicted)		protein	taxon:4896	20050107	PomBase		
+PomBase	SPBC1347.02	fkbp39		GO:0005730	PMID:16823372	IDA		C	FKBP-type peptidyl-prolyl cis-trans isomerase (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC21B10.10	rps402		GO:0005730	PMID:16823372	IDA		C	40S ribosomal protein S4 (predicted)	rps4-2	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC2D10.10c	fib1		GO:0005730	GO_REF:0000024	ISO	SGD:S000002172	C	fibrillarin, rRNA methyltransferase	fib|nop1	protein	taxon:4896	20050204	PomBase		
+PomBase	SPBC365.04c	SPBC365.04c		GO:0005730	GO_REF:0000024	ISS	UniProtKB:Q07623	C	RNA-binding protein, involved in ribosome biogenesis (predicted)		protein	taxon:4896	20040921	PomBase		
+PomBase	SPBC16C6.11	rpl3201		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L32	rpl32-1	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC1711.05	srp40		GO:0005730	PMID:16823372	IDA		C	nucleocytoplasmic transport chaperone Srp40 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC1861.01c	cnp3		GO:0005730	PMID:16823372	IDA		C	kinetochore protein, CENP-C ortholog Cnp3	SPBC56F2.13|mif2	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC1711.05	srp40		GO:0005730	GO_REF:0000024	ISO	SGD:S000001800	C	nucleocytoplasmic transport chaperone Srp40 (predicted)		protein	taxon:4896	20050630	PomBase		
+PomBase	SPNCRNA.445	snoR61		GO:0005730	GO_REF:0000024	ISO	SGD:S000006452	C	small nucleolar RNA snR61	SPNGAF57	snoRNA	taxon:4896	20091119	PomBase		
+PomBase	SPBC1921.01c	rpl35b		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L35a (predicted)	rpl37-1|rpl37	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC2D10.10c	fib1		GO:0005730	PMID:16823372	IDA		C	fibrillarin, rRNA methyltransferase	fib|nop1	protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC29B5.03c	rpl26		GO:0005730	PMID:16823372	IDA		C	60S ribosomal protein L26 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC211.08c	mtr3		GO:0005730	GO_REF:0000039	IEA	UniProtKB-SubCell:SL-0188	C	exosomal 3'-5' exoribonuclease, PH-like Mtr3		protein	taxon:4896	20170114	UniProt		
+PomBase	SPBC19G7.16	iws1		GO:0005730	PMID:16823372	IDA		C	transcription elongation factor complex subunit Iws1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC887.14c	pfh1		GO:0005730	PMID:18725402	IDA		C	5' to 3' DNA helicase, involved in DNA recombination and repair Pif1	pif1	protein	taxon:4896	20080901	PomBase		
+PomBase	SPBC11G11.03	mrt4		GO:0005730	PMID:16823372	IDA		C	mRNA turnover and ribosome assembly protein Mrt4 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC2D10.19c	alb1		GO:0005730	PMID:16823372	IDA		C	pre-60S shuttling factor Alb1 (predicted)		protein	taxon:4896	20091111	PomBase		
+PomBase	SPBC83.17	mbf1		GO:0005730	PMID:16823372	IDA		C	transcriptional coactivator, multiprotein bridging factor Mbf1 (predicted)		protein	taxon:4896	20091111	PomBase		
 ! this file to the Gene Ontology Consortium (GOC).  The "GOC Validation
-PomBase	SPCC1322.12c	bub1		GO:0071957	PMID:16179942	IDA		C	mitotic spindle checkpoint kinase Bub1		protein	NCBITaxon:4896	20140908	PomBase	exists_during(GO:0000088)	
-PomBase	SPAC644.12	cdc5		GO:0005634	PMID:20970342	IDA		C	splicing factor, Prp19 complex subunit Cdc5		protein	NCBITaxon:4896	20110804	PomBase	exists_during(GO:0007137)	
-PomBase	SPBC1703.14c	top1		GO:0005634	PMID:20970342	IDA		C	DNA topoisomerase I		protein	NCBITaxon:4896	20110804	PomBase	exists_during(GO:0007137)	
-PomBase	SPAC343.07	mug28		GO:0005634	PMID:20410137	IDA		C	RNA-binding protein Mug28		protein	NCBITaxon:4896	20151008	PomBase	exists_during(GO:0007137)	
-PomBase	SPCC962.06c	bpb1		GO:0005634	PMID:20970342	IDA		C	KH and CC/hC domain splicing factor Bpb1	sf1|ods3	protein	NCBITaxon:4896	20110804	PomBase	exists_during(GO:0007137)	
-PomBase	SPBC646.04	pla1		GO:0005634	PMID:20970342	IDA		C	poly(A) polymerase Pla1		protein	NCBITaxon:4896	20110804	PomBase	exists_during(GO:0007137)	
-PomBase	SPBC582.03	cdc13		GO:0005634	PMID:15791259	IDA		C	G2/M B-type cyclin Cdc13		protein	NCBITaxon:4896	20150506	PomBase	exists_during(GO:0007137)	
-PomBase	SPAC926.07c	dlc2		GO:0034399	PMID:11907273	IDA		C	dynein light chain Dlc2 (predicted)		protein	NCBITaxon:4896	20141128	PomBase	exists_during(GO:0051321)	
-PomBase	SPCC4B3.15	mid1		GO:0005826	PMID:9852154	IDA		C	medial ring protein Mid1	dmf1	protein	NCBITaxon:4896	20121012	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC1782.09c	clp1		GO:0005826	PMID:16085489	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	NCBITaxon:4896	20150302	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC19G7.05c	bgs1		GO:0005826	PMID:24790095	IDA		C	primary septum and spore wall linear 1,3-beta-glucan synthase catalytic subunit Bgs1	cps1|drc1|swl1	protein	NCBITaxon:4896	20151028	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC27F1.02c	cdc8		GO:0005826	PMID:20807799	IDA		C	tropomyosin	fus4	protein	NCBITaxon:4896	20130909	PomBase	exists_during(GO:0000087)	PR:000037081
-PomBase	SPBC1A4.05	blt1		GO:0005826	PMID:24790095	IDA		C	ubiquitin domain-like protein Blt1		protein	NCBITaxon:4896	20151028	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC12B10.10	nod1		GO:0005826	PMID:23349808	IDA		C	medial cortical node Gef2-related protein protein Nod1		protein	NCBITaxon:4896	20130731	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC1A4.05	blt1		GO:0005826	PMID:23349808	IDA		C	ubiquitin domain-like protein Blt1		protein	NCBITaxon:4896	20130731	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC20G8.05c	cdc15		GO:0005826	PMID:24790095	IDA		C	extended Fer/CIP4 (EFC) domain protein Cdc15		protein	NCBITaxon:4896	20151028	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC31A2.16	gef2		GO:0005826	PMID:23349808	IDA		C	RhoGEF Gef2		protein	NCBITaxon:4896	20130731	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC7D4.07c	trx1		GO:0015035	PMID:22245228	EXP		F	cytosolic thioredoxin Trx1		protein	NCBITaxon:4896	20120524	PomBase	happens_during(GO:0072690),has_direct_input(PomBase:SPAC29E6.05c)	
-PomBase	SPCC16A11.17	mcm4		GO:0030875	PMID:10747035	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	NCBITaxon:4896	20120919	PomBase	exists_during(GO:0000080)	
-PomBase	SPBC336.09c	rrn7		GO:0000983	PMID:25410910	IDA		F	RNA polymerase I core factor complex subunit Rrn7		protein	NCBITaxon:4896	20160303	PomBase	part_of(GO:0045944)	
-PomBase	SPBC29A3.17	gef3		GO:0036391	PMID:24947517	IDA		C	RhoGEF Gef3		protein	NCBITaxon:4896	20160822	PomBase	exists_during(GO:0000093)	
-PomBase	SPBC2G2.14	csi1		GO:0035974	PMID:26483559	EXP		C	mitotic centromere-SPB clustering protein Csi1		protein	NCBITaxon:4896	20160630	PomBase	exists_during(GO:0007128)	
-PomBase	SPBC582.06c	mcp6		GO:0035974	PMID:15654021	IDA		C	horsetail movement protein Hrs1/Mcp6	hrs1|mug3	protein	NCBITaxon:4896	20141128	PomBase	exists_during(GO:0007128)	
-PomBase	SPBC1778.02	rap1	colocalizes_with	GO:0035974	PMID:11676924	IDA		C	telomere binding protein Rap1	lot2	protein	NCBITaxon:4896	20150527	PomBase	exists_during(GO:0007128)	
-PomBase	SPBC646.17c	dic1		GO:0035974	PMID:20298435	IDA		C	meiotic dynein intermediate chain Dic1	SPBC855.01c|SPBP35G2.01c|mug44	protein	NCBITaxon:4896	20120405	PomBase	exists_during(GO:0007128)	
-PomBase	SPAC458.04c	dli1		GO:0035974	PMID:20298435	IDA		C	meiotic dynein intermediate light chain Dli1/Dil1	dil1	protein	NCBITaxon:4896	20120323	PomBase	exists_during(GO:0007128)	
-PomBase	SPBC582.06c	mcp6		GO:0035974	PMID:16111942	IDA		C	horsetail movement protein Hrs1/Mcp6	hrs1|mug3	protein	NCBITaxon:4896	20050110	PomBase	exists_during(GO:0007128)	
-PomBase	SPAC16A10.07c	taz1	colocalizes_with	GO:0035974	PMID:11676924	IDA		C	human TRF ortholog Taz1	myb1|myb|lot3	protein	NCBITaxon:4896	20150527	PomBase	exists_during(GO:0007128)	
-PomBase	SPAC1093.06c	dhc1		GO:0035974	PMID:10366596	IDA		C	minus-end directed microtubule motor, dynein heavy chain Dhc1	SPAC30C2.01c	protein	NCBITaxon:4896	20141126	PomBase	exists_during(GO:0007128)	
-PomBase	SPAC1093.06c	dhc1		GO:0035974	PMID:20298435	IDA		C	minus-end directed microtubule motor, dynein heavy chain Dhc1	SPAC30C2.01c	protein	NCBITaxon:4896	20120405	PomBase	exists_during(GO:0007128)	
-PomBase	SPCC1223.06	tea1		GO:0035838	PMID:20870879	IDA		C	cell end marker Tea1	alp8	protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPBC23G7.04c	nif1		GO:0035838	PMID:20870879	IDA		C	SEL1 repeat protein Nif1		protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPAC15A10.16	bud6		GO:0035838	PMID:20870879	IDA		C	actin interacting protein 3 homolog Bud6	aip3|fat1|SPAC15E1.01	protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPCC1840.02c	bgs4		GO:0035838	PMID:20870879	IDA		C	secondary septum 1,6 branched 1,3-beta-glucan synthase catalytic subunit Bgs4	orb11|cwg1|pbr1|sph1	protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPAC23C4.02	crn1		GO:0035838	PMID:20870879	IDA		C	actin binding protein, coronin Crn1		protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPAC110.03	cdc42		GO:0035838	PMID:20870879	IDA		C	Rho family GTPase Cdc42		protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPAC3H8.10	spo20		GO:0035838	PMID:20870879	IDA		C	sec14 cytosolic factor family, glycerophospholipid-transfer protein Spo20/Sec14	sec14	protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPBC1105.17	cnp1		GO:0043505	PMID:18077559	IMP		C	centromere-specific histone H3 CENP-A	sim2	protein	NCBITaxon:4896	20110901	PomBase	exists_during(GO:0000080)	
-PomBase	SPBP4H10.06c	cut14		GO:0035327	PMID:25847133	IDA		C	condensin complex SMC subunit Smc2	smc2	protein	NCBITaxon:4896	20150828	PomBase	exists_during(GO:0000085)	
-PomBase	SPBP22H7.09c	mis15		GO:0000779	PMID:17035632	IDA		C	kinetochore protein, CENP-N ortholog Mis15		protein	NCBITaxon:4896	20070529	PomBase	exists_during(GO:0000278)	
-PomBase	SPBC1861.01c	cnp3		GO:0000779	PMID:17035632	IDA		C	kinetochore protein, CENP-C ortholog Cnp3	SPBC56F2.13|mif2	protein	NCBITaxon:4896	20070529	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC1687.20c	mis6		GO:0000779	PMID:17035632	IDA		C	kinetochore protein, CENP-I ortholog Mis6		protein	NCBITaxon:4896	20070529	PomBase	exists_during(GO:0000278)	
-PomBase	SPBC18E5.03c	sim4		GO:0000779	PMID:17035632	IDA		C	kinetochore protein, CENP-K ortholog Sim4		protein	NCBITaxon:4896	20070529	PomBase	exists_during(GO:0000278)	
-PomBase	SPBC409.09c	mis13		GO:0000779	PMID:17035632	IDA		C	NMS complex subunit Mis13	cnl1	protein	NCBITaxon:4896	20070529	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC16A10.05c	dad1		GO:0000779	PMID:17035632	IDA		C	DASH complex subunit Dad1		protein	NCBITaxon:4896	20070529	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC6F12.02	rst2		GO:0005737	PMID:21118717	IDA		C	transcription factor Rst2		protein	NCBITaxon:4896	20150812	PomBase	exists_during(GO:0071333)	
-PomBase	SPBC1105.17	cnp1		GO:0043505	PMID:18077559	IMP		C	centromere-specific histone H3 CENP-A	sim2	protein	NCBITaxon:4896	20110901	PomBase	exists_during(GO:0000085)	
-PomBase	SPBC32F12.04	gtb1		GO:0000923	PMID:1770000	IDA		C	gamma-tubulin Gtb1	tug1	protein	NCBITaxon:4896	20130923	PomBase	exists_during(GO:0000093),exists_during(GO:0000281)	
-PomBase	SPAC17D4.02	cdc45		GO:0003682	PMID:19109429	IDA		F	DNA replication pre-initiation complex subunit Cdc45	sna41|goa1	protein	NCBITaxon:4896	20120523	PomBase	happens_during(GO:0000084)	
-PomBase	SPBC216.02	mcp5		GO:0005938	PMID:16585273	IDA		C	cortical anchoring factor for dynein Mcp5/Num1	num1|mug21	protein	NCBITaxon:4896	20060424	PomBase	exists_during(GO:0007128)	
-PomBase	SPBC216.02	mcp5		GO:0005938	PMID:16624923	IDA		C	cortical anchoring factor for dynein Mcp5/Num1	num1|mug21	protein	NCBITaxon:4896	20060424	PomBase	exists_during(GO:0007128)	
-PomBase	SPAC458.04c	dli1		GO:0071687	PMID:20404563	IDA		C	meiotic dynein intermediate light chain Dli1/Dil1	dil1	protein	NCBITaxon:4896	20130430	PomBase	exists_during(GO:0007128)	
-PomBase	SPAC24H6.05	cdc25		GO:0005737	PMID:1500423	IDA		C	M phase inducer tyrosine phosphatase Cdc25	sal2	protein	NCBITaxon:4896	20041103	PomBase	exists_during(GO:0000089)	
-PomBase	SPBC11B10.09	cdc2		GO:0005737	PMID:11683390	EXP		C	cyclin-dependent protein kinase Cdk1/Cdc2	swo2|cdk1|tws1|wee2	protein	NCBITaxon:4896	20161020	PomBase	exists_during(GO:0000089)	
-PomBase	SPCC4F11.02	ptc1		GO:0035970	PMID:8196617	IDA		P	protein phosphatase 2C Ptc1		protein	NCBITaxon:4896	20140804	PomBase	happens_during(GO:0034605)	
-PomBase	SPAC2E12.02	hsf1		GO:0000790	PMID:21072667	IDA		C	transcription factor Hsf1	hstf|hsf	protein	NCBITaxon:4896	20150409	PomBase	coincident_with(PomBase:SPAC2E12.02),exists_during(GO:0034605)	
-PomBase	SPBC19C2.09	sre1		GO:0061419	PMID:16537923	IMP		P	sterol regulatory element binding protein, transcription factor Sre1		protein	NCBITaxon:4896	20120131	PomBase	happens_during(GO:0071456),has_regulation_target(PomBase:SPBC887.15c)	
-PomBase	SPBC902.06	mto2		GO:0044732	PMID:15837798	IDA		C	microtubule organizer Mto2		protein	NCBITaxon:4896	20050624	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC890.02c	alp7		GO:0044732	PMID:12360293	IDA		C	centrosomal transforming acidic coiled-coil (TACC) protein ortholog Alp7	mia1	protein	NCBITaxon:4896	20040818	PomBase	exists_during(GO:0000278)	
-PomBase	SPBC725.12	nbl1		GO:0000778	PMID:19570910	IDA		C	Borealin homolog Nbl1	mug118	protein	NCBITaxon:4896	20090707	PomBase	exists_during(GO:0000089)	
-PomBase	SPAC11E3.03	csm1		GO:0000778	PMID:20935472	IDA		C	microtubule-site clamp monopolin complex subunit Csm1/Pcs1	pcs1	protein	NCBITaxon:4896	20150212	PomBase	exists_during(GO:0000089)	
-PomBase	SPCC962.02c	bir1		GO:0000778	PMID:11861551	IDA		C	survivin, Bir1	cut17|pbh1|SPCP31B10.10c	protein	NCBITaxon:4896	20041203	PomBase	exists_during(GO:0000089)	
-PomBase	SPAC25G10.07c	cut7		GO:0000778	PMID:26258632	IDA		C	kinesin family plus-end microtubule motor Cut7		protein	NCBITaxon:4896	20151125	PomBase	exists_during(GO:0000089)	
-PomBase	SPCC962.02c	bir1		GO:0000778	PMID:11554922	IDA		C	survivin, Bir1	cut17|pbh1|SPCP31B10.10c	protein	NCBITaxon:4896	20150814	PomBase	exists_during(GO:0000089)	
-PomBase	SPCC320.13c	ark1		GO:0000778	PMID:11554922	IDA		C	aurora-B kinase Ark1	aim1|SPCC330.16	protein	NCBITaxon:4896	20150814	PomBase	exists_during(GO:0000089)	
-PomBase	SPCC320.13c	ark1		GO:0000778	PMID:19570910	IDA		C	aurora-B kinase Ark1	aim1|SPCC330.16	protein	NCBITaxon:4896	20090707	PomBase	exists_during(GO:0000089)	
-PomBase	SPCC320.13c	ark1		GO:0000778	PMID:11792803	IDA		C	aurora-B kinase Ark1	aim1|SPCC330.16	protein	NCBITaxon:4896	20161012	PomBase	exists_during(GO:0000089)	
-PomBase	SPAC6G10.02c	tea3		GO:0032153	PMID:12007420	IDA		C	cell end marker Tea3		protein	NCBITaxon:4896	20051003	PomBase	exists_during(GO:0000090)	
-PomBase	SPAC20H4.11c	rho5		GO:0032153	PMID:16146630	IDA		C	Rho family GTPase Rho5		protein	NCBITaxon:4896	20050913	PomBase	exists_during(GO:0000090)	
-PomBase	SPBC776.02c	dis2		GO:0032153	PMID:17895368	IDA		C	serine/threonine protein phosphatase PP1, Dis2	sds1|bws1	protein	NCBITaxon:4896	20150128	PomBase	exists_during(GO:0000090)	
-PomBase	SPBC2G5.06c	hmt2		GO:0006750	PMID:11679064	IMP		P	sulfide-quinone oxidoreductase	cad1	protein	NCBITaxon:4896	20120112	PomBase	happens_during(GO:0071276)	
-PomBase	SPAPB8E5.03	mae1		GO:0098714	PMID:1293882	IDA		P	malic acid transport protein Mae1		protein	NCBITaxon:4896	20121124	PomBase	happens_during(GO:0071333)	
-PomBase	SPBC646.13	sds23		GO:0005829	PMID:16819157	IDA		C	PP2A-type phosphatase inhibitor Sds23/Moc1	psp1|moc1	protein	NCBITaxon:4896	20050303	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC24B11.06c	sty1		GO:0004707	PMID:9136929	IDA		F	MAP kinase Sty1	spc1|phh1	protein	NCBITaxon:4896	20150108	PomBase	happens_during(GO:0071472),has_direct_input(PomBase:SPBC29B5.01)	
-PomBase	SPAC1805.17	crm1		GO:0005049	PMID:24478458	IMP		F	importin family nuclear export receptor Crm1	caf2|SPAC1B2.01	protein	NCBITaxon:4896	20160826	PomBase	happens_during(GO:0072690),has_direct_input(PomBase:SPCC645.07)	
-PomBase	SPBC725.02	mpr1		GO:0005737	PMID:20919928	IDA		C	histidine-containing response regulator phosphotransferase Mpr1	spy1	protein	NCBITaxon:4896	20160623	PomBase	exists_during(GO:0070301)	
-PomBase	SPCC74.06	mak3		GO:0005737	PMID:20919928	IDA		C	histidine kinase Mak3	phk2	protein	NCBITaxon:4896	20160623	PomBase	exists_during(GO:0070301)	
-PomBase	SPBC887.10	mcs4		GO:0005737	PMID:20919928	IDA		C	response regulator Mcs4		protein	NCBITaxon:4896	20160623	PomBase	exists_during(GO:0070301)	
-PomBase	SPAC27E2.09	mak2		GO:0005737	PMID:20919928	IDA		C	histidine kinase Mak2	phk1	protein	NCBITaxon:4896	20160623	PomBase	exists_during(GO:0070301)	
-PomBase	SPAC1834.08	mak1		GO:0005737	PMID:20919928	IDA		C	histidine kinase Mak1	phk3	protein	NCBITaxon:4896	20160623	PomBase	exists_during(GO:0070301)	
-PomBase	SPBC19G7.09	ulp1		GO:0034399	PMID:11884512	IDA		C	SUMO deconjugating enzyme Ulp1		protein	NCBITaxon:4896	20050708	PomBase	exists_during(GO:0000085)	
-PomBase	SPBC27.02c	ask1		GO:0043622	PMID:20624975	IGI	PomBase:SPAC18G6.15	P	DASH complex subunit Ask1	mug181	protein	NCBITaxon:4896	20160527	PomBase	happens_during(GO:0051329)	
-PomBase	SPCC576.15c	ksg1		GO:0004674	PMID:22976295	IDA		F	serine/threonine protein kinase Ksg1		protein	NCBITaxon:4896	20151027	PomBase	happens_during(GO:0071242),has_direct_input(PomBase:SPCC4G3.08)	
-PomBase	SPBC216.07c	tor2		GO:0004674	PMID:22976295	IDA		F	serine/threonine protein kinase Tor2	SPBC646.01c	protein	NCBITaxon:4896	20151027	PomBase	happens_during(GO:0071242),has_direct_input(PomBase:SPCC4G3.08)	
-PomBase	SPAC10F6.09c	psm3		GO:0003677	PMID:26687354	IMP		F	mitotic cohesin complex ATPase subunit Psm3/Smc3	smc3	protein	NCBITaxon:4896	20160709	PomBase	part_of(GO:0061780)	PR:000037033
-PomBase	SPAC1F7.01c	spt6		GO:1900050	PMID:23851719	IMP		P	nucleosome remodeling protein Spt6	SPAC694.07c	protein	NCBITaxon:4896	20130801	PomBase	happens_during(GO:0042789)	
-PomBase	SPBC29B5.01	atf1		GO:0001077	PMID:15164362	IMP		F	transcription factor, Atf-CREB family Atf1	mts1|sss1|gad7	protein	NCBITaxon:4896	20120106	PomBase	happens_during(GO:0071276),has_regulation_target(PomBase:SPBC660.07)	
-PomBase	SPAC21E11.03c	pcr1		GO:0001077	PMID:15164362	IMP		F	transcription factor Pcr1	mts2	protein	NCBITaxon:4896	20120106	PomBase	happens_during(GO:0071276),has_regulation_target(PomBase:SPBC660.07)	
-PomBase	SPAC8C9.03	cgs1		GO:0005737	PMID:18621924	IDA		C	cAMP-dependent protein kinase regulatory subunit Cgs1		protein	NCBITaxon:4896	20150205	PomBase	exists_during(GO:0060274)	
-PomBase	SPAC23E2.01	fep1		GO:0001078	PMID:25733668	IDA		F	iron-sensing transcription factor Fep1	gaf2	protein	NCBITaxon:4896	20150611	PomBase	happens_during(GO:0071281),has_regulation_target(PomBase:SPAC1F8.02c)	
-PomBase	SPAC607.09c	btn1		GO:0051286	PMID:18346214	IDA		C	battenin CLN3 family protein		protein	NCBITaxon:4896	20080331	PomBase	exists_during(GO:0034605)	
-PomBase	SPCC645.07	rgf1		GO:0051286	PMID:24478458	IDA		C	RhoGEF for Rho1, Rgf1		protein	NCBITaxon:4896	20160826	PomBase	exists_during(GO:0034605)	
-PomBase	SPAC11E3.03	csm1		GO:0000776	PMID:19758558	IDA		C	microtubule-site clamp monopolin complex subunit Csm1/Pcs1	pcs1	protein	NCBITaxon:4896	20141218	PomBase	exists_during(GO:0051329)	
-PomBase	SPAC8E11.02c	rad24		GO:0005515	PMID:16085489	IPI	PomBase:SPAC1782.09c	F	14-3-3 protein Rad24	sam4|anr5	protein	NCBITaxon:4896	20160921	PomBase	part_of(GO:0051220)	
-PomBase	SPAC8E11.02c	rad24		GO:0005515	PMID:15629716	IPI	PomBase:SPAC24H6.05	F	14-3-3 protein Rad24	sam4|anr5	protein	NCBITaxon:4896	20150121	PomBase	part_of(GO:0051220)	
-PomBase	SPCC962.02c	bir1		GO:0000778	PMID:11861551	IDA		C	survivin, Bir1	cut17|pbh1|SPCP31B10.10c	protein	NCBITaxon:4896	20041203	PomBase	exists_during(GO:0000091)	
-PomBase	SPBC19C2.09	sre1		GO:0061419	PMID:16537923	IMP		P	sterol regulatory element binding protein, transcription factor Sre1		protein	NCBITaxon:4896	20120131	PomBase	happens_during(GO:0071456),has_regulation_target(PomBase:SPAC19G12.08)	
-PomBase	SPCC16A11.17	mcm4		GO:0048478	PMID:18180284	IMP		P	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	NCBITaxon:4896	20151119	PomBase	happens_during(GO:0072711)	
-PomBase	SPCC1795.01c	mad3		GO:1990948	PMID:11909965	TAS		F	mitotic spindle checkpoint protein Mad3	SPCC895.02	protein	NCBITaxon:4896	20050503	PomBase	has_direct_input(GO:0005680),part_of(GO:0045841)	
-PomBase	SPCC4F11.02	ptc1		GO:0070262	PMID:8196617	IDA		P	protein phosphatase 2C Ptc1		protein	NCBITaxon:4896	20140804	PomBase	happens_during(GO:0034605)	
-PomBase	SPAC3G9.01	nsk1		GO:0000942	PMID:22065639	IDA		C	Clp1-interacting, microtubule plus-end binding Nsk1		protein	NCBITaxon:4896	20130905	PomBase	exists_during(GO:0000236)	
-PomBase	SPBC16E9.07	mug100		GO:0005739	PMID:22146723	IDA		C	Schizosaccharomyces pombe specific protein Mug100		protein	NCBITaxon:4896	20151105	PomBase	exists_during(GO:0000278)	
-PomBase	SPBC115.02c	afg1		GO:0005739	PMID:22146723	IDA		C	AFG1 family mitochondrial ATPase Afg1 (predicted)		protein	NCBITaxon:4896	20151105	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC16C9.07	pom2		GO:0005739	PMID:22174761	IDA		C	DYRK family protein kinase Pom2	ppk5|SPAC2G11.01|mug189	protein	NCBITaxon:4896	20130123	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC7D4.13c	SPAC7D4.13c		GO:0005739	PMID:22146723	IDA		C	Schizosaccharomyces specific protein		protein	NCBITaxon:4896	20151105	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC1610.04	mug99		GO:0005739	PMID:22146723	IDA		C	conserved fungal protein Mug99		protein	NCBITaxon:4896	20151105	PomBase	exists_during(GO:0000278)	
-PomBase	SPAC222.10c	byr4		GO:0044732	PMID:10799520	IDA		C	two-component GAP Byr4		protein	NCBITaxon:4896	20041018	PomBase	exists_during(GO:0051329)	
-PomBase	SPBC12D12.01	sad1		GO:0044732	PMID:9802907	IDA		C	spindle pole body SUN domain protein Sad1	SPBC16H5.01c	protein	NCBITaxon:4896	20160428	PomBase	exists_during(GO:0051329)	
-PomBase	SPBC582.03	cdc13		GO:0044732	PMID:11084332	IDA		C	G2/M B-type cyclin Cdc13		protein	NCBITaxon:4896	20151214	PomBase	exists_during(GO:0051329)	
-PomBase	SPBC365.15	alp4		GO:0044732	PMID:11080156	IDA		C	gamma tubulin complex Spc97/GCP2 subunit Alp4		protein	NCBITaxon:4896	20150323	PomBase	exists_during(GO:0051329)	
-PomBase	SPAC4D7.07c	csi2		GO:0044732	PMID:25253718	IDA		C	mitotic chromosome segregation protein Csi2		protein	NCBITaxon:4896	20150515	PomBase	exists_during(GO:0051329)	
-PomBase	SPAC1782.09c	clp1		GO:0044732	PMID:16085489	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	NCBITaxon:4896	20150302	PomBase	exists_during(GO:0051329)	
-PomBase	SPBC428.20c	alp6		GO:0044732	PMID:11080156	IDA		C	gamma tubulin complex Spc98/GCP3 subunit Alp6	SPBC902.01c	protein	NCBITaxon:4896	20150323	PomBase	exists_during(GO:0051329)	
-PomBase	SPAC1782.09c	clp1		GO:0044732	PMID:11448769	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	NCBITaxon:4896	20140922	PomBase	exists_during(GO:0051329)	
-PomBase	SPAC1782.09c	clp1		GO:0044732	PMID:18951025	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	NCBITaxon:4896	20150224	PomBase	exists_during(GO:0051329)	
-PomBase	SPAC4D7.05	sum1		GO:0034399	PMID:12006658	IDA		C	translation initiation factor eIF3i	tif34	protein	NCBITaxon:4896	20140218	PomBase	exists_during(GO:0034605)	
-PomBase	SPAC31A2.05c	mis4		GO:0003690	PMID:24291789	IDA		F	cohesin loading factor (adherin) Mis4		protein	NCBITaxon:4896	20160823	PomBase	part_of(GO:1905406)	
-PomBase	SPAC1687.18c	ssl3		GO:0003690	PMID:24291789	IDA		F	cohesin loading factor Ssl3		protein	NCBITaxon:4896	20160823	PomBase	part_of(GO:1905406)	
-PomBase	SPAC20G8.05c	cdc15		GO:0032153	PMID:7634333	IDA		C	extended Fer/CIP4 (EFC) domain protein Cdc15		protein	NCBITaxon:4896	20150306	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC12C2.08	dnm1		GO:0032153	PMID:19373772	IDA		C	mitochondrial dynamin family scission GTPase Dnm1		protein	NCBITaxon:4896	20140911	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC146.13c	myo1		GO:0032153	PMID:11260263	IDA		C	myosin type I		protein	NCBITaxon:4896	20160908	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC821.12	orb6		GO:0032153	PMID:9636183	IDA		C	serine/threonine protein kinase Orb6		protein	NCBITaxon:4896	20160307	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC19G7.05c	bgs1		GO:0032153	PMID:27082518	IDA		C	primary septum and spore wall linear 1,3-beta-glucan synthase catalytic subunit Bgs1	cps1|drc1|swl1	protein	NCBITaxon:4896	20160715	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC530.14c	dsk1		GO:0032153	PMID:16823372	IDA		C	SR protein-specific kinase Dsk1		protein	NCBITaxon:4896	20121113	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC3H8.10	spo20		GO:0032153	PMID:11294895	IDA		C	sec14 cytosolic factor family, glycerophospholipid-transfer protein Spo20/Sec14	sec14	protein	NCBITaxon:4896	20140402	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC6G9.11	syb1		GO:0032153	PMID:27082518	IDA		C	SNAP receptor, synaptobrevin family		protein	NCBITaxon:4896	20160715	PomBase	exists_during(GO:0000087)	
-PomBase	SPCC825.03c	psy1		GO:0032153	PMID:27082518	IDA		C	SNARE Psy1	sso1	protein	NCBITaxon:4896	20160715	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC1782.09c	clp1		GO:0032153	PMID:11448769	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	NCBITaxon:4896	20140922	PomBase	exists_during(GO:0000087)	
-PomBase	SPCC1739.10	mug33		GO:0032153	PMID:21652630	IDA		C	Tea1-interacting protein involved in exocytosis		protein	NCBITaxon:4896	20131107	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC688.07c	rng10		GO:0032153	PMID:27385337	IDA		C	coiled-coil protein involved in septum formation Rng10		protein	NCBITaxon:4896	20160720	PomBase	exists_during(GO:0000087)	
-PomBase	SPCC1919.03c	amk2		GO:0005737	PMID:22375066	IDA		C	AMP-activated protein kinase beta subunit Amk2		protein	NCBITaxon:4896	20150223	PomBase	exists_during(GO:0006995)	
-PomBase	SPCC74.03c	ssp2		GO:0005737	PMID:22375066	IDA		C	AMP-activated protein serine/threonine kinase alpha subunit Ssp2	ucp9	protein	NCBITaxon:4896	20150223	PomBase	exists_during(GO:0006995)	
-PomBase	SPAC1556.08c	cbs2		GO:0005737	PMID:22375066	IDA		C	AMP-activated protein kinase gamma subunit cbs2	SPAC1F12.01c	protein	NCBITaxon:4896	20150223	PomBase	exists_during(GO:0006995)	
-PomBase	SPAC2E12.02	hsf1		GO:0000790	PMID:21072667	IDA		C	transcription factor Hsf1	hstf|hsf	protein	NCBITaxon:4896	20150409	PomBase	coincident_with(PomBase:SPBP35G2.16c),exists_during(GO:0034605)	
-PomBase	SPAC644.14c	rad51		GO:0035861	PMID:12023299	IDA		C	RecA family recombinase Rad51/Rhp51	rhp51	protein	NCBITaxon:4896	20160427	PomBase	exists_during(GO:0000085),exists_during(GO:0071479)	
-PomBase	SPBC16G5.12c	top3		GO:0035861	PMID:12023299	IDA		C	DNA topoisomerase III		protein	NCBITaxon:4896	20160427	PomBase	exists_during(GO:0000085),exists_during(GO:0071479)	
-PomBase	SPAC2G11.12	rqh1		GO:0035861	PMID:12023299	IDA		C	RecQ type DNA helicase Rqh1	hus2|rad12|rec9	protein	NCBITaxon:4896	20160427	PomBase	exists_during(GO:0000085),exists_during(GO:0071479)	
-PomBase	SPCC188.02	par1		GO:0005826	PMID:11707284	IDA		C	protein phosphatase PP2A regulatory subunit B-56 Par1	pbp1	protein	NCBITaxon:4896	20150115	PomBase	exists_during(GO:0000090)	
-PomBase	SPBC4.04c	mcm2		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm2	cdc19|nda1	protein	NCBITaxon:4896	20141106	PomBase	exists_during(GO:0000080)	
-PomBase	SPCC1682.02c	mcm3		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm3		protein	NCBITaxon:4896	20141106	PomBase	exists_during(GO:0000080)	
-PomBase	SPBC428.18	cdt1		GO:0000790	PMID:10766248	IDA		C	replication licensing factor Cdt1		protein	NCBITaxon:4896	20150507	PomBase	exists_during(GO:0000080)	
-PomBase	SPCC16A11.17	mcm4		GO:0000790	PMID:11854402	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	NCBITaxon:4896	20121005	PomBase	exists_during(GO:0000080)	
-PomBase	SPBC211.04c	mcm6		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm6	mis5	protein	NCBITaxon:4896	20141106	PomBase	exists_during(GO:0000080)	
-PomBase	SPCC16A11.17	mcm4		GO:0000790	PMID:10766248	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	NCBITaxon:4896	20150507	PomBase	exists_during(GO:0000080)	
-PomBase	SPBC25D12.03c	mcm7		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm7		protein	NCBITaxon:4896	20141106	PomBase	exists_during(GO:0000080)	
-PomBase	SPCC16A11.17	mcm4		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	NCBITaxon:4896	20141106	PomBase	exists_during(GO:0000080)	
-PomBase	SPAPB1E7.02c	mcl1		GO:0000790	PMID:15643072	IDA		C	DNA polymerase alpha accessory factor Mcl1	slr3	protein	NCBITaxon:4896	20141103	PomBase	exists_during(GO:0000080)	
-PomBase	SPCC16A11.17	mcm4		GO:0000790	PMID:10747035	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	NCBITaxon:4896	20120919	PomBase	exists_during(GO:0000080)	
-PomBase	SPAPB1E7.02c	mcl1		GO:0000790	PMID:12455694	IDA		C	DNA polymerase alpha accessory factor Mcl1	slr3	protein	NCBITaxon:4896	20141106	PomBase	exists_during(GO:0000080)	
-PomBase	SPAC458.04c	dli1		GO:0005868	PMID:20298435	IDA		C	meiotic dynein intermediate light chain Dli1/Dil1	dil1	protein	NCBITaxon:4896	20120323	PomBase	exists_during(GO:0007128)	
-PomBase	SPBC11B10.09	cdc2		GO:0005737	PMID:11683390	EXP		C	cyclin-dependent protein kinase Cdk1/Cdc2	swo2|cdk1|tws1|wee2	protein	NCBITaxon:4896	20161020	PomBase	exists_during(GO:0000093)	
-PomBase	SPAC1782.09c	clp1		GO:0005737	PMID:18951025	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	NCBITaxon:4896	20150224	PomBase	exists_during(GO:0000093)	
-PomBase	SPAC644.14c	rad51		GO:0000775	PMID:18923422	IDA		C	RecA family recombinase Rad51/Rhp51	rhp51	protein	NCBITaxon:4896	20121107	PomBase	exists_during(GO:0000084)	
-PomBase	SPBC582.05c	brc1		GO:0000775	PMID:20661445	IDA		C	BRCT domain protein Brc1		protein	NCBITaxon:4896	20130828	PomBase	exists_during(GO:0000084)	
-PomBase	SPCC297.03	ssp1		GO:0051285	PMID:24451546	IDA		C	Ca2+/calmodulin-dependent (CaMMK)-like protein kinase Ssp1		protein	NCBITaxon:4896	20150224	PomBase	exists_during(GO:0071472)	
-PomBase	SPAP8A3.02c	ofd2		GO:0000790	PMID:22235339	IDA		C	histone H2A dioxygenase Ofd2		protein	NCBITaxon:4896	20150916	PomBase	coincident_with(PomBase:SPAC1782.07),exists_during(GO:0071456)	
-PomBase	SPAP8A3.02c	ofd2		GO:0000790	PMID:22235339	IDA		C	histone H2A dioxygenase Ofd2		protein	NCBITaxon:4896	20150916	PomBase	coincident_with(PomBase:SPCC191.07),exists_during(GO:0071456)	
-PomBase	SPBC19C2.09	sre1		GO:0061419	PMID:16537923	IMP		P	sterol regulatory element binding protein, transcription factor Sre1		protein	NCBITaxon:4896	20120131	PomBase	happens_during(GO:0071456),has_regulation_target(PomBase:SPBC19C2.09)	
-PomBase	SPAC18G6.10	lem2		GO:0044732	PMID:21880100	IDA		C	LEM domain protein Heh1/Lem2	heh1	protein	NCBITaxon:4896	20120203	PomBase	exists_during(GO:0000092)	
-PomBase	SPAC3G9.01	nsk1		GO:0044732	PMID:21965289	IDA		C	Clp1-interacting, microtubule plus-end binding Nsk1		protein	NCBITaxon:4896	20121113	PomBase	exists_during(GO:0000092)	
-PomBase	SPAC222.10c	byr4		GO:0044732	PMID:24920823	IDA		C	two-component GAP Byr4		protein	NCBITaxon:4896	20140716	PomBase	exists_during(GO:0000092)	
-PomBase	SPBC776.13	cnd1		GO:0005730	PMID:18362178	IDA		C	condensin complex non-SMC subunit Cnd1		protein	NCBITaxon:4896	20150213	PomBase	exists_during(GO:0000087)	
-PomBase	SPBP4H10.06c	cut14		GO:0035327	PMID:25847133	IDA		C	condensin complex SMC subunit Smc2	smc2	protein	NCBITaxon:4896	20150828	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC23C11.16	plo1		GO:0045944	PMID:12411492	IMP		P	Polo kinase Plo1		protein	NCBITaxon:4896	20151019	PomBase	happens_during(GO:0010458),occurs_at(SO:0001871)	
-PomBase	SPCC736.14	dis1		GO:0044732	PMID:7628693	IDA		C	TOG/XMAP14 microtubule-associated protein Dis1		protein	NCBITaxon:4896	20141230	PomBase	exists_during(GO:0000089)	
-PomBase	SPBC902.06	mto2		GO:0044732	PMID:15800064	IDA		C	microtubule organizer Mto2		protein	NCBITaxon:4896	20160922	PomBase	exists_during(GO:0000089)	
-PomBase	SPBC17F3.02	nak1		GO:0044732	PMID:23394829	IDA		C	PAK-related GC kinase Nak1	orb3|mor4	protein	NCBITaxon:4896	20140327	PomBase	exists_during(GO:0000089)	
-PomBase	SPBC582.03	cdc13		GO:0044732	PMID:11683390	EXP		C	G2/M B-type cyclin Cdc13		protein	NCBITaxon:4896	20161021	PomBase	exists_during(GO:0000089)	
-PomBase	SPBC11B10.09	cdc2		GO:0044732	PMID:11683390	EXP		C	cyclin-dependent protein kinase Cdk1/Cdc2	swo2|cdk1|tws1|wee2	protein	NCBITaxon:4896	20161021	PomBase	exists_during(GO:0000089)	
-PomBase	SPBC20F10.06	mad2		GO:0044732	PMID:15930132	IDA		C	mitotic spindle checkpoint protein Mad2		protein	NCBITaxon:4896	20151126	PomBase	exists_during(GO:0000089)	
-PomBase	SPAC12G12.04	mcp60		GO:0005758	PMID:22139357	IDA		C	mitochondrial heat shock protein Hsp60/Mcp60	hsp60	protein	NCBITaxon:4896	20150122	PomBase	exists_during(GO:0070301)	
-PomBase	SPAC24B11.06c	sty1		GO:0005758	PMID:22139357	IDA		C	MAP kinase Sty1	spc1|phh1	protein	NCBITaxon:4896	20150122	PomBase	exists_during(GO:0070301)	
-PomBase	SPCC1322.08	srk1		GO:0004674	PMID:15629716	IDA		F	MAPK-activated protein kinase Srk1	mkp1	protein	NCBITaxon:4896	20150121	PomBase	happens_during(GO:0000085),has_direct_input(PomBase:SPAC24H6.05)	
-PomBase	SPAC1093.06c	dhc1		GO:0035974	PMID:10366596	IDA		C	minus-end directed microtubule motor, dynein heavy chain Dhc1	SPAC30C2.01c	protein	NCBITaxon:4896	20141126	PomBase	exists_during(GO:0007132)	
-PomBase	SPAC1805.08	dlc1		GO:0030981	PMID:11907273	IDA		C	dynein light chain Dlc1		protein	NCBITaxon:4896	20141128	PomBase	exists_during(GO:0051321)	
-PomBase	SPAC15A10.16	bud6		GO:0035839	PMID:20870879	IDA		C	actin interacting protein 3 homolog Bud6	aip3|fat1|SPAC15E1.01	protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPAC2F7.03c	pom1		GO:0035839	PMID:20870879	IDA		C	DYRK family protein kinase Pom1		protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPBC1706.01	tea4		GO:0035839	PMID:20870879	IDA		C	tip elongation aberrant protein Tea4	wsh3	protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPCC1223.06	tea1		GO:0035839	PMID:20870879	IDA		C	cell end marker Tea1	alp8	protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPBC530.04	mod5		GO:0035839	PMID:20870879	IDA		C	Tea1 anchoring protein Mod5		protein	NCBITaxon:4896	20120503	PomBase	exists_during(GO:0007124)	
-PomBase	SPAC23C11.16	plo1		GO:0005634	PMID:9852154	IDA		C	Polo kinase Plo1		protein	NCBITaxon:4896	20121012	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC776.13	cnd1		GO:0005634	PMID:18362178	IDA		C	condensin complex non-SMC subunit Cnd1		protein	NCBITaxon:4896	20150213	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC530.14c	dsk1		GO:0005634	PMID:8485317	IDA		C	SR protein-specific kinase Dsk1		protein	NCBITaxon:4896	20141203	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC664.10	klp2		GO:0005634	PMID:11694582	IDA		C	minus-end directed microtubule motor kinesin-14, Klp2		protein	NCBITaxon:4896	20141128	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC2A9.07c	hpz1		GO:0005634	PMID:22970243	IDA		C	zf-PARP type zinc finger protein, G1-S transition regulator Hpz1		protein	NCBITaxon:4896	20140701	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC146.03c	cut3		GO:0005634	PMID:18362178	IDA		C	condensin complex SMC subunit Smc4	smc4	protein	NCBITaxon:4896	20150311	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC2F12.13	klp5		GO:0005634	PMID:18799626	IDA		C	kinesin-8 family plus-end microtubule motor Klp5	sot1	protein	NCBITaxon:4896	20140304	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC1685.15c	klp6		GO:0005634	PMID:18799626	IDA		C	kinesin-8 family plus-end microtubule motor Klp6	sot2|SPBC649.01c	protein	NCBITaxon:4896	20140305	PomBase	exists_during(GO:0000087)	
-PomBase	SPBC11B10.09	cdc2		GO:0005634	PMID:11084332	IDA		C	cyclin-dependent protein kinase Cdk1/Cdc2	swo2|cdk1|tws1|wee2	protein	NCBITaxon:4896	20151214	PomBase	exists_during(GO:0000087)	
-PomBase	SPCC16C4.03	pin1		GO:0005634	PMID:11707530	IDA		C	peptidyl-prolyl cis-trans isomerase Pin1		protein	NCBITaxon:4896	20141016	PomBase	exists_during(GO:0000087)	
-PomBase	SPCC895.07	alp14		GO:0005634	PMID:19606211	IDA		C	TOG/XMAP14 family protein Alp14	mtc1	protein	NCBITaxon:4896	20090817	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC7D4.07c	trx1		GO:0015035	PMID:22245228	EXP		F	cytosolic thioredoxin Trx1		protein	NCBITaxon:4896	20120524	PomBase	happens_during(GO:0070301),has_direct_input(PomBase:SPAC29E6.05c)	
-PomBase	SPBC16D10.04c	dna2		GO:0003682	PMID:22682245	IDA		F	DNA replication endonuclease-helicase Dna2		protein	NCBITaxon:4896	20140205	PomBase	happens_during(GO:0031297),occurs_at(GO:0043596)	
-PomBase	SPAC8C9.03	cgs1		GO:0046827	PMID:18621924	IMP		P	cAMP-dependent protein kinase regulatory subunit Cgs1		protein	NCBITaxon:4896	20150211	PomBase	happens_during(GO:0042149),has_regulation_target(PomBase:SPBC106.10)	
-PomBase	SPAC1F5.04c	cdc12		GO:0007015	PMID:24954052	IMP		P	formin Cdc12		protein	NCBITaxon:4896	20140702	PomBase	occurs_at(GO:0005826)	
-PomBase	SPAC3H8.10	spo20		GO:0060187	PMID:11294895	IDA		C	sec14 cytosolic factor family, glycerophospholipid-transfer protein Spo20/Sec14	sec14	protein	NCBITaxon:4896	20140402	PomBase	exists_during(GO:0000087)	
-PomBase	SPAC607.09c	btn1		GO:0032153	PMID:18346214	IDA		C	battenin CLN3 family protein		protein	NCBITaxon:4896	20080331	PomBase	exists_during(GO:0034605)	
-PomBase	SPAC9G1.02	wis4		GO:0051403	PMID:23389634	IMP		P	MAP kinase kinase kinase Wis4	wak1|wik1	protein	NCBITaxon:4896	20130801	PomBase	happens_during(GO:0071470)	
-PomBase	SPAC1006.09	win1		GO:0051403	PMID:23389634	IMP		P	MAP kinase kinase kinase Win1	SPAC1250.06c|SPAPJ730.01	protein	NCBITaxon:4896	20130801	PomBase	happens_during(GO:0071470)	
+PomBase	SPCC1322.12c	bub1		GO:0071957	PMID:16179942	IDA		C	mitotic spindle checkpoint kinase Bub1		protein	taxon:4896	20140908	PomBase	exists_during(GO:0000088)	
+PomBase	SPAC644.12	cdc5		GO:0005634	PMID:20970342	IDA		C	splicing factor, Prp19 complex subunit Cdc5		protein	taxon:4896	20110804	PomBase	exists_during(GO:0007137)	
+PomBase	SPBC1703.14c	top1		GO:0005634	PMID:20970342	IDA		C	DNA topoisomerase I		protein	taxon:4896	20110804	PomBase	exists_during(GO:0007137)	
+PomBase	SPAC343.07	mug28		GO:0005634	PMID:20410137	IDA		C	RNA-binding protein Mug28		protein	taxon:4896	20151008	PomBase	exists_during(GO:0007137)	
+PomBase	SPCC962.06c	bpb1		GO:0005634	PMID:20970342	IDA		C	KH and CC/hC domain splicing factor Bpb1	sf1|ods3	protein	taxon:4896	20110804	PomBase	exists_during(GO:0007137)	
+PomBase	SPBC646.04	pla1		GO:0005634	PMID:20970342	IDA		C	poly(A) polymerase Pla1		protein	taxon:4896	20110804	PomBase	exists_during(GO:0007137)	
+PomBase	SPBC582.03	cdc13		GO:0005634	PMID:15791259	IDA		C	G2/M B-type cyclin Cdc13		protein	taxon:4896	20150506	PomBase	exists_during(GO:0007137)	
+PomBase	SPAC926.07c	dlc2		GO:0034399	PMID:11907273	IDA		C	dynein light chain Dlc2 (predicted)		protein	taxon:4896	20141128	PomBase	exists_during(GO:0051321)	
+PomBase	SPCC4B3.15	mid1		GO:0005826	PMID:9852154	IDA		C	medial ring protein Mid1	dmf1	protein	taxon:4896	20121012	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC1782.09c	clp1		GO:0005826	PMID:16085489	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	taxon:4896	20150302	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC19G7.05c	bgs1		GO:0005826	PMID:24790095	IDA		C	primary septum and spore wall linear 1,3-beta-glucan synthase catalytic subunit Bgs1	cps1|drc1|swl1	protein	taxon:4896	20151028	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC27F1.02c	cdc8		GO:0005826	PMID:20807799	IDA		C	tropomyosin	fus4	protein	taxon:4896	20130909	PomBase	exists_during(GO:0000087)	PR:000037081
+PomBase	SPBC1A4.05	blt1		GO:0005826	PMID:24790095	IDA		C	ubiquitin domain-like protein Blt1		protein	taxon:4896	20151028	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC12B10.10	nod1		GO:0005826	PMID:23349808	IDA		C	medial cortical node Gef2-related protein protein Nod1		protein	taxon:4896	20130731	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC1A4.05	blt1		GO:0005826	PMID:23349808	IDA		C	ubiquitin domain-like protein Blt1		protein	taxon:4896	20130731	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC20G8.05c	cdc15		GO:0005826	PMID:24790095	IDA		C	extended Fer/CIP4 (EFC) domain protein Cdc15		protein	taxon:4896	20151028	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC31A2.16	gef2		GO:0005826	PMID:23349808	IDA		C	RhoGEF Gef2		protein	taxon:4896	20130731	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC7D4.07c	trx1		GO:0015035	PMID:22245228	EXP		F	cytosolic thioredoxin Trx1		protein	taxon:4896	20120524	PomBase	happens_during(GO:0072690),has_direct_input(PomBase:SPAC29E6.05c)	
+PomBase	SPCC16A11.17	mcm4		GO:0030875	PMID:10747035	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	taxon:4896	20120919	PomBase	exists_during(GO:0000080)	
+PomBase	SPBC336.09c	rrn7		GO:0000983	PMID:25410910	IDA		F	RNA polymerase I core factor complex subunit Rrn7		protein	taxon:4896	20160303	PomBase	part_of(GO:0045944)	
+PomBase	SPBC29A3.17	gef3		GO:0036391	PMID:24947517	IDA		C	RhoGEF Gef3		protein	taxon:4896	20160822	PomBase	exists_during(GO:0000093)	
+PomBase	SPBC2G2.14	csi1		GO:0035974	PMID:26483559	EXP		C	mitotic centromere-SPB clustering protein Csi1		protein	taxon:4896	20160630	PomBase	exists_during(GO:0007128)	
+PomBase	SPBC582.06c	mcp6		GO:0035974	PMID:15654021	IDA		C	horsetail movement protein Hrs1/Mcp6	hrs1|mug3	protein	taxon:4896	20141128	PomBase	exists_during(GO:0007128)	
+PomBase	SPBC1778.02	rap1	colocalizes_with	GO:0035974	PMID:11676924	IDA		C	telomere binding protein Rap1	lot2	protein	taxon:4896	20150527	PomBase	exists_during(GO:0007128)	
+PomBase	SPBC646.17c	dic1		GO:0035974	PMID:20298435	IDA		C	meiotic dynein intermediate chain Dic1	SPBC855.01c|SPBP35G2.01c|mug44	protein	taxon:4896	20120405	PomBase	exists_during(GO:0007128)	
+PomBase	SPAC458.04c	dli1		GO:0035974	PMID:20298435	IDA		C	meiotic dynein intermediate light chain Dli1/Dil1	dil1	protein	taxon:4896	20120323	PomBase	exists_during(GO:0007128)	
+PomBase	SPBC582.06c	mcp6		GO:0035974	PMID:16111942	IDA		C	horsetail movement protein Hrs1/Mcp6	hrs1|mug3	protein	taxon:4896	20050110	PomBase	exists_during(GO:0007128)	
+PomBase	SPAC16A10.07c	taz1	colocalizes_with	GO:0035974	PMID:11676924	IDA		C	human TRF ortholog Taz1	myb1|myb|lot3	protein	taxon:4896	20150527	PomBase	exists_during(GO:0007128)	
+PomBase	SPAC1093.06c	dhc1		GO:0035974	PMID:10366596	IDA		C	minus-end directed microtubule motor, dynein heavy chain Dhc1	SPAC30C2.01c	protein	taxon:4896	20141126	PomBase	exists_during(GO:0007128)	
+PomBase	SPAC1093.06c	dhc1		GO:0035974	PMID:20298435	IDA		C	minus-end directed microtubule motor, dynein heavy chain Dhc1	SPAC30C2.01c	protein	taxon:4896	20120405	PomBase	exists_during(GO:0007128)	
+PomBase	SPCC1223.06	tea1		GO:0035838	PMID:20870879	IDA		C	cell end marker Tea1	alp8	protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPBC23G7.04c	nif1		GO:0035838	PMID:20870879	IDA		C	SEL1 repeat protein Nif1		protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPAC15A10.16	bud6		GO:0035838	PMID:20870879	IDA		C	actin interacting protein 3 homolog Bud6	aip3|fat1|SPAC15E1.01	protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPCC1840.02c	bgs4		GO:0035838	PMID:20870879	IDA		C	secondary septum 1,6 branched 1,3-beta-glucan synthase catalytic subunit Bgs4	orb11|cwg1|pbr1|sph1	protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPAC23C4.02	crn1		GO:0035838	PMID:20870879	IDA		C	actin binding protein, coronin Crn1		protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPAC110.03	cdc42		GO:0035838	PMID:20870879	IDA		C	Rho family GTPase Cdc42		protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPAC3H8.10	spo20		GO:0035838	PMID:20870879	IDA		C	sec14 cytosolic factor family, glycerophospholipid-transfer protein Spo20/Sec14	sec14	protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPBC1105.17	cnp1		GO:0043505	PMID:18077559	IMP		C	centromere-specific histone H3 CENP-A	sim2	protein	taxon:4896	20110901	PomBase	exists_during(GO:0000080)	
+PomBase	SPBP4H10.06c	cut14		GO:0035327	PMID:25847133	IDA		C	condensin complex SMC subunit Smc2	smc2	protein	taxon:4896	20150828	PomBase	exists_during(GO:0000085)	
+PomBase	SPBP22H7.09c	mis15		GO:0000779	PMID:17035632	IDA		C	kinetochore protein, CENP-N ortholog Mis15		protein	taxon:4896	20070529	PomBase	exists_during(GO:0000278)	
+PomBase	SPBC1861.01c	cnp3		GO:0000779	PMID:17035632	IDA		C	kinetochore protein, CENP-C ortholog Cnp3	SPBC56F2.13|mif2	protein	taxon:4896	20070529	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC1687.20c	mis6		GO:0000779	PMID:17035632	IDA		C	kinetochore protein, CENP-I ortholog Mis6		protein	taxon:4896	20070529	PomBase	exists_during(GO:0000278)	
+PomBase	SPBC18E5.03c	sim4		GO:0000779	PMID:17035632	IDA		C	kinetochore protein, CENP-K ortholog Sim4		protein	taxon:4896	20070529	PomBase	exists_during(GO:0000278)	
+PomBase	SPBC409.09c	mis13		GO:0000779	PMID:17035632	IDA		C	NMS complex subunit Mis13	cnl1	protein	taxon:4896	20070529	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC16A10.05c	dad1		GO:0000779	PMID:17035632	IDA		C	DASH complex subunit Dad1		protein	taxon:4896	20070529	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC6F12.02	rst2		GO:0005737	PMID:21118717	IDA		C	transcription factor Rst2		protein	taxon:4896	20150812	PomBase	exists_during(GO:0071333)	
+PomBase	SPBC1105.17	cnp1		GO:0043505	PMID:18077559	IMP		C	centromere-specific histone H3 CENP-A	sim2	protein	taxon:4896	20110901	PomBase	exists_during(GO:0000085)	
+PomBase	SPBC32F12.04	gtb1		GO:0000923	PMID:1770000	IDA		C	gamma-tubulin Gtb1	tug1	protein	taxon:4896	20130923	PomBase	exists_during(GO:0000093),exists_during(GO:0000281)	
+PomBase	SPAC17D4.02	cdc45		GO:0003682	PMID:19109429	IDA		F	DNA replication pre-initiation complex subunit Cdc45	sna41|goa1	protein	taxon:4896	20120523	PomBase	happens_during(GO:0000084)	
+PomBase	SPBC216.02	mcp5		GO:0005938	PMID:16585273	IDA		C	cortical anchoring factor for dynein Mcp5/Num1	num1|mug21	protein	taxon:4896	20060424	PomBase	exists_during(GO:0007128)	
+PomBase	SPBC216.02	mcp5		GO:0005938	PMID:16624923	IDA		C	cortical anchoring factor for dynein Mcp5/Num1	num1|mug21	protein	taxon:4896	20060424	PomBase	exists_during(GO:0007128)	
+PomBase	SPAC458.04c	dli1		GO:0071687	PMID:20404563	IDA		C	meiotic dynein intermediate light chain Dli1/Dil1	dil1	protein	taxon:4896	20130430	PomBase	exists_during(GO:0007128)	
+PomBase	SPAC24H6.05	cdc25		GO:0005737	PMID:1500423	IDA		C	M phase inducer tyrosine phosphatase Cdc25	sal2	protein	taxon:4896	20041103	PomBase	exists_during(GO:0000089)	
+PomBase	SPBC11B10.09	cdc2		GO:0005737	PMID:11683390	EXP		C	cyclin-dependent protein kinase Cdk1/Cdc2	swo2|cdk1|tws1|wee2	protein	taxon:4896	20161020	PomBase	exists_during(GO:0000089)	
+PomBase	SPCC4F11.02	ptc1		GO:0035970	PMID:8196617	IDA		P	protein phosphatase 2C Ptc1		protein	taxon:4896	20140804	PomBase	happens_during(GO:0034605)	
+PomBase	SPAC2E12.02	hsf1		GO:0000790	PMID:21072667	IDA		C	transcription factor Hsf1	hstf|hsf	protein	taxon:4896	20150409	PomBase	coincident_with(PomBase:SPAC2E12.02),exists_during(GO:0034605)	
+PomBase	SPBC19C2.09	sre1		GO:0061419	PMID:16537923	IMP		P	sterol regulatory element binding protein, transcription factor Sre1		protein	taxon:4896	20120131	PomBase	happens_during(GO:0071456),has_regulation_target(PomBase:SPBC887.15c)	
+PomBase	SPBC902.06	mto2		GO:0044732	PMID:15837798	IDA		C	microtubule organizer Mto2		protein	taxon:4896	20050624	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC890.02c	alp7		GO:0044732	PMID:12360293	IDA		C	centrosomal transforming acidic coiled-coil (TACC) protein ortholog Alp7	mia1	protein	taxon:4896	20040818	PomBase	exists_during(GO:0000278)	
+PomBase	SPBC725.12	nbl1		GO:0000778	PMID:19570910	IDA		C	Borealin homolog Nbl1	mug118	protein	taxon:4896	20090707	PomBase	exists_during(GO:0000089)	
+PomBase	SPAC11E3.03	csm1		GO:0000778	PMID:20935472	IDA		C	microtubule-site clamp monopolin complex subunit Csm1/Pcs1	pcs1	protein	taxon:4896	20150212	PomBase	exists_during(GO:0000089)	
+PomBase	SPCC962.02c	bir1		GO:0000778	PMID:11861551	IDA		C	survivin, Bir1	cut17|pbh1|SPCP31B10.10c	protein	taxon:4896	20041203	PomBase	exists_during(GO:0000089)	
+PomBase	SPAC25G10.07c	cut7		GO:0000778	PMID:26258632	IDA		C	kinesin family plus-end microtubule motor Cut7		protein	taxon:4896	20151125	PomBase	exists_during(GO:0000089)	
+PomBase	SPCC962.02c	bir1		GO:0000778	PMID:11554922	IDA		C	survivin, Bir1	cut17|pbh1|SPCP31B10.10c	protein	taxon:4896	20150814	PomBase	exists_during(GO:0000089)	
+PomBase	SPCC320.13c	ark1		GO:0000778	PMID:11554922	IDA		C	aurora-B kinase Ark1	aim1|SPCC330.16	protein	taxon:4896	20150814	PomBase	exists_during(GO:0000089)	
+PomBase	SPCC320.13c	ark1		GO:0000778	PMID:19570910	IDA		C	aurora-B kinase Ark1	aim1|SPCC330.16	protein	taxon:4896	20090707	PomBase	exists_during(GO:0000089)	
+PomBase	SPCC320.13c	ark1		GO:0000778	PMID:11792803	IDA		C	aurora-B kinase Ark1	aim1|SPCC330.16	protein	taxon:4896	20161012	PomBase	exists_during(GO:0000089)	
+PomBase	SPAC6G10.02c	tea3		GO:0032153	PMID:12007420	IDA		C	cell end marker Tea3		protein	taxon:4896	20051003	PomBase	exists_during(GO:0000090)	
+PomBase	SPAC20H4.11c	rho5		GO:0032153	PMID:16146630	IDA		C	Rho family GTPase Rho5		protein	taxon:4896	20050913	PomBase	exists_during(GO:0000090)	
+PomBase	SPBC776.02c	dis2		GO:0032153	PMID:17895368	IDA		C	serine/threonine protein phosphatase PP1, Dis2	sds1|bws1	protein	taxon:4896	20150128	PomBase	exists_during(GO:0000090)	
+PomBase	SPBC2G5.06c	hmt2		GO:0006750	PMID:11679064	IMP		P	sulfide-quinone oxidoreductase	cad1	protein	taxon:4896	20120112	PomBase	happens_during(GO:0071276)	
+PomBase	SPAPB8E5.03	mae1		GO:0098714	PMID:1293882	IDA		P	malic acid transport protein Mae1		protein	taxon:4896	20121124	PomBase	happens_during(GO:0071333)	
+PomBase	SPBC646.13	sds23		GO:0005829	PMID:16819157	IDA		C	PP2A-type phosphatase inhibitor Sds23/Moc1	psp1|moc1	protein	taxon:4896	20050303	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC24B11.06c	sty1		GO:0004707	PMID:9136929	IDA		F	MAP kinase Sty1	spc1|phh1	protein	taxon:4896	20150108	PomBase	happens_during(GO:0071472),has_direct_input(PomBase:SPBC29B5.01)	
+PomBase	SPAC1805.17	crm1		GO:0005049	PMID:24478458	IMP		F	importin family nuclear export receptor Crm1	caf2|SPAC1B2.01	protein	taxon:4896	20160826	PomBase	happens_during(GO:0072690),has_direct_input(PomBase:SPCC645.07)	
+PomBase	SPBC725.02	mpr1		GO:0005737	PMID:20919928	IDA		C	histidine-containing response regulator phosphotransferase Mpr1	spy1	protein	taxon:4896	20160623	PomBase	exists_during(GO:0070301)	
+PomBase	SPCC74.06	mak3		GO:0005737	PMID:20919928	IDA		C	histidine kinase Mak3	phk2	protein	taxon:4896	20160623	PomBase	exists_during(GO:0070301)	
+PomBase	SPBC887.10	mcs4		GO:0005737	PMID:20919928	IDA		C	response regulator Mcs4		protein	taxon:4896	20160623	PomBase	exists_during(GO:0070301)	
+PomBase	SPAC27E2.09	mak2		GO:0005737	PMID:20919928	IDA		C	histidine kinase Mak2	phk1	protein	taxon:4896	20160623	PomBase	exists_during(GO:0070301)	
+PomBase	SPAC1834.08	mak1		GO:0005737	PMID:20919928	IDA		C	histidine kinase Mak1	phk3	protein	taxon:4896	20160623	PomBase	exists_during(GO:0070301)	
+PomBase	SPBC19G7.09	ulp1		GO:0034399	PMID:11884512	IDA		C	SUMO deconjugating enzyme Ulp1		protein	taxon:4896	20050708	PomBase	exists_during(GO:0000085)	
+PomBase	SPBC27.02c	ask1		GO:0043622	PMID:20624975	IGI	PomBase:SPAC18G6.15	P	DASH complex subunit Ask1	mug181	protein	taxon:4896	20160527	PomBase	happens_during(GO:0051329)	
+PomBase	SPCC576.15c	ksg1		GO:0004674	PMID:22976295	IDA		F	serine/threonine protein kinase Ksg1		protein	taxon:4896	20151027	PomBase	happens_during(GO:0071242),has_direct_input(PomBase:SPCC4G3.08)	
+PomBase	SPBC216.07c	tor2		GO:0004674	PMID:22976295	IDA		F	serine/threonine protein kinase Tor2	SPBC646.01c	protein	taxon:4896	20151027	PomBase	happens_during(GO:0071242),has_direct_input(PomBase:SPCC4G3.08)	
+PomBase	SPAC10F6.09c	psm3		GO:0003677	PMID:26687354	IMP		F	mitotic cohesin complex ATPase subunit Psm3/Smc3	smc3	protein	taxon:4896	20160709	PomBase	part_of(GO:0061780)	PR:000037033
+PomBase	SPAC1F7.01c	spt6		GO:1900050	PMID:23851719	IMP		P	nucleosome remodeling protein Spt6	SPAC694.07c	protein	taxon:4896	20130801	PomBase	happens_during(GO:0042789)	
+PomBase	SPBC29B5.01	atf1		GO:0001077	PMID:15164362	IMP		F	transcription factor, Atf-CREB family Atf1	mts1|sss1|gad7	protein	taxon:4896	20120106	PomBase	happens_during(GO:0071276),has_regulation_target(PomBase:SPBC660.07)	
+PomBase	SPAC21E11.03c	pcr1		GO:0001077	PMID:15164362	IMP		F	transcription factor Pcr1	mts2	protein	taxon:4896	20120106	PomBase	happens_during(GO:0071276),has_regulation_target(PomBase:SPBC660.07)	
+PomBase	SPAC8C9.03	cgs1		GO:0005737	PMID:18621924	IDA		C	cAMP-dependent protein kinase regulatory subunit Cgs1		protein	taxon:4896	20150205	PomBase	exists_during(GO:0060274)	
+PomBase	SPAC23E2.01	fep1		GO:0001078	PMID:25733668	IDA		F	iron-sensing transcription factor Fep1	gaf2	protein	taxon:4896	20150611	PomBase	happens_during(GO:0071281),has_regulation_target(PomBase:SPAC1F8.02c)	
+PomBase	SPAC607.09c	btn1		GO:0051286	PMID:18346214	IDA		C	battenin CLN3 family protein		protein	taxon:4896	20080331	PomBase	exists_during(GO:0034605)	
+PomBase	SPCC645.07	rgf1		GO:0051286	PMID:24478458	IDA		C	RhoGEF for Rho1, Rgf1		protein	taxon:4896	20160826	PomBase	exists_during(GO:0034605)	
+PomBase	SPAC11E3.03	csm1		GO:0000776	PMID:19758558	IDA		C	microtubule-site clamp monopolin complex subunit Csm1/Pcs1	pcs1	protein	taxon:4896	20141218	PomBase	exists_during(GO:0051329)	
+PomBase	SPAC8E11.02c	rad24		GO:0005515	PMID:16085489	IPI	PomBase:SPAC1782.09c	F	14-3-3 protein Rad24	sam4|anr5	protein	taxon:4896	20160921	PomBase	part_of(GO:0051220)	
+PomBase	SPAC8E11.02c	rad24		GO:0005515	PMID:15629716	IPI	PomBase:SPAC24H6.05	F	14-3-3 protein Rad24	sam4|anr5	protein	taxon:4896	20150121	PomBase	part_of(GO:0051220)	
+PomBase	SPCC962.02c	bir1		GO:0000778	PMID:11861551	IDA		C	survivin, Bir1	cut17|pbh1|SPCP31B10.10c	protein	taxon:4896	20041203	PomBase	exists_during(GO:0000091)	
+PomBase	SPBC19C2.09	sre1		GO:0061419	PMID:16537923	IMP		P	sterol regulatory element binding protein, transcription factor Sre1		protein	taxon:4896	20120131	PomBase	happens_during(GO:0071456),has_regulation_target(PomBase:SPAC19G12.08)	
+PomBase	SPCC16A11.17	mcm4		GO:0048478	PMID:18180284	IMP		P	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	taxon:4896	20151119	PomBase	happens_during(GO:0072711)	
+PomBase	SPCC1795.01c	mad3		GO:1990948	PMID:11909965	TAS		F	mitotic spindle checkpoint protein Mad3	SPCC895.02	protein	taxon:4896	20050503	PomBase	has_direct_input(GO:0005680),part_of(GO:0045841)	
+PomBase	SPCC4F11.02	ptc1		GO:0070262	PMID:8196617	IDA		P	protein phosphatase 2C Ptc1		protein	taxon:4896	20140804	PomBase	happens_during(GO:0034605)	
+PomBase	SPAC3G9.01	nsk1		GO:0000942	PMID:22065639	IDA		C	Clp1-interacting, microtubule plus-end binding Nsk1		protein	taxon:4896	20130905	PomBase	exists_during(GO:0000236)	
+PomBase	SPBC16E9.07	mug100		GO:0005739	PMID:22146723	IDA		C	Schizosaccharomyces pombe specific protein Mug100		protein	taxon:4896	20151105	PomBase	exists_during(GO:0000278)	
+PomBase	SPBC115.02c	afg1		GO:0005739	PMID:22146723	IDA		C	AFG1 family mitochondrial ATPase Afg1 (predicted)		protein	taxon:4896	20151105	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC16C9.07	pom2		GO:0005739	PMID:22174761	IDA		C	DYRK family protein kinase Pom2	ppk5|SPAC2G11.01|mug189	protein	taxon:4896	20130123	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC7D4.13c	SPAC7D4.13c		GO:0005739	PMID:22146723	IDA		C	Schizosaccharomyces specific protein		protein	taxon:4896	20151105	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC1610.04	mug99		GO:0005739	PMID:22146723	IDA		C	conserved fungal protein Mug99		protein	taxon:4896	20151105	PomBase	exists_during(GO:0000278)	
+PomBase	SPAC222.10c	byr4		GO:0044732	PMID:10799520	IDA		C	two-component GAP Byr4		protein	taxon:4896	20041018	PomBase	exists_during(GO:0051329)	
+PomBase	SPBC12D12.01	sad1		GO:0044732	PMID:9802907	IDA		C	spindle pole body SUN domain protein Sad1	SPBC16H5.01c	protein	taxon:4896	20160428	PomBase	exists_during(GO:0051329)	
+PomBase	SPBC582.03	cdc13		GO:0044732	PMID:11084332	IDA		C	G2/M B-type cyclin Cdc13		protein	taxon:4896	20151214	PomBase	exists_during(GO:0051329)	
+PomBase	SPBC365.15	alp4		GO:0044732	PMID:11080156	IDA		C	gamma tubulin complex Spc97/GCP2 subunit Alp4		protein	taxon:4896	20150323	PomBase	exists_during(GO:0051329)	
+PomBase	SPAC4D7.07c	csi2		GO:0044732	PMID:25253718	IDA		C	mitotic chromosome segregation protein Csi2		protein	taxon:4896	20150515	PomBase	exists_during(GO:0051329)	
+PomBase	SPAC1782.09c	clp1		GO:0044732	PMID:16085489	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	taxon:4896	20150302	PomBase	exists_during(GO:0051329)	
+PomBase	SPBC428.20c	alp6		GO:0044732	PMID:11080156	IDA		C	gamma tubulin complex Spc98/GCP3 subunit Alp6	SPBC902.01c	protein	taxon:4896	20150323	PomBase	exists_during(GO:0051329)	
+PomBase	SPAC1782.09c	clp1		GO:0044732	PMID:11448769	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	taxon:4896	20140922	PomBase	exists_during(GO:0051329)	
+PomBase	SPAC1782.09c	clp1		GO:0044732	PMID:18951025	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	taxon:4896	20150224	PomBase	exists_during(GO:0051329)	
+PomBase	SPAC4D7.05	sum1		GO:0034399	PMID:12006658	IDA		C	translation initiation factor eIF3i	tif34	protein	taxon:4896	20140218	PomBase	exists_during(GO:0034605)	
+PomBase	SPAC31A2.05c	mis4		GO:0003690	PMID:24291789	IDA		F	cohesin loading factor (adherin) Mis4		protein	taxon:4896	20160823	PomBase	part_of(GO:1905406)	
+PomBase	SPAC1687.18c	ssl3		GO:0003690	PMID:24291789	IDA		F	cohesin loading factor Ssl3		protein	taxon:4896	20160823	PomBase	part_of(GO:1905406)	
+PomBase	SPAC20G8.05c	cdc15		GO:0032153	PMID:7634333	IDA		C	extended Fer/CIP4 (EFC) domain protein Cdc15		protein	taxon:4896	20150306	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC12C2.08	dnm1		GO:0032153	PMID:19373772	IDA		C	mitochondrial dynamin family scission GTPase Dnm1		protein	taxon:4896	20140911	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC146.13c	myo1		GO:0032153	PMID:11260263	IDA		C	myosin type I		protein	taxon:4896	20160908	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC821.12	orb6		GO:0032153	PMID:9636183	IDA		C	serine/threonine protein kinase Orb6		protein	taxon:4896	20160307	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC19G7.05c	bgs1		GO:0032153	PMID:27082518	IDA		C	primary septum and spore wall linear 1,3-beta-glucan synthase catalytic subunit Bgs1	cps1|drc1|swl1	protein	taxon:4896	20160715	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC530.14c	dsk1		GO:0032153	PMID:16823372	IDA		C	SR protein-specific kinase Dsk1		protein	taxon:4896	20121113	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC3H8.10	spo20		GO:0032153	PMID:11294895	IDA		C	sec14 cytosolic factor family, glycerophospholipid-transfer protein Spo20/Sec14	sec14	protein	taxon:4896	20140402	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC6G9.11	syb1		GO:0032153	PMID:27082518	IDA		C	SNAP receptor, synaptobrevin family		protein	taxon:4896	20160715	PomBase	exists_during(GO:0000087)	
+PomBase	SPCC825.03c	psy1		GO:0032153	PMID:27082518	IDA		C	SNARE Psy1	sso1	protein	taxon:4896	20160715	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC1782.09c	clp1		GO:0032153	PMID:11448769	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	taxon:4896	20140922	PomBase	exists_during(GO:0000087)	
+PomBase	SPCC1739.10	mug33		GO:0032153	PMID:21652630	IDA		C	Tea1-interacting protein involved in exocytosis		protein	taxon:4896	20131107	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC688.07c	rng10		GO:0032153	PMID:27385337	IDA		C	coiled-coil protein involved in septum formation Rng10		protein	taxon:4896	20160720	PomBase	exists_during(GO:0000087)	
+PomBase	SPCC1919.03c	amk2		GO:0005737	PMID:22375066	IDA		C	AMP-activated protein kinase beta subunit Amk2		protein	taxon:4896	20150223	PomBase	exists_during(GO:0006995)	
+PomBase	SPCC74.03c	ssp2		GO:0005737	PMID:22375066	IDA		C	AMP-activated protein serine/threonine kinase alpha subunit Ssp2	ucp9	protein	taxon:4896	20150223	PomBase	exists_during(GO:0006995)	
+PomBase	SPAC1556.08c	cbs2		GO:0005737	PMID:22375066	IDA		C	AMP-activated protein kinase gamma subunit cbs2	SPAC1F12.01c	protein	taxon:4896	20150223	PomBase	exists_during(GO:0006995)	
+PomBase	SPAC2E12.02	hsf1		GO:0000790	PMID:21072667	IDA		C	transcription factor Hsf1	hstf|hsf	protein	taxon:4896	20150409	PomBase	coincident_with(PomBase:SPBP35G2.16c),exists_during(GO:0034605)	
+PomBase	SPAC644.14c	rad51		GO:0035861	PMID:12023299	IDA		C	RecA family recombinase Rad51/Rhp51	rhp51	protein	taxon:4896	20160427	PomBase	exists_during(GO:0000085),exists_during(GO:0071479)	
+PomBase	SPBC16G5.12c	top3		GO:0035861	PMID:12023299	IDA		C	DNA topoisomerase III		protein	taxon:4896	20160427	PomBase	exists_during(GO:0000085),exists_during(GO:0071479)	
+PomBase	SPAC2G11.12	rqh1		GO:0035861	PMID:12023299	IDA		C	RecQ type DNA helicase Rqh1	hus2|rad12|rec9	protein	taxon:4896	20160427	PomBase	exists_during(GO:0000085),exists_during(GO:0071479)	
+PomBase	SPCC188.02	par1		GO:0005826	PMID:11707284	IDA		C	protein phosphatase PP2A regulatory subunit B-56 Par1	pbp1	protein	taxon:4896	20150115	PomBase	exists_during(GO:0000090)	
+PomBase	SPBC4.04c	mcm2		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm2	cdc19|nda1	protein	taxon:4896	20141106	PomBase	exists_during(GO:0000080)	
+PomBase	SPCC1682.02c	mcm3		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm3		protein	taxon:4896	20141106	PomBase	exists_during(GO:0000080)	
+PomBase	SPBC428.18	cdt1		GO:0000790	PMID:10766248	IDA		C	replication licensing factor Cdt1		protein	taxon:4896	20150507	PomBase	exists_during(GO:0000080)	
+PomBase	SPCC16A11.17	mcm4		GO:0000790	PMID:11854402	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	taxon:4896	20121005	PomBase	exists_during(GO:0000080)	
+PomBase	SPBC211.04c	mcm6		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm6	mis5	protein	taxon:4896	20141106	PomBase	exists_during(GO:0000080)	
+PomBase	SPCC16A11.17	mcm4		GO:0000790	PMID:10766248	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	taxon:4896	20150507	PomBase	exists_during(GO:0000080)	
+PomBase	SPBC25D12.03c	mcm7		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm7		protein	taxon:4896	20141106	PomBase	exists_during(GO:0000080)	
+PomBase	SPCC16A11.17	mcm4		GO:0000790	PMID:16899242	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	taxon:4896	20141106	PomBase	exists_during(GO:0000080)	
+PomBase	SPAPB1E7.02c	mcl1		GO:0000790	PMID:15643072	IDA		C	DNA polymerase alpha accessory factor Mcl1	slr3	protein	taxon:4896	20141103	PomBase	exists_during(GO:0000080)	
+PomBase	SPCC16A11.17	mcm4		GO:0000790	PMID:10747035	IDA		C	MCM complex subunit Mcm4/Cdc21	cdc21|SPCC24B10.01	protein	taxon:4896	20120919	PomBase	exists_during(GO:0000080)	
+PomBase	SPAPB1E7.02c	mcl1		GO:0000790	PMID:12455694	IDA		C	DNA polymerase alpha accessory factor Mcl1	slr3	protein	taxon:4896	20141106	PomBase	exists_during(GO:0000080)	
+PomBase	SPAC458.04c	dli1		GO:0005868	PMID:20298435	IDA		C	meiotic dynein intermediate light chain Dli1/Dil1	dil1	protein	taxon:4896	20120323	PomBase	exists_during(GO:0007128)	
+PomBase	SPBC11B10.09	cdc2		GO:0005737	PMID:11683390	EXP		C	cyclin-dependent protein kinase Cdk1/Cdc2	swo2|cdk1|tws1|wee2	protein	taxon:4896	20161020	PomBase	exists_during(GO:0000093)	
+PomBase	SPAC1782.09c	clp1		GO:0005737	PMID:18951025	IDA		C	Cdc14-related protein phosphatase Clp1/Flp1	flp1	protein	taxon:4896	20150224	PomBase	exists_during(GO:0000093)	
+PomBase	SPAC644.14c	rad51		GO:0000775	PMID:18923422	IDA		C	RecA family recombinase Rad51/Rhp51	rhp51	protein	taxon:4896	20121107	PomBase	exists_during(GO:0000084)	
+PomBase	SPBC582.05c	brc1		GO:0000775	PMID:20661445	IDA		C	BRCT domain protein Brc1		protein	taxon:4896	20130828	PomBase	exists_during(GO:0000084)	
+PomBase	SPCC297.03	ssp1		GO:0051285	PMID:24451546	IDA		C	Ca2+/calmodulin-dependent (CaMMK)-like protein kinase Ssp1		protein	taxon:4896	20150224	PomBase	exists_during(GO:0071472)	
+PomBase	SPAP8A3.02c	ofd2		GO:0000790	PMID:22235339	IDA		C	histone H2A dioxygenase Ofd2		protein	taxon:4896	20150916	PomBase	coincident_with(PomBase:SPAC1782.07),exists_during(GO:0071456)	
+PomBase	SPAP8A3.02c	ofd2		GO:0000790	PMID:22235339	IDA		C	histone H2A dioxygenase Ofd2		protein	taxon:4896	20150916	PomBase	coincident_with(PomBase:SPCC191.07),exists_during(GO:0071456)	
+PomBase	SPBC19C2.09	sre1		GO:0061419	PMID:16537923	IMP		P	sterol regulatory element binding protein, transcription factor Sre1		protein	taxon:4896	20120131	PomBase	happens_during(GO:0071456),has_regulation_target(PomBase:SPBC19C2.09)	
+PomBase	SPAC18G6.10	lem2		GO:0044732	PMID:21880100	IDA		C	LEM domain protein Heh1/Lem2	heh1	protein	taxon:4896	20120203	PomBase	exists_during(GO:0000092)	
+PomBase	SPAC3G9.01	nsk1		GO:0044732	PMID:21965289	IDA		C	Clp1-interacting, microtubule plus-end binding Nsk1		protein	taxon:4896	20121113	PomBase	exists_during(GO:0000092)	
+PomBase	SPAC222.10c	byr4		GO:0044732	PMID:24920823	IDA		C	two-component GAP Byr4		protein	taxon:4896	20140716	PomBase	exists_during(GO:0000092)	
+PomBase	SPBC776.13	cnd1		GO:0005730	PMID:18362178	IDA		C	condensin complex non-SMC subunit Cnd1		protein	taxon:4896	20150213	PomBase	exists_during(GO:0000087)	
+PomBase	SPBP4H10.06c	cut14		GO:0035327	PMID:25847133	IDA		C	condensin complex SMC subunit Smc2	smc2	protein	taxon:4896	20150828	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC23C11.16	plo1		GO:0045944	PMID:12411492	IMP		P	Polo kinase Plo1		protein	taxon:4896	20151019	PomBase	happens_during(GO:0010458),occurs_at(SO:0001871)	
+PomBase	SPCC736.14	dis1		GO:0044732	PMID:7628693	IDA		C	TOG/XMAP14 microtubule-associated protein Dis1		protein	taxon:4896	20141230	PomBase	exists_during(GO:0000089)	
+PomBase	SPBC902.06	mto2		GO:0044732	PMID:15800064	IDA		C	microtubule organizer Mto2		protein	taxon:4896	20160922	PomBase	exists_during(GO:0000089)	
+PomBase	SPBC17F3.02	nak1		GO:0044732	PMID:23394829	IDA		C	PAK-related GC kinase Nak1	orb3|mor4	protein	taxon:4896	20140327	PomBase	exists_during(GO:0000089)	
+PomBase	SPBC582.03	cdc13		GO:0044732	PMID:11683390	EXP		C	G2/M B-type cyclin Cdc13		protein	taxon:4896	20161021	PomBase	exists_during(GO:0000089)	
+PomBase	SPBC11B10.09	cdc2		GO:0044732	PMID:11683390	EXP		C	cyclin-dependent protein kinase Cdk1/Cdc2	swo2|cdk1|tws1|wee2	protein	taxon:4896	20161021	PomBase	exists_during(GO:0000089)	
+PomBase	SPBC20F10.06	mad2		GO:0044732	PMID:15930132	IDA		C	mitotic spindle checkpoint protein Mad2		protein	taxon:4896	20151126	PomBase	exists_during(GO:0000089)	
+PomBase	SPAC12G12.04	mcp60		GO:0005758	PMID:22139357	IDA		C	mitochondrial heat shock protein Hsp60/Mcp60	hsp60	protein	taxon:4896	20150122	PomBase	exists_during(GO:0070301)	
+PomBase	SPAC24B11.06c	sty1		GO:0005758	PMID:22139357	IDA		C	MAP kinase Sty1	spc1|phh1	protein	taxon:4896	20150122	PomBase	exists_during(GO:0070301)	
+PomBase	SPCC1322.08	srk1		GO:0004674	PMID:15629716	IDA		F	MAPK-activated protein kinase Srk1	mkp1	protein	taxon:4896	20150121	PomBase	happens_during(GO:0000085),has_direct_input(PomBase:SPAC24H6.05)	
+PomBase	SPAC1093.06c	dhc1		GO:0035974	PMID:10366596	IDA		C	minus-end directed microtubule motor, dynein heavy chain Dhc1	SPAC30C2.01c	protein	taxon:4896	20141126	PomBase	exists_during(GO:0007132)	
+PomBase	SPAC1805.08	dlc1		GO:0030981	PMID:11907273	IDA		C	dynein light chain Dlc1		protein	taxon:4896	20141128	PomBase	exists_during(GO:0051321)	
+PomBase	SPAC15A10.16	bud6		GO:0035839	PMID:20870879	IDA		C	actin interacting protein 3 homolog Bud6	aip3|fat1|SPAC15E1.01	protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPAC2F7.03c	pom1		GO:0035839	PMID:20870879	IDA		C	DYRK family protein kinase Pom1		protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPBC1706.01	tea4		GO:0035839	PMID:20870879	IDA		C	tip elongation aberrant protein Tea4	wsh3	protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPCC1223.06	tea1		GO:0035839	PMID:20870879	IDA		C	cell end marker Tea1	alp8	protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPBC530.04	mod5		GO:0035839	PMID:20870879	IDA		C	Tea1 anchoring protein Mod5		protein	taxon:4896	20120503	PomBase	exists_during(GO:0007124)	
+PomBase	SPAC23C11.16	plo1		GO:0005634	PMID:9852154	IDA		C	Polo kinase Plo1		protein	taxon:4896	20121012	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC776.13	cnd1		GO:0005634	PMID:18362178	IDA		C	condensin complex non-SMC subunit Cnd1		protein	taxon:4896	20150213	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC530.14c	dsk1		GO:0005634	PMID:8485317	IDA		C	SR protein-specific kinase Dsk1		protein	taxon:4896	20141203	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC664.10	klp2		GO:0005634	PMID:11694582	IDA		C	minus-end directed microtubule motor kinesin-14, Klp2		protein	taxon:4896	20141128	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC2A9.07c	hpz1		GO:0005634	PMID:22970243	IDA		C	zf-PARP type zinc finger protein, G1-S transition regulator Hpz1		protein	taxon:4896	20140701	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC146.03c	cut3		GO:0005634	PMID:18362178	IDA		C	condensin complex SMC subunit Smc4	smc4	protein	taxon:4896	20150311	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC2F12.13	klp5		GO:0005634	PMID:18799626	IDA		C	kinesin-8 family plus-end microtubule motor Klp5	sot1	protein	taxon:4896	20140304	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC1685.15c	klp6		GO:0005634	PMID:18799626	IDA		C	kinesin-8 family plus-end microtubule motor Klp6	sot2|SPBC649.01c	protein	taxon:4896	20140305	PomBase	exists_during(GO:0000087)	
+PomBase	SPBC11B10.09	cdc2		GO:0005634	PMID:11084332	IDA		C	cyclin-dependent protein kinase Cdk1/Cdc2	swo2|cdk1|tws1|wee2	protein	taxon:4896	20151214	PomBase	exists_during(GO:0000087)	
+PomBase	SPCC16C4.03	pin1		GO:0005634	PMID:11707530	IDA		C	peptidyl-prolyl cis-trans isomerase Pin1		protein	taxon:4896	20141016	PomBase	exists_during(GO:0000087)	
+PomBase	SPCC895.07	alp14		GO:0005634	PMID:19606211	IDA		C	TOG/XMAP14 family protein Alp14	mtc1	protein	taxon:4896	20090817	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC7D4.07c	trx1		GO:0015035	PMID:22245228	EXP		F	cytosolic thioredoxin Trx1		protein	taxon:4896	20120524	PomBase	happens_during(GO:0070301),has_direct_input(PomBase:SPAC29E6.05c)	
+PomBase	SPBC16D10.04c	dna2		GO:0003682	PMID:22682245	IDA		F	DNA replication endonuclease-helicase Dna2		protein	taxon:4896	20140205	PomBase	happens_during(GO:0031297),occurs_at(GO:0043596)	
+PomBase	SPAC8C9.03	cgs1		GO:0046827	PMID:18621924	IMP		P	cAMP-dependent protein kinase regulatory subunit Cgs1		protein	taxon:4896	20150211	PomBase	happens_during(GO:0042149),has_regulation_target(PomBase:SPBC106.10)	
+PomBase	SPAC1F5.04c	cdc12		GO:0007015	PMID:24954052	IMP		P	formin Cdc12		protein	taxon:4896	20140702	PomBase	occurs_at(GO:0005826)	
+PomBase	SPAC3H8.10	spo20		GO:0060187	PMID:11294895	IDA		C	sec14 cytosolic factor family, glycerophospholipid-transfer protein Spo20/Sec14	sec14	protein	taxon:4896	20140402	PomBase	exists_during(GO:0000087)	
+PomBase	SPAC607.09c	btn1		GO:0032153	PMID:18346214	IDA		C	battenin CLN3 family protein		protein	taxon:4896	20080331	PomBase	exists_during(GO:0034605)	
+PomBase	SPAC9G1.02	wis4		GO:0051403	PMID:23389634	IMP		P	MAP kinase kinase kinase Wis4	wak1|wik1	protein	taxon:4896	20130801	PomBase	happens_during(GO:0071470)	
+PomBase	SPAC1006.09	win1		GO:0051403	PMID:23389634	IMP		P	MAP kinase kinase kinase Win1	SPAC1250.06c|SPAPJ730.01	protein	taxon:4896	20130801	PomBase	happens_during(GO:0071470)	
