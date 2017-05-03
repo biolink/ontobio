@@ -2,7 +2,12 @@ import networkx as nx
 import logging
 
 def get_minimal_subgraph(g, nodes):
-
+    """
+    given a set of nodes, extract a subgraph that excludes non-informative nodes - i.e.
+    those that are not MRCAs of pairs of existing nodes.
+    
+    Note: no property chain reasoning is performed. As a result, edge labels are lost.
+    """
     logging.info("Slimming {} to {}".format(g,nodes))
     # maps ancestor nodes to members of the focus node set they subsume
     mm = {}
@@ -20,6 +25,7 @@ def get_minimal_subgraph(g, nodes):
     # merge graph
     egraph = nx.MultiDiGraph()
 
+    # TODO: ensure edge labels are preserved
     for a, aset in mm.items():
         for p in g.predecessors(a):
             logging.info(" cmp {} -> {} // {} {}".format(len(aset),len(mm[p]), a, p))
