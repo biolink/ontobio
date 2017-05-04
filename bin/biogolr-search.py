@@ -48,6 +48,8 @@ def main():
 
     parser.add_argument('-A', '--associations', dest='associations', action='store_true', default=False,
                         help='Path to output file')
+    parser.add_argument('-s', '--settings', type=str,
+                        help='Path to config file')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
     parser.add_argument('-f', '--facets', type=str, required=False,
@@ -78,11 +80,17 @@ def main():
     if args.facets is not None:
         facets = args.facets.split(",")
 
+    config = None
+    if args.settings is not None:
+        from ontobio.config import load_config
+        config = load_config(args.settings)
     results = None
+
     if args.associations:
         q = None
         if args.search != '%':
             q = args.search
+
         q = GolrAssociationQuery(q=q,
                                  is_go=args.legacy_solr,
                                  fq=args.fq,

@@ -59,6 +59,7 @@ setuptools.setup(
         'sparqlwrapper',
         'cachier',
         'prefixcommons',
+        'marshmallow',
         'scipy'
     ],
 

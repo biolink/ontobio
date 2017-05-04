@@ -226,6 +226,8 @@ class GolrSearchQuery():
                  is_go=False,
                  url=None,
                  solr=None,
+                 config=None,
+                 fq=None,
                  hl=True,
                  facet_fields=None,
                  search_fields=None,
@@ -234,7 +236,9 @@ class GolrSearchQuery():
         self.category = category
         self.is_go = is_go
         self.url = url
+        self.fq = fq
         self.solr = solr
+        self.config = config
         self.hl = hl
         self.facet_fields = facet_fields
         self.search_fields = search_fields
@@ -405,6 +409,7 @@ class GolrAssociationQuery():
                  include_raw=False,
                  field_mapping=None,
                  solr=None,
+                 config=None,
                  url=None,
                  select_fields=None,
                  fetch_objects=False,
@@ -449,6 +454,7 @@ class GolrAssociationQuery():
         self.include_raw=include_raw
         self.field_mapping=field_mapping
         self.solr=solr
+        self.config = config
         self.select_fields=select_fields
         self.fetch_objects=fetch_objects
         self.fetch_subjects=fetch_subjects

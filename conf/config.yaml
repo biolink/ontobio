@@ -1,1 +1,6 @@
-solr_url: "https://solr.monarchinitiative.org/solr/golr"
+solr_assocs_url: "https://solr.monarchinitiative.org/solr/golr"
+amigo_solr_assocs_url: "http://golr.berkeleybop.org"
+solr_search_url: "https://solr-dev.monarchinitiative.org/solr/search"
+amigo_solr_search_url: "http://golr.berkeleybop.org"
+sparql_url: "http://sparql.hegroup.org/sparql"
+use_amigo_for: function

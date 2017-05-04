@@ -1,4 +1,4 @@
-amigo_solr_url: http://browser.planteome.org/solr
+amigo_solr_assocs_url: http://browser.planteome.org/solr
 amigo_solr_search_url: http://browser.planteome.org/solr
 sparql_url: http://sparql.hegroup.org/sparql
 use_amigo_for: *
