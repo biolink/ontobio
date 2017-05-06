@@ -143,7 +143,6 @@ monarch_golr_url = "https://solr.monarchinitiative.org/solr/golr/"
 monarch_solr = pysolr.Solr(monarch_golr_url, timeout=5)
 
 
-
 def translate_facet_field(fcs):
     """
     Translates solr facet_fields results into something easier to manipulate
@@ -946,7 +945,7 @@ class GolrAssociationQuery():
         lf = M.label_field(fname)
     
         gq = GolrAssociationQuery() ## TODO - make this a class method
-        id = d[fname]
+        id = d[fname]                
         id = self.make_canonical_identifier(id)
         #if id.startswith('MGI:MGI:'):
         #    id = id.replace('MGI:MGI:','MGI:')
@@ -996,12 +995,33 @@ class GolrAssociationQuery():
             subject['taxon'] = self.translate_obj(d,M.SUBJECT_TAXON)
         if M.OBJECT_TAXON in d:
             obj['taxon'] = self.translate_obj(d, M.OBJECT_TAXON)
+
+        qualifiers = []
+        if M.RELATION in d and isinstance(d[M.RELATION],list):
+            # GO overloads qualifiers and relation
+            relation = None
+            for rel in d[M.RELATION]:
+                if rel.lower() == 'not':
+                    qualifiers.append(rel)
+                else:
+                    relation = rel
+            if relation is not None:
+                d[M.RELATION] = relation
+            else:
+                d[M.RELATION] = None
+
+        negated = 'not' in qualifiers        
+        
         assoc = {'id':d.get(M.ID),
                  'subject': subject,
                  'object': obj,
+                 'negated': negated,
                  'relation': self.translate_obj(d,M.RELATION),
                  'publications': self.translate_objs(d,M.SOURCE),  # note 'source' is used in the golr schema
         }
+        if len(qualifiers) > 0:
+            assoc['qualifiers'] = qualifiers
+            
         if M.OBJECT_CLOSURE in d:
             assoc['object_closure'] = d.get(M.OBJECT_CLOSURE)
         if M.IS_DEFINED_BY in d:
