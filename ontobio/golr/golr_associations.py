@@ -102,7 +102,23 @@ def map2slim(subjects, slim, **kwargs):
             pmap[k].append(a)
     results = [ {'subject': subj, 'slim':t, 'assocs': assocs} for ((subj,t),assocs) in pmap.items()]
     return results
-        
+
+def top_species(**kwargs):
+    results = search_associations(facet_fields = [M.SUBJECT_TAXON],
+                                  facet=True,
+                                  facet_limit=-1,
+                                  rows=0,
+                                  **kwargs)
+    fcs = results['facet_counts']
+    logging.info("FCs={}".format(fcs))
+    ## TODO:
+    if 'taxon' in fcs:
+        d = fcs['taxon']
+    else:
+        d = fcs['subject_taxon']
+    return sorted(d.items(), key=lambda t: -t[1])
+    
+
 
 def bulk_fetch(subject_category, object_category, taxon, rows=MAX_ROWS, **kwargs):
     """
@@ -225,6 +241,7 @@ def select_distinct(distinct_field=None, **kwargs):
                                   facet_fields=[distinct_field],
                                   **kwargs
     )
+    # TODO: map field
     return list(results['facet_counts'][distinct_field].keys())
 
 
