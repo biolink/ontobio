@@ -7,6 +7,7 @@ import logging
 import ontobio.ontol
 from ontobio.ontol import Ontology, Synonym
 from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_labels
+from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
 
 
 class RemoteSparqlOntology(Ontology):
@@ -88,7 +89,7 @@ class RemoteSparqlOntology(Ontology):
         bindings = run_sparql(query)
         return [r['c']['value'] for r in bindings]
 
-    def sparql(self, select='*', body=None, single_column=False):
+    def sparql(self, select='*', body=None, inject_prefixes=[], single_column=False):
         """
         Execute a SPARQL query.
 
@@ -106,24 +107,33 @@ class RemoteSparqlOntology(Ontology):
         cols = []
         select_val = None
         if select is None or select=='*':
-            cols=None
+            if not single_column:
+                cols=None
             select_val='*'
         else:
             cols = select
             select_val = ", ".join(['?'+c for c in select])
+
+        prefixes = ""
+        if inject_prefixes is not None:
+            plist = ["prefix {}: <{}> ".format(p,expand_uri(p+":")) for p in inject_prefixes if p != "" and p is not None]
+            prefixes = "\n".join(plist)
         query = """
+        {prefixes}
         SELECT {s} WHERE {{
         GRAPH <{g}>  {{
         {b}
         }}
         }}
-        """.format(s=select_val, b=body, g=namedGraph)
+        """.format(prefixes=prefixes, s=select_val, b=body, g=namedGraph)
         bindings = run_sparql(query)
+        if len(bindings) == 0:
+            return []
         if cols == None:
             return bindings
         else:
             if single_column:
-                c = cols[0]
+                c = list(bindings[0].keys())[0]
                 return [r[c]['value'] for r in bindings]
             else:
                 return [r[c]['value'] for c in cols for r in bindings]

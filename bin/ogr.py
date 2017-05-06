@@ -17,6 +17,7 @@ from networkx.algorithms.dag import ancestors, descendants
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.graph_io import GraphRenderer
 from ontobio.slimmer import get_minimal_subgraph
+from prefixcommons.curie_util import contract_uri, expand_uri
 import logging
 
 def main():
@@ -41,6 +42,8 @@ def main():
                         help='Properties')
     parser.add_argument('-P', '--prefix', type=str, required=False,
                         help='Prefix to constrain traversal on, e.g. PATO, ENVO')
+    parser.add_argument('-Q', '--query', type=str, required=False,
+                        help='SPARQL query body (only works with sparql handle)')
     parser.add_argument('-s', '--search', type=str, default='', required=False,
                         help='Search type. p=partial, r=regex')
     parser.add_argument('-S', '--slim', type=str, default='', required=False,
@@ -74,9 +77,17 @@ def main():
     if dirn == '' and args.to is not None:
         dirn = 'u'
     searchp = args.search
+    
     if args.level is not None:
         logging.info("Query for level: {}".format(args.level))
         qids = qids + ont.get_level(args.level, relations=args.properties, prefix=args.prefix)
+
+    if args.query is not None:
+        qids = qids + ont.sparql(select='*',
+                                 body=args.query,
+                                 inject_prefixes = ont.prefixes(),
+                                 single_column=True)
+        
     for id in ont.resolve_names(args.ids,
                                 is_remote = searchp.find('x') > -1,
                                 is_partial_match = searchp.find('p') > -1,

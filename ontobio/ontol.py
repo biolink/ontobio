@@ -137,6 +137,27 @@ class Ontology():
         """
         pass
 
+    def prefixes(self):
+        """
+        list all prefixes used
+        """
+        pset = set()
+        for n in self.nodes():
+            pfx = self.prefix(n)
+            if pfx is not None:
+                pset.add(pfx)
+        return list(pset)
+
+    def prefix(self, nid):
+        """
+        Return prefix for a node
+        """
+        parts = nid.split(":")
+        if len(parts) > 1:
+            return parts[0]
+        else:
+            return None
+    
     def nodes(self):
         """
         Returns all nodes in ontology

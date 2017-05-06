@@ -135,6 +135,12 @@ E.g. terms ending neuron, to tree
 ogr -r cl %neuron -t tree
 ```
 
+## SPARQL
+
+```
+ogr-tree  -r pato -Q "{?x rdfs:subClassOf+ PATO:0000052}"
+```
+
 # Associations
 
 The `ogr-assoc` command handles ontologies
