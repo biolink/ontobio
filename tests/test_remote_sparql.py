@@ -93,3 +93,17 @@ def test_remote_sparql():
     print("SLIM: {}".format(slim))
     assert ABSENT in slim
     assert QUALITY not in slim
+
+def test_dynamic_query():
+    """
+    Dynamic query
+    """
+    factory = OntologyFactory()
+    print("Creating ont")
+    ont = factory.create('pato')
+
+    ids = ont.sparql(select='?x',
+                     body="{?x rdfs:subClassOf+ GO:0005634}",
+                     inject_prefixes = ont.prefixes(),
+                     single_column=True)
+    assert Y_SHAPED in ids
