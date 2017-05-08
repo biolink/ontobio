@@ -101,6 +101,9 @@ class RemoteSparqlOntology(Ontology):
          - If '*' is passed, then the result is a list of dicts, { $var: {value: $val } }
          - If a list of vars is passed, then the result is a list of lists
          - Unless single_column=True, in which case the results are a simple list of values from the first var
+
+        The inject_prefixes argument can be used to inject a list of prefixes - these are expanded
+        using the prefixcommons library
         
         """
         namedGraph = get_named_graph(self.handle)
