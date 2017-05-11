@@ -1,6 +1,6 @@
 from ontobio.ontol_factory import OntologyFactory
 import logging
-from ontobio.graph_io import GraphRenderer
+from ontobio.io.ontol_renderers import GraphRenderer
 
 PART_OF = 'BFO:0000050'
 
@@ -22,12 +22,15 @@ def test_local_json_parse():
     nodes = ont.search('%')
     print("NODES: {}".format(nodes))
     w = GraphRenderer.create(None)
-    w.write_subgraph(g, nodes)
+    w.write_subgraph(ont, nodes)
     i = 'http://model.geneontology.org/0000000300000001/0000000300000007'
     ni = g[i]
     print(str(ni))
     ['GO:0060070'] == ni['types']
     nbrs = ont.neighbors(i)
     print("NEIGHBORS: {}".format(nbrs))
-    
+    subont = tbox_ontology.subontology(nodes, minimal=False)
+    w = GraphRenderer.create('obo')
+    print(w.render(subont))
+
 

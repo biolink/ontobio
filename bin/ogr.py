@@ -15,7 +15,7 @@ import argparse
 import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.graph_io import GraphRenderer
+from ontobio.io.ontol_renderers import GraphRenderer
 from ontobio.slimmer import get_minimal_subgraph
 from prefixcommons.curie_util import contract_uri, expand_uri
 import logging
@@ -99,7 +99,7 @@ def main():
                                relations=args.properties)
 
     g = ont.get_filtered_graph(relations=args.properties)
-    show_subgraph(g, nodes, qids, args)
+    show_subgraph(ont, nodes, qids, args)
 
 
 def cmd_cycles(handle, args):
@@ -114,7 +114,7 @@ def cmd_search(handle, args):
         for r in results:
             print(r)
 
-def show_subgraph(g, nodes, query_ids, args):
+def show_subgraph(ont, nodes, query_ids, args):
     """
     Writes or displays graph
     """
@@ -124,7 +124,7 @@ def show_subgraph(g, nodes, query_ids, args):
     w = GraphRenderer.create(args.to)
     if args.outfile is not None:
         w.outfile = args.outfile
-    w.write_subgraph(g, nodes, query_ids=query_ids, container_predicates=args.container_properties)
+    w.write_subgraph(ont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
             
 def resolve_ids(ont, ids, args):
     r_ids = []

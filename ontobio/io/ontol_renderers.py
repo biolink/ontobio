@@ -1,5 +1,5 @@
 """
-Various classes for rendering of networkx ontology graphs
+Various classes for rendering of ontology graphs
 """
 
 import networkx as nx
@@ -37,17 +37,17 @@ class GraphRenderer():
         self.config = config
         
     
-    def render(self, g, **args):
+    def render(self, ontol, **args):
         """
-        Render a networkx graph object
+        Render a `ontology` object
         """
         pass
 
-    def write(self, g, **args):
+    def write(self, ontol, **args):
         """
-        Write a networkx graph object
+        Write a `ontology` object
         """
-        s = self.render(g, **args)
+        s = self.render(ontol, **args)
         if self.outfile is None:
             print(s)
         else:
@@ -55,19 +55,19 @@ class GraphRenderer():
             f.write(s)
             f.close()
 
-    def render_subgraph(self, g, nodes, **args):
+    def render_subgraph(self, ontol, nodes, **args):
         """
-        Render a networkx graph object after inducing a subgraph
+        Render a `ontology` object after inducing a subgraph
         """
-        subg = g.subgraph(nodes)
-        return self.render(subg, **args)
+        subont = ontol.subontology(nodes)
+        return self.render(subont, **args)
     
-    def write_subgraph(self, g, nodes, **args):
+    def write_subgraph(self, ontol, nodes, **args):
         """
-        Write a networkx graph object after inducing a subgraph
+        Write a `ontology` object after inducing a subgraph
         """
-        subg = g.subgraph(nodes)
-        self.write(subg, **args)
+        subont = ontol.subontology(nodes)
+        self.write(subont, **args)
 
     def render_relation(self, r, **args):
         """
@@ -80,16 +80,17 @@ class GraphRenderer():
             return m[r]
         return r
     
-    def render_noderef(self, g, n, query_ids=[], **args):
+    def render_noderef(self, ontol, n, query_ids=[], **args):
         """
         Render a node object
         """
         marker = ""
         if n in query_ids:
             marker = " * "
-        if n in g.node and 'label' in g.node[n]:
+        label = ontol.label(n)
+        if label is not None:
             return '{} ! {}{}'.format(str(n),
-                                      g.node[n]['label'],
+                                      label,
                                       marker)
         else:
             return str(n)
@@ -123,7 +124,8 @@ class NativeDotGraphRenderer(GraphRenderer):
     def __init__(self, **args):
         super().__init__(**args)
 
-    def render(self, g, **args):
+    def render(self, ontol, **args):
+        g = ontol.get_graph()
         _, fn = tempfile.mkstemp(suffix='dot')
         write_dot(g, fn)
         f = open(fn, 'r')
@@ -131,7 +133,8 @@ class NativeDotGraphRenderer(GraphRenderer):
         f.close()
         return s
 
-    def write(self, g, **args):
+    def write(self, ontol, **args):
+        g = ontol.get_graph()        
         fn = self.outfile
         if fn is None:
             _, fn = tempfile.mkstemp(suffix='dot')
@@ -153,14 +156,16 @@ class DotGraphRenderer(GraphRenderer):
                  **args):
         super().__init__(**args)
         self.image_format = image_format
+        # obographviz makes use of OboJson, so we leverage this here
         self.ojgr = OboJsonGraphRenderer(**args)
 
     # TODO: currently render and write are equivalent
-    def render(self, g, query_ids=[], container_predicates=[], **args):
+    def render(self, ontol, query_ids=[], container_predicates=[], **args):
+        g = ontol.get_graph()
         # create json object to pass to og2dot
         _, fn = tempfile.mkstemp(suffix='.json')
         self.ojgr.outfile = fn
-        self.ojgr.write(g, **args)
+        self.ojgr.write(ontol, **args)
 
         # call og2dot
         cmdtoks = ['og2dot.js']
@@ -182,8 +187,8 @@ class DotGraphRenderer(GraphRenderer):
         logging.info(cp)
         os.remove(fn)
         
-    def write(self, g, **args):
-        self.render(g, **args)
+    def write(self, ontol, **args):
+        self.render(ontol, **args)
             
 
 class SimpleListGraphRenderer(GraphRenderer):
@@ -193,13 +198,14 @@ class SimpleListGraphRenderer(GraphRenderer):
     def __init__(self, **args):
         super().__init__(**args)
 
-    def render(self, g, **args):
+    def render(self, ontol, **args):
+        g = ontol.get_graph() # TODO - use ontol methods directly
         s = ""
-        for n in g.nodes():
-            s += self.render_noderef(g, n, **args) + "\n"
-            for n2 in g.predecessors(n):
+        for n in ontol.nodes():
+            s += self.render_noderef(ontol, n, **args) + "\n"
+            for n2 in ontol.parents(n):
                 for _,ea in g[n2][n].items():
-                    s += '  {} {}'.format(str(ea['pred']), self.render_noderef(g, n2, **args))
+                    s += '  {} {}'.format(str(ea['pred']), self.render_noderef(ontol, n2, **args))
                     s += "\n"
         return s
         
@@ -210,21 +216,23 @@ class AsciiTreeGraphRenderer(GraphRenderer):
     def __init__(self, **args):
         super().__init__(**args)
         
-    def render(self, g, **args):
+    def render(self, ontol, **args):
+        g = ontol.get_graph()
         ts = nx.topological_sort(g)
         roots = [n for n in ts if len(g.predecessors(n))==0]
         s=""
         for n in roots:
-            s += self._show_tree_node(None, n, g, 0, **args) + "\n"
+            s += self._show_tree_node(None, n, ontol, 0, **args) + "\n"
         return s
 
-    def _show_tree_node(self, rel, n, g, depth=0, **args):
-        s = " " * depth + self.render_relation(rel) + " " +self.render_noderef(g, n, **args) + "\n"
-        for c in g.successors(n):
+    def _show_tree_node(self, rel, n, ontol, depth=0, **args):
+        g = ontol.get_graph() # TODO - use ontol methods directly
+        s = " " * depth + self.render_relation(rel) + " " +self.render_noderef(ontol, n, **args) + "\n"
+        for c in ontol.children(n):
             preds = []
             for _,ea in g[n][c].items():
                 preds.append(ea['pred'])
-            s+= self._show_tree_node(",".join(preds), c, g, depth+1, **args)
+            s+= self._show_tree_node(",".join(preds), c, ontol, depth+1, **args)
         return s
 
 class OboFormatGraphRenderer(GraphRenderer):
@@ -234,21 +242,24 @@ class OboFormatGraphRenderer(GraphRenderer):
     def __init__(self, **args):
         super().__init__(**args)
         
-    def render(self, g, **args):
+    def render(self, ontol, **args):
+        g = ontol.get_graph() # TODO - use ontol methods directly
         ts = nx.topological_sort(g)
         s = "ontology: auto\n\n"
         for n in ts:
-            s += self.render_noderef(self, n, g, **args)
+            s += self.render_noderef(self, n, ontol, **args)
         return s
 
-    def render(self, g, **args):
+    def render(self, ontol, **args):
+        g = ontol.get_graph() # TODO - use ontol methods directly
         ts = nx.topological_sort(g)
         s = "ontology: auto\n\n"
         for n in ts:
-            s += self.render_node(n, g, **args)
+            s += self.render_node(n, ontol, **args)
         return s
     
-    def render_node(self, nid, g, **args):
+    def render_node(self, nid, ontol, **args):
+        g = ontol.get_graph() # TODO - use ontol methods directly
         n = g.node[nid]
         s = "[Term]\n";
         s += self.tag('id', nid)
@@ -262,10 +273,18 @@ class OboFormatGraphRenderer(GraphRenderer):
                     s += self.tag('is_a', p)
                 else:
                     s += self.tag('relationship', pred, p)
+        for ld in ontol.logical_definitions(nid):
+            for gen in ld.genus_ids:
+                s += self.tag('intersection_of', gen)
+            for pred,filler in ld.restrictions:
+                s += self.tag('intersection_of', pred, filler)
+                
         s += "\n"
         return s
 
-    def render_xrefs(self, nid, g, **args):
+    # TODO
+    def render_xrefs(self, nid, ontol, **args):
+        g = ontol.xref_graph # TODO - use ontol methods directly
         n = g.node[nid]
         s = "[Term]\n";
         s += self.tag('id ! TODO', nid)
@@ -293,28 +312,29 @@ class OboJsonGraphRenderer(GraphRenderer):
     def __init__(self, **args):
         super().__init__(**args)
         
-    def to_json(self, g, **args):
+    def to_json(self, ontol, **args):
+        g = ontol.get_graph() # TODO - use ontol methods directly
         obj = {}
         node_objs = []
-        for n in g.nodes():
-            node_objs.append(self.node_to_json(n, g, **args))
+        for n in ontol.nodes():
+            node_objs.append(self.node_to_json(n, ontol, **args))
         obj['nodes'] = node_objs
         edge_objs = []
         for e in g.edges_iter(data=True):
-            edge_objs.append(self.edge_to_json(e, g, **args))
+            edge_objs.append(self.edge_to_json(e, ontol, **args))
         obj['edges'] = edge_objs
         return {'graphs' : [obj]}
 
-    def render(self, g, **args):
-        obj = self.to_json(g, **args)
+    def render(self, ontol, **args):
+        obj = self.to_json(ontol, **args)
         return json.dumps(obj)
     
-    def node_to_json(self, nid, g, **args):
-        n = g.node[nid]
+    def node_to_json(self, nid, ontol, **args):
+        label = ontol.label(nid)
         return {'id' : nid,
-                'lbl' : n.get('label')}
+                'lbl' : label}
     
-    def edge_to_json(self, e, g, **args):
+    def edge_to_json(self, e, ontol, **args):
         (obj,sub,meta) = e
         return {'sub' : sub,
                 'obj' : obj,

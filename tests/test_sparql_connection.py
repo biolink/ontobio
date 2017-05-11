@@ -1,6 +1,6 @@
 from ontobio.ontol_factory import OntologyFactory
 from networkx.algorithms.dag import ancestors
-from ontobio.graph_io import GraphRenderer
+from ontobio.io.ontol_renderers import GraphRenderer
 
 PLOIDY = 'PATO:0001374'
 
@@ -33,17 +33,14 @@ def test_remote_sparql():
 
     shapes1 = ont.resolve_names(Q, is_regex=True, is_remote=False)
     print("SHAPE Q:"+str(shapes1))
-    show_nodes(w, g, shapes1)
+    show_nodes(w, ont, shapes1)
     assert Y_SHAPED in shapes1
     
     shapes2 = ont.resolve_names(Q, is_regex=True, is_remote=True)
     print("SHAPE Q:"+str(shapes2))
-    show_nodes(w, g, shapes2)
+    show_nodes(w, ont, shapes2)
     assert Y_SHAPED in shapes2
 
-def show_nodes(w, g, ids):
+def show_nodes(w, ont, ids):
     for id in ids:
-        print(w.render_noderef(g, id))
-    
-    
-
+        print(w.render_noderef(ont, id))
