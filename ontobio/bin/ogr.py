@@ -15,7 +15,7 @@ import argparse
 import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.graph_io import GraphRenderer
+from ontobio.io.ontol_renderers import GraphRenderer
 from ontobio.slimmer import get_minimal_subgraph
 import logging
 
@@ -111,7 +111,8 @@ def show_subgraph(g, nodes, query_ids, args):
     w = GraphRenderer.create(args.to)
     if args.outfile is not None:
         w.outfile = args.outfile
-    w.write_subgraph(g, nodes, query_ids=query_ids, container_predicates=args.container_properties)
+    subont = Ontology(graph=g)
+    w.write_subgraph(subont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
             
 def resolve_ids(ont, ids, args):
     r_ids = []

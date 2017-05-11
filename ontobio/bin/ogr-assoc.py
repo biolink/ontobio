@@ -27,7 +27,6 @@ import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.graph_io import GraphRenderer
 from ontobio.slimmer import get_minimal_subgraph
 import logging
 
