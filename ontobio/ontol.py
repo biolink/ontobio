@@ -36,6 +36,8 @@ class Ontology():
         # obograph
         self.graphdoc = graphdoc
 
+        self.all_logical_definitions = []
+        
         # alternatively accept a payload object
         if payload is not None:
             self.graph = payload.get('graph')

@@ -158,7 +158,8 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         self.graph = g
         self.graph_name = get_named_graph(handle)
         self.xref_graph = get_xref_graph(handle)
-        logging.info("Graph "+str(self.graph))
+        self.all_logical_definitions = []
+        logging.info("Graph: {} LDs: {}".format(self.graph, self.all_logical_definitions))
 
     def __str__(self):
         return "h:{} g:{}".format(self.handle, self.graph)
@@ -172,6 +173,7 @@ class LazyRemoteSparqlOntology(RemoteSparqlOntology):
     """
 
     def __init__(self):
-        pass
+        self.all_logical_definitions = [] ## TODO
+
 
     
