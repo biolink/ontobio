@@ -158,6 +158,12 @@ class AssociationSet():
                 for t in amap[m]:
                     results.append( (m,t) )
         return results
+
+    def annotations(self, subject_id):
+        if subject_id in self.association_map:
+            return self.association_map[subject_id]
+        else:
+            return []
             
     def query(self, terms=[], negated_terms=[]):
         """
