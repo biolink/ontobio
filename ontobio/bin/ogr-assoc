@@ -1,7 +1,0 @@
-#!/bin/sh
-DIRNAME=`dirname $0`
-BIOLINK=$DIRNAME/../..
-pyvenv venv
-source $BIOLINK/venv/bin/activate
-PYTHONPATH=$BIOLINK python $DIRNAME/ogr-assoc.py "$@"
-
