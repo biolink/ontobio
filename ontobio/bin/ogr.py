@@ -78,7 +78,8 @@ def main():
     for id in ont.resolve_names(args.ids,
                                 is_remote = searchp.find('x') > -1,
                                 is_partial_match = searchp.find('p') > -1,
-                                is_regex = searchp.find('r') > -1):
+                                is_regex = searchp.find('r') > -1,
+                                synonyms=True):
         qids.append(id)
     logging.info("Query IDs: {}".format(qids))
 
