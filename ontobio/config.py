@@ -23,11 +23,11 @@ class Config():
 
     """
     def __init__(self,
-                 solr_assocs_url = "https://solr.monarchinitiative.org/solr/golr"
-                 amigo_solr_assocs_url = "http://golr.berkeleybop.org"
-                 solr_search_url = "https://solr-dev.monarchinitiative.org/solr/search"
-                 amigo_solr_search_url = "http://golr.berkeleybop.org"
-                 sparql_url = "http://sparql.hegroup.org/sparql"
+                 solr_assocs_url = "https://solr.monarchinitiative.org/solr/golr",
+                 amigo_solr_assocs_url = "http://golr.berkeleybop.org",
+                 solr_search_url = "https://solr-dev.monarchinitiative.org/solr/search",
+                 amigo_solr_search_url = "http://golr.berkeleybop.org",
+                 sparql_url = "http://sparql.hegroup.org/sparql",
                  use_amigo_for = "function"):
         self.solr_assocs_url = solr_assocs_url
         self.amigo_solr_assocs_url = amigo_solr_assocs_url
