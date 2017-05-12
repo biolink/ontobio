@@ -34,7 +34,8 @@ prefixmap = dict(
     treated_by_drug = 'http://www.wikidata.org/prop/direct/P2176')
 
 qmap = dict(
-    disease2protein = dict(chain=['genetic_association', 'encodes'], prefix='UniProtKB')
+    disease2protein = dict(chain=['genetic_association', 'encodes'], prefix='UniProtKB'),
+    genetic_association = dict(chain=['genetic_association'], prefix='NCBIGene')
     )
 
 

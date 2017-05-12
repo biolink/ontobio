@@ -38,6 +38,11 @@ ontol_sources = {
     '': "http://sparql.hegroup.org/sparql"
     }
 
+OIO_SYNS = dict(
+    related='oboInOwl:hasRelatedSynonym',
+    narrow = 'oboInOwl:hasNarrowSynonym',
+    broad = 'oboInOwl:hasBroadSynonym',
+    exact = 'oboInOwl:hasExactSynonym')
     
 
 def get_digraph(ont, relations=None, writecache=False):
