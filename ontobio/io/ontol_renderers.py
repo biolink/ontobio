@@ -237,7 +237,9 @@ class AsciiTreeGraphRenderer(GraphRenderer):
 
 class OboFormatGraphRenderer(GraphRenderer):
     """
-    Render as obo format
+    Render as obo format.
+
+    Note this is currently incomplete
     """
     def __init__(self, **args):
         super().__init__(**args)
@@ -263,7 +265,7 @@ class OboFormatGraphRenderer(GraphRenderer):
         n = g.node[nid]
         s = "[Term]\n";
         s += self.tag('id', nid)
-        s += self.tag('name', n['label'])
+        s += self._dtag('name', n, 'label')
         for p in g.predecessors(nid):
             for _,ea in g[p][nid].items():
                 pred = ea['pred']
@@ -279,9 +281,24 @@ class OboFormatGraphRenderer(GraphRenderer):
             for pred,filler in ld.restrictions:
                 s += self.tag('intersection_of', pred, filler)
                 
+        for syn in ontol.synonyms(nid):
+            t = ""
+            if syn.lextype is not None:
+                t = " "+syn.lextype
+            x = ""
+            if syn.xrefs is not None:
+                x = ", ".join(syn.xrefs)
+            s += 'synonym: "{}" {}{} [{}]\n'.format(self._escape_quotes(syn.val),
+                                                    syn.scope(),
+                                                    t,
+                                                    x)
         s += "\n"
         return s
 
+    def _escape_quotes(self, v):
+        # TODO: escape newlines etc
+        return v.replace('"',"z")
+        
     # TODO
     def render_xrefs(self, nid, ontol, **args):
         g = ontol.xref_graph # TODO - use ontol methods directly
@@ -304,6 +321,12 @@ class OboFormatGraphRenderer(GraphRenderer):
     def tag(self, t, *vs):
         v = " ".join(vs)
         return t + ': ' + v + "\n"
+
+    # tag using dictionary
+    def _dtag(self, t, d, k):
+        if k in d:
+            return self.tag(t, d[k])
+        return ""
     
 class OboJsonGraphRenderer(GraphRenderer):
     """
