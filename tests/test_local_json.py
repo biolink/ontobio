@@ -134,7 +134,9 @@ def test_graph():
     [s1] = [x for x in syns if x.val == 'protoplast']
     assert s1.pred == 'hasRelatedSynonym'
     assert s1.xrefs == ['GOC:mah']
-    
+
+    assert [] == ont.search('protoplast', synonyms=False)
+    assert {CELL_PART,INTRACELLULAR} == set(ont.search('protoplast', synonyms=True))
     
 #logging.basicConfig(level=logging.DEBUG)
 
