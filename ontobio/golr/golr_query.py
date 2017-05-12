@@ -180,7 +180,8 @@ def goassoc_fieldmap():
     return {
         M.SUBJECT: 'bioentity',
         M.SUBJECT_CLOSURE: 'bioentity',
-        M.SUBJECT_CATEGORY: 'type',
+        ##M.SUBJECT_CATEGORY: 'type',
+        M.SUBJECT_CATEGORY: None,
         M.SUBJECT_LABEL: 'bioentity_label',
         M.SUBJECT_TAXON: 'taxon',
         M.SUBJECT_TAXON_LABEL: 'taxon_label',

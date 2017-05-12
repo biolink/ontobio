@@ -1,5 +1,8 @@
 """
-Parser for GAF and various Association TSVs
+Parsers for GAF and various Association TSVs.
+
+All parser objects instantiate a subclass of the abstract `AssocParser` object
+
 """
 import re
 import requests
@@ -8,18 +11,24 @@ from contextlib import closing
 import subprocess
 import logging
 
+TAXON = 'TAXON'
+ENTITY = 'ENTITY'
+ANNOTATION = 'ANNOTATION'
+
 class AssocParserConfig():
     """
-    Configuration for parser
+    Configuration for an association parser
     """
     def __init__(self,
+                 remove_double_prefixes=False,
                  class_map=None,
                  entity_map=None,
-                 taxa=None,
+                 valid_taxa=None,
                  class_idspaces=None):
+        self.remove_double_prefixes=remove_double_prefixes
         self.class_map=class_map
         self.entity_map=entity_map
-        self.taxa=taxa
+        self.valid_taxa=valid_taxa
         self.class_idspaces=class_idspaces
 
 class Report():
@@ -28,53 +37,220 @@ class Report():
     """
 
     # Levels
+    FATAL = 'FATAL'
     ERROR = 'ERROR'
     WARNING = 'WARNING'
-
+    
     # Warnings: TODO link to gorules
     INVALID_ID = "Invalid identifier"
+    INVALID_IDSPACE = "Invalid identifier prefix"
+    INVALID_TAXON = "Invalid taxon"
+
+    """
+    3 warning levels
+    """
+    LEVELS = [FATAL, ERROR, WARNING]
     
     def __init__(self):
         self.messages = []
+        self.n_lines = 0
+        self.n_assocs = 0
+        self.skipped = []
+        self.subjects = set()
+        self.objects = set()
+        self.taxa = set()
+        self.references = set()
 
-    def error(self, line, type, obj):
-        self.message(ERROR, line, type, obj)
-    def message(self, level, line, type, obj):
-        self.messages.add({'level':level,
-                           'line':line,
-                           'type':type,
-                           'obj':obj})
+    def error(self, line, type, obj, msg=""):
+        self.message(self.ERROR, line, type, obj, msg)
+    def message(self, level, line, type, obj, msg=""):
+        self.messages.append({'level':level,
+                              'line':line,
+                              'type':type,
+                              'message':msg,
+                              'obj':obj})
+
+    def to_report_json(self):
+        """
+        Generate a summary in json format
+        """
+
+        N = 10
+        report = dict(
+            summary = dict(association_count = self.n_assocs,
+                           line_count = self.n_lines,
+                           skipped_line_count = len(self.skipped)),
+            aggregate_statistics = dict(subject_count=len(self.subjects),
+                                        object_count=len(self.objects),
+                                        taxon_count=len(self.taxa),
+                                        reference_count=len(self.references),
+                                        taxon_sample=list(self.taxa)[0:N],
+                                        subject_sample=list(self.subjects)[0:N],
+                                        object_sample=list(self.objects)[0:N])
+        )
+
+        # grouped messages
+        gm = {}
+        for level in self.LEVELS:
+            gm[level] = []
+        for m in self.messages:
+            level = m['level']
+            gm[level].append(m)
+
+        mgroups = []
+        for level in self.LEVELS:
+            msgs = gm[level]
+            mgroup = dict(level=level,
+                          count=len(msgs),
+                          messages=msgs)
+            mgroups.append(mgroup)
+        report['groups'] = mgroups
+        return report
+
+    def to_markdown(self):
+        """
+        Generate a summary in markdown format
+        """
+        json = self.to_report_json()
+        summary = json['summary']
+        
+        s = ""
+        s = s + "\n## SUMMARY\n\n";
+
+        s = s + " * Associations: {}\n" . format(summary['association_count'])
+        s = s + " * Lines in file (incl headers): {}\n" . format(summary['line_count'])
+        s = s + " * Lines skipped: {}\n" . format(summary['skipped_line_count'])
+                
+        stats = json['aggregate_statistics']
+        s = s + "\n## STATISTICS\n\n";
+        for k,v in stats.items():
+            s = s + " * {}: {}\n" . format(k,v)
+
+                
+
+        s = s + "\n## MESSAGES\n\n";
+        for g in json['groups']:
+            s = s + " * {}: {}\n".format(g['level'], g['count'])
+        s = s + "\n\n";
+        for g in json['groups']:
+            level = g['level']
+            msgs = g['messages']
+            if len(msgs) > 0:
+                s = s + "### {}\n\n".format(level)
+                for m in msgs:
+                    s = s + " * {} {} `{}`\n".format(m['type'],m['message'],m['line'])
+        return s
         
 class AssocParser():
     """
     Abstract superclass of all association parser classes
     """
 
-    def parse(self, file):
+    def parse(self, file, outfile=None):
         """
         Parse a file.
+        
+        Arguments
+        ---------
 
-        File object may be http URLs, filename or `file-like-object`
+        - file : http URL, filename or `file-like-object`, for input assoc file
+
+        - outfile : a `file-like-object`. if specified, file-like objects will be written here
+
         """
         file = self._ensure_file(file)
         assocs = []
+        skipped = []
+        n_lines = 0
         for line in file:
+            n_lines = n_lines+1
             if line.startswith("!"):
+                if outfile is not None:
+                    outfile.write(line)
                 continue
             line = line.strip("\n")
-            assocs = assocs + self.parse_line(line)
+            line2, new_assocs  = self.parse_line(line)
+            if new_assocs is None or new_assocs == []:
+                logging.warn("SKIPPING: {}".format(new_assocs))
+                skipped.append(line)
+            else:
+                for a in new_assocs:
+                    rpt = self.report
+                    rpt.subjects.add(a['subject']['id'])
+                    rpt.objects.add(a['object']['id'])
+                    rpt.references.update(a['evidence']['has_supporting_reference'])
+                    if 'taxon' in a['subject']:
+                        rpt.taxa.add(a['subject']['taxon']['id'])
+                assocs = assocs + new_assocs
+                if outfile is not None:
+                    outfile.write(line2 + "\n")
+
+        self.report.skipped = self.report.skipped + skipped
+        self.report.n_lines = self.report.n_lines + n_lines
+        self.report.n_assocs = self.report.n_assocs + len(assocs)
+        logging.info("Parsed {} assocs from {} lines. Skipped: {}".
+                     format(len(assocs),
+                            n_lines,
+                            len(skipped)))
         file.close()
         return assocs
-    
-    def _validate_id(self, id, line):
+
+    # split an ID/CURIE into prefix and local parts
+    # (not currently used)
+    def _parse_id(self, id):
+        toks = id.split(":")
+        if len(toks) == 2:
+            return (toks[0],toks[1])
+        else:
+            return (toks[0],toks[1:].join(":"))
+
+    # split an ID/CURIE into prefix and local parts
+    def _get_id_prefix(self, id):
+        toks = id.split(":")
+        return toks[0]
+        
+    def _validate_taxon(self, taxon, line):
+        if self.config.valid_taxa is None:
+            return True
+        else:
+            if taxon in self.config.valid_taxa:
+                return True
+            else:
+                self.report.error(line, Report.INVALID_TAXON, taxon)
+                return False
+        
+    def _validate_id(self, id, line, context=None):
         if id.find(" ") > -1:
             self.report.error(line, Report.INVALID_ID, id)
+            return False
+        if id.find("|") > -1:
+            # non-fatal
+            self.report.error('', Report.INVALID_ID, id)
+        idspace = self._get_id_prefix(id)
+        if context == ANNOTATION and self.config.class_idspaces is not None:
+            if idspace not in self.config.class_idspaces:
+                self.report.error(line, Report.INVALID_IDSPACE, id, "allowed: {}".format(self.config.class_idspaces))
+                return False
+        return True
+
+    def _split_pipe(self, v):
+        if v == "":
+            return []
+        ids = v.split("|")
+        ids = [id for id in ids if self._validate_id(id, '')]
+        return ids
     
     def _pair_to_id(self, db, localid):
+        if self.config.remove_double_prefixes:
+            ## Switch MGI:MGI:n to MGI:n
+            if localid.startswith(db+":"):
+                localid = localid.replace(db+":","")
         return db + ":" + localid
 
     def _taxon_id(self,id):
-        return id.replace('taxon','NCBITaxon')
+         id = id.replace('taxon','NCBITaxon')
+         self._validate_id(id,'',TAXON)
+         return id
     
     def _ensure_file(self, file):
         if isinstance(file,str):
@@ -99,7 +275,7 @@ class AssocParser():
             return file
             
     
-    def parse_class_expression(self, x):
+    def _parse_class_expression(self, x):
         ## E.g. exists_during(GO:0000753)
         ## Atomic class expressions only
         [(p,v)] = re.findall('(.*)\((.*)\)',x)
@@ -138,6 +314,8 @@ class GpadParser(AssocParser):
             rel = vals[2]
             # TODO: not
             id = self._pair_to_id(vals[0], vals[1])
+            if not self._validate_id(id, line, ENTITY):
+                continue
             t = vals[3]
             tuples.append( (id,None,t) )
         return tuples
@@ -159,9 +337,14 @@ class GpadParser(AssocParser):
          assigned_by,
          annotation_xp,
          annotation_properties] = vals
-                
-        id = self._pair_to_id(db, db_object_id)
 
+        id = self._pair_to_id(db, db_object_id)
+        if not self._validate_id(id, line, ENTITY):
+            return line, []
+        
+        if not self._validate_id(goid, line, ANNOTATION):
+            return line, []
+        
         assocs = []
         xp_ors = annotation_xp.split("|")
         for xp_or in xp_ors:
@@ -169,7 +352,7 @@ class GpadParser(AssocParser):
             extns = []
             for xp_and in xp_ands:
                 if xp_and != "":
-                    extns.append(self.parse_class_expression(xp_and))
+                    extns.append(self._parse_class_expression(xp_and))
             assoc = {
                 'source_line': line,
                 'subject': {
@@ -184,15 +367,15 @@ class GpadParser(AssocParser):
                 },
                 'evidence': {
                     'type': evidence,
-                    'with_support_from': withfrom,
-                    'has_supporting_reference': reference
+                    'with_support_from': self._split_pipe(withfrom),
+                    'has_supporting_reference': self._split_pipe(reference)
                 },
                 'provided_by': assigned_by,
                 'date': date,
                 
             }
             assocs.append(assoc)
-        return assocs
+        return line, assocs
     
 class GafParser(AssocParser):
     """
@@ -222,6 +405,8 @@ class GafParser(AssocParser):
             if vals[3] != "":
                 continue
             id = self._pair_to_id(vals[0], vals[1])
+            if not self._validate_id(id, line, ENTITY):
+                continue
             n = vals[2]
             t = vals[4]
             tuples.append( (id,n,t) )
@@ -255,12 +440,24 @@ class GafParser(AssocParser):
          annotation_xp,
          gene_product_isoform] = vals
 
+        ## --
+        ## db + db_object_id. CARD=1
+        ## --
         id = self._pair_to_id(db, db_object_id)
-
+        if not self._validate_id(id, line, ENTITY):
+            return line, []
         
+        if not self._validate_id(goid, line, ANNOTATION):
+            return line, []
+        
+        ## --
+        ## optionally map goid and entity (gp) id
+        ## --
         # Example use case: map2slim
         if config.class_map is not None:
             goid = self.map_id(goid, config.class_map)
+            if not self._validate_id(goid, line, ANNOTATION):
+                return line, []
             vals[4] = goid
             
         # Example use case: mapping from UniProtKB to MOD ID
@@ -271,33 +468,58 @@ class GafParser(AssocParser):
             db_object_id = toks[1:]
             vals[1] = db_object_id
 
+        ## --
+        ## end of line re-processing
+        ## --
         # regenerate line post-mapping
         line = "\t".join(vals)
 
+        ## --
+        ## taxon CARD={1,2}
+        ## --
+        ## if a second value is specified, this is the interacting taxon
         taxa = [self._taxon_id(x) for x in taxon.split("|")]
         taxon = taxa[0]
         in_taxa = taxa[1:]
+        self._validate_taxon(taxon, line)
         
+        ## --
+        ## db_object_synonym CARD=0..*
+        ## --
         synonyms = db_object_synonym.split("|")
         if db_object_synonym == "":
             synonyms = []
-        
 
+        ## --
+        ## process associations
+        ## --
+        ## note that any disjunctions in the annotation extension
+        ## will result in the generation of multiple associations
         assocs = []
         xp_ors = annotation_xp.split("|")
         for xp_or in xp_ors:
+
+            # gather conjunctive expressions in extensions field
             xp_ands = xp_or.split(",")
             extns = []
             for xp_and in xp_ands:
                 if xp_and != "":
-                    extns.append(self.parse_class_expression(xp_and))
+                    extns.append(self._parse_class_expression(xp_and))
 
+            ## --
+            ## qualifier
+            ## --
+            ## we generate both qualifier and relation field
             relation = None
             qualifiers = qualifier.split("|")
             if qualifier == '':
                 qualifiers = []
             negated =  'NOT' in qualifiers
             other_qualifiers = [q for q in qualifiers if q != 'NOT']
+
+            ## In GAFs, relation is overloaded into qualifier.
+            ## If no explicit non-NOT qualifier is specified, use
+            ## a default based on GPI spec
             if len(other_qualifiers) > 0:
                 relation = other_qualifiers[0]
             else:
@@ -309,13 +531,14 @@ class GafParser(AssocParser):
                     relation = 'enables'
                 else:
                     relation = None
-                    
-            object = {'id':goid}
-            if len(extns) > 0:
-                object['extensions'] = extns
-            if len(taxa) > 0:
-                object['in_taxon'] = taxa
 
+            ## --
+            ## goid
+            ## --
+            object = {'id':goid,
+                      'taxon': taxon}
+
+            # construct subject dict
             subject = {
                 'id':id,
                 'label':db_object_symbol,
@@ -326,18 +549,27 @@ class GafParser(AssocParser):
                     'id': taxon
                 }
             }
+            
+            ## --
+            ## gene_product_isoform
+            ## --
+            ## This is mapped to a more generic concept of subject_extensions
             subject_extns = []
             if gene_product_isoform is not None and gene_product_isoform != '':
                 subject_extns.append({'property':'isoform', 'filler':gene_product_isoform})
-            if len(subject_extns) > 0:
-                subject['extensions'] = subject_extns
 
+            ## --
+            ## evidence
+            ## reference
+            ## withfrom
+            ## --
             evidence = {
                 'type': evidence,
-                'has_supporting_reference': reference
+                'has_supporting_reference': self._split_pipe(reference)
             }
-            if withfrom != '':
-                evidence['with_support_from'] = withfrom
+            evidence['with_support_from'] = self._split_pipe(withfrom)
+
+            ## Construct main return dict
             assoc = {
                 'source_line': line,
                 'subject': subject,
@@ -352,7 +584,12 @@ class GafParser(AssocParser):
                 'date': date,
                 
             }
+            if len(subject_extns) > 0:
+                assoc['subject_extensions'] = subject_extns
+            if len(extns) > 0:
+                assoc['object_extensions'] = extns
+                
             assocs.append(assoc)
-        return assocs
+        return line, assocs
     
 ## TODO - HPOA parser

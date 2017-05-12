@@ -31,7 +31,7 @@ import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.graph_io import GraphRenderer
+from ontobio.io.ontol_renderers import GraphRenderer
 from ontobio.slimmer import get_minimal_subgraph
 import logging
 
@@ -47,7 +47,7 @@ def main():
 
     parser.add_argument('-r', '--resource', type=str, required=False,
                         help='Name of ontology')
-    parser.add_argument('-f', '--file', type=str, required=False,
+    parser.add_argument('-f', '--assocfile', type=str, required=False,
                         help='Name of input file for associations - currently GAF is assumed')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
@@ -73,6 +73,11 @@ def main():
                         help='Increase output verbosity')
 
     subparsers = parser.add_subparsers(dest='subcommand', help='sub-command help')
+
+    # EXTRACT ONTOLOGY
+    parser_n = subparsers.add_parser('subontology', help='Extract sub-ontology')
+    parser_n.add_argument('-M', '--minimal', dest='minimal', action='store_true', default=False, help='If set, remove non-MRCA nodes')
+    parser_n.set_defaults(function=extract_ontology)
     
     # ENRICHMENT
     parser_n = subparsers.add_parser('enrichment', help='Perform an enrichment test')
@@ -146,17 +151,27 @@ def main():
     # Association Factory
     afactory = AssociationSetFactory()
     [subject_category, object_category] = args.category
-    aset = afactory.create(ontology=ont,
-                           file=args.file,
-                           subject_category=subject_category,
-                           object_category=object_category,
-                           evidence=evidence,
-                           taxon=args.taxon)
+    aset = None
+    if args.assocfile is not None:
+        aset = afactory.create_from_file(file=args.assocfile,
+                                        ontology=ont)
+    else:
+        # create using GO/Monarch services
+        aset = afactory.create(ontology=ont,
+                               subject_category=subject_category,
+                               object_category=object_category,
+                               taxon=args.taxon)
     
     
     func = args.function
     func(ont, aset, args)
 
+def extract_ontology(ont, aset, args):
+    ont = aset.subontology(minimal=args.minimal)
+    w = GraphRenderer.create('obo')
+    w.outfile = args.outfile
+    w.write(ont)
+    
 def run_enrichment_test(ont, aset, args):
     subjects = args.subjects
     if args.query is not None:

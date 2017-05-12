@@ -119,7 +119,7 @@ class Ontology():
         """
         return self.get_graph().subgraph(nodes)
 
-    def subontology(self, nodes=[], minimal=False):
+    def subontology(self, nodes=[], minimal=False, relations=None):
         """
         Returns a new ontology that is an extract of this one
 
@@ -128,7 +128,11 @@ class Ontology():
         if minimal:
             from ontobio.slimmer import get_minimal_subgraph
             g = get_minimal_subgraph(self.get_graph(), nodes)
+            
         ont = Ontology(graph=g) # TODO - add metadata
+        if relations is not None:
+            g = ont.get_filtered_graph(relations)
+            ont = Ontology(graph=g)
         return ont
     
     def extract_subset(self, subset):
@@ -201,6 +205,7 @@ class Ontology():
         if relations is None:
             g = self.get_graph()
         else:
+            # TODO: make this more efficient
             g = self.get_filtered_graph(relations)
         if node in g:
             return g.predecessors(node)
@@ -304,8 +309,6 @@ class Ontology():
                 nodes.update(nx.ancestors(g, id))
         return nodes
                 
-
-
     def get_roots(self, relations=None, prefix=None):
         """
         Get all nodes at root
@@ -415,7 +418,7 @@ class Ontology():
         return []
 
     
-    def resolve_names(self, names, **args):
+    def resolve_names(self, names, synonyms=False, **args):
         """
         returns a list of identifiers based on an input list of labels and identifiers.
 
@@ -437,12 +440,16 @@ class Ontology():
             if len(n.split(":")) ==2:
                 r_ids.append(n)
             else:
-                matches = [nid for nid in g.nodes() if self.is_match(g.node[nid], n, **args)]
-                r_ids += matches
+                matches = set([nid for nid in g.nodes() if self._is_match(self.label(nid), n, **args)])
+                if synonyms:
+                    for nid in g.nodes():
+                        for s in self.synonyms(nid):
+                            if self._is_match(s.val, n, **args):
+                                matches.add(nid) 
+                r_ids += list(matches)
         return r_ids
 
-    def is_match(self, node, term, is_partial_match=False, is_regex=False, **args):
-        label = node.get('label')
+    def _is_match(self, label, term, is_partial_match=False, is_regex=False, **args):
         if term == '%':
             # always match if client passes '%'
             return True
@@ -503,7 +510,13 @@ class Synonym():
     """
     Represents a synonym using the OBO model
     """
-    
+
+    predmap = dict(
+        hasExactSynonym='exact',
+        hasBroadSynonym='broad',
+        hasNarrowSynonym='narrow',
+        hasRelatedSynonym='related')
+
     def __init__(self, class_id, val=None, pred=None, lextype=None, xrefs=None, ontology=None):
         """
         Arguments:
@@ -541,6 +554,9 @@ class Synonym():
         return '{} "{}" {} {} {}'.format(self.class_id, self.val, self.pred, self.lextype, self.xrefs)
     def __repr__(self):
         return self.__str__()
+
+    def scope(self):
+        return self.predmap[self.pred].upper()
     
     def __cmp__(self, other):
         (x,y) = (str(self),str(other))

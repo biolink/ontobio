@@ -160,11 +160,25 @@ class AssociationSet():
         return results
 
     def annotations(self, subject_id):
+        """
+        Returns a list of classes used to describe a subject
+
+        @Deprecated: use objects_for_subject
+        """
         if subject_id in self.association_map:
             return self.association_map[subject_id]
         else:
             return []
-            
+
+    def objects_for_subject(self, subject_id):
+        """
+        Returns a list of classes used to describe a subject
+        """
+        if subject_id in self.association_map:
+            return self.association_map[subject_id]
+        else:
+            return []
+        
     def query(self, terms=[], negated_terms=[]):
         """
         Basic boolean query, using inference.
