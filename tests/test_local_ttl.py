@@ -16,7 +16,9 @@ def test_local_json_parse():
     """
     factory = OntologyFactory()
     print("Creating ont")
-    tbox_ontology = factory.create('go')
+    #tbox_ontology = factory.create('go')
+    # TODO: create test module for this example
+    tbox_ontology = factory.create('tests/resources/go-truncated-pombase.json')
     ont = factory.create('tests/resources/gocam-example.ttl', tbox_ontology=tbox_ontology)
     g = ont.get_graph()
     nodes = ont.search('%')

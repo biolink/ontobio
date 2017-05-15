@@ -6,12 +6,6 @@ POMBASE = "tests/resources/truncated-pombase.gaf"
 POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
 ONT = "tests/resources/go-truncated-pombase.json"
 
-def test_factory():
-    ont = OntologyFactory().create(ONT)
-    f = AssociationSetFactory()
-    aset = f.create(ontology=ont, file=POMBASE)
-    print("SUBJS: {}".format(aset.subjects))
-    assert len(aset.subjects) > 100
 
 def test_skim():
     p = GafParser()
