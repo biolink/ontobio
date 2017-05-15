@@ -592,4 +592,164 @@ class GafParser(AssocParser):
             assocs.append(assoc)
         return line, assocs
     
-## TODO - HPOA parser
+class HpoaParser(GafParser):
+    """
+    Parser for HPOA format
+
+    http://human-phenotype-ontology.github.io/documentation.html#annot
+
+    Note that there are similarities with Gaf format, so we inherit from GafParser, and override
+    """
+    
+    def __init__(self,config=AssocParserConfig()):
+        """
+        Arguments:
+        ---------
+
+        config : a AssocParserConfig object
+        """
+        self.config = config
+        self.report = Report()
+
+    def parse_line(self, line, class_map=None, entity_map=None):
+        """
+        Parses a single line of a HPOA
+        """
+        config = self.config
+
+        # http://human-phenotype-ontology.github.io/documentation.html#annot
+        vals = line.split("\t")
+        [db,
+         db_object_id,
+         db_object_symbol,
+         qualifier,
+         hpoid,
+         reference,
+         evidence,
+         onset,
+         frequency,
+         withfrom,
+         aspect,
+         db_object_synonym,
+         date,
+         assigned_by] = vals
+
+        # hardcode this, as HPOA is currently human-only
+        taxon = 'NCBITaxon:9606'
+
+        # hardcode this, as HPOA is currently disease-only
+        db_object_type = 'disease'
+        
+        ## --
+        ## db + db_object_id. CARD=1
+        ## --
+        id = self._pair_to_id(db, db_object_id)
+        if not self._validate_id(id, line, ENTITY):
+            return line, []
+        
+        if not self._validate_id(hpoid, line, ANNOTATION):
+            return line, []
+        
+        ## --
+        ## optionally map hpoid and entity (disease) id
+        ## --
+        # Example use case: HPO map2slim
+        if config.class_map is not None:
+            hpoid = self.map_id(hpoid, config.class_map)
+            if not self._validate_id(hpoid, line, ANNOTATION):
+                return line, []
+            vals[4] = hpoid
+            
+        # Example use case: mapping from OMIM to Orphanet
+        if config.entity_map is not None:
+            id = self.map_id(id, config.entity_map)
+            toks = id.split(":")
+            db = toks[0]
+            db_object_id = toks[1:]
+            vals[1] = db_object_id
+
+        ## --
+        ## end of line re-processing
+        ## --
+        # regenerate line post-mapping
+        line = "\t".join(vals)
+        
+        ## --
+        ## db_object_synonym CARD=0..*
+        ## --
+        synonyms = db_object_synonym.split("|")
+        if db_object_synonym == "":
+            synonyms = []
+
+
+        ## --
+        ## qualifier
+        ## --
+        ## we generate both qualifier and relation field
+        relation = None
+        qualifiers = qualifier.split("|")
+        if qualifier == '':
+            qualifiers = []
+        negated =  'NOT' in qualifiers
+        other_qualifiers = [q for q in qualifiers if q != 'NOT']
+
+        ## CURRENTLY NOT USED
+        if len(other_qualifiers) > 0:
+            relation = other_qualifiers[0]
+        else:
+            if aspect == 'O':
+                relation = 'has_phenotype'
+            elif aspect == 'I':
+                relation = 'has_inheritance'
+            elif aspect == 'M':
+                relation = 'mortality'
+            elif aspect == 'C':
+                relation = 'has_onset'
+            else:
+                relation = None
+
+        ## --
+        ## hpoid
+        ## --
+        object = {'id':hpoid,
+                  'taxon': taxon}
+
+        # construct subject dict
+        subject = {
+            'id':id,
+            'label':db_object_symbol,
+            'type': db_object_type,
+            'synonyms': synonyms,
+            'taxon': {
+                'id': taxon
+            }
+        }
+
+        ## --
+        ## evidence
+        ## reference
+        ## withfrom
+        ## --
+        evidence = {
+            'type': evidence,
+            'has_supporting_reference': self._split_pipe(reference)
+        }
+        evidence['with_support_from'] = self._split_pipe(withfrom)
+
+        ## Construct main return dict
+        assoc = {
+            'source_line': line,
+            'subject': subject,
+            'object': object,
+            'negated': negated,
+            'qualifiers': qualifiers,
+            'relation': {
+                'id': relation
+            },
+            'evidence': evidence,
+            'provided_by': assigned_by,
+            'date': date,
+            
+        }
+            
+        return line, [assoc]

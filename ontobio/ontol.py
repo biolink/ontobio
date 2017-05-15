@@ -25,7 +25,7 @@ class Ontology():
         """
         initializes based on an ontology name.
 
-        Note: do not call this directly, use OntologyFactory instead
+        **Note**: do not call this directly, use OntologyFactory instead
         """
         self.handle = handle
 
@@ -48,9 +48,14 @@ class Ontology():
 
     def get_graph(self):
         """
-        Returns a networkx graph for the whole ontology.
+        Return a networkx graph for the whole ontology.
 
-        Only implemented for 'eager' implementations 
+        Note: Only implemented for *eager* implementations 
+
+        Return
+        ------
+        nx.MultiDiGraph
+            A networkx MultiDiGraph object representing the complete ontology
         """
         return self.graph
 
@@ -63,16 +68,16 @@ class Ontology():
 
         Implementation notes: currently this is not cached
 
-        Arguments:
-
+        Arguments
+        ---------
           - relations : list
-
              list of object property IDs, e.g. subClassOf, BFO:0000050. If empty, uses all.
-
           - prefix : String
-
              if specified, create a subgraph using only classes with this prefix, e.g. ENVO, PATO, GO
-
+        Return
+        ------
+        nx.MultiDiGraph
+            A networkx MultiDiGraph object representing the filtered ontology
         """
         # default method - wrap get_graph
         srcg = self.get_graph()
@@ -112,19 +117,31 @@ class Ontology():
         
     def subgraph(self, nodes=[]):
         """
-        Returns an induced subgraph
+        Return an induced subgraph
 
         By default this wraps networkx subgraph,
         but this may be overridden in specific implementations
         """
         return self.get_graph().subgraph(nodes)
 
-    def subontology(self, nodes=[], minimal=False, relations=None):
+    def subontology(self, nodes=None, minimal=False, relations=None):
         """
-        Returns a new ontology that is an extract of this one
+        Return a new ontology that is an extract of this one
+
+        Arguments:
+
+        - Nodes: list
+
+            list of node IDs to include in subontology. If None, all are used
+
+        - Relations: list
+
+            list of relation IDs to include in subontology. If None, all are used
 
         """
-        g = self.get_graph().subgraph(nodes)
+        g = self.get_graph()
+        if nodes is not None:
+            g = g.subgraph(nodes)
         if minimal:
             from ontobio.slimmer import get_minimal_subgraph
             g = get_minimal_subgraph(self.get_graph(), nodes)
@@ -134,6 +151,25 @@ class Ontology():
             g = ont.get_filtered_graph(relations)
             ont = Ontology(graph=g)
         return ont
+
+    def create_slim_mapping(self, subset=[]):
+        """
+        Given an ontology subset, create a mapping between all nodes in ontology
+        and most recent ancestor in subset
+        """
+        subset = set(subset)
+        m = {}
+        for n in self.nodes():
+            ancs = subset.intersection(self.ancestors(n), reflexive=True)
+            ancs = self._nr(ancs)
+            m[n['id']] = ancs
+        return m
+
+    def _nr(self, ids):
+        sids = set(ids)
+        for id in ids:
+            sids = sids.difference(self.ancestors(id, reflexive=False))
+        return sids
     
     def extract_subset(self, subset):
         """
@@ -166,7 +202,7 @@ class Ontology():
     
     def nodes(self):
         """
-        Returns all nodes in ontology
+        Return all nodes in ontology
 
         Wraps networkx by default
         """
@@ -174,7 +210,7 @@ class Ontology():
 
     def node(self, id):
         """
-        Returns a node with a given ID
+        Return a node with a given ID
 
         Wraps networkx by default
         """
@@ -185,7 +221,7 @@ class Ontology():
         
     def parents(self, node, relations=None):
         """
-        Returns all direct parents of specified node.
+        Return all direct parents of specified node.
 
         Wraps networkx by default.
 
@@ -214,7 +250,7 @@ class Ontology():
     
     def children(self, node, relations=None):
         """
-        Returns all direct children of specified node.
+        Return all direct children of specified node.
 
         Wraps networkx by default.
 
@@ -240,24 +276,32 @@ class Ontology():
         else:
             return []
     
-    def ancestors(self, node, relations=None):
-        """
-        Returns all ancestors of specified node.
+    def ancestors(self, node, relations=None, reflexive=False):
+        """Return all ancestors of specified node.
 
-        Wraps networkx by default.
+        The default implementation is to use networkx, but some
+        implementations of the Ontology class may use a database or
+        service backed implementation, for large graphs.
 
         Arguments
         ---------
+        node : str
+            identifier for node in ontology
+        reflexive : bool
+            if true, return query node in graph
+        relations : list
+             relation (object property) IDs used to filter
 
-        node: string
-
-           identifier for node in ontology
-
-        relations: list of strings
-
-           list of relation (object property) IDs used to filter
+        Returns
+        -------
+        list[str]
+            ancestor node IDs
 
         """
+        if reflexive:
+            ancs = self.ancestors(node, relations, reflexive=False)
+            return ancs + [node]
+            
         g = None
         if relations is None:
             g = self.get_graph()
@@ -268,14 +312,32 @@ class Ontology():
         else:
             return []
 
-    def descendants(self, node, relations=None):
+    def descendants(self, node, relations=None, reflexive=False):
         """
         Returns all ancestors of specified node.
 
-        Wraps networkx by default.
+        The default implementation is to use networkx, but some
+        implementations of the Ontology class may use a database or
+        service backed implementation, for large graphs.
 
-        Arguments as for ancestors
+
+        Arguments
+        ---------
+        node : str
+            identifier for node in ontology
+        reflexive : bool
+            if true, return query node in graph
+        relations : list
+             relation (object property) IDs used to filter
+
+        Returns
+        -------
+        list[str]
+            descendant node IDs
         """
+        if reflexive:
+            ancs = self.ancestors(node, relations, reflexive=False)
+            return ancs + [node]
         g = None
         if relations is None:
             g = self.get_graph()
@@ -290,13 +352,21 @@ class Ontology():
         """
         Traverse (optionally) up and (optionally) down from an input set of nodes
 
-        Arguments:
+        Arguments
+        ---------
+        qids : list[str]
+            list of seed node IDs to start from
+        up : bool
+            if True, include ancestors
+        down : bool
+            if True, include descendants
+        relations : list[str]
+            list of relations used to filter
 
-          - qids : list
-          - up : boolean
-          - down : boolean
-          - relations : list
-          - prefix : string
+        Return
+        ------
+        list[str]
+            nodes reachable from qids
         """
         g = self.get_filtered_graph(**args)
         nodes = set()
@@ -311,7 +381,14 @@ class Ontology():
                 
     def get_roots(self, relations=None, prefix=None):
         """
-        Get all nodes at root
+        Get all nodes that lack parents
+
+        Arguments
+        ---------
+        relations : list[str]
+            list of relations used to filter
+        prefix : str
+            E.g. GO. Exclude nodes that lack this prefix when testing parentage
         """
         g = self.get_filtered_graph(relations=relations, prefix=prefix)
         # note: we also eliminate any singletons, which includes obsolete classes
@@ -321,6 +398,11 @@ class Ontology():
     def get_level(self, level, relations=None, **args):
         """
         Get all nodes at a particular level
+
+        Arguments
+        ---------
+        relations : list[str]
+            list of relations used to filter
         """
         g = self.get_filtered_graph(relations)
         nodes = self.get_roots(relations=relations, **args)
@@ -333,7 +415,16 @@ class Ontology():
 
     def parent_index(self, relations=None):
         """
-        Returns a list of lists [[CLASS_1, PARENT_1,1, ..., PARENT_1,N], [CLASS_2, PARENT_2,1, PARENT_2,2, ... ] ... ]
+        Returns a mapping of nodes to all direct parents
+
+        Arguments
+        ---------
+        relations : list[str]
+            list of relations used to filter
+
+        Returns:
+        list
+            list of lists [[CLASS_1, PARENT_1,1, ..., PARENT_1,N], [CLASS_2, PARENT_2,1, PARENT_2,2, ... ] ... ]
         """
         g = None
         if relations is None:
@@ -349,7 +440,14 @@ class Ontology():
         """
         Retrieves logical definitions for a class id
 
-        Returns: LogicalDefinition
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+
+        Returns
+        -------
+        LogicalDefinition
         """
         ldefs = self.all_logical_definitions
         if ldefs is not None:
@@ -361,6 +459,18 @@ class Ontology():
     def synonyms(self, nid, include_label=False):
         """
         Retrieves synonym objects for a class
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+        include_label : bool
+            If True, include label/names as Synonym objects
+
+        Returns
+        -------
+        list[Synonym]
+            :class:`Synonym` objects
         """
         n = self.node(nid)
         syns = []
@@ -376,6 +486,16 @@ class Ontology():
     def all_synonyms(self, include_label=False):
         """
         Retrieves all synonyms
+
+        Arguments
+        ---------
+        include_label : bool
+            If True, include label/names as Synonym objects
+
+        Returns
+        -------
+        list[Synonym]
+            :class:`Synonym` objects
         """
         syns = []
         for n in self.nodes():
@@ -385,6 +505,17 @@ class Ontology():
     def label(self, nid, id_if_null=False):
         """
         Fetches label for a node
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+        id_if_null : bool
+            If True and node has no label return id as label
+
+        Return
+        ------
+        str
         """
         g = self.get_graph()
         if nid in g:
@@ -405,6 +536,17 @@ class Ontology():
     def xrefs(self, nid, bidirectional=False):
         """
         Fetches xrefs for a node
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+        bidirection : bool
+            If True, include nodes xreffed to nid
+
+        Return
+        ------
+        list[str]
         """
         if self.xref_graph is not None:
             xg = self.xref_graph
@@ -424,15 +566,14 @@ class Ontology():
 
         Arguments
         ---------
-
-        is_regex : boolean
-
+        names: list
+           search terms. '%' treated as wildcard
+        synonyms: bool
+           if true, search on synonyms in addition to labels
+        is_regex : bool
            if true, treats each name as a regular expression
-
-        is_partial_match : boolean
-
+        is_partial_match : bool
            if true, treats each name as a regular expression .*name.*
-
         """
         g = self.get_graph()
         r_ids = []
@@ -469,7 +610,21 @@ class Ontology():
         """
         Simple search. Returns list of IDs.
 
-        Arguments: as for resolve_names
+        Arguments
+        ---------
+        searchterm: list
+           search term. '%' treated as wildcard
+        synonyms: bool
+           if true, search on synonyms in addition to labels
+        is_regex : bool
+           if true, treats each name as a regular expression
+        is_partial_match : bool
+           if true, treats each name as a regular expression .*name.*
+
+        Return
+        ------
+        list
+           match node IDs
         """
         return self.resolve_names([searchterm], **args)
 
@@ -477,25 +632,23 @@ class LogicalDefinition():
     """
     A simple OWL logical definition conforming to the pattern:
 
+    ::
+
         class_id = (genus_id_1 AND ... genus_id_n) AND (P_1 some FILLER_1) AND ... (P_m some FILLER_m)
+
+    See `obographs <https://github.com/geneontology/obographs>`_ docs for more details
 
     """
     def __init__(self, class_id, genus_ids, restrictions):
         """
-        Arguments:
-
-         - class_id : string
-
-             the class that is being defined
-
-         - genus_ids : list
-
-             a list of named classes (typically length 1)
-
-         - restrictions : list
-
-             a list of (PROPERTY_ID, FILLER_CLASS_ID) tuples
-
+        Arguments
+        ---------
+        class_id : string
+            the class that is being defined
+        genus_ids : list
+            a list of named classes (typically length 1)
+        restrictions : list
+            a list of (PROPERTY_ID, FILLER_CLASS_ID) tuples
         """
         self.class_id = class_id
         self.genus_ids = genus_ids

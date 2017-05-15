@@ -12,7 +12,7 @@ test:
 
 # only run local tests
 travis_test:
-	pytest tests/*local*.py
+	pytest tests/test_*local*.py tests/test_*parser*.py
 
 cleandist:
 	rm dist/*
@@ -24,3 +24,6 @@ release: cleandist
 
 nb:
 	PYTHONPATH=.. jupyter notebook
+
+foo:
+	./bin/flask2marshmallow.pl ../biolink-api/biolink/datamodel/serializers.py 

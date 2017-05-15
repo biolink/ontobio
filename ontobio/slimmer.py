@@ -92,3 +92,4 @@ def _traverse(g, nset, rmnodes, acc):
     acc = acc.union(parents - rmnodes)
     nset = nset.union(parents.intersection(rmnodes))
     return _traverse(g, nset, rmnodes, acc)
+

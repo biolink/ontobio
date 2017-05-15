@@ -373,12 +373,12 @@ class AssociationSet():
             b = sample_size - a
             c = bg_count[cls] - a
             d = (bg_size - bg_count[cls]) - b
-            logging.debug("ABCD="+str((cls,a,b,c,d,sample_size)))
+            #logging.debug("ABCD="+str((cls,a,b,c,d,sample_size)))
             _, p_uncorrected = sp.stats.fisher_exact( [[a, b], [c, d]], direction)
             p = p_uncorrected * num_hypotheses
             if p>1.0:
                 p=1.0
-            logging.debug("P={} uncorrected={}".format(p,p_uncorrected))
+            #logging.debug("P={} uncorrected={}".format(p,p_uncorrected))
             if p<threshold:
                 res = {'c':cls,'p':p,'p_uncorrected':p_uncorrected}
                 if labels:
