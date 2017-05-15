@@ -17,6 +17,7 @@ class GraphRendererConfig():
     def __init__(self,
                  relsymbolmap={
                      'subClassOf': '%',
+                     'subPropertyOf': '%',
                      'BFO:0000050': '<',
                      'RO:0002202': '~',
                  }):
@@ -246,7 +247,8 @@ class OboFormatGraphRenderer(GraphRenderer):
         
     def render(self, ontol, **args):
         g = ontol.get_graph() # TODO - use ontol methods directly
-        ts = nx.topological_sort(g)
+        ts = g.nodes()
+        ts.sort()
         s = "ontology: auto\n\n"
         for n in ts:
             s += self.render_noderef(self, n, ontol, **args)
@@ -254,7 +256,8 @@ class OboFormatGraphRenderer(GraphRenderer):
 
     def render(self, ontol, **args):
         g = ontol.get_graph() # TODO - use ontol methods directly
-        ts = nx.topological_sort(g)
+        ts = g.nodes()
+        ts.sort()
         s = "ontology: auto\n\n"
         for n in ts:
             s += self.render_node(n, ontol, **args)
