@@ -1,5 +1,7 @@
 """
-Factory class for generating ontology objects based on a variety of handle types
+Factory class for generating ontology objects based on a variety of handle types.
+
+See :ref:`inputs` on readthedocs for more details
 """
 
 import networkx as nx
@@ -26,8 +28,10 @@ default_ontology = None
 
 
 class OntologyFactory():
-    """
-    Creates an ontology
+    """Implements a factory for generating :class:`Ontology` objects.
+
+    You should use a factory object rather than initializing
+    `Ontology` directly. See :ref:`inputs` for more details.
     """
 
     # class variable - reuse the same object throughout
@@ -36,6 +40,11 @@ class OntologyFactory():
     def __init__(self, handle=None):
         """
         initializes based on an ontology name
+
+        Arguments
+        ---------
+        handle : str
+            see `create`
         """
         self.handle = handle
 
@@ -43,9 +52,16 @@ class OntologyFactory():
         """
         Creates an ontology based on a handle
 
-         - FILENAME.json : creates an ontology from an obographs json file
-         - obo:ONTID     : E.g. obo:pato - creates an ontology from obolibrary PURL (requires owltools)
-         - ONTID         : E.g. 'pato' - creates an ontology from a remote SPARQL query
+        Handle is one of the following
+
+        - `FILENAME.json` : creates an ontology from an obographs json file
+        - `obo:ONTID`     : E.g. obo:pato - creates an ontology from obolibrary PURL (requires owltools)
+        - `ONTID`         : E.g. 'pato' - creates an ontology from a remote SPARQL query
+
+        Arguments
+        ---------
+        handle : str
+            specifies how to retrieve the ontology info
 
         """
         if handle == None:
