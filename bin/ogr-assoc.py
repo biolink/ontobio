@@ -48,7 +48,9 @@ def main():
     parser.add_argument('-r', '--resource', type=str, required=False,
                         help='Name of ontology')
     parser.add_argument('-f', '--assocfile', type=str, required=False,
-                        help='Name of input file for associations - currently GAF is assumed')
+                        help='Name of input file for associations')
+    parser.add_argument('--assocformat', type=str, default='gaf', required=False,
+                        help='Format of association file, if passed (default: gaf)')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
     parser.add_argument('-t', '--to', type=str, required=False,
@@ -154,7 +156,8 @@ def main():
     aset = None
     if args.assocfile is not None:
         aset = afactory.create_from_file(file=args.assocfile,
-                                        ontology=ont)
+                                         fmt=args.assocformat,
+                                         ontology=ont)
     else:
         # create using GO/Monarch services
         aset = afactory.create(ontology=ont,
