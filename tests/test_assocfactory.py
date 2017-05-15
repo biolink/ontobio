@@ -11,6 +11,7 @@ MITO = 'GO:0005739'
 MOUSE = 'NCBITaxon:10090'
 TRANSCRIPTION_FACTOR = 'GO:0003700'
 TRANSPORTER = 'GO:0005215'
+PART_OF = 'BFO:0000050'
 
 def test_remote_go():
     """
@@ -18,7 +19,7 @@ def test_remote_go():
     """
     ofactory = OntologyFactory()
     afactory = AssociationSetFactory()
-    ont = ofactory.create('go')
+    ont = ofactory.create('go').subontology(relations=['subClassOf', PART_OF])
     aset = afactory.create(ontology=ont,
                            subject_category='gene',
                            object_category='function',
@@ -26,6 +27,8 @@ def test_remote_go():
     
     rs = aset.query([TRANSCRIPTION_FACTOR],[])
     print("Mouse genes annotated to TF: {} {}".format(rs, len(rs)))
+    for g in rs:
+        print("  Gene: {} {}".format(g,aset.label(g)))
     set_tf = rs
     
     rs = aset.query([NUCLEUS],[])
