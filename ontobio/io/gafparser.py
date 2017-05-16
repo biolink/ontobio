@@ -40,7 +40,7 @@ class Report():
     FATAL = 'FATAL'
     ERROR = 'ERROR'
     WARNING = 'WARNING'
-    
+
     # Warnings: TODO link to gorules
     INVALID_ID = "Invalid identifier"
     INVALID_IDSPACE = "Invalid identifier prefix"
@@ -50,7 +50,7 @@ class Report():
     3 warning levels
     """
     LEVELS = [FATAL, ERROR, WARNING]
-    
+
     def __init__(self):
         self.messages = []
         self.n_lines = 0
@@ -113,62 +113,72 @@ class Report():
         """
         json = self.to_report_json()
         summary = json['summary']
-        
+
         s = ""
-        s = s + "\n## SUMMARY\n\n";
+        s += "\n## SUMMARY\n\n"
 
-        s = s + " * Associations: {}\n" . format(summary['association_count'])
-        s = s + " * Lines in file (incl headers): {}\n" . format(summary['line_count'])
-        s = s + " * Lines skipped: {}\n" . format(summary['skipped_line_count'])
-                
+        s += " * Associations: {}\n" . format(summary['association_count'])
+        s += " * Lines in file (incl headers): {}\n" . format(summary['line_count'])
+        s += " * Lines skipped: {}\n" . format(summary['skipped_line_count'])
+
         stats = json['aggregate_statistics']
-        s = s + "\n## STATISTICS\n\n";
+        s += "\n## STATISTICS\n\n"
         for k,v in stats.items():
-            s = s + " * {}: {}\n" . format(k,v)
+            s += " * {}: {}\n" . format(k,v)
 
-                
 
-        s = s + "\n## MESSAGES\n\n";
+
+        s += "\n## MESSAGES\n\n"
         for g in json['groups']:
-            s = s + " * {}: {}\n".format(g['level'], g['count'])
-        s = s + "\n\n";
+            s += " * {}: {}\n".format(g['level'], g['count'])
+        s += "\n\n"
         for g in json['groups']:
             level = g['level']
             msgs = g['messages']
             if len(msgs) > 0:
-                s = s + "### {}\n\n".format(level)
+                s += "### {}\n\n".format(level)
                 for m in msgs:
-                    s = s + " * {} {} `{}`\n".format(m['type'],m['message'],m['line'])
+                    s += " * {} {} `{}`\n".format(m['type'],m['message'],m['line'])
         return s
-        
+
+# TODO avoid using names that are builtin python: file, id
+
 class AssocParser():
     """
     Abstract superclass of all association parser classes
     """
 
     def parse(self, file, outfile=None):
-        """
-        Parse a file.
+        """Parse a line-oriented association file into a list of association dict objects
+
+        Note the returned list is of dict objects. TODO: These will
+        later be specified using marshmallow and it should be possible
+        to generate objects
         
         Arguments
         ---------
+        file : file or string
+            The file is parsed into association objects. Can be a http URL, filename or `file-like-object`, for input assoc file
+        outfile : file
+            Optional output file in which processed lines are written. This a file or `file-like-object`
 
-        - file : http URL, filename or `file-like-object`, for input assoc file
-
-        - outfile : a `file-like-object`. if specified, file-like objects will be written here
-
+        Return
+        ------
+        list
+            Associations generated from the file
         """
         file = self._ensure_file(file)
         assocs = []
         skipped = []
         n_lines = 0
         for line in file:
-            n_lines = n_lines+1
+            n_lines += 1
             if line.startswith("!"):
                 if outfile is not None:
                     outfile.write(line)
                 continue
             line = line.strip("\n")
+            # Let's rename line2 to something more meaningful
             line2, new_assocs  = self.parse_line(line)
             if new_assocs is None or new_assocs == []:
                 logging.warn("SKIPPING: {}".format(new_assocs))
@@ -181,19 +191,20 @@ class AssocParser():
                     rpt.references.update(a['evidence']['has_supporting_reference'])
                     if 'taxon' in a['subject']:
                         rpt.taxa.add(a['subject']['taxon']['id'])
-                assocs = assocs + new_assocs
+                assocs += new_assocs
                 if outfile is not None:
                     outfile.write(line2 + "\n")
 
-        self.report.skipped = self.report.skipped + skipped
-        self.report.n_lines = self.report.n_lines + n_lines
-        self.report.n_assocs = self.report.n_assocs + len(assocs)
+        self.report.skipped += skipped
+        self.report.n_lines += n_lines
+        self.report.n_assocs += len(assocs)
         logging.info("Parsed {} assocs from {} lines. Skipped: {}".
                      format(len(assocs),
                             n_lines,
                             len(skipped)))
         file.close()
         return assocs
+
 
     def skim(self, file):
         """
@@ -203,8 +214,11 @@ class AssocParser():
 
         Return a list of tuples (subject_id, subject_label, object_id)
         """
-        pass
+        raise NotImplementedError("AssocParser.skim not implemented")
     
+    def parse_line(self, line):
+        raise NotImplementedError("AssocParser.parse_line not implemented")
+
     # split an ID/CURIE into prefix and local parts
     # (not currently used)
     def _parse_id(self, id):
@@ -218,7 +232,7 @@ class AssocParser():
     def _get_id_prefix(self, id):
         toks = id.split(":")
         return toks[0]
-        
+
     def _validate_taxon(self, taxon, line):
         if self.config.valid_taxa is None:
             return True
@@ -228,9 +242,9 @@ class AssocParser():
             else:
                 self.report.error(line, Report.INVALID_TAXON, taxon)
                 return False
-        
+
     def _validate_id(self, id, line, context=None):
-        if id.find(" ") > -1:
+        if " " in id:
             self.report.error(line, Report.INVALID_ID, id)
             return False
         if id.find("|") > -1:
@@ -249,7 +263,7 @@ class AssocParser():
         ids = v.split("|")
         ids = [id for id in ids if self._validate_id(id, '')]
         return ids
-    
+
     def _pair_to_id(self, db, localid):
         if self.config.remove_double_prefixes:
             ## Switch MGI:MGI:n to MGI:n
@@ -261,9 +275,10 @@ class AssocParser():
          id = id.replace('taxon','NCBITaxon')
          self._validate_id(id,'',TAXON)
          return id
-    
+
     def _ensure_file(self, file):
         if isinstance(file,str):
+            # TODO Let's fix this if/elseif chain.
             if file.startswith("ftp"):
                 f = tempfile.NamedTemporaryFile()
                 fn = f.name
@@ -283,8 +298,8 @@ class AssocParser():
                  return open("myfile.txt", "r")
         else:
             return file
-            
-    
+
+
     def _parse_class_expression(self, x):
         ## E.g. exists_during(GO:0000753)
         ## Atomic class expressions only
@@ -293,8 +308,13 @@ class AssocParser():
             'property':p,
             'filler':v
         }
-        
-    
+
+# TODO consider making an Association its own class too to give it a little more
+# TODO Semantic value?
+
+# TODO consider making an ID class?
+
+
 class GpadParser(AssocParser):
     """
     Parser for GO GPAD Format
@@ -311,7 +331,7 @@ class GpadParser(AssocParser):
         """
         self.config = config
         self.report = Report()
-        
+
     def skim(self, file):
         file = self._ensure_file(file)
         tuples = []
@@ -331,8 +351,21 @@ class GpadParser(AssocParser):
         return tuples
 
     def parse_line(self, line):            
-        """
-        Parses a single line of a GPAD
+        """Parses a single line of a GPAD.
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         vals = line.split("\t")
         [db,
@@ -351,10 +384,10 @@ class GpadParser(AssocParser):
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, line, ENTITY):
             return line, []
-        
+
         if not self._validate_id(goid, line, ANNOTATION):
             return line, []
-        
+
         assocs = []
         xp_ors = annotation_xp.split("|")
         for xp_or in xp_ors:
@@ -382,16 +415,16 @@ class GpadParser(AssocParser):
                 },
                 'provided_by': assigned_by,
                 'date': date,
-                
+
             }
             assocs.append(assoc)
         return line, assocs
-    
+
 class GafParser(AssocParser):
     """
     Parser for GO GAF format
     """
-    
+
     def __init__(self,config=AssocParserConfig()):
         """
         Arguments:
@@ -401,7 +434,7 @@ class GafParser(AssocParser):
         """
         self.config = config
         self.report = Report()
-        
+
     def skim(self, file):
         file = self._ensure_file(file)
         tuples = []
@@ -426,15 +459,29 @@ class GafParser(AssocParser):
     def parse_line(self, line, class_map=None, entity_map=None):
         """
         Parses a single line of a GAF
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         config = self.config
-        
+
         vals = line.split("\t")
         # GAF v1 is defined as 15 cols, GAF v2 as 17.
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
         if len(vals) == 15:
-            vals = vals + ["",""]
+            vals += ["",""]
         [db,
          db_object_id,
          db_object_symbol,
@@ -459,10 +506,10 @@ class GafParser(AssocParser):
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, line, ENTITY):
             return line, []
-        
+
         if not self._validate_id(goid, line, ANNOTATION):
             return line, []
-        
+
         ## --
         ## optionally map goid and entity (gp) id
         ## --
@@ -472,7 +519,7 @@ class GafParser(AssocParser):
             if not self._validate_id(goid, line, ANNOTATION):
                 return line, []
             vals[4] = goid
-            
+
         # Example use case: mapping from UniProtKB to MOD ID
         if config.entity_map is not None:
             id = self.map_id(id, config.entity_map)
@@ -495,7 +542,7 @@ class GafParser(AssocParser):
         taxon = taxa[0]
         in_taxa = taxa[1:]
         self._validate_taxon(taxon, line)
-        
+
         ## --
         ## db_object_synonym CARD=0..*
         ## --
@@ -548,6 +595,7 @@ class GafParser(AssocParser):
             ## --
             ## goid
             ## --
+            # TODO We shouldn't overload buildin keywords/functions
             object = {'id':goid,
                       'taxon': taxon}
 
@@ -562,7 +610,7 @@ class GafParser(AssocParser):
                     'id': taxon
                 }
             }
-            
+
             ## --
             ## gene_product_isoform
             ## --
@@ -595,16 +643,16 @@ class GafParser(AssocParser):
                 'evidence': evidence,
                 'provided_by': assigned_by,
                 'date': date,
-                
+
             }
             if len(subject_extns) > 0:
                 assoc['subject_extensions'] = subject_extns
             if len(extns) > 0:
                 assoc['object_extensions'] = extns
-                
+
             assocs.append(assoc)
         return line, assocs
-    
+
 class HpoaParser(GafParser):
     """
     Parser for HPOA format
@@ -613,7 +661,7 @@ class HpoaParser(GafParser):
 
     Note that there are similarities with Gaf format, so we inherit from GafParser, and override
     """
-    
+
     def __init__(self,config=AssocParserConfig()):
         """
         Arguments:
@@ -626,7 +674,21 @@ class HpoaParser(GafParser):
 
     def parse_line(self, line, class_map=None, entity_map=None):
         """
-        Parses a single line of a HPOA
+        Parses a single line of a HPOA file
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         config = self.config
 
@@ -652,17 +714,17 @@ class HpoaParser(GafParser):
 
         # hardcode this, as HPOA is currently disease-only
         db_object_type = 'disease'
-        
+
         ## --
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, line, ENTITY):
             return line, []
-        
+
         if not self._validate_id(hpoid, line, ANNOTATION):
             return line, []
-        
+
         ## --
         ## optionally map hpoid and entity (disease) id
         ## --
@@ -672,7 +734,7 @@ class HpoaParser(GafParser):
             if not self._validate_id(hpoid, line, ANNOTATION):
                 return line, []
             vals[4] = hpoid
-            
+
         # Example use case: mapping from OMIM to Orphanet
         if config.entity_map is not None:
             id = self.map_id(id, config.entity_map)
@@ -686,7 +748,7 @@ class HpoaParser(GafParser):
         ## --
         # regenerate line post-mapping
         line = "\t".join(vals)
-        
+
         ## --
         ## db_object_synonym CARD=0..*
         ## --
@@ -762,7 +824,7 @@ class HpoaParser(GafParser):
             'evidence': evidence,
             'provided_by': assigned_by,
             'date': date,
-            
+
         }
-            
+
         return line, [assoc]

@@ -84,12 +84,14 @@ of storing sets of associations.
 
 .. currentmodule:: ontobio.assoc_factory
 
-Code example, fetching complete associations:
+Code example: parse all associations from a GAF, and filter according
+to provider:
 
 .. code-block:: python
 
     p = GafParser()
     assocs = p.parse(open(POMBASE,"r"))
+    pombase_assocs = [a for a in assocs if a['provided_by'] == 'UniProt']
 
 Code example, creating `AssociationSet` objects, using an :class:`AssociationSetFactory`
 
