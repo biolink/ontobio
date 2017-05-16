@@ -205,6 +205,17 @@ class AssocParser():
         file.close()
         return assocs
 
+
+    def skim(self, file):
+        """
+        Lightweight parse of a file into tuples.
+        
+        Note this discards metadata such as evidence.
+
+        Return a list of tuples (subject_id, subject_label, object_id)
+        """
+        raise NotImplementedError("AssocParser.skim not implemented")
+    
     def parse_line(self, line):
         raise NotImplementedError("AssocParser.parse_line not implemented")
 
@@ -274,7 +285,7 @@ class AssocParser():
                 cmd = ['wget',file,'-O',fn]
                 subprocess.run(cmd, check=True)
                 return open(fn,"r")
-            elif file.startswith("http") or file.startswith("ftp"):
+            elif file.startswith("http")
                 url = file
                 with closing(requests.get(url, stream=False)) as resp:
                     logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
@@ -328,8 +339,8 @@ class GpadParser(AssocParser):
             if line.startswith("!"):
                 continue
             vals = line.split("\t")
-            if len(vals) < 15:
-                logging.error("Unexpected number of vals: {}".format(vals))
+            if len(vals) != 12:
+                logging.error("Unexpected number of columns: {}. GPAD should have 12.".format(vals))
             rel = vals[2]
             # TODO: not
             id = self._pair_to_id(vals[0], vals[1])
@@ -432,7 +443,7 @@ class GafParser(AssocParser):
                 continue
             vals = line.split("\t")
             if len(vals) < 15:
-                logging.error("Unexpected number of vals: {}".format(vals))
+                logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
             if vals[3] != "":
                 continue
@@ -466,6 +477,9 @@ class GafParser(AssocParser):
         config = self.config
 
         vals = line.split("\t")
+        # GAF v1 is defined as 15 cols, GAF v2 as 17.
+        # We treat everything as GAF2 by adding two blank columns.
+        # TODO: check header metadata to see if columns corresponds to declared dataformat version
         if len(vals) == 15:
             vals += ["",""]
         [db,
