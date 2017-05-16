@@ -149,16 +149,23 @@ class AssocParser():
     """
 
     def parse(self, file, outfile=None):
-        """
-        Parse a file.
+        """Parse a line-oriented association file into a list of association dict objects
 
+        Note the returned list is of dict objects. TODO: These will
+        later be specified using marshmallow and it should be possible
+        to generate objects
+        
         Arguments
         ---------
-        file : file
-            http URL, filename or `file-like-object`, for input assoc file
+        file : file or string
+            The file is parsed into association objects. Can be a http URL, filename or `file-like-object`, for input assoc file
         outfile : file
-            a `file-like-object`. if specified, file-like objects will be written here
+            Optional output file in which processed lines are written. This a file or `file-like-object`
 
+        Return
+        ------
+        list
+            Associations generated from the file
         """
         file = self._ensure_file(file)
         assocs = []
@@ -198,6 +205,17 @@ class AssocParser():
         file.close()
         return assocs
 
+
+    def skim(self, file):
+        """
+        Lightweight parse of a file into tuples.
+        
+        Note this discards metadata such as evidence.
+
+        Return a list of tuples (subject_id, subject_label, object_id)
+        """
+        raise NotImplementedError("AssocParser.skim not implemented")
+    
     def parse_line(self, line):
         raise NotImplementedError("AssocParser.parse_line not implemented")
 
@@ -267,7 +285,7 @@ class AssocParser():
                 cmd = ['wget',file,'-O',fn]
                 subprocess.run(cmd, check=True)
                 return open(fn,"r")
-            elif file.startswith("http") or file.startswith("ftp"):
+            elif file.startswith("http")
                 url = file
                 with closing(requests.get(url, stream=False)) as resp:
                     logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
@@ -323,8 +341,8 @@ class GpadParser(AssocParser):
             if line.startswith("!"):
                 continue
             vals = line.split("\t")
-            if len(vals) < 15:
-                logging.error("Unexpected number of vals: {}".format(vals))
+            if len(vals) != 12:
+                logging.error("Unexpected number of columns: {}. GPAD should have 12.".format(vals))
             rel = vals[2]
             # TODO: not
             id = self._pair_to_id(vals[0], vals[1])
@@ -334,9 +352,22 @@ class GpadParser(AssocParser):
             tuples.append( (id,None,t) )
         return tuples
 
-    def parse_line(self, line):
-        """
-        Parses a single line of a GPAD
+    def parse_line(self, line):            
+        """Parses a single line of a GPAD.
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         vals = line.split("\t")
         [db,
@@ -416,7 +447,7 @@ class GafParser(AssocParser):
                 continue
             vals = line.split("\t")
             if len(vals) < 15:
-                logging.error("Unexpected number of vals: {}".format(vals))
+                logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
             if vals[3] != "":
                 continue
@@ -432,10 +463,27 @@ class GafParser(AssocParser):
     def parse_line(self, line):
         """
         Parses a single line of a GAF
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         config = self.config
 
         vals = line.split("\t")
+        # GAF v1 is defined as 15 cols, GAF v2 as 17.
+        # We treat everything as GAF2 by adding two blank columns.
+        # TODO: check header metadata to see if columns corresponds to declared dataformat version
         if len(vals) == 15:
             vals += ["",""]
         [db,
@@ -630,7 +678,21 @@ class HpoaParser(GafParser):
 
     def parse_line(self, line, class_map=None, entity_map=None):
         """
-        Parses a single line of a HPOA
+        Parses a single line of a HPOA file
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         config = self.config
 
