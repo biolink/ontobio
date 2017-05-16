@@ -147,16 +147,23 @@ class AssocParser():
     """
 
     def parse(self, file, outfile=None):
-        """
-        Parse a file.
+        """Parse a line-oriented association file into a list of association dict objects
+
+        Note the returned list is of dict objects. TODO: These will
+        later be specified using marshmallow and it should be possible
+        to generate objects
         
         Arguments
         ---------
+        file : file or string
+            The file is parsed into association objects. Can be a http URL, filename or `file-like-object`, for input assoc file
+        outfile : file
+            Optional output file in which processed lines are written. This a file or `file-like-object`
 
-        - file : http URL, filename or `file-like-object`, for input assoc file
-
-        - outfile : a `file-like-object`. if specified, file-like objects will be written here
-
+        Return
+        ------
+        list
+            Associations generated from the file
         """
         file = self._ensure_file(file)
         assocs = []
@@ -321,8 +328,21 @@ class GpadParser(AssocParser):
         return tuples
 
     def parse_line(self, line):            
-        """
-        Parses a single line of a GPAD
+        """Parses a single line of a GPAD.
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         vals = line.split("\t")
         [db,
@@ -416,6 +436,20 @@ class GafParser(AssocParser):
     def parse_line(self, line, class_map=None, entity_map=None):
         """
         Parses a single line of a GAF
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         config = self.config
         
@@ -613,7 +647,21 @@ class HpoaParser(GafParser):
 
     def parse_line(self, line, class_map=None, entity_map=None):
         """
-        Parses a single line of a HPOA
+        Parses a single line of a HPOA file
+
+        Return a tuple `(processed_line, associations)`. Typically
+        there will be a single association, but in some cases there
+        may be none (invalid line) or multiple (disjunctive clause in
+        annotation extensions)
+
+        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
+        :method:`parse_file` can be used over the whole file
+
+        Arguments
+        ---------
+        line : str
+            A single tab-seperated line from a GPAD file
+
         """
         config = self.config
 
