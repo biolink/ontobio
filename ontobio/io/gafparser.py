@@ -260,7 +260,7 @@ class AssocParser():
                 cmd = ['wget',file,'-O',fn]
                 subprocess.run(cmd, check=True)
                 return open(fn,"r")
-            elif file.startswith("http") or file.startswith("ftp"):
+            elif file.startswith("http")
                 url = file
                 with closing(requests.get(url, stream=False)) as resp:
                     logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
