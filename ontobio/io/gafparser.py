@@ -154,10 +154,10 @@ class AssocParser():
 
         Arguments
         ---------
-
-        - file : http URL, filename or `file-like-object`, for input assoc file
-
-        - outfile : a `file-like-object`. if specified, file-like objects will be written here
+        file : file
+            http URL, filename or `file-like-object`, for input assoc file
+        outfile : file
+            a `file-like-object`. if specified, file-like objects will be written here
 
         """
         file = self._ensure_file(file)
@@ -304,6 +304,8 @@ class GpadParser(AssocParser):
     https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-1_2.md
     """
 
+    ANNOTATION_CLASS_COLUMN=3
+    
     def __init__(self,config=AssocParserConfig()):
         """
         Arguments:
@@ -394,6 +396,8 @@ class GafParser(AssocParser):
     Parser for GO GAF format
     """
 
+    ANNOTATION_CLASS_COLUMN=4
+
     def __init__(self,config=AssocParserConfig()):
         """
         Arguments:
@@ -425,7 +429,7 @@ class GafParser(AssocParser):
         return tuples
 
 
-    def parse_line(self, line, class_map=None, entity_map=None):
+    def parse_line(self, line):
         """
         Parses a single line of a GAF
         """

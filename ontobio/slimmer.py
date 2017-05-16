@@ -1,6 +1,7 @@
 import networkx as nx
 import logging
 
+
 def get_minimal_subgraph(g, nodes):
     """
     given a set of nodes, extract a subgraph that excludes non-informative nodes - i.e.

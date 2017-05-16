@@ -152,20 +152,39 @@ class Ontology():
             ont = Ontology(graph=g)
         return ont
 
-    def create_slim_mapping(self, subset=[]):
+    def create_slim_mapping(self, subset=None, subset_nodes=None):
         """
-        Given an ontology subset, create a mapping between all nodes in ontology
-        and most recent ancestor in subset
+        Create a dictionary that maps between all nodes in an ontology to a subset
+
+        Arguments
+        ---------
+        ont : `Ontology`
+            Complete ontology to be mapped. Assumed pre-filtered for relationship types
+        subset : str
+            Name of subset to map to, e.g. goslim_generic
+        nodes : list
+            If no named subset provided, subset is passed in as list of node ids
+    
+        Return
+        ------
+        dict
+            maps all nodes in ont to one or more non-redundant nodes in subset
         """
-        subset = set(subset)
+        if subset is not None:
+            subset_nodes = self.extract_subset(subset)
+        
+        subset_nodes = set(subset_nodes)
         m = {}
         for n in self.nodes():
-            ancs = subset.intersection(self.ancestors(n), reflexive=True)
-            ancs = self._nr(ancs)
-            m[n['id']] = ancs
+            ancs = subset_nodes.intersection(self.ancestors(n, reflexive=True))
+            ancs = self.filter_redundant(ancs)
+            m[n] = ancs
         return m
 
-    def _nr(self, ids):
+    def filter_redundant(self, ids):
+        """
+        Return all non-redundant ids from a list
+        """
         sids = set(ids)
         for id in ids:
             sids = sids.difference(self.ancestors(id, reflexive=False))
@@ -173,9 +192,9 @@ class Ontology():
     
     def extract_subset(self, subset):
         """
-        Find all nodes in a subset.
+        Return all nodes in a subset.
     
-        We assume the oboInOwl encoding of subsets, and subset IDs are IRIs
+        We assume the oboInOwl encoding of subsets, and subset IDs are IRIs, or IR fragments
         """
         pass
 
@@ -300,7 +319,8 @@ class Ontology():
         """
         if reflexive:
             ancs = self.ancestors(node, relations, reflexive=False)
-            return ancs + [node]
+            ancs.add(node)
+            return ancs
             
         g = None
         if relations is None:
