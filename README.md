@@ -20,4 +20,8 @@ Documentation is on [readthedocs](https://ontobio.readthedocs.io)
 
 See the [Jupyter Notebooks](http://nbviewer.jupyter.org/github/biolink/ontobio/tree/master/notebooks/) for code examples
 
+# Mailing list
+
+ * [biolink-api google group](https://groups.google.com/forum/#!forum/biolink-api)
+
 

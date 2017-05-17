@@ -2,6 +2,11 @@
 
 These guidelines are for developers of OntoBio, whether internal or in the broader community. 
 
+## Mailing list
+
+
+ * [biolink-api google group](https://groups.google.com/forum/#!forum/biolink-api)
+ 
 ## Code Style
 
  * Use NumPy-style docstrings. See [Napoleon docs]((http://www.sphinx-doc.org/en/stable/ext/napoleon.html)
