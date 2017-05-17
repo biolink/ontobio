@@ -95,9 +95,9 @@ def test_gaf():
     
 
 def test_remote_go_pombase():
-    ont = OntologyFactory().create(ONT)
+    ont = OntologyFactory().create('go')
     f = AssociationSetFactory()
-    aset = f.create(ontology=ont, file=POMBASE)
+    aset = f.create(ontology=ont, fmt='gaf', file=POMBASE)
     print("SUBJS: {}".format(aset.subjects))
     assert len(aset.subjects) > 100
     

@@ -1,5 +1,5 @@
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.golr.golr_associations import search_associations, GolrFields
+from ontobio.golr.golr_associations import search_associations, GolrFields, map2slim
 
 M=GolrFields()
 
