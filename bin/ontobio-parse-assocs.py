@@ -56,7 +56,9 @@ def main():
 
     subparsers = parser.add_subparsers(dest='subcommand', help='sub-command help')
     
-    # QUERY
+    parser_n = subparsers.add_parser('validate', help='Validate associations')
+    parser_n.set_defaults(function=validate_assocs)
+
     parser_n = subparsers.add_parser('filter', help='Filter associations')
     parser_n.set_defaults(function=filter_assocs)
 
@@ -106,6 +108,9 @@ def main():
         print(p.report.to_markdown())
         
 def filter_assocs(ont, file, outfile, p, args):
+    assocs = p.parse(open(file, "r"), outfile)
+
+def validate_assocs(ont, file, outfile, p, args):
     assocs = p.parse(open(file, "r"), outfile)
 
 def map2slim(ont, file, outfile, p, args):
