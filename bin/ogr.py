@@ -124,6 +124,7 @@ def show_subgraph(ont, nodes, query_ids, args):
     w = GraphRenderer.create(args.to)
     if args.outfile is not None:
         w.outfile = args.outfile
+    logging.info("Writing subgraph for {}, |nodes|={}".format(ont,len(nodes)))
     w.write_subgraph(ont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
             
 def resolve_ids(ont, ids, args):

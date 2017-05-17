@@ -95,6 +95,7 @@ def search(ont, searchterm):
     bindings = run_sparql(query)
     return [(r['c']['value'],r['l']['value']) for r in bindings]
 
+@cachier(stale_after=SHELF_LIFE)
 def get_terms_in_subset(ont, subset):
     """
     Find all nodes in a subset.

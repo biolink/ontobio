@@ -21,12 +21,10 @@ class AssocParserConfig():
     """
     def __init__(self,
                  remove_double_prefixes=False,
-                 class_map=None,
                  entity_map=None,
                  valid_taxa=None,
                  class_idspaces=None):
         self.remove_double_prefixes=remove_double_prefixes
-        self.class_map=class_map
         self.entity_map=entity_map
         self.valid_taxa=valid_taxa
         self.class_idspaces=class_idspaces
@@ -45,6 +43,7 @@ class Report():
     INVALID_ID = "Invalid identifier"
     INVALID_IDSPACE = "Invalid identifier prefix"
     INVALID_TAXON = "Invalid taxon"
+    UNMAPPED_ID = "Unmapped identifier"
 
     """
     3 warning levels
@@ -63,6 +62,8 @@ class Report():
 
     def error(self, line, type, obj, msg=""):
         self.message(self.ERROR, line, type, obj, msg)
+    def warning(self, line, type, obj, msg=""):
+        self.message(self.WARNING, line, type, obj, msg)
     def message(self, level, line, type, obj, msg=""):
         self.messages.append({'level':level,
                               'line':line,
@@ -126,8 +127,6 @@ class Report():
         for k,v in stats.items():
             s += " * {}: {}\n" . format(k,v)
 
-
-
         s += "\n## MESSAGES\n\n"
         for g in json['groups']:
             s += " * {}: {}\n".format(g['level'], g['count'])
@@ -138,7 +137,7 @@ class Report():
             if len(msgs) > 0:
                 s += "### {}\n\n".format(level)
                 for m in msgs:
-                    s += " * {} {} `{}`\n".format(m['type'],m['message'],m['line'])
+                    s += " * {}: {} '{}' `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
         return s
 
 # TODO avoid using names that are builtin python: file, id
@@ -205,6 +204,55 @@ class AssocParser():
         file.close()
         return assocs
 
+    def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
+        """
+        Map a file to a subset, writing out results
+
+        You can pass either a subset name (e.g. goslim_generic) or a dictionary with ready-made mappings
+
+        Arguments
+        ---------
+        file: file
+            Name or file object for input assoc file
+        outfile: file
+            Name or file object for output (mapped) assoc file; writes to stdout if not set
+        subset: str
+            Optional name of subset to map to, e.g. goslim_generic
+        class_map: dict
+            Mapping between asserted class ids and ids to map to. Many to many
+        ontology: `Ontology`
+            Ontology to extract subset from
+
+        """
+        if subset is not None:
+            logging.info("Creating mapping for subset: {}".format(subset))
+            class_map = ontology.create_slim_mapping(subset=subset, relations=relations)
+
+        if class_map is None:
+            raise ValueError("Neither class_map not subset is set")
+        col = self.ANNOTATION_CLASS_COLUMN
+        file = self._ensure_file(file)
+        tuples = []
+        for line in file:
+            if line.startswith("!"):
+                continue
+            vals = line.split("\t")
+            logging.info("LINE: {} VALS: {}".format(line, vals))
+            if len(vals) < col:
+                raise ValueError("Line: {} has too few cols, expect class id in col {}".format(line, col))
+            cid = vals[col]
+            if cid not in class_map or len(class_map[cid]) == 0:
+                self.report.error(line, Report.UNMAPPED_ID, cid)
+                continue
+            else:
+                for mcid in class_map[cid]:
+                    vals[col] = mcid
+                    line = "\t".join(vals)
+                    if outfile is not None:
+                        outfile.write(line)
+                    else:
+                        print(line)
+                
 
     def skim(self, file):
         """
@@ -285,7 +333,7 @@ class AssocParser():
                 cmd = ['wget',file,'-O',fn]
                 subprocess.run(cmd, check=True)
                 return open(fn,"r")
-            elif file.startswith("http")
+            elif file.startswith("http"):
                 url = file
                 with closing(requests.get(url, stream=False)) as resp:
                     logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
@@ -295,7 +343,7 @@ class AssocParser():
                     else:
                         return None
             else:
-                 return open("myfile.txt", "r")
+                 return open(file, "r")
         else:
             return file
 
@@ -514,16 +562,6 @@ class GafParser(AssocParser):
         if not self._validate_id(goid, line, ANNOTATION):
             return line, []
 
-        ## --
-        ## optionally map goid and entity (gp) id
-        ## --
-        # Example use case: map2slim
-        if config.class_map is not None:
-            goid = self.map_id(goid, config.class_map)
-            if not self._validate_id(goid, line, ANNOTATION):
-                return line, []
-            vals[4] = goid
-
         # Example use case: mapping from UniProtKB to MOD ID
         if config.entity_map is not None:
             id = self.map_id(id, config.entity_map)
@@ -602,7 +640,7 @@ class GafParser(AssocParser):
             # TODO We shouldn't overload buildin keywords/functions
             object = {'id':goid,
                       'taxon': taxon}
-
+            
             # construct subject dict
             subject = {
                 'id':id,
@@ -676,7 +714,7 @@ class HpoaParser(GafParser):
         self.config = config
         self.report = Report()
 
-    def parse_line(self, line, class_map=None, entity_map=None):
+    def parse_line(self, line):
         """
         Parses a single line of a HPOA file
 
@@ -729,15 +767,6 @@ class HpoaParser(GafParser):
         if not self._validate_id(hpoid, line, ANNOTATION):
             return line, []
 
-        ## --
-        ## optionally map hpoid and entity (disease) id
-        ## --
-        # Example use case: HPO map2slim
-        if config.class_map is not None:
-            hpoid = self.map_id(hpoid, config.class_map)
-            if not self._validate_id(hpoid, line, ANNOTATION):
-                return line, []
-            vals[4] = hpoid
 
         # Example use case: mapping from OMIM to Orphanet
         if config.entity_map is not None:

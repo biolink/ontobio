@@ -138,5 +138,17 @@ def test_graph():
     assert [] == ont.search('protoplast', synonyms=False)
     assert {CELL_PART,INTRACELLULAR} == set(ont.search('protoplast', synonyms=True))
     
-#logging.basicConfig(level=logging.DEBUG)
-
+def test_subontology():
+    """
+    Load extracting subontology
+    """
+    factory = OntologyFactory()
+    print("Creating ont")
+    ont = factory.create('tests/resources/go-truncated-pombase.json')
+    print("ONT NODES: {}".format(ont.nodes()))
+    subont = ont.subontology(relations=['subClassOf'])
+    PERM = 'GO:1990578'
+    print("NODES: {}".format(subont.nodes()))
+    ancs = subont.ancestors(PERM)
+    print(str(ancs))
+    assert len(ancs) > 0

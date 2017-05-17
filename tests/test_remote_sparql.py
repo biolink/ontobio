@@ -117,3 +117,25 @@ def test_dynamic_query():
                      single_column=True)
     assert Y_SHAPED in ids
     assert ABSENT not in ids
+
+def test_subontology():
+    """
+    subontology
+    """
+    factory = OntologyFactory()
+    print("Creating ont")
+    ont = factory.create('go')
+    print("ONT NODES: {}".format(ont.nodes()))
+    subont = ont.subontology(relations=['subClassOf'])
+    PERM = 'GO:1990578'
+    print("NODES: {}".format(subont.nodes()))
+    ancs = subont.ancestors(PERM, reflexive=True)
+    print(str(ancs))
+    for a in ancs:
+        print(" ANC: {} '{}'".format(a,subont.label(a)))
+    assert len(ancs) > 0
+    from ontobio.io.ontol_renderers import GraphRenderer
+    w = GraphRenderer.create('tree')
+    w.write_subgraph(ont, ancs)
+
+    

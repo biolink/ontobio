@@ -13,12 +13,6 @@ TRANSCRIPTION_FACTOR = 'GO:0003700'
 TRANSPORTER = 'GO:0005215'
 PART_OF = 'BFO:0000050'
 
-def test_remote_go_pombase():
-    ont = OntologyFactory().create(ONT)
-    f = AssociationSetFactory()
-    aset = f.create(ontology=ont, file=POMBASE)
-    print("SUBJS: {}".format(aset.subjects))
-    assert len(aset.subjects) > 100
 
 def test_remote_go():
     """
@@ -98,4 +92,12 @@ def test_gaf():
     for g in genes:
         print("G={} '{}'".format(g, aset.label(g)))
     assert G1 in genes
+    
+
+def test_remote_go_pombase():
+    ont = OntologyFactory().create(ONT)
+    f = AssociationSetFactory()
+    aset = f.create(ontology=ont, file=POMBASE)
+    print("SUBJS: {}".format(aset.subjects))
+    assert len(aset.subjects) > 100
     
