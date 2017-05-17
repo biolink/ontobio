@@ -152,20 +152,66 @@ class Ontology():
             ont = Ontology(graph=g)
         return ont
 
-    def create_slim_mapping(self, subset=[]):
+    def create_slim_mapping(self, subset=None, subset_nodes=None, relations=None, disable_checks=False):
         """
-        Given an ontology subset, create a mapping between all nodes in ontology
-        and most recent ancestor in subset
+        Create a dictionary that maps between all nodes in an ontology to a subset
+
+        Arguments
+        ---------
+        ont : `Ontology`
+            Complete ontology to be mapped. Assumed pre-filtered for relationship types
+        subset : str
+            Name of subset to map to, e.g. goslim_generic
+        nodes : list
+            If no named subset provided, subset is passed in as list of node ids
+        relations : list
+            List of relations to filter on
+        disable_checks: bool
+            Unless this is set, this will prevent a mapping being generated with non-standard relations.
+            The motivation here is that the ontology graph may include relations that it is inappropriate to
+            propagate gene products over, e.g. transports, has-part
+    
+        Return
+        ------
+        dict
+            maps all nodes in ont to one or more non-redundant nodes in subset
+
+        Raises
+        ------
+        ValueError
+            if the subset is empty
         """
-        subset = set(subset)
+        if subset is not None:
+            subset_nodes = self.extract_subset(subset)
+            logging.info("Extracting subset: {} -> {}".format(subset, subset_nodes))
+        
+        if subset_nodes is None or len(subset_nodes) == 0:
+            raise ValueError("subset nodes is blank")
+        subset_nodes = set(subset_nodes)
+        logging.debug("SUBSET: {}".format(subset_nodes))
+
+        # Use a sub-ontology for mapping
+        subont = self
+        if relations is not None:
+            subont = self.subontology(relations=relations)
+            
+        if not disable_checks:
+            for r in subont.relations_used():
+                if r != 'subClassOf' and r != 'BFO:0000050' and r != 'subPropertyOf':
+                    raise ValueError("Not safe to propagate over a graph with edge type: {}".format(r))
+        
         m = {}
-        for n in self.nodes():
-            ancs = subset.intersection(self.ancestors(n), reflexive=True)
-            ancs = self._nr(ancs)
-            m[n['id']] = ancs
+        for n in subont.nodes():
+            ancs = subont.ancestors(n, reflexive=True)
+            #logging.info("  M: {} -> {}".format(n, ancs))
+            ancs_in_subset = subset_nodes.intersection(ancs)
+            m[n] = list(ancs_in_subset)
         return m
 
-    def _nr(self, ids):
+    def filter_redundant(self, ids):
+        """
+        Return all non-redundant ids from a list
+        """
         sids = set(ids)
         for id in ids:
             sids = sids.difference(self.ancestors(id, reflexive=False))
@@ -173,9 +219,9 @@ class Ontology():
     
     def extract_subset(self, subset):
         """
-        Find all nodes in a subset.
+        Return all nodes in a subset.
     
-        We assume the oboInOwl encoding of subsets, and subset IDs are IRIs
+        We assume the oboInOwl encoding of subsets, and subset IDs are IRIs, or IR fragments
         """
         pass
 
@@ -216,6 +262,16 @@ class Ontology():
         """
         return self.get_graph().node[id]
 
+    def relations_used(self):
+        """
+        Return list of all relations used to connect edges
+        """
+        g = self.get_graph()
+        types = set()
+        for x,y,d in g.edges_iter(data=True):
+            types.add(d['pred'])
+        return list(types)
+    
     def neighbors(self, node, relations=None):
         return self.parents(node, relations=relations) + self.children(node, relations=relations)
         
@@ -300,7 +356,8 @@ class Ontology():
         """
         if reflexive:
             ancs = self.ancestors(node, relations, reflexive=False)
-            return ancs + [node]
+            ancs.add(node)
+            return ancs
             
         g = None
         if relations is None:
