@@ -17,7 +17,7 @@ travis_test:
 cleandist:
 	rm dist/*
 
-# TODO: manually increment version, run . bump.sh, then this
+# TODO: manually increment version in ontobio/__init__.sh, run . bump.sh, then this
 release: cleandist
 	python setup.py sdist bdist_wheel bdist_egg
 	twine upload dist/*
