@@ -205,7 +205,7 @@ of a query to generate the initial set of IDs, e.g.:
 Associations
 ------------
 
-The ``ogr-assoc`` command handles ontologies
+The ``ontobio-assoc`` command handles ontologies
 
 Subcommands:
 
@@ -228,31 +228,31 @@ Enrichment analysis, using all genes associated to a GO term as sample
 
 ::
 
-    ogr-assoc -v -r go -T NCBITaxon:9606 -C gene function enrichment -q GO:1903010 
+    ontobio-assoc -v -r go -T NCBITaxon:9606 -C gene function enrichment -q GO:1903010 
 
 Plotly:    
     
 ::
 
-    ogr-assoc -v -r go -T NCBITaxon:10090 -C gene function dendrogram GO:0003700 GO:0005215 GO:0005634 GO:0005737 GO:0005739 GO:0005694 GO:0005730  GO:0000228 GO:0000262 
+    ontobio-assoc -v -r go -T NCBITaxon:10090 -C gene function dendrogram GO:0003700 GO:0005215 GO:0005634 GO:0005737 GO:0005739 GO:0005694 GO:0005730  GO:0000228 GO:0000262 
 
 
 Show similarity matrix for a set of genes:
 
 ::
 
-    ogr-assoc -v -r go -T NCBITaxon:10090 -C gene function simmatrix MGI:1890081 MGI:97487 MGI:106593 MGI:97250 MGI:2151057 MGI:1347473
+    ontobio-assoc -v -r go -T NCBITaxon:10090 -C gene function simmatrix MGI:1890081 MGI:97487 MGI:106593 MGI:97250 MGI:2151057 MGI:1347473
 
 Basic queries, using file as input:    
 
 ::
 
-    ogr-assoc -C gene function -T pombe -r go -f tests/resources/truncated-pombase.gaf query -q GO:0005622
+    ontobio-assoc -C gene function -T pombe -r go -f tests/resources/truncated-pombase.gaf query -q GO:0005622
 
 Parsing assoc files
 -------------------
 
-The ``ogr-parse-assoc.py`` command will parse association files (GAF,
+The ``ontobio-parse-assocs.py`` command will parse association files (GAF,
 GPAD, HPOA etc)
 
 GOlr Queries
