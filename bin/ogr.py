@@ -93,7 +93,7 @@ def main():
                                 is_partial_match = searchp.find('p') > -1,
                                 is_regex = searchp.find('r') > -1):
         qids.append(id)
-    logging.info("Query IDs: {}".format(qids))
+    logging.info("Query IDs: {} Rels: {}".format(qids, args.properties))
 
     nodes = ont.traverse_nodes(qids, up=dirn.find("u") > -1, down=dirn.find("d") > -1,
                                relations=args.properties)
