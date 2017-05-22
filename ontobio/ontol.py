@@ -217,14 +217,43 @@ class Ontology():
             sids = sids.difference(self.ancestors(id, reflexive=False))
         return sids
     
-    def extract_subset(self, subset):
+    def extract_subset(self, subset, contract=True):
         """
         Return all nodes in a subset.
     
         We assume the oboInOwl encoding of subsets, and subset IDs are IRIs, or IR fragments
         """
-        pass
+        return [n for n in self.nodes() if subset in self.subsets(n, contract=contract)]
 
+    def subsets(self, nid, contract=True):
+        """
+        Retrieves subset ids for a class or ontology object
+        """
+        n = self.node(nid)
+        subsets = []
+        meta = self._meta(nid)
+        if 'subsets' in meta:
+            subsets = meta['subsets']
+        else:
+            subsets = []
+        if contract:
+            subsets = [self._contract_subset(s) for s in subsets]
+        return subsets
+
+    def _contract_subset(self, s):
+        if s.find("#") > -1:
+            return s.split('#')[-1]
+        else:
+            return s
+        
+    def _meta(self, nid):
+        n = self.node(nid)
+        if 'meta' in n:
+            return n['meta']
+        else:
+            return {}
+        
+    
     def prefixes(self):
         """
         list all prefixes used
