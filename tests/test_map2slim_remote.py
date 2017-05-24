@@ -13,7 +13,6 @@ SUBSET = [
     'GO:0005730', ## nucleolus
     'GO:0016604', ## nuclear body
     'GO:0023052'  ## signaling
-
 ]
     
 def test_map2slim_gaf():
