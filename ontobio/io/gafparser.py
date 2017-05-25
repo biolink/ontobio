@@ -23,11 +23,14 @@ class AssocParserConfig():
                  remove_double_prefixes=False,
                  entity_map=None,
                  valid_taxa=None,
-                 class_idspaces=None):
+                 class_idspaces=None,
+                 entity_idspaces=None,
+                 filter_out_evidence=[]):
         self.remove_double_prefixes=remove_double_prefixes
         self.entity_map=entity_map
         self.valid_taxa=valid_taxa
         self.class_idspaces=class_idspaces
+        self.filter_out_evidence = filter_out_evidence
 
 class Report():
     """
@@ -153,7 +156,7 @@ class AssocParser():
         Note the returned list is of dict objects. TODO: These will
         later be specified using marshmallow and it should be possible
         to generate objects
-        
+
         Arguments
         ---------
         file : file or string
@@ -177,9 +180,9 @@ class AssocParser():
                     outfile.write(line)
                 continue
             line = line.strip("\n")
-            # Let's rename line2 to something more meaningful
-            line2, new_assocs  = self.parse_line(line)
-            if new_assocs is None or new_assocs == []:
+
+            parsed_line, new_assocs  = self.parse_line(line)
+            if self._skipping_line(new_assocs): # Skip if there were no assocs
                 logging.warn("SKIPPING: {}".format(new_assocs))
                 skipped.append(line)
             else:
@@ -192,7 +195,7 @@ class AssocParser():
                         rpt.taxa.add(a['subject']['taxon']['id'])
                 assocs += new_assocs
                 if outfile is not None:
-                    outfile.write(line2 + "\n")
+                    outfile.write(parsed_line + "\n")
 
         self.report.skipped += skipped
         self.report.n_lines += n_lines
@@ -252,20 +255,23 @@ class AssocParser():
                         outfile.write(line)
                     else:
                         print(line)
-                
+
 
     def skim(self, file):
         """
         Lightweight parse of a file into tuples.
-        
+
         Note this discards metadata such as evidence.
 
         Return a list of tuples (subject_id, subject_label, object_id)
         """
         raise NotImplementedError("AssocParser.skim not implemented")
-    
+
     def parse_line(self, line):
         raise NotImplementedError("AssocParser.parse_line not implemented")
+
+    def _skipping_line(self, associations):
+        return associations is None or associations == []
 
     # split an ID/CURIE into prefix and local parts
     # (not currently used)
@@ -371,7 +377,7 @@ class GpadParser(AssocParser):
     """
 
     ANNOTATION_CLASS_COLUMN=3
-    
+
     def __init__(self,config=AssocParserConfig()):
         """
         Arguments:
@@ -400,7 +406,7 @@ class GpadParser(AssocParser):
             tuples.append( (id,None,t) )
         return tuples
 
-    def parse_line(self, line):            
+    def parse_line(self, line):
         """Parses a single line of a GPAD.
 
         Return a tuple `(processed_line, associations)`. Typically
@@ -562,6 +568,11 @@ class GafParser(AssocParser):
         if not self._validate_id(goid, line, ANNOTATION):
             return line, []
 
+        # If the evidence code is one of the set we're filtering out (skipping)
+        # then no association and return!
+        if evidence.upper() in self.config.filter_out_evidence:
+            return line, []
+
         # Example use case: mapping from UniProtKB to MOD ID
         if config.entity_map is not None:
             id = self.map_id(id, config.entity_map)
@@ -640,7 +651,7 @@ class GafParser(AssocParser):
             # TODO We shouldn't overload buildin keywords/functions
             object = {'id':goid,
                       'taxon': taxon}
-            
+
             # construct subject dict
             subject = {
                 'id':id,
