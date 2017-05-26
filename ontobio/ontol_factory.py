@@ -104,6 +104,10 @@ def create_ontology(handle=None, **args):
             logging.info("using cached file: "+fn)
         g = obograph_util.convert_json_file(fn)
         ont = Ontology(handle=handle, payload=g)
+    elif handle.startswith("wdq:"):
+        from ontobio.sparql.wikidata_ontology import EagerWikidataOntology
+        logging.info("Fetching from Wikidata")
+        ont = EagerWikidataOntology(handle=handle)
     elif handle.startswith("http:"):
         logging.info("Fetching from Web PURL: "+handle)
         encoded = hashlib.sha256(handle.encode()).hexdigest()
