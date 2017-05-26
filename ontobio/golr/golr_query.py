@@ -624,7 +624,7 @@ class GolrAssociationQuery():
         if object_taxon is not None:
             fq['object_taxon_closure'] = object_taxon
         if self.id is not None:
-            fq['id'] = id
+            fq['id'] = self.id
         if self.evidence is not None:
             e = self.evidence
             if e.startswith("-"):
