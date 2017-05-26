@@ -22,6 +22,7 @@ from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
+from ontobio.io import gafparser
 from ontobio.slimmer import get_minimal_subgraph
 import logging
 
@@ -45,6 +46,8 @@ def main():
                         help='Path to messages (report) markdown file')
     parser.add_argument('-t', '--to', type=str, required=False,
                         help='Output to (tree, dot, ...)')
+    parser.add_argument("--filter-out", nargs="+", required=False, default=[], metavar="EVIDENCE",
+                        help="List of any evidence codes to filter out of the GAF. E.G. --filter-out IEA IMP")
     parser.add_argument('-T', '--taxon', nargs='*', required=False,
                         help='valid taxon (NCBITaxon ID) - validate against this')
     parser.add_argument('--subject_prefix', nargs='*', required=False,
@@ -54,8 +57,9 @@ def main():
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
+
     subparsers = parser.add_subparsers(dest='subcommand', help='sub-command help')
-    
+
     parser_n = subparsers.add_parser('validate', help='Validate associations')
     parser_n.set_defaults(function=validate_assocs)
 
@@ -68,7 +72,7 @@ def main():
                           help='Properties')
     parser_n.add_argument('-s', '--subset', type=str, required=True,
                           help='subset (e.g. map2slim)')
-    
+
     args = parser.parse_args()
 
     if args.verbosity >= 2:
@@ -76,7 +80,7 @@ def main():
     if args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
     logging.info("Welcome!")
-    
+
     handle = args.resource
 
     # Ontology Factory
@@ -86,18 +90,23 @@ def main():
     logging.info("ont: {}".format(ont))
 
     func = args.function
-    p = GafParser()
+
+    # Upper case all evidence codes
+    args.filter_out = [code.upper() for code in args.filter_out]
 
     # set configuration
-    config = p.config
-    config.valid_taxa = args.taxon
-    config.class_idspaces = args.object_prefix
-    config.entity_idspaces = args.subject_prefix
-    
+    config = gafparser.AssocParserConfig(
+        valid_taxa=args.taxon,
+        class_idspaces=args.object_prefix,
+        entity_idspaces=args.subject_prefix,
+        filter_out_evidence=args.filter_out
+    )
+    p = GafParser(config=config)
+
     outfh = None
     if args.outfile is not None:
         outfh = open(args.outfile, "w")
-    func(ont, args.file, outfh,  p, args)
+    func(ont, args.file, outfh, p, args)
     if outfh is not None:
         outfh.close()
     if args.messagefile is not None:
@@ -106,7 +115,7 @@ def main():
         mfh.close()
     else:
         print(p.report.to_markdown())
-        
+
 def filter_assocs(ont, file, outfile, p, args):
     assocs = p.parse(open(file, "r"), outfile)
 
@@ -116,10 +125,14 @@ def validate_assocs(ont, file, outfile, p, args):
 def map2slim(ont, file, outfile, p, args):
     assocs = p.map_to_subset(open(file, "r"),
                              ontology=ont, outfile=outfile, subset=args.subset, relations=args.properties)
-    
 
 
-    
+def _default(something, default):
+    if something is None:
+        return default
+    else:
+        return something
+
 
 
 if __name__ == "__main__":
