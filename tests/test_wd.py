@@ -8,6 +8,8 @@ PTSD = 'DOID:2055'
 
 def test_wd_sparql_ptsd():
     """
+    TODO
+
     test using PTSD
     """
     xrefs = wd.fetchall_xrefs('HP')

@@ -1,6 +1,5 @@
 """
 An ontology backed by a remote Wikidata SPARQL service.
-
 """
 
 import networkx as nx
@@ -16,55 +15,6 @@ class WikidataOntology(Ontology):
     An ontology backed by a remote Wikidata SPARQL service.
     """
 
-    # TODO
-    def extract_subset(self, subset):
-        """
-        Find all nodes in a subset.
-    
-        We assume the oboInOwl encoding of subsets, and subset IDs are IRIs
-        """
-    
-        # note subsets have an unusual encoding
-        query = """
-        prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
-        SELECT ?c WHERE {{
-        GRAPH <{g}>  {{
-        ?c oboInOwl:inSubset ?s
-        FILTER regex(?s,'#{s}$','i')
-        }}
-        }}
-        """.format(s=subset, g=self.graph_name)
-        bindings = run_sparql(query)
-        return [r['c']['value'] for r in bindings]
-
-    # TODO
-    def subsets(self):
-        """
-        Find all subsets for an ontology
-        """
-    
-        # note subsets have an unusual encoding
-        query = """
-        prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
-        SELECT DISTINCT ?s WHERE {{
-        GRAPH <{g}>  {{
-        ?c oboInOwl:inSubset ?s 
-        }}
-        }}
-        """.format(g=self.graph_name)
-        bindings = run_sparql(query)
-        return [r['s']['value'] for r in bindings]
-
-    # TODO
-    # Override
-    def all_synonyms(self, include_label=False):
-        syntups = fetchall_syns(self.graph_name)
-        syns = [Synonym(t[0],pred=t[1], val=t[2]) for t in syntups]
-        if include_label:
-            #lsyns = [Synonym(t[0],pred='label', val=t[1]) for t in fetchall_labels(self.graph_name)]
-            lsyns = [Synonym(x, pred='label', val=self.label(x)) for x in self.nodes()]
-            syns = syns + lsyns
-        return syns
 
     # TODO
     # Override
@@ -179,6 +129,10 @@ class EagerWikidataOntology(WikidataOntology):
         return "h:{} g:{}".format(self.handle, self.graph)
 
     def create_from_hub(self, hub_id):
+        if hub_id.find(":") == -1:
+            hub_id = 'wd:' + hub_id
+        if hub_id.startswith('http'):
+            hub_id = '<' + hub_id + '>'
         q = """
         PREFIX wd: <http://www.wikidata.org/entity/> 
         CONSTRUCT {{
@@ -189,8 +143,8 @@ class EagerWikidataOntology(WikidataOntology):
         ?cls rdfs:subClassOf ?superClass
         }}
         WHERE {{
-         {{  {{ ?cls wdt:P279* <{hub_id}> }} UNION
-             {{ <{hub_id}> wdt:P279* ?cls }} }}
+         {{  {{ ?cls wdt:P279* {hub_id} }} UNION
+             {{ {hub_id} wdt:P279* ?cls }} }}
         ?cls wdt:P279 ?superClass
         SERVICE wikibase:label {{
           bd:serviceParam wikibase:language "en" .

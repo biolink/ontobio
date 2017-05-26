@@ -176,6 +176,13 @@ class Ontology():
         """
         return self.get_graph().node[id]
 
+    def sorted_nodes(self):
+        """
+        Returns all nodes in ontology, after topological sort
+
+        """
+        return nx.topological_sort(self.get_graph())
+    
     def neighbors(self, node, relations=None):
         return self.parents(node, relations=relations) + self.children(node, relations=relations)
         
