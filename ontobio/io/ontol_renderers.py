@@ -218,22 +218,30 @@ class AsciiTreeGraphRenderer(GraphRenderer):
         super().__init__(**args)
         
     def render(self, ontol, **args):
-        g = ontol.get_graph()
-        ts = nx.topological_sort(g)
-        roots = [n for n in ts if len(g.predecessors(n))==0]
+        #g = ontol.get_graph()
+        #ts = nx.topological_sort(g)
+        #roots = [n for n in ts if len(g.predecessors(n))==0]
+        roots = ontol.get_roots()
+        logging.info("Drawing ascii tree, using roots: {}".format(roots))
+        if len(roots) == 0:
+            logging.error("No roots in {}".format(ontol))
         s=""
         for n in roots:
-            s += self._show_tree_node(None, n, ontol, 0, **args) + "\n"
+            s += self._show_tree_node(None, n, ontol, 0, path=[], **args) + "\n"
         return s
 
-    def _show_tree_node(self, rel, n, ontol, depth=0, **args):
+    def _show_tree_node(self, rel, n, ontol, depth=0, path=[], **args):
         g = ontol.get_graph() # TODO - use ontol methods directly
-        s = " " * depth + self.render_relation(rel) + " " +self.render_noderef(ontol, n, **args) + "\n"
+        s = " " * depth + self.render_relation(rel) + " " +self.render_noderef(ontol, n, **args)
+        if n in path:
+            logging.warn("CYCLE: {} already visited in {}".format(n, path))
+            return s + " <-- CYCLE\n"
+        s += "\n"
         for c in ontol.children(n):
             preds = []
             for _,ea in g[n][c].items():
                 preds.append(ea['pred'])
-            s+= self._show_tree_node(",".join(preds), c, ontol, depth+1, **args)
+            s+= self._show_tree_node(",".join(preds), c, ontol, depth+1, path+[n], **args)
         return s
 
 class OboFormatGraphRenderer(GraphRenderer):
