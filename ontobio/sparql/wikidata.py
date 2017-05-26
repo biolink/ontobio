@@ -28,6 +28,7 @@ prefixmap = dict(
     DOID = 'http://www.wikidata.org/prop/direct/P699',
     CHEBI = 'http://www.wikidata.org/prop/direct/P683',
     UniProtKB = 'http://www.wikidata.org/prop/direct/P352',
+    NCBIGene = 'http://www.wikidata.org/prop/direct/P351',
     IPR = 'http://www.wikidata.org/prop/direct/P2926',
     encodes = 'http://www.wikidata.org/prop/direct/P688',
     genetic_association = 'http://www.wikidata.org/prop/direct/P2293',
@@ -35,6 +36,7 @@ prefixmap = dict(
 
 qmap = dict(
     disease2protein = dict(chain=['genetic_association', 'encodes'], prefix='UniProtKB'),
+    disease2drug = dict(chain=['treated_by_drug']),
     genetic_association = dict(chain=['genetic_association'], prefix='NCBIGene')
     )
 
