@@ -11,6 +11,8 @@ MITO = 'GO:0005739'
 MOUSE = 'NCBITaxon:10090'
 TRANSCRIPTION_FACTOR = 'GO:0003700'
 TRANSPORTER = 'GO:0005215'
+PART_OF = 'BFO:0000050'
+
 
 def test_remote_go():
     """
@@ -18,7 +20,7 @@ def test_remote_go():
     """
     ofactory = OntologyFactory()
     afactory = AssociationSetFactory()
-    ont = ofactory.create('go')
+    ont = ofactory.create('go').subontology(relations=['subClassOf', PART_OF])
     aset = afactory.create(ontology=ont,
                            subject_category='gene',
                            object_category='function',
@@ -26,6 +28,8 @@ def test_remote_go():
     
     rs = aset.query([TRANSCRIPTION_FACTOR],[])
     print("Mouse genes annotated to TF: {} {}".format(rs, len(rs)))
+    for g in rs:
+        print("  Gene: {} {}".format(g,aset.label(g)))
     set_tf = rs
     
     rs = aset.query([NUCLEUS],[])
@@ -88,4 +92,12 @@ def test_gaf():
     for g in genes:
         print("G={} '{}'".format(g, aset.label(g)))
     assert G1 in genes
+    
+
+def test_remote_go_pombase():
+    ont = OntologyFactory().create('go')
+    f = AssociationSetFactory()
+    aset = f.create(ontology=ont, fmt='gaf', file=POMBASE)
+    print("SUBJS: {}".format(aset.subjects))
+    assert len(aset.subjects) > 100
     

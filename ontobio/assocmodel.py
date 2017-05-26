@@ -160,11 +160,25 @@ class AssociationSet():
         return results
 
     def annotations(self, subject_id):
+        """
+        Returns a list of classes used to describe a subject
+
+        @Deprecated: use objects_for_subject
+        """
         if subject_id in self.association_map:
             return self.association_map[subject_id]
         else:
             return []
-            
+
+    def objects_for_subject(self, subject_id):
+        """
+        Returns a list of classes used to describe a subject
+        """
+        if subject_id in self.association_map:
+            return self.association_map[subject_id]
+        else:
+            return []
+        
     def query(self, terms=[], negated_terms=[]):
         """
         Basic boolean query, using inference.
@@ -359,12 +373,12 @@ class AssociationSet():
             b = sample_size - a
             c = bg_count[cls] - a
             d = (bg_size - bg_count[cls]) - b
-            logging.debug("ABCD="+str((cls,a,b,c,d,sample_size)))
+            #logging.debug("ABCD="+str((cls,a,b,c,d,sample_size)))
             _, p_uncorrected = sp.stats.fisher_exact( [[a, b], [c, d]], direction)
             p = p_uncorrected * num_hypotheses
             if p>1.0:
                 p=1.0
-            logging.debug("P={} uncorrected={}".format(p,p_uncorrected))
+            #logging.debug("P={} uncorrected={}".format(p,p_uncorrected))
             if p<threshold:
                 res = {'c':cls,'p':p,'p_uncorrected':p_uncorrected}
                 if labels:

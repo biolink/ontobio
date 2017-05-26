@@ -12,15 +12,18 @@ test:
 
 # only run local tests
 travis_test:
-	pytest tests/*local*.py
+	pytest tests/test_*local*.py tests/test_*parser*.py
 
 cleandist:
 	rm dist/*
 
-# TODO: manually increment version, run . bump.sh, then this
+# TODO: manually increment version in ontobio/__init__.sh, run . bump.sh, then this
 release: cleandist
 	python setup.py sdist bdist_wheel bdist_egg
 	twine upload dist/*
 
 nb:
 	PYTHONPATH=.. jupyter notebook
+
+foo:
+	./bin/flask2marshmallow.pl ../biolink-api/biolink/datamodel/serializers.py 

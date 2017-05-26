@@ -93,7 +93,7 @@ def main():
                                 is_partial_match = searchp.find('p') > -1,
                                 is_regex = searchp.find('r') > -1):
         qids.append(id)
-    logging.info("Query IDs: {}".format(qids))
+    logging.info("Query IDs: {} Rels: {}".format(qids, args.properties))
 
     nodes = ont.traverse_nodes(qids, up=dirn.find("u") > -1, down=dirn.find("d") > -1,
                                relations=args.properties)
@@ -124,6 +124,7 @@ def show_subgraph(ont, nodes, query_ids, args):
     w = GraphRenderer.create(args.to)
     if args.outfile is not None:
         w.outfile = args.outfile
+    logging.info("Writing subgraph for {}, |nodes|={}".format(ont,len(nodes)))
     w.write_subgraph(ont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
             
 def resolve_ids(ont, ids, args):

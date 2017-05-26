@@ -2,6 +2,8 @@
 
 For optimal viewing, browse this folder [using nbviewer](http://nbviewer.jupyter.org/github/biolink/ontobio/tree/master/notebooks/) .
 
+See [notebooks section](http://ontobio.readthedocs.io/en/latest/notebooks.html) on ReadTheDocs
+
 ## Dynamic Execution / Editing
 
 First:

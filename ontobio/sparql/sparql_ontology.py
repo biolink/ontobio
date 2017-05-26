@@ -6,7 +6,7 @@ import networkx as nx
 import logging
 import ontobio.ontol
 from ontobio.ontol import Ontology, Synonym
-from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_labels
+from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_labels, OIO_SYNS
 from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
 
 
@@ -52,6 +52,7 @@ class RemoteSparqlOntology(Ontology):
         bindings = run_sparql(query)
         return [r['s']['value'] for r in bindings]
 
+    # Override
     def all_synonyms(self, include_label=False):
         syntups = fetchall_syns(self.graph_name)
         syns = [Synonym(t[0],pred=t[1], val=t[2]) for t in syntups]
@@ -60,18 +61,23 @@ class RemoteSparqlOntology(Ontology):
             lsyns = [Synonym(x, pred='label', val=self.label(x)) for x in self.nodes()]
             syns = syns + lsyns
         return syns
-    
-    def resolve_names(self, names, is_remote=False, **args):
+
+    # Override
+    def resolve_names(self, names, is_remote=False, synonyms=False, **args):
         if not is_remote:
+            # TODO: ensure synonyms present
             return super().resolve_names(names, **args)
         else:
-            results = []
+            results = set()
             for name in names:
-                results += self._search(name)
-            logging.info("REMOT RESULTS="+str(results))
-            return results
-        
-    def _search(self, searchterm):
+                results.update( self._search(name, 'rdfs:label', **args) )
+            if synonyms:
+                for pred in OIO_SYNS.values():
+                    results.update( self._search(name, pred, **args) )
+            logging.info("REMOTE RESULTS="+str(results))
+            return list(results)
+
+    def _search(self, searchterm, pred, **args):
         """
         Search for things using labels
         """
@@ -79,13 +85,14 @@ class RemoteSparqlOntology(Ontology):
         searchterm = searchterm.replace('%','.*')
         namedGraph = get_named_graph(self.handle)
         query = """
+        prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
         SELECT ?c WHERE {{
         GRAPH <{g}>  {{
-        ?c rdfs:label ?l
+        ?c {pred} ?l
         FILTER regex(?l,'{s}','i')
         }}
         }}
-        """.format(s=searchterm, g=namedGraph)
+        """.format(pred=pred, s=searchterm, g=namedGraph)
         bindings = run_sparql(query)
         return [r['c']['value'] for r in bindings]
 
@@ -114,8 +121,11 @@ class RemoteSparqlOntology(Ontology):
                 cols=None
             select_val='*'
         else:
-            cols = select
-            select_val = ", ".join(['?'+c for c in select])
+            if isinstance(cols,list):
+                cols = [select]
+            else:
+                cols = select
+            select_val = ", ".join(['?'+c for c in cols])
 
         prefixes = ""
         if inject_prefixes is not None:

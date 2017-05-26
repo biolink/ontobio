@@ -8,3 +8,5 @@ def test_cfg():
     print(str(cfg))
     assert True
     cfg = get_config()
+    print(str(cfg.solr_assocs_url))
+    print(str(cfg.ontologies))

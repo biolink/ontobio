@@ -3,4 +3,10 @@ amigo_solr_assocs_url: "http://golr.berkeleybop.org"
 solr_search_url: "https://solr-dev.monarchinitiative.org/solr/search"
 amigo_solr_search_url: "http://golr.berkeleybop.org"
 sparql_url: "http://sparql.hegroup.org/sparql"
+scigraph_ontology_url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
+scigraph_data_url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
 use_amigo_for: function
+ontologies:
+  - id: magic1234
+    handle: ceph
+    pre_load: true

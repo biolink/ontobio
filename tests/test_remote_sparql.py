@@ -16,6 +16,7 @@ INCREASED_SIZE = 'PATO:0000586'
 PROTRUDING = 'PATO:0001598'
 MORPHOLOGY = 'PATO:0000051'
 ABSENT = 'PATO:0000462'
+CONICAL = 'PATO:0002021'
 
 def test_remote_sparql():
     """
@@ -45,6 +46,15 @@ def test_remote_sparql():
     print("SEARCH (re, explicit): {}".format(search_results))
     assert SHAPE in search_results
     assert len(search_results)>10
+    
+    # syns
+    syn = 'cone-shaped'
+    search_results = ont.search(syn, synonyms=False)
+    print("SEARCH (no syns): {}".format(search_results))
+    assert [] == search_results
+    #search_results = ont.search(syn, synonyms=True)
+    #print("SEARCH (with syns): {}".format(search_results))
+    #assert [CONICAL] == search_results
     
     num_nodes = 0
     for n in ont.nodes():
@@ -102,8 +112,30 @@ def test_dynamic_query():
     print("Creating ont")
     ont = factory.create('pato')
 
-    ids = ont.sparql(select='?x',
-                     body="{?x rdfs:subClassOf+ GO:0005634}",
+    ids = ont.sparql(body="{?x rdfs:subClassOf+ "+SHAPE+"}",
                      inject_prefixes = ont.prefixes(),
                      single_column=True)
     assert Y_SHAPED in ids
+    assert ABSENT not in ids
+
+def test_subontology():
+    """
+    subontology
+    """
+    factory = OntologyFactory()
+    print("Creating ont")
+    ont = factory.create('go')
+    print("ONT NODES: {}".format(ont.nodes()))
+    subont = ont.subontology(relations=['subClassOf'])
+    PERM = 'GO:1990578'
+    print("NODES: {}".format(subont.nodes()))
+    ancs = subont.ancestors(PERM, reflexive=True)
+    print(str(ancs))
+    for a in ancs:
+        print(" ANC: {} '{}'".format(a,subont.label(a)))
+    assert len(ancs) > 0
+    from ontobio.io.ontol_renderers import GraphRenderer
+    w = GraphRenderer.create('tree')
+    w.write_subgraph(ont, ancs)
+
+    

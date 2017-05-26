@@ -13,6 +13,7 @@ from cachier import cachier
 import datetime
 from ontobio.golr.golr_associations import bulk_fetch
 from ontobio.assocmodel import AssociationSet, AssociationSetMetadata
+import ontobio.io.gafparser as px
 from ontobio.io.gafparser import GafParser
 
 SHELF_LIFE = datetime.timedelta(days=3)
@@ -28,7 +29,7 @@ class AssociationSetFactory():
         initializes based on an ontology name
         """
 
-    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None):
+    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None, fmt=None):
         """
         creates an AssociationSet
 
@@ -49,7 +50,8 @@ class AssociationSetFactory():
                                       taxon=taxon)
         
         if file is not None:
-            return self.create_from_file(file,
+            return self.create_from_file(file=file,
+                                         fmt=fmt,
                                          ontology=ontology,
                                          meta=meta)
 
@@ -94,16 +96,34 @@ class AssociationSetFactory():
         aset = AssociationSet(subject_label_map=subject_label_map, association_map=amap, **args)
         return aset
     
-    def create_from_file(self, file, format=None, **args):
+    def create_from_file(self, file=None, fmt='gaf', **args):
         """
-        Creates from a file. Guesses format if not specified.
+        Creates from a file.
 
-        NOTE: currently only GAF implemented
+        Arguments
+        ---------
+        file : str or file
+            input file or filename
+        format : str
+            name of format e.g. gaf
+        
         """
         if isinstance(file,str):
             file = open(file,"r")
-        return self.create_from_gaf(file, **args)
 
+        p = None
+        if fmt == 'gaf':
+            p = px.GafParser()
+        elif fmt == 'gpad':
+            p = px.GpadParser()
+        elif fmt == 'hpoa':
+            p = px.HpoaParser()
+        else:
+            logging.error("Format not recognized: {}".format(fmt))
+        logging.info("Parsing {} with {}/{}".format(file, fmt, p))
+        results = p.skim(file)
+        return self.create_from_tuples(results, **args)
+    
     def create_from_gaf(self, file, **args):
         """
         Creates from a GAF file
@@ -112,11 +132,6 @@ class AssociationSetFactory():
         results = p.skim(file)
         return self.create_from_tuples(results, **args)
 
-    def create_from_gpad(self, file):
-        """
-        Creates from a GPAD file
-        """
-        pass
 
     def create_from_phenopacket(self, file):
         """

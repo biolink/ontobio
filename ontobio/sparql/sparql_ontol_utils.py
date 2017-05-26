@@ -30,6 +30,7 @@ cache = lru_cache(maxsize=None)
 
 
 SUBCLASS_OF = 'subClassOf'
+SUBPROPERTY_OF = 'subPropertyOf'
 
 # TODO
 # for now we assume ontobee
@@ -38,6 +39,11 @@ ontol_sources = {
     '': "http://sparql.hegroup.org/sparql"
     }
 
+OIO_SYNS = dict(
+    related='oboInOwl:hasRelatedSynonym',
+    narrow = 'oboInOwl:hasNarrowSynonym',
+    broad = 'oboInOwl:hasBroadSynonym',
+    exact = 'oboInOwl:hasExactSynonym')
     
 
 def get_digraph(ont, relations=None, writecache=False):
@@ -70,6 +76,7 @@ def get_edges(ont):
     logging.info("QUERYING:"+ont)
     edges = [(c,SUBCLASS_OF, d) for (c,d) in fetchall_isa(ont)]
     edges += fetchall_svf(ont)
+    edges += [(c,SUBPROPERTY_OF, d) for (c,d) in fetchall_subPropertyOf(ont)]
     return edges
 
 def search(ont, searchterm):
@@ -88,6 +95,7 @@ def search(ont, searchterm):
     bindings = run_sparql(query)
     return [(r['c']['value'],r['l']['value']) for r in bindings]
 
+@cachier(stale_after=SHELF_LIFE)
 def get_terms_in_subset(ont, subset):
     """
     Find all nodes in a subset.
@@ -150,6 +158,17 @@ def get_named_graph(ont):
 def fetchall_isa(ont):
     namedGraph = get_named_graph(ont)
     queryBody = querybody_isa()
+    query = """
+    SELECT * WHERE {{
+    GRAPH <{g}>  {q}
+    }}
+    """.format(q=queryBody, g=namedGraph)
+    bindings = run_sparql(query)
+    return [(r['c']['value'],r['d']['value']) for r in bindings]
+
+def fetchall_subPropertyOf(ont):
+    namedGraph = get_named_graph(ont)
+    queryBody = querybody_subPropertyOf()
     query = """
     SELECT * WHERE {{
     GRAPH <{g}>  {q}
@@ -243,6 +262,13 @@ def fetchall_xrefs(ont):
 def querybody_isa():
     return """
     { ?c rdfs:subClassOf ?d }
+    FILTER (!isBlank(?c))
+    FILTER (!isBlank(?d))
+    """
+
+def querybody_subPropertyOf():
+    return """
+    { ?c rdfs:subPropertyOf ?d }
     FILTER (!isBlank(?c))
     FILTER (!isBlank(?d))
     """

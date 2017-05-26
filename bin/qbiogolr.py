@@ -5,7 +5,7 @@ Command line wrapper to ontobio.golr library.
 
 Type:
 
-    qbiogorl -h
+    qbiogolr -h
 
 For instructions
 
@@ -14,7 +14,7 @@ For instructions
 import argparse
 from ontobio.golr.golr_associations import search_associations_compact
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.graph_io import *
+from ontobio.io.ontol_renderers import *
 import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from networkx.drawing.nx_pydot import write_dot
