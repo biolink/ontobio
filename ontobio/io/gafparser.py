@@ -10,6 +10,7 @@ import tempfile
 from contextlib import closing
 import subprocess
 import logging
+import io
 
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
