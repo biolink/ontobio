@@ -135,6 +135,19 @@ def test_graph():
     assert s1.pred == 'hasRelatedSynonym'
     assert s1.xrefs == ['GOC:mah']
 
+    GOSLIM = 'goslim_generic'
+    subsets = ont.subsets(NUCLEUS)
+    print("SUBSETS: {}".format(subsets))
+    assert GOSLIM in subsets
+    assert len(subsets) > 0
+
+    in_slim = ont.extract_subset(GOSLIM)
+    print("IN SLIM: {}".format(in_slim))
+    assert len(in_slim) > 0
+    assert NUCLEUS in in_slim
+    
+    #logging.basicConfig(level=logging.DEBUG)
+
     assert [] == ont.search('protoplast', synonyms=False)
     assert {CELL_PART,INTRACELLULAR} == set(ont.search('protoplast', synonyms=True))
     

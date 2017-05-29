@@ -691,6 +691,7 @@ class GafParser(AssocParser):
                 'object': object,
                 'negated': negated,
                 'qualifiers': qualifiers,
+                'aspect': aspect,
                 'relation': {
                     'id': relation
                 },
