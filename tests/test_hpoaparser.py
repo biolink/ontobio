@@ -43,7 +43,7 @@ def test_parse_hpoa():
 
     for m in p.report.messages:
         print("MESSAGE: {}".format(m))
-    assert len(p.report.messages) == 1
+    assert len(p.report.messages) == 0
     print(p.report.to_markdown())
     
 def test_validate_hp_idspaces():

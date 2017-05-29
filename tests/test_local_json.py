@@ -137,6 +137,9 @@ def test_graph():
 
     assert [] == ont.search('protoplast', synonyms=False)
     assert {CELL_PART,INTRACELLULAR} == set(ont.search('protoplast', synonyms=True))
+
+    assert ont.has_node(CELL_PART)
+    assert not ont.has_node('FOO:123')
     
 def test_subontology():
     """
