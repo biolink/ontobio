@@ -22,12 +22,16 @@ class AssocParserConfig():
     """
     def __init__(self,
                  remove_double_prefixes=False,
+                 ontology=None,
+                 repair_obsoletes=True,
                  entity_map=None,
                  valid_taxa=None,
                  class_idspaces=None,
                  entity_idspaces=None,
                  filter_out_evidence=[]):
         self.remove_double_prefixes=remove_double_prefixes
+        self.ontology=ontology
+        self.repair_obsoletes=repair_obsoletes
         self.entity_map=entity_map
         self.valid_taxa=valid_taxa
         self.class_idspaces=class_idspaces
@@ -45,9 +49,12 @@ class Report():
 
     # Warnings: TODO link to gorules
     INVALID_ID = "Invalid identifier"
+    UNKNOWN_ID = "Unknown identifier"
     INVALID_IDSPACE = "Invalid identifier prefix"
     INVALID_TAXON = "Invalid taxon"
     UNMAPPED_ID = "Unmapped identifier"
+    OBSOLETE_CLASS = "Obsolete class"
+    OBSOLETE_CLASS_NO_REPLACEMENT = "Obsolete class with no replacement"
 
     """
     3 warning levels
@@ -141,7 +148,7 @@ class Report():
             if len(msgs) > 0:
                 s += "### {}\n\n".format(level)
                 for m in msgs:
-                    s += " * {}: {} '{}' `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
+                    s += " * {}: obj:'{}' \"{}\" `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
         return s
 
 # TODO avoid using names that are builtin python: file, id
@@ -188,6 +195,7 @@ class AssocParser():
                 skipped.append(line)
             else:
                 for a in new_assocs:
+                    self._validate_assoc(a)
                     rpt = self.report
                     rpt.subjects.add(a['subject']['id'])
                     rpt.objects.add(a['object']['id'])
@@ -207,6 +215,9 @@ class AssocParser():
                             len(skipped)))
         file.close()
         return assocs
+
+    def _validate_assoc(self, assoc):
+        self._validate_ontology_class_id(assoc['object']['id'], assoc['source_line'])
 
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
@@ -298,13 +309,35 @@ class AssocParser():
                 self.report.error(line, Report.INVALID_TAXON, taxon)
                 return False
 
+    # check the term id is in the ontology, and is not obsolete
+    def _validate_ontology_class_id(self, id, line, subclassof=None):
+        ont = self.config.ontology
+        if ont is None:
+            return id
+        if not ont.has_node(id):
+            self.report.warning(line, Report.UNKNOWN_ID, id)
+            return id
+        if ont.is_obsolete(id):
+            if self.config.repair_obsoletes:
+                rb = ont.replaced_by(id, strict=False)
+                if isinstance(rb,str):
+                    self.report.warning(line, Report.OBSOLETE_CLASS, id)
+                    id =  rb
+                else:
+                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id)
+            else:
+                self.report.warning(line, Report.OBSOLETE_CLASS, id)
+        # TODO: subclassof
+        return id
+        
+            
     def _validate_id(self, id, line, context=None):
         if " " in id:
-            self.report.error(line, Report.INVALID_ID, id)
+            self.report.error(line, Report.INVALID_ID, id, "contains spaces")
             return False
         if id.find("|") > -1:
             # non-fatal
-            self.report.error('', Report.INVALID_ID, id)
+            self.report.error('', Report.INVALID_ID, id, "contains pipe in unexpected place")
         idspace = self._get_id_prefix(id)
         if context == ANNOTATION and self.config.class_idspaces is not None:
             if idspace not in self.config.class_idspaces:
@@ -853,7 +886,7 @@ class HpoaParser(GafParser):
         ## --
         evidence = {
             'type': evidence,
-            'has_supporting_reference': self._split_pipe(reference)
+            'has_supporting_reference': reference.split("; ")
         }
         evidence['with_support_from'] = self._split_pipe(withfrom)
 

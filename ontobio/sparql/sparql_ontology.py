@@ -165,6 +165,9 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         logging.info("Creating eager-remote-sparql from "+str(handle))
         g = get_digraph(handle, None, True)
         logging.info("Graph:"+str(g))
+        if len(g.nodes()) == 0 and len(g.edges()) == 0:
+            logging.error("Empty graph for '{}' - did you use the correct id?".
+                          format(handle))
         self.graph = g
         self.graph_name = get_named_graph(handle)
         self.xref_graph = get_xref_graph(handle)

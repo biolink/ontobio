@@ -291,6 +291,12 @@ class Ontology():
         """
         return self.get_graph().node[id]
 
+    def has_node(self, id):
+        """
+        True if id identifies a node in the ontology graph
+        """
+        return id in self.get_graph().node
+    
     def sorted_nodes(self):
         """
         Returns all nodes in ontology, after topological sort
@@ -549,6 +555,67 @@ class Ontology():
         else:
             return []
 
+    def _get_meta_prop(self, nid, prop):
+        n = self.node(nid)
+        if 'meta' in n:
+            meta = n['meta']
+            if prop in meta:
+                return meta[prop]
+        return None
+
+    def _get_meta(self, nid):
+        n = self.node(nid)
+        if 'meta' in n:
+            return n['meta']
+        return None
+
+    def _get_basic_property_values(self, nid):
+        return self._get_meta_prop(nid, 'basicPropertyValues')
+    
+    def _get_basic_property_value(self, nid, prop):
+        bpvs = self._get_basic_property_values()
+        return [x['val'] for x in bpvs in x['pred'] == prop]
+    
+    def is_obsolete(self, nid):
+        """
+        True if node is obsolete
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+        """
+        dep = self._get_meta_prop(nid, 'deprecated')
+        return  dep is not None and dep
+
+    def replaced_by(self, nid, strict=True):
+        """
+        Returns value of 'replaced by' (IAO_0100001) property for obsolete nodes
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+        strict: bool
+            If true, raise error if cardinality>1. If false, return list if cardinality>1
+
+        Return
+        ------
+        None if no value set, otherwise returns node id (or list if multiple values, see strict setting)
+        """
+        vs = self._get_basic_property_value(nid, 'IAO:0100001')
+        if len(vs) == 0:
+            return None
+        elif len(vs) == 1:
+            return vs[0]
+        else:
+            msg = "replaced_by has multiple values: {}".format(vs)
+            if strict:
+                raise ValueError(msg)
+            else:
+                logging.error(msg)
+                return vs
+    
     def synonyms(self, nid, include_label=False):
         """
         Retrieves synonym objects for a class

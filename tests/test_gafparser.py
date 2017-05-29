@@ -24,6 +24,11 @@ def test_parse_gpad():
 def parse_with(f, p):
     is_gaf = f == POMBASE
     ont = OntologyFactory().create(ONT)
+
+    if is_gaf:
+        # only do ontology checking on GAF parse;
+        # this is because ontology is made from GAF
+        p.config.ontology = ont
     results = p.parse(open(f,"r"))
     r1 = results[0]
     assert r1['evidence']['with_support_from'] == ['SGD:S000001583']
@@ -44,6 +49,19 @@ def parse_with(f, p):
     for m in p.report.messages:
         print("MESSAGE: {}".format(m))
     assert len(p.report.messages) == 0
+    print(p.report.to_markdown())
+
+def test_invalid_goid():
+    # Note: this ontology is a subset of GO extracted using the GAF, not GPAD
+    ont = OntologyFactory().create(ONT)
+    p = GpadParser()
+    p.config.ontology = ont
+    results = p.parse(open(POMBASE_GPAD,"r"))
+
+    # we expect errors since ONT is not tuned for the GPAD file
+    for m in p.report.messages:
+        print("MESSAGE: {}".format(m))
+    assert len(p.report.messages) > 500
     print(p.report.to_markdown())
     
 def test_validate_go_idspaces():
