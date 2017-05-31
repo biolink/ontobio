@@ -10,24 +10,67 @@ class OntologyConfigSchema(Schema):
     handle = fields.Str(description="ontology handle")
     pre_load = fields.Bool(description="if true, load this ontology at startup")
 
+class EndpointSchema(Schema):
+    """
+    Configuration for a REST or RESTish endpoint
+    """
+    url = fields.Url()
+    timeout = fields.Int()
+
+    @post_load
+    def make_object(self, data):
+        return Endpoint(**data)
+
+class CategorySchema(Schema):
+    """
+    Maps a category label to a root ontology class
+    """
+    id = fields.Str()
+    superclass = fields.Str()
+
+    @post_load
+    def make_object(self, data):
+        return Category(**data)
+    
 class ConfigSchema(Schema):
     """
     Marshmallow schema for configuration objects.
     """
-    sparql_url = fields.Url(description="SPARQL URL to use for ontology queries")
-    solr_url = fields.Url()
-    solr_search_url = fields.Url()
-    go_solr_url = fields.Url()
-    go_solr_search_url = fields.Url()
-    scigraph_ontology_url = fields.Url()
-    scigraph_data_url = fields.Url()
+    sparql = fields.Nested(EndpointSchema, description="SPARQL URL to use for ontology queries")
+    solr_assocs = fields.Nested(EndpointSchema)
+    solr_search = fields.Nested(EndpointSchema)
+    amigo_solr_assocs = fields.Nested(EndpointSchema)
+    amigo_solr_search = fields.Nested(EndpointSchema)
+    scigraph_ontology = fields.Nested(EndpointSchema)
+    scigraph_data = fields.Nested(EndpointSchema)
+    default_solr_schema = fields.Str()
     ontologies = fields.List(fields.Nested(OntologyConfigSchema))
+    categories = fields.List(fields.Nested(CategorySchema))
+    use_amigo_for = fields.List(fields.Str(description="category to use amigo for"))
     
     @post_load
     def make_object(self, data):
-        logging.info("POST-LOAD: {}".format(data))
         return Config(**data)
 
+class Endpoint():
+    """
+    RESTish endpoint
+    """
+    def __init__(self,
+                 url = None,
+                 timeout = None):
+        self.url = url
+        self.timeout = timeout
+        
+class Category():
+    """
+    Maps category to class
+    """
+    def __init__(self,
+                 id = None,
+                 superclass = None):
+        self.id = id
+        self.superclass = superclass
     
 class Config():
     """
@@ -36,26 +79,42 @@ class Config():
 
     """
     def __init__(self,
-                 solr_assocs_url = "https://solr.monarchinitiative.org/solr/golr",
-                 amigo_solr_assocs_url = "http://golr.berkeleybop.org",
-                 solr_search_url = "https://solr-dev.monarchinitiative.org/solr/search",
-                 amigo_solr_search_url = "http://golr.berkeleybop.org",
-                 sparql_url = "http://sparql.hegroup.org/sparql",
-                 scigraph_ontology_url = None,
-                 scigraph_data_url = None,
-                 ontologies = {},
+                 solr_assocs = None,
+                 amigo_solr_assocs = None,
+                 solr_search = None,
+                 amigo_solr_search = None,
+                 sparql = None,
+                 scigraph_ontology = None,
+                 scigraph_data = None,
+                 ontologies = [],
+                 categories = [],
+                 default_solr_schema = None,
                  use_amigo_for = "function"):
-        self.solr_assocs_url = solr_assocs_url
-        self.amigo_solr_assocs_url = amigo_solr_assocs_url
-        self.solr_search_url = solr_assocs_url
-        self.amigo_solr_search_url = amigo_solr_assocs_url
-        self.sparql_url = sparql_url
-        self.scigraph_ontology_url = scigraph_ontology_url
-        self.scigraph_data_url = scigraph_data_url
+        self.solr_assocs = solr_assocs
+        self.amigo_solr_assocs = amigo_solr_assocs
+        self.solr_search = solr_search
+        self.amigo_solr_search = amigo_solr_search
+        self.sparql = sparql
+        self.scigraph_ontology = scigraph_ontology
+        self.scigraph_data = scigraph_data
         self.ontologies = ontologies
+        self.categories = categories
+        self.default_solr_schema = default_solr_schema
         self.use_amigo_for = use_amigo_for
 
-    def get_solr_search_url(use_amigo=False):
+    def endpoint_url(self, endpoint):
+        if endpoint is None:
+            return None
+        else:
+            return endpoint.url
+
+    def get_category_class(self, categ):
+        matches = [c.superclass for c in self.categories if c.id == categ]
+        if len(matches) > 0:
+            return matches[0]
+        return None
+        
+    def get_solr_search_url(self, use_amigo=False):
         """
         Return solr URL to be used for lexical entity searches
 
@@ -66,9 +125,9 @@ class Config():
         use_amigo : bool
             If true, get the URL for the GO/AmiGO instance of GOlr. This is typically used for category='function' queries
         """
-        url = self.solr_search_url
+        url = self.endpoint_url(self.solr_search)
         if use_amigo:
-            url = self.amigo_solr_search_url
+            url = self.endpoint_url(self.amigo_solr_search)
         return url
             
     def get_solr_assocs_url(use_amigo=False):
@@ -80,17 +139,18 @@ class Config():
         There are two possible schemas: Monarch and AmiGO. The AmiGO schema is used for
         querying the GO and Planteome Golr instances
         """
-        url = self.solr_assocs_url
+        url = self.endpoint_url(self.solr_assocs)
         if use_amigo:
-            url = self.amigo_solr_assocs_url
+            url = self.endpoint_url(self.amigo_solr_assocs)
         return url
 
 class Session():
     """
     Configuration for current session
     """
-    default_config_path = 'conf/config.yaml'
-    config = None
+    def __init__(self):
+        self.default_config_path = 'conf/config.yaml'
+        self.config = None
 
 """
     Current session
@@ -111,6 +171,20 @@ def get_config():
         logging.info("Using pre-loaded object: {}".format(session.config))
     return session.config
 
+def set_config(path):
+    """
+    Set configuration for current session.
+    """
+    logging.info("LOADING FROM: {}".format(path))
+    session.config = load_config(path)
+    return session.config
+
+def reset_config():
+    """
+    Reset currrent session configuration
+    """
+    session.config = None
+
 def load_config(path):
     f = open(path,'r')
     obj = yaml.load(f)
@@ -118,7 +192,7 @@ def load_config(path):
     config = schema.load(obj).data
     errs = schema.validate(obj)
     if len(errs) > 0:
-        logging.error("ERRS: {}".format(errs))
+        logging.error("CONFIG ERRS: {}".format(errs))
         raise ValueError('Error loading '+path)
     #config = Config()
     return config

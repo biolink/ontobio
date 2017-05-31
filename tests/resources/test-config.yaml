@@ -21,6 +21,13 @@ scigraph_data:
   timeout: 2
 use_amigo_for:
   - function
+categories:
+  - id: anatomy
+    superclass: PO:0025131
+  - id: phenotype
+    superclass: TO:0000387
+  - id: environment
+    superclass: TO:0000387
 ontologies:
   - id: magic1234
     handle: pato

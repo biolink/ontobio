@@ -22,25 +22,23 @@ def test_map2slim_golr():
         print("Subject: {} Slim:{} Assocs:{}".format(r['subject'],r['slim'],len(r['assocs'])))
     assert n_found > 0
 
-def test_map2slim_ont():
-    ont = OntologyFactory().create('go')
-    relations=['subClassOf', 'BFO:0000050']
-    m = ont.create_slim_mapping(subset_nodes=SLIM, relations=relations)
-    print(str(m))
-    assert m['GO:0005798'] == ['GO:0005794']
-
-    searchresult = search_associations(subjects=SUBJECTS,
-                                       object_category='function')
-
-    ok = False
-    for a in searchresult['associations']:
-        gene = a['subject']['id']
-        cid = a['object']['id']
-        mcids = m.get(cid)
-        ## e.g. ZFIN:ZDB-GENE-050417-357 : GO:0060037 -> ['GO:0048731']
-        print("{} : {} -> {}".format(gene, cid, mcids))
-        if gene == 'ZFIN:ZDB-GENE-050417-357' and mcids == ['GO:0048731']:
-            ok = True
-    assert ok
-
-    
+#def test_map2slim_ont():
+#    ont = OntologyFactory().create('go')
+#    relations=['subClassOf', 'BFO:0000050']
+#    m = ont.create_slim_mapping(subset_nodes=SLIM, relations=relations)
+#    print(str(m))
+#    assert m['GO:0005798'] == ['GO:0005794']
+#
+#    searchresult = search_associations(subjects=SUBJECTS,
+#                                       object_category='function')
+#
+#    ok = False
+#    for a in searchresult['associations']:
+#        gene = a['subject']['id']
+#        cid = a['object']['id']
+#        mcids = m.get(cid)
+#        ## e.g. ZFIN:ZDB-GENE-050417-357 : GO:0060037 -> ['GO:0048731']
+#        print("{} : {} -> {}".format(gene, cid, mcids))
+#        if gene == 'ZFIN:ZDB-GENE-050417-357' and mcids == ['GO:0048731']:
+#            ok = True
+#    assert ok

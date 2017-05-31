@@ -1,3 +1,6 @@
+"""
+Test Generate RDF from Assocs
+"""
 from ontobio.io.gafparser import GafParser
 from ontobio.rdfgen.assoc_rdfgen import SimpleAssocGenerator,CamGenerator
 from ontobio.assoc_factory import AssociationSetFactory
@@ -14,4 +17,4 @@ def test_parse():
     gen2 = CamGenerator()
     for a in assocs:
         gen1.translate(a)
-        gen2.translate(a)
+        #gen2.translate(a)
