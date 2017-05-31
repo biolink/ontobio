@@ -191,7 +191,7 @@ class AssocParser():
 
             parsed_line, new_assocs  = self.parse_line(line)
             if self._skipping_line(new_assocs): # Skip if there were no assocs
-                logging.warn("SKIPPING: {}".format(new_assocs))
+                logging.warn("SKIPPING: {}".format(line))
                 skipped.append(line)
             else:
                 for a in new_assocs:
@@ -412,13 +412,15 @@ class GpadParser(AssocParser):
 
     ANNOTATION_CLASS_COLUMN=3
 
-    def __init__(self,config=AssocParserConfig()):
+    def __init__(self,config=None):
         """
         Arguments:
         ---------
 
         config : a AssocParserConfig object
         """
+        if config == None:
+            config = AssocParserConfig()
         self.config = config
         self.report = Report()
 
@@ -517,13 +519,15 @@ class GafParser(AssocParser):
 
     ANNOTATION_CLASS_COLUMN=4
 
-    def __init__(self,config=AssocParserConfig()):
+    def __init__(self,config=None):
         """
         Arguments:
         ---------
 
         config : a AssocParserConfig object
         """
+        if config == None:
+            config = AssocParserConfig()
         self.config = config
         self.report = Report()
 
@@ -750,13 +754,15 @@ class HpoaParser(GafParser):
     Note that there are similarities with Gaf format, so we inherit from GafParser, and override
     """
 
-    def __init__(self,config=AssocParserConfig()):
+    def __init__(self,config=None):
         """
         Arguments:
         ---------
 
         config : a AssocParserConfig object
         """
+        if config == None:
+            config = AssocParserConfig()
         self.config = config
         self.report = Report()
 

@@ -10,6 +10,15 @@ subpackage_tests: $(patsubst %,test-%,$(PACKAGES))
 test:
 	pytest tests/*.py
 
+debug_test:
+	pytest -s -vvvv tests/*.py
+
+t-%:
+	pytest tests/test_$*.py
+
+foo:
+	which pytest
+
 # only run local tests
 travis_test:
 	pytest tests/test_*local*.py tests/test_*parser*.py
@@ -25,5 +34,5 @@ release: cleandist
 nb:
 	PYTHONPATH=.. jupyter notebook
 
-foo:
+mm:
 	./bin/flask2marshmallow.pl ../biolink-api/biolink/datamodel/serializers.py 

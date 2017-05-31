@@ -138,9 +138,9 @@ def solr_quotify(v):
     
 
 # We take the monarch golr as default
-# TODO: config
-monarch_golr_url = "https://solr.monarchinitiative.org/solr/golr/"
-monarch_solr = pysolr.Solr(monarch_golr_url, timeout=5)
+# Note that these can be overridden using a config object
+#monarch_golr_url = "https://solr.monarchinitiative.org/solr/golr/"
+#monarch_solr = pysolr.Solr(monarch_golr_url, timeout=5)
 
 
 def translate_facet_field(fcs):
@@ -216,7 +216,26 @@ def map_field(fn, m) :
 class GolrServer():
     pass
 
-class GolrSearchQuery():
+class GolrAbstractQuery():
+    def get_config(self):
+        if self.config is None:
+            from ontobio.config import Config, get_config
+            self.config = get_config()
+        return self.config
+    
+    def _set_solr(self, endpoint):
+        self.solr = pysolr.Solr(endpoint.url, timeout=endpoint.timeout)
+        return self.solr
+
+    def _use_amigo_schema(self, object_category):
+        if object_category is not None and object_category == 'function':
+            return True
+        ds = self.get_config().default_solr_schema
+        if ds is not None and ds == 'amigo':
+            return True
+        return False
+
+class GolrSearchQuery(GolrAbstractQuery):
     """
     Queries over a search document
     """
@@ -262,7 +281,7 @@ class GolrSearchQuery():
         
         qf = []
         suffixes = ['std','kw','eng']
-        if (self.is_go):
+        if self.is_go:
             self.search_fields=dict(entity_label=3,general_blob=3)
             self.hl = False
             # TODO: formal mapping
@@ -271,12 +290,19 @@ class GolrSearchQuery():
             suffixes = ['searchable']
             fq['document_category'] = "general"
             if self.url is None:
-                self.url = 'http://golr.berkeleybop.org/'
-
+                self._set_solr(self.get_config().amigo_solr_search)
+                #self.url = 'http://golr.berkeleybop.org/'
+            else:
+                self.solr = pysolr.Solr(self.url, timeout=2)
+        else:
+            if self.url is None:
+                self._set_solr(self.get_config().solr_search)
+            else:
+                self.solr = pysolr.Solr(self.url, timeout=2)
         
-        if self.url is None:
-            self.url = 'https://solr-dev.monarchinitiative.org/solr/search'
-        self.solr = pysolr.Solr(self.url, timeout=2)
+        #if self.url is None:
+        #    self.url = 'https://solr-dev.monarchinitiative.org/solr/search'
+        #self.solr = pysolr.Solr(self.url, timeout=2)
         
         for (f,relevancy) in self.search_fields.items():
             fmt="{}_{}^{}"
@@ -334,7 +360,7 @@ class GolrSearchQuery():
         return payload
                  
 
-class GolrAssociationQuery():
+class GolrAssociationQuery(GolrAbstractQuery):
     """
     A Query object providing a higher level of abstraction over either GO or Monarch Solr indexes
 
@@ -386,7 +412,11 @@ class GolrAssociationQuery():
         If true, then the associations list will be false, instead
         compact_associations contains a more compact representation
         consisting of objects with (subject, relation and objects)
-    
+
+    config : Config
+
+        See :ref:`Config` for details. The config object can be used
+        to set values for the solr instance to be queried
     
     """
     def __init__(self,
@@ -516,28 +546,41 @@ class GolrAssociationQuery():
         # temporary: for querying go solr, map fields. TODO
         object_category=self.object_category
         logging.info("Object category: {}".format(object_category))
+        
         object=self.object
         if object_category is None and object is not None and object.startswith('GO:'):
+            # Infer category
             object_category = 'function'
-            logging.info("Inferring Object category: {}".format(object_category))
+            logging.info("Inferring Object category: {} from {}".
+                         format(object_category, object))
 
         if self.solr is None:
             if self.url is None:
-                self.solr = monarch_solr
+                self._set_solr(self.get_config().solr_assocs)
+                #self.solr = monarch_solr
             else:
                 self.solr = pysolr.Solr(self.url, timeout=5)
                 
         # URL to use for querying solr
-        if object_category is not None and object_category == 'function':
+        if self._use_amigo_schema(object_category):
             if self.url is None:
-                go_golr_url = "http://golr.berkeleybop.org/solr/"
-                self.solr = pysolr.Solr(go_golr_url, timeout=5)
+                self._set_solr(self.get_config().amigo_solr_assocs)
+                #go_golr_url = "http://golr.berkeleybop.org/solr/"
+                #self.solr = pysolr.Solr(go_golr_url, timeout=5)
             self.field_mapping=goassoc_fieldmap()
             fq['document_category'] = 'annotation'
             if subject is not None:
                 subject = self.make_gostyle_identifier(subject)
             if subjects is not None:
                 subjects = [self.make_gostyle_identifier(s) for s in subjects]
+
+            # the AmiGO schema lacks an object_category field;
+            # we could use the 'aspect' field but instead we use a mapping of
+            # the category to a root class
+            if object_category is not None:
+                cc = self.get_config().get_category_class(object_category)
+                if cc is not None and object == None:
+                    object = cc
     
         ## subject params
         subject_taxon=self.subject_taxon
@@ -612,6 +655,7 @@ class GolrAssociationQuery():
                 fq['subject'] = subjects
             else:
                 fq['subject_closure'] = subjects
+                
         objects=self.objects
         if objects is not None:
             # lists are assumed to be disjunctive

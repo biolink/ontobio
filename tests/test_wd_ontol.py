@@ -1,6 +1,5 @@
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.sparql.wikidata_ontology import EagerWikidataOntology
-from ontobio.io.ontol_renderers import GraphRenderer
 import ontobio.sparql.wikidata as wd
 import logging
 
@@ -40,6 +39,7 @@ def test_factory():
     print(labels)
     # Note: it's possible wd may change rendering this false
     assert 'Fear of frogs' in labels
+    from ontobio.io.ontol_renderers import GraphRenderer
     w = GraphRenderer.create('tree')
     w.write_subgraph(ont, nodes, query_ids=qids)
 

@@ -77,4 +77,8 @@ def test_validate_go_idspaces():
     assert summary['association_count'] == 0
     assert summary['line_count'] > 300
     print(p.report.to_markdown())
+
+    # ensure config is not preserved
+    p = GafParser()
+    assert p.config.class_idspaces == None
     

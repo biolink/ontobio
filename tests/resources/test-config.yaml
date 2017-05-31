@@ -1,11 +1,11 @@
 solr_assocs:
-  url: "https://solr.monarchinitiative.org/solr/golr"
-  timeout: 5
+  url: "https://example.org"
+  timeout: 999
 amigo_solr_assocs:
   url: "http://golr.berkeleybop.org"
-  timeout: 4
+  timeout: 2
 solr_search:
-  url: "https://solr.monarchinitiative.org/solr/search"
+  url: "https://solr-dev.monarchinitiative.org/solr/search"
   timeout: 2
 amigo_solr_search:
   url: "http://golr.berkeleybop.org"
@@ -21,6 +21,13 @@ scigraph_data:
   timeout: 2
 use_amigo_for:
   - function
+categories:
+  - id: anatomy
+    superclass: PO:0025131
+  - id: phenotype
+    superclass: TO:0000387
+  - id: environment
+    superclass: TO:0000387
 ontologies:
   - id: magic1234
     handle: pato

@@ -1,3 +1,6 @@
+"""
+Tests for ontobio.golr.golr_associations
+"""
 from ontobio.golr.golr_associations import search_associations, search_associations_compact, select_distinct_subjects, get_objects_for_subject, get_subjects_for_object
 
 
