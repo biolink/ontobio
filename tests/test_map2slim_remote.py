@@ -1,3 +1,6 @@
+"""
+deprecated
+"""
 from ontobio.io.gafparser import GafParser, GpadParser
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
