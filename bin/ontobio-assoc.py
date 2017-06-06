@@ -12,9 +12,12 @@ For instructions
 Examples:
 
 ```
+
+Find genes annotated to a GO class in human:
+
 ontobio-assoc.py -v -r go -T NCBITaxon:9606 -C gene function query -q GO:1903010 
 
-Query planteome:
+Analogous query in planteome:
 
 ontobio-assoc.py -v -y conf/planteome-config.yaml -r po -T NCBITaxon:3702 -C gene anatomy query -q PO:0025034
 
