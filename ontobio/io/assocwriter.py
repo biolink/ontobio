@@ -1,7 +1,20 @@
+"""
+Classes for exporting associations.
+
+Currently only one implementation: GpadWriter
+
+"""
+
 class AssocWriterConfig():
+    """
+    Placeholder class for configuration object for all writers
+    """
     pass
 
 class AssocWriter():
+    """
+    Abstract superclass of all association writer objects (Gpad, GAF)
+    """
     def _split_prefix(self, ref):
         id = ref['id']
         [prefix, local_id] = id.split(':')
@@ -11,16 +24,38 @@ class AssocWriter():
         line = "\t".join(vals)
         self.file.write(line + "\n")
 
-    def write(self, assocs):
+    def write_assoc(self, assoc):
+        """
+        Write a single association to a line in the output file
+        """
+        pass  ## Implemented in subclasses
+    
+    def write(self, assocs, meta=None):
+        """
+        Write a complete set of associations to a file
+
+        Arguments
+        ---------
+        assocs: list[dict]
+            A list of association dict objects
+        meta: Meta
+            metadata about association set (not yet implemented)
+
+        """
         for a in assocs:
             self.write_assoc(a)
         
 class GpadWriter(AssocWriter):
-
+    """
+    Writes Associations in GPAD format
+    """
     def __init__(self, file=None):
         self.file = file
 
     def write_assoc(self, assoc):
+        """
+        Write a single association to a line in the output file
+        """
         subj = assoc['subject']
         
         db, db_object_id = self._split_prefix(subj)
@@ -59,3 +94,8 @@ class GpadWriter(AssocWriter):
 
         self._write_row(vals)
     
+class GafWriter(AssocWriter):
+    """
+    Writes Associations in GAF format. Not yet implemented
+    """
+    pass
