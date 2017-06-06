@@ -48,6 +48,8 @@ def main():
                         help='Search type. p=partial, r=regex')
     parser.add_argument('-S', '--slim', type=str, default='', required=False,
                         help='Slim type. m=minimal')
+    parser.add_argument('--insubset', type=str, default='', required=False,
+                        help='Name of subset to use as seed set of terms. For multiple subsets use comma for intersection and pipe for union')
     parser.add_argument('-L', '--level', type=int, required=False,
                         help='Query all nodes at level L in graph')
     parser.add_argument('-c', '--container_properties', nargs='*', type=str, required=False,
@@ -82,6 +84,22 @@ def main():
         logging.info("Query for level: {}".format(args.level))
         qids = qids + ont.get_level(args.level, relations=args.properties, prefix=args.prefix)
 
+    if args.insubset is not None:
+        disjs = args.insubset.split("|")
+        dset = set()
+        for i in disjs:
+            cset = None
+            conjs = i.split(",")
+            for j in conjs:
+                terms = set(ont.extract_subset(j))
+                if cset is None:
+                    cset = terms
+                else:
+                    cset = cset.intersection(terms)
+            dset = dset.union(cset)
+        qids = qids + list(dset)
+                    
+        
     if args.query is not None:
         qids = qids + ont.sparql(select='*',
                                  body=args.query,
