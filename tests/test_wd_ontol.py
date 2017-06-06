@@ -5,7 +5,6 @@ import logging
 
 PTSD = 'DOID:2055'
 
-
 def test_wd_ontol_eager():
     """
     test Eager implementation
@@ -29,7 +28,9 @@ def test_factory():
     """
     f = OntologyFactory()
     ont = f.create('wdq:Q544006')
-    qids = ont.search('Anx%')
+    for n in ont.nodes():
+        print('{} "{}"'.format(n,ont.label(n)))
+    qids = ont.search('anxiety%')
     assert len(qids) > 0
     print(qids)
     nodes = ont.traverse_nodes(qids, up=True, down=True)
