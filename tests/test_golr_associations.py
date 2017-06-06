@@ -12,6 +12,9 @@ LSD = 'DOID:9455'
 DANIO = 'NCBITaxon:7954'
 
 def test_select_distinct():
+    """
+    Find distinct genes
+    """
     results = select_distinct_subjects(subject_category='gene',
                                        object_category='phenotype',
                                        subject_taxon='NCBITaxon:9606')
@@ -19,6 +22,9 @@ def test_select_distinct():
     assert len(results) > 0
 
 def test_go_assocs():
+    """
+    Test basic association search functionality
+    """
     payload = search_associations(subject=TWIST_ZFIN,
                                   object_category='function'
     )
