@@ -22,6 +22,7 @@ from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
+from ontobio.io.assocwriter import GpadWriter
 from ontobio.io import gafparser
 from ontobio.slimmer import get_minimal_subgraph
 import logging
@@ -67,6 +68,11 @@ def main():
 
     parser_n = subparsers.add_parser('filter', help='Filter associations')
     parser_n.set_defaults(function=filter_assocs)
+
+    parser_n = subparsers.add_parser('convert', help='Convert associations')
+    parser_n.set_defaults(function=convert_assocs)
+    parser_n.add_argument('-t', '--to', type=str, required=True,
+                          help='Format to convert to')
 
     parser_n = subparsers.add_parser('map2slim', help='Map to a subset/slim')
     parser_n.set_defaults(function=map2slim)
@@ -141,6 +147,17 @@ def filter_assocs(ont, file, outfile, p, args):
 
 def validate_assocs(ont, file, outfile, p, args):
     assocs = p.parse(open(file, "r"), outfile)
+
+def convert_assocs(ont, file, outfile, p, args):
+    assocs = p.parse(open(file, "r"), None)
+    w = GpadWriter()
+    fmt = args.to
+    if fmt == 'gpad':
+        w = GpadWriter()
+    else:
+        raise ValueError("Not supported: {}".format(fmt))
+    w.file = outfile
+    w.write(assocs)
 
 def map2slim(ont, file, outfile, p, args):
     assocs = p.map_to_subset(open(file, "r"),
