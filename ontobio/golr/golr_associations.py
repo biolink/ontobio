@@ -95,6 +95,7 @@ def map2slim(subjects, slim, **kwargs):
     for a in searchresult['associations']:
         subj = a['subject']['id']
         slimmed_terms = a['slim']
+        #logging.info('SLIM: {} {}'.format(subj,slimmed_terms))
         for t in slimmed_terms:
             k = (subj,t)
             if k not in pmap:
