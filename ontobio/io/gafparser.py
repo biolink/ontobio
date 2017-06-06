@@ -4,6 +4,9 @@ Parsers for GAF and various Association TSVs.
 All parser objects instantiate a subclass of the abstract `AssocParser` object
 
 """
+
+# TODO: Refactor - move some stuff out into generic parser object
+
 import re
 import requests
 import tempfile
@@ -15,6 +18,7 @@ import io
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
 ANNOTATION = 'ANNOTATION'
+
 
 class AssocParserConfig():
     """
@@ -28,6 +32,8 @@ class AssocParserConfig():
                  valid_taxa=None,
                  class_idspaces=None,
                  entity_idspaces=None,
+                 exclude_relations=[],
+                 include_relations=[],
                  filter_out_evidence=[]):
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -35,6 +41,8 @@ class AssocParserConfig():
         self.entity_map=entity_map
         self.valid_taxa=valid_taxa
         self.class_idspaces=class_idspaces
+        self.include_relations=include_relations
+        self.exclude_relations=exclude_relations
         self.filter_out_evidence = filter_out_evidence
 
 class Report():
@@ -188,6 +196,9 @@ class AssocParser():
                     outfile.write(line)
                 continue
             line = line.strip("\n")
+            if line == "":
+                logging.warn("EMPTY LINE")
+                continue
 
             parsed_line, new_assocs  = self.parse_line(line)
             if self._skipping_line(new_assocs): # Skip if there were no assocs
@@ -285,6 +296,40 @@ class AssocParser():
     def _skipping_line(self, associations):
         return associations is None or associations == []
 
+    def _is_exclude_relation(self, relation):
+        if self.config.include_relations is not None and len(self.config.include_relations)>0:
+            if relation not in self.config.include_relations:
+                return True
+        if self.config.exclude_relations is not None and len(self.config.exclude_relations)>0:
+            if relation in self.config.exclude_relations:
+                return True
+        return False
+        
+    ## we generate both qualifier and relation field
+    ## Returns: (negated, relation, other_qualifiers)
+    def _parse_qualifier(self, qualifier, aspect):
+        relation = None
+        qualifiers = qualifier.split("|")
+        if qualifier == '':
+            qualifiers = []
+        negated =  'NOT' in qualifiers
+        other_qualifiers = [q for q in qualifiers if q != 'NOT']
+        ## In GAFs, relation is overloaded into qualifier.
+        ## If no explicit non-NOT qualifier is specified, use
+        ## a default based on GPI spec
+        if len(other_qualifiers) > 0:
+            relation = other_qualifiers[0]
+        else:
+            if aspect == 'C':
+                relation = 'part_of'
+            elif aspect == 'P':
+                relation = 'involved_in'
+            elif aspect == 'F':
+                relation = 'enables'
+            else:
+                relation = None
+        return (negated, relation, other_qualifiers)
+    
     # split an ID/CURIE into prefix and local parts
     # (not currently used)
     def _parse_id(self, id):
@@ -434,7 +479,14 @@ class GpadParser(AssocParser):
             if len(vals) != 12:
                 logging.error("Unexpected number of columns: {}. GPAD should have 12.".format(vals))
             rel = vals[2]
-            # TODO: not
+            
+            negated, relation, _ = self._parse_qualifier(vals[2], None)
+            if negated:
+                continue
+            if self._is_exclude_relation(relation):
+                continue
+            
+
             id = self._pair_to_id(vals[0], vals[1])
             if not self._validate_id(id, line, ENTITY):
                 continue
@@ -462,7 +514,7 @@ class GpadParser(AssocParser):
         vals = line.split("\t")
         [db,
          db_object_id,
-         relation,
+         qualifier,
          goid,
          reference,
          evidence,
@@ -480,6 +532,11 @@ class GpadParser(AssocParser):
         if not self._validate_id(goid, line, ANNOTATION):
             return line, []
 
+        ## --
+        ## qualifier
+        ## --
+        negated, relation, other_qualifiers = self._parse_qualifier(qualifier, None)
+        
         assocs = []
         xp_ors = annotation_xp.split("|")
         for xp_or in xp_ors:
@@ -497,6 +554,7 @@ class GpadParser(AssocParser):
                     'id':goid,
                     'extensions': extns
                 },
+                'negated': negated,
                 'relation': {
                     'id': relation
                 },
@@ -509,6 +567,8 @@ class GpadParser(AssocParser):
                 'date': date,
 
             }
+            if len(other_qualifiers) > 0:
+                assoc['qualifiers'] = other_qualifiers
             assocs.append(assoc)
         return line, assocs
 
@@ -541,7 +601,10 @@ class GafParser(AssocParser):
             if len(vals) < 15:
                 logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
-            if vals[3] != "":
+            negated, relation, _ = self._parse_qualifier(vals[3], vals[8])
+            if negated:
+                continue
+            if self._is_exclude_relation(relation):
                 continue
             id = self._pair_to_id(vals[0], vals[1])
             if not self._validate_id(id, line, ENTITY):
@@ -578,6 +641,8 @@ class GafParser(AssocParser):
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
         if len(vals) == 15:
             vals += ["",""]
+        if len(vals) != 17:
+            logging.error("Wrong number of lines: {}".format(lines))
         [db,
          db_object_id,
          db_object_symbol,
@@ -660,28 +725,7 @@ class GafParser(AssocParser):
             ## --
             ## qualifier
             ## --
-            ## we generate both qualifier and relation field
-            relation = None
-            qualifiers = qualifier.split("|")
-            if qualifier == '':
-                qualifiers = []
-            negated =  'NOT' in qualifiers
-            other_qualifiers = [q for q in qualifiers if q != 'NOT']
-
-            ## In GAFs, relation is overloaded into qualifier.
-            ## If no explicit non-NOT qualifier is specified, use
-            ## a default based on GPI spec
-            if len(other_qualifiers) > 0:
-                relation = other_qualifiers[0]
-            else:
-                if aspect == 'C':
-                    relation = 'part_of'
-                elif aspect == 'P':
-                    relation = 'involved_in'
-                elif aspect == 'F':
-                    relation = 'enables'
-                else:
-                    relation = None
+            negated, relation, other_qualifiers = self._parse_qualifier(qualifier, aspect)
 
             ## --
             ## goid
@@ -727,7 +771,7 @@ class GafParser(AssocParser):
                 'subject': subject,
                 'object': object,
                 'negated': negated,
-                'qualifiers': qualifiers,
+                'qualifiers': other_qualifiers,
                 'aspect': aspect,
                 'relation': {
                     'id': relation
