@@ -10,6 +10,10 @@ class OntologyConfigSchema(Schema):
     handle = fields.Str(description="ontology handle")
     pre_load = fields.Bool(description="if true, load this ontology at startup")
 
+    @post_load
+    def make_object(self, data):
+        return OntologyConfig(**data)
+
 class EndpointSchema(Schema):
     """
     Configuration for a REST or RESTish endpoint
@@ -61,6 +65,18 @@ class Endpoint():
                  timeout = None):
         self.url = url
         self.timeout = timeout
+
+class OntologyConfig():
+    """
+    Maps local id of ontology to a handle
+    """
+    def __init__(self,
+                 id = None,
+                 handle = None,
+                 pre_load = False):
+        self.id = id
+        self.handle = handle
+        self.pre_load  = pre_load
         
 class Category():
     """
@@ -165,8 +181,14 @@ def get_config():
     whatever is the default load path to find the config yaml
     """
     if session.config is None:
-        logging.info("LOADING FROM: {}".format(session.default_config_path))
-        session.config = load_config(session.default_config_path)
+        path = session.default_config_path
+        import os
+        if os.path.isfile(path):
+            logging.info("LOADING FROM: {}".format(path))
+            session.config = load_config(path)
+        else:
+            session.config = Session()
+            logging.info("using default session: {}, path does not exist: {}".format(session, path))            
     else:
         logging.info("Using pre-loaded object: {}".format(session.config))
     return session.config
