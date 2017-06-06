@@ -2,14 +2,17 @@ import requests
 from contextlib import closing
 from cachier import cachier
 import datetime
+import logging
 
 SHELF_LIFE = datetime.timedelta(days=1)
 
-def get_ecomap(url):
+@cachier(stale_after=SHELF_LIFE)
+def get_ecomap_str(url):
+    logging.info("Fetching ecomap from {}".format(url))
     with closing(requests.get(url, stream=False)) as resp:
         # TODO: redirects
         if resp.status_code == 200:
-            return parse_ecomap_str(resp.text())
+            return resp.text
 
 #E.g.
 # IEA	Default	ECO:0000501
@@ -30,7 +33,8 @@ class EcoMap():
     
     def mappings(self):
         if self._mappings == None:
-            self._mappings = get_ecomap(PURL)
+            s = get_ecomap_str(self.PURL)
+            self._mappings = self.parse_ecomap_str(s)
         return self._mappings
 
     def parse_ecomap_str(self, str):
@@ -39,10 +43,13 @@ class EcoMap():
         for line in lines:
             if line.startswith('#'):
                 continue
+            if line == "":
+                continue
+            logging.info("LINE={}".format(line))
             [code, ref, cls] = line.split("\t")
             if ref == 'Default':
                 ref = None
-            tups.add( (code, ref, cls) )
+            tups.append( (code, ref, cls) )
         return tups
                 
     def coderef_to_ecoclass(self, code, reference=None):
@@ -63,11 +70,11 @@ class EcoMap():
             ECO class CURIE/ID
         """
         mcls = None
-        for (this_code,this_ref,cls) in self.mappings:
+        for (this_code,this_ref,cls) in self.mappings():
             if this_code == code:
-                if this_reference  == reference:
+                if this_ref  == reference:
                     return cls
-                if this_reference is None:
+                if this_ref is None:
                     mcls = cls
                     
         return mcls
@@ -92,7 +99,7 @@ class EcoMap():
         """
         code = ''
         ref = None
-        for (code,ref,this_cls) in self.mappings:
+        for (code,ref,this_cls) in self.mappings():
             if cls == this_cls:
                 return code, ref
         return None, None
