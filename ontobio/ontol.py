@@ -325,13 +325,9 @@ class Ontology():
 
         Arguments
         ---------
-
         node: string
-
            identifier for node in ontology
-
         relations: list of strings
-
            list of relation (object property) IDs used to filter
 
         """
