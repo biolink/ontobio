@@ -3,7 +3,12 @@
 Command Line
 ============
 
-See :doc:`installation`
+A large subset of ontobio functionality is available via a powerful
+command line interface that can be used by non-programmers.
+
+You will first need to install, see :doc:`installation`
+
+After that, set up your PATH:
 
 ::
 
@@ -210,14 +215,15 @@ The ``ontobio-assoc`` command handles ontologies
 Subcommands:
 
 ::
-   subontology         Extract sub-ontology
-   enrichment          Perform an enrichment test
-   phenolog            Perform multiple enrichment tests
-   query               Query based on positive and negative terms
-   associations        Query for association pairs
-   intersections       Query intersections
-   dendrogram          Plot dendrogram from intersections
-   simmatrix           Plot dendrogram for similarities between subjects
+   
+    subontology         Extract sub-ontology
+    enrichment          Perform an enrichment test
+    phenolog            Perform multiple enrichment tests
+    query               Query based on positive and negative terms
+    associations        Query for association pairs
+    intersections       Query intersections
+    dendrogram          Plot dendrogram from intersections
+    simmatrix           Plot dendrogram for similarities between subjects
 
 
 Examples
@@ -252,8 +258,8 @@ Basic queries, using file as input:
 Parsing assoc files
 -------------------
 
-The ``ontobio-parse-assocs.py`` command will parse association files (GAF,
-GPAD, HPOA etc)
+The ``ontobio-parse-assocs.py`` command will parse, validate and
+convert association files (GAF, GPAD, HPOA etc)
 
 GOlr Queries
 ------------

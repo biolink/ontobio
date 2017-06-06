@@ -3,6 +3,8 @@
 Installation
 ============
 
+Ontobio requires Python version 3.4 or higher
+
 Install with pip:
 
 ::
@@ -20,7 +22,6 @@ The development version can be downloaded from GitHub.
     cd ontobio
     pip install -e .[dev,test]
 
-Ontobio requires Python version 3.4 or higher
 
 With pyvenv
 -----------
