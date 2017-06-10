@@ -180,7 +180,9 @@ def goassoc_fieldmap():
     return {
         M.SUBJECT: 'bioentity',
         M.SUBJECT_CLOSURE: 'bioentity',
-        ##M.SUBJECT_CATEGORY: 'type',
+        ## In the GO AmiGO instance, the type field is not correctly populated
+        ## See above in the code for hack that restores this for planteome instance
+        ## M.SUBJECT_CATEGORY: 'type',
         M.SUBJECT_CATEGORY: None,
         M.SUBJECT_LABEL: 'bioentity_label',
         M.SUBJECT_TAXON: 'taxon',
@@ -235,6 +237,7 @@ class GolrAbstractQuery():
             return True
         return False
 
+    
 class GolrSearchQuery(GolrAbstractQuery):
     """
     Queries over a search document
@@ -568,6 +571,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 #go_golr_url = "http://golr.berkeleybop.org/solr/"
                 #self.solr = pysolr.Solr(go_golr_url, timeout=5)
             self.field_mapping=goassoc_fieldmap()
+
+            # awkward hack: we want to avoid typing on the amigo golr gene field,
+            # UNLESS this is a planteome golr
+            if "planteome" in self.get_config().amigo_solr_assocs.url:
+                self.field_mapping[M.SUBJECT_CATEGORY] = 'type'
+                
             fq['document_category'] = 'annotation'
             if subject is not None:
                 subject = self.make_gostyle_identifier(subject)
