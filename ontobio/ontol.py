@@ -551,6 +551,44 @@ class Ontology():
         else:
             return []
 
+    def definition(self, nid):
+        """
+        Text definition object for a node
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+
+        Return
+        ------
+        dict
+            definition object, dict(val=TEXT, xrefs=LIST)
+        """
+        return self._get_meta_prop(nid, 'definition')
+        
+    def definition_val(self, nid):
+        """
+        Text definition string value for a node
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+
+        Return
+        ------
+        str
+            text definition
+        """
+        defn = self.definition(nid)
+        if defn is None:
+            return None
+        else:
+            return defn['val']
+    
+
+    
     def _get_meta_prop(self, nid, prop):
         n = self.node(nid)
         if 'meta' in n:
@@ -698,7 +736,7 @@ class Ontology():
         nid : str
             Node identifier for entity to be queried
         bidirection : bool
-            If True, include nodes xreffed to nid
+            If True, include nodes that xref nid
 
         Return
         ------
@@ -708,7 +746,7 @@ class Ontology():
             xg = self.xref_graph
             if nid not in xg:
                 return []
-            if bidirectional:
+            elif bidirectional:
                 return xg.neighbors(nid)
             else:
                 return [x for x in xg.neighbors(nid) if xg[nid][x]['source'] == nid]
