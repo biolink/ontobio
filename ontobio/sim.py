@@ -45,6 +45,23 @@ class SimEngine():
         if num_union == 0:
             return 0.0
         return len(a1.intersection(a2)) / num_union
+    
+    def class_jaccard_similarity(self,c1,c2):
+        """
+        Calculate jaccard index of two classes
+
+        |ancs(c1) /\ ancs(c2)|
+        ---
+        |ancs(c1) \/ ancs(c2)|
+
+        """
+        ont = self.association_set.ontology
+        a1 = ont.ancestors(c1,reflexive=True)
+        a2 = ont.ancestors(c2,reflexive=True)
+        num_union = len(a1.union(a2))
+        if num_union == 0:
+            return 0.0
+        return len(a1.intersection(a2)) / num_union
 
     def class_resnik_similarity(self,c1,c2):
         """
