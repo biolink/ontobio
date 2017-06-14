@@ -1,4 +1,5 @@
 import math
+import pandas as pd
 
 class SimEngine():
 
@@ -84,3 +85,21 @@ class SimEngine():
                 mrcas.append(a)
         return max_ic, mrcas
     
+    def used_classes(self):
+        aset = self.association_set
+        cset = set()
+        for s in aset.subjects:
+            cset.update(aset.inferred_types(s))
+        return cset
+        
+    def dataframe(self):
+        aset = self.association_set
+        entries = []
+        subjs = aset.subjects
+        for s in subjs:
+            vmap = {}
+            for c in aset.inferred_types(s):
+                vmap[c] = 1
+            entries.append(vmap)
+        df = pd.DataFrame(entries, index=subjs)
+        return df
