@@ -34,5 +34,7 @@ release: cleandist
 nb:
 	PYTHONPATH=.. jupyter notebook
 
+# Hack: generate marshmallow schema from flaskrest serializers
+# used to make assoc_schema.py
 mm:
 	./bin/flask2marshmallow.pl ../biolink-api/biolink/datamodel/serializers.py 

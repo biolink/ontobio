@@ -16,41 +16,171 @@ class RemoteScigraphOntology(Ontology):
     ontology backed by SciGraph endpoint
     """
 
-    def __init__(self, url=None):
-        if url is not None:
-            self.url_prefix = url
+    def __init__(self,
+                 handle=None,
+                 url=None,
+                 config=None):
+        if handle is not None:
+            handle = handle.replace("scigraph:","")
         else:
-            self.url_prefix = "http://scigraph-data.monarchinitiative.org/scigraph/"
+            handle = "ontology"
+        
+        if url is None:
+            if config is not None:
+                urlObj = config.scigraph_ontology
+                if handle == 'data':
+                    urlObj = config.scigraph_data
+                if config.scigraph_data is not None:
+                    url = self.config.scigraph_data.url
+            if url is None:
+                url = 'https://scigraph-ontology-dev.monarchinitiative.org/scigraph'
+        self.url = url
+        logging.info("Base SciGraph URL: {}".format(url))
         return
-    
+
     # Internal wrapper onto requests API
     def get_response(self, path="", q=None, format=None, **params):
-        url = self.url_prefix + path;
+        url = self.url
+        if not url.endswith("/"):
+            url += "/"
+        url += path;
         if q is not None:
             url += "/" +q;
         if format is not None:
             url = url  + "." + format;
+        logging.info("Request: {} params: {}".format(url, params))
         r = requests.get(url, params=params)
         return r
 
-    def neighbors(self, id=None, **params):
+    def _neighbors_graph(self, id=None, **params):
         """
         Get neighbors of a node
 
         parameters are directly passed through to SciGraph: e.g. depth, relationshipType
         """
         response = self.get_response("graph/neighbors", id, "json", **params)
-        # TODO: should return ids?
         return response.json()
+
+    # Override
+    def subgraph(self, nodes=[], relations=None):
+        r_nodes = []
+        r_edges = []
+        
+        logging.debug("Scigraph, Subgraph for {}".format(nodes))
+        for n in nodes:
+            logging.debug("Parents-of {}".format(n))
+            g = self._neighbors_graph(n,
+                                      direction='OUTGOING',
+                                      distance=1,
+                                      relationshipType=self._mkrel(relations))
+            r_nodes += g['nodes']
+            r_edges += g['edges']
+        digraph = nx.MultiDiGraph()
+        for n in r_nodes:
+            digraph.add_node(n['id'], attr_dict=self._repair(n))
+        for e in r_edges:
+            digraph.add_edge(e['obj'],e['sub'], pred=e['pred'])
+        return digraph
+
+
+    # Override
+    def subontology(self, nodes=[], **args):
+        g = self.subgraph(nodes, **args)
+        ont = Ontology(graph=g) 
+        return ont
+
+    # Override
+    # TODO: dependent on modeling in scigraph
+    def subsets(self, nid, contract=True):
+        raise NotImplementedError()
+
+    def get_roots(self, relations=None, prefix=None):
+        raise NotImplementedError()
+    
+    # Override
+    # Override
+    def nodes(self):
+        raise NotImplementedError()
+
+    def _mkrel(self, relations=None):
+        if relations is not None:
+            return "|".join(relations)
+        else:
+            return None
+        
+    # Override
+    def ancestors(self, node, relations=None, reflexive=False):
+        logging.info("Ancestors of {} over {}".format(node, relations))
+        g = self._neighbors_graph(node,
+                                  direction='OUTGOING',
+                                  relationshipType=self._mkrel(relations))
+        return [v['id'] for v in g['nodes']]
+
+    # Override
+    def neighbors(self, node, relations=None):
+        g = self._neighbors_graph(node,
+                                  direction='BOTH',
+                                  distance=1,
+                                  relationshipType=self._mkrel(relations))
+        return [v['id'] for v in g['nodes']]
+
+    # map between bbopgraph and obograph
+    def _repair(self, n):
+        if 'lbl' in n:
+            n['label'] = n['lbl']
+            del n['lbl']
+        return n
+            
+    # Override
+    def node(self, nid):
+        g = self._neighbors_graph(node,
+                                  depth=0,
+                                  relationshipType=relstr)
+        return self._repair(g['nodes'][0])
+
+    # Override
+    def has_node(self, id):
+        return self.node(id) is not None
+
+    # Override
+    def traverse_nodes(self, qids, up=True, down=False, relations=None):
+        nodes = set()
+        for id in qids:
+            # reflexive - always add self
+            nodes.add(id)
+            if down:
+                nodes.update(self.descendants(id, relations=relations))
+            if up:
+                nodes.update(self.ancestors(id, relations=relations))
+        return nodes
+    
+    def label(self, nid, id_if_null=False):
+        n = self.node(nid)
+        if n is not None and 'label' in n:
+            return n['label']
+        else:
+            if id_if_null:
+                return nid
+            else:
+                return None
     
     def extract_subset(self, subset):
-        pass
+        raise NotImplementedError()
+
+    # Override
+    def resolve_names(self, names, synonyms=True, **args):
+        results = set()
+        for name in names:
+            for r in self._vocab_term(name, searchSynonyms=synonyms):
+                results.add(r['curie'])
+        return list(results)
+
+    def _vocab_term(self, term, **args):
+        if '%' in term:
+            term = term.replace('%','')
+            return self.get_response("vocabulary/search", term, "json", **args).json()
+        else:
+            return self.get_response("vocabulary/term", term, "json", **args).json()
     
-    def resolve_names(self, names, is_remote=False, **args):
-        ## TODO
-        return names
-    
-    def subgraph(self, nodes=[]):
-        return self.get_graph().subgraph(nodes)
 
     
