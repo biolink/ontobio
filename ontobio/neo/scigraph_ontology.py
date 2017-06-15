@@ -13,13 +13,33 @@ from ontobio.ontol import Ontology
 
 class RemoteScigraphOntology(Ontology):
     """
-    ontology backed by SciGraph endpoint
+    ontology backed by SciGraph endpoint.
+
+    This class implements a subset of the methods in `Ontology`, 
+    it should be able to substitute for an Ontology method
     """
 
     def __init__(self,
                  handle=None,
                  url=None,
                  config=None):
+        """
+        Constructor - typically you do not need to call this directly.
+
+        Specify a scigraph handle in ontol_factory, e.g.
+
+        ``
+        OntologyFactory().create('scigraph:data')
+        ``
+
+        The Session instance will be consulted to determine the URL
+
+        The handle can be
+
+        - `scigraph:ontology` use scigraph_ontology from config
+        - `scigraph:data` use scigraph_data from config
+        - `scigraph:` use default
+        """
         if handle is not None:
             handle = handle.replace("scigraph:","")
         else:
@@ -39,7 +59,7 @@ class RemoteScigraphOntology(Ontology):
         return
 
     # Internal wrapper onto requests API
-    def get_response(self, path="", q=None, format=None, **params):
+    def _get_response(self, path="", q=None, format=None, **params):
         url = self.url
         if not url.endswith("/"):
             url += "/"
@@ -58,7 +78,7 @@ class RemoteScigraphOntology(Ontology):
 
         parameters are directly passed through to SciGraph: e.g. depth, relationshipType
         """
-        response = self.get_response("graph/neighbors", id, "json", **params)
+        response = self._get_response("graph/neighbors", id, "json", **params)
         return response.json()
 
     # Override
@@ -107,15 +127,30 @@ class RemoteScigraphOntology(Ontology):
             return "|".join(relations)
         else:
             return None
+
         
     # Override
     def ancestors(self, node, relations=None, reflexive=False):
-        logging.info("Ancestors of {} over {}".format(node, relations))
+        logging.debug("Ancestors of {} over {}".format(node, relations))
         g = self._neighbors_graph(node,
                                   direction='OUTGOING',
                                   relationshipType=self._mkrel(relations))
-        return [v['id'] for v in g['nodes']]
+        arr = [v['id'] for v in g['nodes']]
+        if reflexive:
+            arr.add(id)
+        return arr
 
+    # Override
+    def descendants(self, node, relations=None, reflexive=False):
+        logging.debug("Descendants of {} over {}".format(node, relations))
+        g = self._neighbors_graph(node,
+                                  direction='INCOMING',
+                                  relationshipType=self._mkrel(relations))
+        arr = [v['id'] for v in g['nodes']]
+        if reflexive:
+            arr.add(id)
+        return arr
+    
     # Override
     def neighbors(self, node, relations=None):
         g = self._neighbors_graph(node,
@@ -129,6 +164,7 @@ class RemoteScigraphOntology(Ontology):
         if 'lbl' in n:
             n['label'] = n['lbl']
             del n['lbl']
+        # TODO: transform meta
         return n
             
     # Override
@@ -171,16 +207,19 @@ class RemoteScigraphOntology(Ontology):
     def resolve_names(self, names, synonyms=True, **args):
         results = set()
         for name in names:
-            for r in self._vocab_term(name, searchSynonyms=synonyms):
+            for r in self._vocab_search(name, searchSynonyms=synonyms):
                 results.add(r['curie'])
+        logging.debug("Search {} -> {}".format(names, results))
         return list(results)
 
-    def _vocab_term(self, term, **args):
+    # this uses one of two routes depending on whether exact or inexact
+    # matching is required
+    def _vocab_search(self, term, **args):
         if '%' in term:
             term = term.replace('%','')
-            return self.get_response("vocabulary/search", term, "json", **args).json()
+            return self._get_response("vocabulary/search", term, "json", **args).json()
         else:
-            return self.get_response("vocabulary/term", term, "json", **args).json()
+            return self._get_response("vocabulary/term", term, "json", **args).json()
     
 
     
