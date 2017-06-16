@@ -74,6 +74,34 @@ Code example, using an :class:`OntologyFactory`
     from ontobio.ontol_factory import OntologyFactory
     ont = OntologyFactory().create("cl")
 
+Remote SciGraph ontology access
+-------------------------------
+
+.. warning ::
+
+    Experimental
+
+Command line example:
+
+::
+
+   ogr.py -r scigraph:ontology
+
+Code example, using an :class:`OntologyFactory`
+
+.. code-block:: python
+
+    from ontobio.ontol_factory import OntologyFactory
+    ont = OntologyFactory().create("scigraph:ontology")
+
+
+.. warning ::
+
+    Since SciGraph contains multiple graphs interwoven together, care
+    must be taken on queries that don't use relationship types, as
+    ancestor/descendant lists may be large
+    
+    
 Local GAF or GPAD association files
 -----------------------------------
 
