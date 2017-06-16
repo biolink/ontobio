@@ -52,15 +52,27 @@ class RemoteSparqlOntology(Ontology):
         bindings = run_sparql(query)
         return [r['s']['value'] for r in bindings]
 
+    def synonyms(self, nid, **args):
+        logging.info("lookup syns for {}".format(nid))
+        if self.all_synonyms_cache == None:
+            self.all_synonyms()
+        return super().synonyms(nid, **args) 
+    
     # Override
     def all_synonyms(self, include_label=False):
-        syntups = fetchall_syns(self.graph_name)
-        syns = [Synonym(t[0],pred=t[1], val=t[2]) for t in syntups]
-        if include_label:
-            #lsyns = [Synonym(t[0],pred='label', val=t[1]) for t in fetchall_labels(self.graph_name)]
-            lsyns = [Synonym(x, pred='label', val=self.label(x)) for x in self.nodes()]
-            syns = syns + lsyns
-        return syns
+        logging.debug("Fetching all syns...")
+        # TODO: include_label in cache
+        if self.all_synonyms_cache == None:
+            syntups = fetchall_syns(self.graph_name)
+            syns = [Synonym(t[0],pred=t[1], val=t[2]) for t in syntups]
+            for syn in syns:
+                self.add_synonym(syn)
+            if include_label:
+                #lsyns = [Synonym(t[0],pred='label', val=t[1]) for t in fetchall_labels(self.graph_name)]
+                lsyns = [Synonym(x, pred='label', val=self.label(x)) for x in self.nodes()]
+                syns = syns + lsyns
+            self.all_synonyms_cache = syns
+        return self.all_synonyms_cache
 
     # Override
     def resolve_names(self, names, is_remote=False, synonyms=False, **args):
@@ -172,6 +184,7 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         self.graph_name = get_named_graph(handle)
         self.xref_graph = get_xref_graph(handle)
         self.all_logical_definitions = []
+        self.all_synonyms_cache = None
         logging.info("Graph: {} LDs: {}".format(self.graph, self.all_logical_definitions))
 
     def __str__(self):

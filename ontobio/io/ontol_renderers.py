@@ -60,14 +60,14 @@ class GraphRenderer():
         """
         Render a `ontology` object after inducing a subgraph
         """
-        subont = ontol.subontology(nodes)
+        subont = ontol.subontology(nodes, **args)
         return self.render(subont, **args)
     
     def write_subgraph(self, ontol, nodes, **args):
         """
         Write a `ontology` object after inducing a subgraph
         """
-        subont = ontol.subontology(nodes)
+        subont = ontol.subontology(nodes, **args)
         self.write(subont, **args)
 
     def render_relation(self, r, **args):

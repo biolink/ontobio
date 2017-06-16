@@ -114,7 +114,6 @@ class Ontology():
             for (o,s,m) in xg.edges(data=True):
                 g.add_edge(o,s,attr_dict=m)
             
-        
     def subgraph(self, nodes=[]):
         """
         Return an induced subgraph
@@ -139,12 +138,14 @@ class Ontology():
             list of relation IDs to include in subontology. If None, all are used
 
         """
-        g = self.get_graph()
+        g = None
         if nodes is not None:
-            g = g.subgraph(nodes)
+            g = self.subgraph(nodes)
+        else:
+            g = self.get_graph()            
         if minimal:
             from ontobio.slimmer import get_minimal_subgraph
-            g = get_minimal_subgraph(self.get_graph(), nodes)
+            g = get_minimal_subgraph(g, nodes)
             
         ont = Ontology(graph=g) # TODO - add metadata
         if relations is not None:
@@ -638,6 +639,18 @@ class Ontology():
         if include_label:
             syns.append(Synonym(nid, val=self.label(nid), pred='label'))
         return syns
+    
+    def add_synonym(self, syn):
+        """
+        Adds a synonym for a node
+        """
+        n = self.node(syn.class_id)
+        if 'meta' not in n:
+            n['meta'] = {}
+        meta = n['meta']
+        if 'synonyms' not in meta:
+            meta['synonyms'] = []
+        meta['synonyms'].append({'val': syn.val,'pred': syn.pred})
 
     def all_synonyms(self, include_label=False):
         """
