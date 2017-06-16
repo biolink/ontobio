@@ -17,7 +17,7 @@ scigraph_ontology:
   url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
   timeout: 2
 scigraph_data:
-  url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
+  url: "https://scigraph-data.monarchinitiative.org/scigraph/"
   timeout: 2
 use_amigo_for:
   - function

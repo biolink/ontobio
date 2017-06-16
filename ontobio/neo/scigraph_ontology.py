@@ -44,16 +44,23 @@ class RemoteScigraphOntology(Ontology):
             handle = handle.replace("scigraph:","")
         else:
             handle = "ontology"
-        
+
+        logging.info("Connecting: {} {}".format(handle, url))
         if url is None:
+            if config is None:
+                from ontobio.config import get_config
+                config = get_config()
             if config is not None:
+                logging.info("Fetching scigraph URL from config: {}".format(handle))                
                 urlObj = config.scigraph_ontology
                 if handle == 'data':
+                    logging.info("Using scigraph_data URL")
                     urlObj = config.scigraph_data
-                if config.scigraph_data is not None:
-                    url = self.config.scigraph_data.url
+                if urlObj is not None:
+                    url = urlObj.url
+                    logging.info("Set URL from config={} {}".format(url, urlObj))
             if url is None:
-                url = 'https://scigraph-ontology-dev.monarchinitiative.org/scigraph'
+                url = 'https://scigraph-ontology.monarchinitiative.org/scigraph'
         self.url = url
         logging.info("Base SciGraph URL: {}".format(url))
         return
@@ -68,10 +75,16 @@ class RemoteScigraphOntology(Ontology):
             url += "/" +q;
         if format is not None:
             url = url  + "." + format;
-        logging.info("Request: {} params: {}".format(url, params))
         r = requests.get(url, params=params)
         return r
 
+    def _get_response_json(self, path="", q=None, format=None, **args):
+        r = self._get_response(path, q, format, **args)
+        if r.status_code == 200:
+            return r.json()
+        else:
+            return []
+    
     def _neighbors_graph(self, id=None, **params):
         """
         Get neighbors of a node
@@ -91,7 +104,7 @@ class RemoteScigraphOntology(Ontology):
             logging.debug("Parents-of {}".format(n))
             g = self._neighbors_graph(n,
                                       direction='OUTGOING',
-                                      distance=1,
+                                      depth=1,
                                       relationshipType=self._mkrel(relations))
             r_nodes += g['nodes']
             r_edges += g['edges']
@@ -134,10 +147,14 @@ class RemoteScigraphOntology(Ontology):
         logging.debug("Ancestors of {} over {}".format(node, relations))
         g = self._neighbors_graph(node,
                                   direction='OUTGOING',
+                                  depth=20,
                                   relationshipType=self._mkrel(relations))
         arr = [v['id'] for v in g['nodes']]
         if reflexive:
-            arr.add(id)
+            arr.add(node)
+        else:
+            if node in arr:
+                arr.remove(node)
         return arr
 
     # Override
@@ -145,17 +162,21 @@ class RemoteScigraphOntology(Ontology):
         logging.debug("Descendants of {} over {}".format(node, relations))
         g = self._neighbors_graph(node,
                                   direction='INCOMING',
+                                  depth=20,
                                   relationshipType=self._mkrel(relations))
         arr = [v['id'] for v in g['nodes']]
         if reflexive:
-            arr.add(id)
+            arr.add(node)
+        else:
+            if node in arr:
+                arr.remove(node)
         return arr
     
     # Override
     def neighbors(self, node, relations=None):
         g = self._neighbors_graph(node,
                                   direction='BOTH',
-                                  distance=1,
+                                  depth=1,
                                   relationshipType=self._mkrel(relations))
         return [v['id'] for v in g['nodes']]
 
@@ -169,9 +190,8 @@ class RemoteScigraphOntology(Ontology):
             
     # Override
     def node(self, nid):
-        g = self._neighbors_graph(node,
-                                  depth=0,
-                                  relationshipType=relstr)
+        g = self._neighbors_graph(nid,
+                                  depth=0)
         return self._repair(g['nodes'][0])
 
     # Override
@@ -208,6 +228,7 @@ class RemoteScigraphOntology(Ontology):
         results = set()
         for name in names:
             for r in self._vocab_search(name, searchSynonyms=synonyms):
+                logging.debug("RESULT={}".format(r))
                 results.add(r['curie'])
         logging.debug("Search {} -> {}".format(names, results))
         return list(results)
@@ -217,9 +238,9 @@ class RemoteScigraphOntology(Ontology):
     def _vocab_search(self, term, **args):
         if '%' in term:
             term = term.replace('%','')
-            return self._get_response("vocabulary/search", term, "json", **args).json()
+            return self._get_response_json("vocabulary/search", term, "json", **args)
         else:
-            return self._get_response("vocabulary/term", term, "json", **args).json()
+            return self._get_response_json("vocabulary/term", term, "json", **args)
     
 
     
