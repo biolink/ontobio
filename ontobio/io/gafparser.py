@@ -535,6 +535,10 @@ class GafParser(AssocParser):
         config = self.config
 
         vals = line.split("\t")
+
+        if len(vals) != 15 and len(vals) != 17:
+            return line, []
+
         # GAF v1 is defined as 15 cols, GAF v2 as 17.
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
