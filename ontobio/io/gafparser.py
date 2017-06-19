@@ -63,6 +63,7 @@ class Report():
     UNMAPPED_ID = "Unmapped identifier"
     OBSOLETE_CLASS = "Obsolete class"
     OBSOLETE_CLASS_NO_REPLACEMENT = "Obsolete class with no replacement"
+    WRONG_NUMBER_OF_COLUMNS = "Wrong number of columns in this line"
 
     """
     3 warning levels
@@ -304,7 +305,7 @@ class AssocParser():
             if relation in self.config.exclude_relations:
                 return True
         return False
-        
+
     ## we generate both qualifier and relation field
     ## Returns: (negated, relation, other_qualifiers)
     def _parse_qualifier(self, qualifier, aspect):
@@ -329,7 +330,7 @@ class AssocParser():
             else:
                 relation = None
         return (negated, relation, other_qualifiers)
-    
+
     # split an ID/CURIE into prefix and local parts
     # (not currently used)
     def _parse_id(self, id):
@@ -374,8 +375,8 @@ class AssocParser():
                 self.report.warning(line, Report.OBSOLETE_CLASS, id)
         # TODO: subclassof
         return id
-        
-            
+
+
     def _validate_id(self, id, line, context=None):
         if " " in id:
             self.report.error(line, Report.INVALID_ID, id, "contains spaces")
@@ -479,13 +480,13 @@ class GpadParser(AssocParser):
             if len(vals) != 12:
                 logging.error("Unexpected number of columns: {}. GPAD should have 12.".format(vals))
             rel = vals[2]
-            
+
             negated, relation, _ = self._parse_qualifier(vals[2], None)
             if negated:
                 continue
             if self._is_exclude_relation(relation):
                 continue
-            
+
 
             id = self._pair_to_id(vals[0], vals[1])
             if not self._validate_id(id, line, ENTITY):
@@ -536,7 +537,7 @@ class GpadParser(AssocParser):
         ## qualifier
         ## --
         negated, relation, other_qualifiers = self._parse_qualifier(qualifier, None)
-        
+
         assocs = []
         xp_ors = annotation_xp.split("|")
         for xp_or in xp_ors:
@@ -636,6 +637,12 @@ class GafParser(AssocParser):
         config = self.config
 
         vals = line.split("\t")
+
+        if len(vals) != 15 and len(vals) != 17:
+            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+                msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(len(vals)))
+            return line, []
+
         # GAF v1 is defined as 15 cols, GAF v2 as 17.
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
