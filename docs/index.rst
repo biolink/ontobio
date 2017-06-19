@@ -2,14 +2,11 @@
 Welcome to ontobio's documentation!
 ===================================
 
-.. image:: https://travis-ci.org/biolink/ontobio.png?branch=master
-
 Library for working with ontologies and ontology associations.
 
 Provides:
 
-* Transparent access to both local files (obo-json, GAF) and remote services (OntoBee,
-  GO, Monarch, Wikidata)
+* Transparent access to both local files ([obo-json](https://github.com/geneontology/obographs), [GAF](http://ontobio.readthedocs.io/en/latest/inputs.html#local-gaf-or-gpad-association-files)) and remote services (OntoBee, GO/GOlr, [Monarch](http://monarchinitiative.org), Wikidata)
 * Powerful graph operations for traversing logical structure of
   ontologies
 * object model for working with ontology metadata elements (synonyms,
@@ -17,7 +14,7 @@ Provides:
 * Access to gene product functional annotations in GO
 * Access to gene/variant/disease/genotype etc info from Monarch
 * Simple basis for building bioinformatics analyses and applications
-  (e.g. enrichment)
+  (e.g. [enrichment](http://ontobio.readthedocs.io/en/latest/analyses.html#enrichment))
 * Underpinnings for web service APIs
 * Rich command line access for non-programmers (see :doc:`commandline`)
 * Examples in :doc:`notebooks`
@@ -30,7 +27,7 @@ ontobio requires Python 3.4+.
 Installation
 ============
 
-You can install flask-restplus with pip:
+You can install ontobio with pip:
 
 .. code-block:: console
 

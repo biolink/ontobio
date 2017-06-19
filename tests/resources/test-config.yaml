@@ -1,14 +1,14 @@
 solr_assocs:
-  url: "http://browser.planteome.org/solr"
-  timeout: 5
+  url: "https://example.org"
+  timeout: 999
 amigo_solr_assocs:
-  url: "http://browser.planteome.org/solr"
-  timeout: 8
+  url: "http://golr.berkeleybop.org"
+  timeout: 2
 solr_search:
-  url: "http://browser.planteome.org/solr"
+  url: "https://solr-dev.monarchinitiative.org/solr/search"
   timeout: 2
 amigo_solr_search:
-  url: "http://browser.planteome.org/solr"
+  url: "http://golr.berkeleybop.org"
   timeout: 2
 sparql:
   url: "http://sparql.hegroup.org/sparql"
@@ -19,6 +19,8 @@ scigraph_ontology:
 scigraph_data:
   url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
   timeout: 2
+use_amigo_for:
+  - function
 categories:
   - id: anatomy
     superclass: PO:0025131
@@ -26,7 +28,6 @@ categories:
     superclass: TO:0000387
   - id: environment
     superclass: TO:0000387
-default_solr_schema: amigo
 ontologies:
   - id: magic1234
     handle: pato

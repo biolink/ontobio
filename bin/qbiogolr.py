@@ -12,7 +12,7 @@ For instructions
 """
 
 import argparse
-from ontobio.golr.golr_associations import search_associations_compact
+from ontobio.golr.golr_associations import search_associations
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.ontol_renderers import *
 import networkx as nx
@@ -95,22 +95,23 @@ def main():
     # query all IDs, gathering associations
     assocs = []
     for id in args.ids:
-        this_assocs = search_golr_wrap(id,
-                                          args.category,
-                                          subject_taxon=args.species,
-                                          rows=1000,
-                                          slim=args.slim,
-                                          evidence=args.evidence,
-                                          map_identifiers=args.mapids)
+        this_assocs, facets = search_golr_wrap(id,
+                                               args.category,
+                                               subject_taxon=args.species,
+                                               rows=1000,
+                                               slim=args.slim,
+                                               evidence=args.evidence,
+                                               map_identifiers=args.mapids)
 
         assocs += this_assocs
 
     logging.info("Num assocs: {}".format(len(assocs)))
     
     for a in assocs:
-        print("{}\t{}\t{}".format(a['subject'],
-                                    a['relation'],
-                                    ";".join(a['objects'])))
+        print("{}\t{}\t{}\t{}".format(a['subject'],
+                                  a['subject_label'],
+                                  a['relation'],
+                                  ";".join(a['objects'])))
 
     if ont is not None:
         # gather all ontology classes used
@@ -185,9 +186,22 @@ def search_golr_wrap(id, category, **args):
     """
     performs searches in both directions
     """
-    assocs = search_associations_compact(object=id, subject_category=category, **args)
-    assocs += search_associations_compact(subject=id, object_category=category, **args)
-    return assocs
+    #assocs1 = search_associations_compact(object=id, subject_category=category, **args)
+    #assocs2 = search_associations_compact(subject=id, object_category=category, **args)
+    assocs1, facets1 = search_compact_wrap(object=id, subject_category=category, **args)
+    assocs2, facets2 = search_compact_wrap(subject=id, object_category=category, **args)
+    facets = facets1
+    if len(assocs2) > 0:
+        facets = facets2
+    return assocs1 + assocs2, facets
+
+def search_compact_wrap(**args):
+    searchresult = search_associations(use_compact_associations=True,
+                                       facet_fields=[],
+                                       **args
+    )
+    return searchresult['compact_associations'], searchresult['facet_counts']
+    
     
 if __name__ == "__main__":
     main()

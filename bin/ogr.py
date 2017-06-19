@@ -48,6 +48,8 @@ def main():
                         help='Search type. p=partial, r=regex')
     parser.add_argument('-S', '--slim', type=str, default='', required=False,
                         help='Slim type. m=minimal')
+    parser.add_argument('--insubset', type=str, default='', required=False,
+                        help='Name of subset to use as seed set of terms. For multiple subsets use comma for intersection and pipe for union')
     parser.add_argument('-L', '--level', type=int, required=False,
                         help='Query all nodes at level L in graph')
     parser.add_argument('-c', '--container_properties', nargs='*', type=str, required=False,
@@ -82,6 +84,22 @@ def main():
         logging.info("Query for level: {}".format(args.level))
         qids = qids + ont.get_level(args.level, relations=args.properties, prefix=args.prefix)
 
+    if args.insubset is not None and args.insubset != "":
+        disjs = args.insubset.split("|")
+        dset = set()
+        for i in disjs:
+            cset = None
+            conjs = i.split(",")
+            for j in conjs:
+                terms = set(ont.extract_subset(j))
+                if cset is None:
+                    cset = terms
+                else:
+                    cset = cset.intersection(terms)
+            dset = dset.union(cset)
+        qids = qids + list(dset)
+                    
+        
     if args.query is not None:
         qids = qids + ont.sparql(select='*',
                                  body=args.query,
@@ -98,8 +116,10 @@ def main():
     nodes = ont.traverse_nodes(qids, up=dirn.find("u") > -1, down=dirn.find("d") > -1,
                                relations=args.properties)
 
-    g = ont.get_filtered_graph(relations=args.properties)
-    show_subgraph(ont, nodes, qids, args)
+    # deprecated
+    #g = ont.get_filtered_graph(relations=args.properties)
+    subont = ont.subontology(nodes, relations=args.properties)
+    show_subgraph(subont, qids, args)
 
 
 def cmd_cycles(handle, args):
@@ -114,7 +134,7 @@ def cmd_search(handle, args):
         for r in results:
             print(r)
 
-def show_subgraph(ont, nodes, query_ids, args):
+def show_subgraph(ont, query_ids, args):
     """
     Writes or displays graph
     """
@@ -124,8 +144,9 @@ def show_subgraph(ont, nodes, query_ids, args):
     w = GraphRenderer.create(args.to)
     if args.outfile is not None:
         w.outfile = args.outfile
-    logging.info("Writing subgraph for {}, |nodes|={}".format(ont,len(nodes)))
-    w.write_subgraph(ont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
+    w.write(ont, query_ids=query_ids, container_predicates=args.container_properties)
+    #logging.info("Writing subgraph for {}, |nodes|={}".format(ont,len(nodes)))
+    #w.write_subgraph(ont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
             
 def resolve_ids(ont, ids, args):
     r_ids = []

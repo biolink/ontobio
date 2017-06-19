@@ -4,16 +4,21 @@ Parsers for GAF and various Association TSVs.
 All parser objects instantiate a subclass of the abstract `AssocParser` object
 
 """
+
+# TODO: Refactor - move some stuff out into generic parser object
+
 import re
 import requests
 import tempfile
 from contextlib import closing
 import subprocess
 import logging
+import io
 
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
 ANNOTATION = 'ANNOTATION'
+
 
 class AssocParserConfig():
     """
@@ -21,15 +26,23 @@ class AssocParserConfig():
     """
     def __init__(self,
                  remove_double_prefixes=False,
+                 ontology=None,
+                 repair_obsoletes=True,
                  entity_map=None,
                  valid_taxa=None,
                  class_idspaces=None,
                  entity_idspaces=None,
+                 exclude_relations=[],
+                 include_relations=[],
                  filter_out_evidence=[]):
         self.remove_double_prefixes=remove_double_prefixes
+        self.ontology=ontology
+        self.repair_obsoletes=repair_obsoletes
         self.entity_map=entity_map
         self.valid_taxa=valid_taxa
         self.class_idspaces=class_idspaces
+        self.include_relations=include_relations
+        self.exclude_relations=exclude_relations
         self.filter_out_evidence = filter_out_evidence
 
 class Report():
@@ -44,9 +57,12 @@ class Report():
 
     # Warnings: TODO link to gorules
     INVALID_ID = "Invalid identifier"
+    UNKNOWN_ID = "Unknown identifier"
     INVALID_IDSPACE = "Invalid identifier prefix"
     INVALID_TAXON = "Invalid taxon"
     UNMAPPED_ID = "Unmapped identifier"
+    OBSOLETE_CLASS = "Obsolete class"
+    OBSOLETE_CLASS_NO_REPLACEMENT = "Obsolete class with no replacement"
 
     """
     3 warning levels
@@ -140,7 +156,7 @@ class Report():
             if len(msgs) > 0:
                 s += "### {}\n\n".format(level)
                 for m in msgs:
-                    s += " * {}: {} '{}' `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
+                    s += " * {}: obj:'{}' \"{}\" `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
         return s
 
 # TODO avoid using names that are builtin python: file, id
@@ -180,13 +196,17 @@ class AssocParser():
                     outfile.write(line)
                 continue
             line = line.strip("\n")
+            if line == "":
+                logging.warn("EMPTY LINE")
+                continue
 
             parsed_line, new_assocs  = self.parse_line(line)
             if self._skipping_line(new_assocs): # Skip if there were no assocs
-                logging.warn("SKIPPING: {}".format(new_assocs))
+                logging.warn("SKIPPING: {}".format(line))
                 skipped.append(line)
             else:
                 for a in new_assocs:
+                    self._validate_assoc(a)
                     rpt = self.report
                     rpt.subjects.add(a['subject']['id'])
                     rpt.objects.add(a['object']['id'])
@@ -206,6 +226,9 @@ class AssocParser():
                             len(skipped)))
         file.close()
         return assocs
+
+    def _validate_assoc(self, assoc):
+        self._validate_ontology_class_id(assoc['object']['id'], assoc['source_line'])
 
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
@@ -273,6 +296,40 @@ class AssocParser():
     def _skipping_line(self, associations):
         return associations is None or associations == []
 
+    def _is_exclude_relation(self, relation):
+        if self.config.include_relations is not None and len(self.config.include_relations)>0:
+            if relation not in self.config.include_relations:
+                return True
+        if self.config.exclude_relations is not None and len(self.config.exclude_relations)>0:
+            if relation in self.config.exclude_relations:
+                return True
+        return False
+        
+    ## we generate both qualifier and relation field
+    ## Returns: (negated, relation, other_qualifiers)
+    def _parse_qualifier(self, qualifier, aspect):
+        relation = None
+        qualifiers = qualifier.split("|")
+        if qualifier == '':
+            qualifiers = []
+        negated =  'NOT' in qualifiers
+        other_qualifiers = [q for q in qualifiers if q != 'NOT']
+        ## In GAFs, relation is overloaded into qualifier.
+        ## If no explicit non-NOT qualifier is specified, use
+        ## a default based on GPI spec
+        if len(other_qualifiers) > 0:
+            relation = other_qualifiers[0]
+        else:
+            if aspect == 'C':
+                relation = 'part_of'
+            elif aspect == 'P':
+                relation = 'involved_in'
+            elif aspect == 'F':
+                relation = 'enables'
+            else:
+                relation = None
+        return (negated, relation, other_qualifiers)
+    
     # split an ID/CURIE into prefix and local parts
     # (not currently used)
     def _parse_id(self, id):
@@ -297,13 +354,35 @@ class AssocParser():
                 self.report.error(line, Report.INVALID_TAXON, taxon)
                 return False
 
+    # check the term id is in the ontology, and is not obsolete
+    def _validate_ontology_class_id(self, id, line, subclassof=None):
+        ont = self.config.ontology
+        if ont is None:
+            return id
+        if not ont.has_node(id):
+            self.report.warning(line, Report.UNKNOWN_ID, id)
+            return id
+        if ont.is_obsolete(id):
+            if self.config.repair_obsoletes:
+                rb = ont.replaced_by(id, strict=False)
+                if isinstance(rb,str):
+                    self.report.warning(line, Report.OBSOLETE_CLASS, id)
+                    id =  rb
+                else:
+                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id)
+            else:
+                self.report.warning(line, Report.OBSOLETE_CLASS, id)
+        # TODO: subclassof
+        return id
+        
+            
     def _validate_id(self, id, line, context=None):
         if " " in id:
-            self.report.error(line, Report.INVALID_ID, id)
+            self.report.error(line, Report.INVALID_ID, id, "contains spaces")
             return False
         if id.find("|") > -1:
             # non-fatal
-            self.report.error('', Report.INVALID_ID, id)
+            self.report.error('', Report.INVALID_ID, id, "contains pipe in unexpected place")
         idspace = self._get_id_prefix(id)
         if context == ANNOTATION and self.config.class_idspaces is not None:
             if idspace not in self.config.class_idspaces:
@@ -378,13 +457,15 @@ class GpadParser(AssocParser):
 
     ANNOTATION_CLASS_COLUMN=3
 
-    def __init__(self,config=AssocParserConfig()):
+    def __init__(self,config=None):
         """
         Arguments:
         ---------
 
         config : a AssocParserConfig object
         """
+        if config == None:
+            config = AssocParserConfig()
         self.config = config
         self.report = Report()
 
@@ -398,7 +479,14 @@ class GpadParser(AssocParser):
             if len(vals) != 12:
                 logging.error("Unexpected number of columns: {}. GPAD should have 12.".format(vals))
             rel = vals[2]
-            # TODO: not
+            
+            negated, relation, _ = self._parse_qualifier(vals[2], None)
+            if negated:
+                continue
+            if self._is_exclude_relation(relation):
+                continue
+            
+
             id = self._pair_to_id(vals[0], vals[1])
             if not self._validate_id(id, line, ENTITY):
                 continue
@@ -426,7 +514,7 @@ class GpadParser(AssocParser):
         vals = line.split("\t")
         [db,
          db_object_id,
-         relation,
+         qualifier,
          goid,
          reference,
          evidence,
@@ -444,6 +532,11 @@ class GpadParser(AssocParser):
         if not self._validate_id(goid, line, ANNOTATION):
             return line, []
 
+        ## --
+        ## qualifier
+        ## --
+        negated, relation, other_qualifiers = self._parse_qualifier(qualifier, None)
+        
         assocs = []
         xp_ors = annotation_xp.split("|")
         for xp_or in xp_ors:
@@ -461,6 +554,7 @@ class GpadParser(AssocParser):
                     'id':goid,
                     'extensions': extns
                 },
+                'negated': negated,
                 'relation': {
                     'id': relation
                 },
@@ -473,6 +567,8 @@ class GpadParser(AssocParser):
                 'date': date,
 
             }
+            if len(other_qualifiers) > 0:
+                assoc['qualifiers'] = other_qualifiers
             assocs.append(assoc)
         return line, assocs
 
@@ -483,13 +579,15 @@ class GafParser(AssocParser):
 
     ANNOTATION_CLASS_COLUMN=4
 
-    def __init__(self,config=AssocParserConfig()):
+    def __init__(self,config=None):
         """
         Arguments:
         ---------
 
         config : a AssocParserConfig object
         """
+        if config == None:
+            config = AssocParserConfig()
         self.config = config
         self.report = Report()
 
@@ -503,7 +601,10 @@ class GafParser(AssocParser):
             if len(vals) < 15:
                 logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
-            if vals[3] != "":
+            negated, relation, _ = self._parse_qualifier(vals[3], vals[8])
+            if negated:
+                continue
+            if self._is_exclude_relation(relation):
                 continue
             id = self._pair_to_id(vals[0], vals[1])
             if not self._validate_id(id, line, ENTITY):
@@ -544,6 +645,8 @@ class GafParser(AssocParser):
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
         if len(vals) == 15:
             vals += ["",""]
+        if len(vals) != 17:
+            logging.error("Wrong number of lines: {}".format(lines))
         [db,
          db_object_id,
          db_object_symbol,
@@ -626,28 +729,7 @@ class GafParser(AssocParser):
             ## --
             ## qualifier
             ## --
-            ## we generate both qualifier and relation field
-            relation = None
-            qualifiers = qualifier.split("|")
-            if qualifier == '':
-                qualifiers = []
-            negated =  'NOT' in qualifiers
-            other_qualifiers = [q for q in qualifiers if q != 'NOT']
-
-            ## In GAFs, relation is overloaded into qualifier.
-            ## If no explicit non-NOT qualifier is specified, use
-            ## a default based on GPI spec
-            if len(other_qualifiers) > 0:
-                relation = other_qualifiers[0]
-            else:
-                if aspect == 'C':
-                    relation = 'part_of'
-                elif aspect == 'P':
-                    relation = 'involved_in'
-                elif aspect == 'F':
-                    relation = 'enables'
-                else:
-                    relation = None
+            negated, relation, other_qualifiers = self._parse_qualifier(qualifier, aspect)
 
             ## --
             ## goid
@@ -693,7 +775,8 @@ class GafParser(AssocParser):
                 'subject': subject,
                 'object': object,
                 'negated': negated,
-                'qualifiers': qualifiers,
+                'qualifiers': other_qualifiers,
+                'aspect': aspect,
                 'relation': {
                     'id': relation
                 },
@@ -719,13 +802,15 @@ class HpoaParser(GafParser):
     Note that there are similarities with Gaf format, so we inherit from GafParser, and override
     """
 
-    def __init__(self,config=AssocParserConfig()):
+    def __init__(self,config=None):
         """
         Arguments:
         ---------
 
         config : a AssocParserConfig object
         """
+        if config == None:
+            config = AssocParserConfig()
         self.config = config
         self.report = Report()
 
@@ -855,7 +940,7 @@ class HpoaParser(GafParser):
         ## --
         evidence = {
             'type': evidence,
-            'has_supporting_reference': self._split_pipe(reference)
+            'has_supporting_reference': reference.split("; ")
         }
         evidence['with_support_from'] = self._split_pipe(withfrom)
 

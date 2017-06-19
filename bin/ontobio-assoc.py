@@ -12,16 +12,25 @@ For instructions
 Examples:
 
 ```
-ogr-assoc -v -r go -T NCBITaxon:9606 -C gene function enrichment -q GO:1903010 
 
-ogr-assoc -v -r go -T NCBITaxon:10090 -C gene function dendrogram GO:0003700 GO:0005215 GO:0005634 GO:0005737 GO:0005739 GO:0005694 GO:0005730  GO:0000228 GO:0000262 
+Find genes annotated to a GO class in human:
 
-ogr-assoc -v -r go -T NCBITaxon:10090 -C gene function simmatrix MGI:1890081 MGI:97487 MGI:106593 MGI:97250 MGI:2151057 MGI:1347473
+ontobio-assoc.py -v -r go -T NCBITaxon:9606 -C gene function query -q GO:1903010 
 
-ogr-assoc -C gene function -T pombe -r go -f tests/resources/truncated-pombase.gaf query -q GO:0005622
+Analogous query in planteome:
+
+ontobio-assoc.py -v -y conf/planteome-config.yaml -r po -T NCBITaxon:3702 -C gene anatomy query -q PO:0025034
+
+ontobio-assoc.py -v -r go -T NCBITaxon:9606 -C gene function enrichment -q GO:1903010 
+
+ontobio-assoc.py -v -r go -T NCBITaxon:10090 -C gene function dendrogram GO:0003700 GO:0005215 GO:0005634 GO:0005737 GO:0005739 GO:0005694 GO:0005730  GO:0000228 GO:0000262 
+
+ontobio-assoc.py -v -r go -T NCBITaxon:10090 -C gene function simmatrix MGI:1890081 MGI:97487 MGI:106593 MGI:97250 MGI:2151057 MGI:1347473
+
+ontobio-assoc.py -C gene function -T pombe -r go -f tests/resources/truncated-pombase.gaf query -q GO:0005622
 
 # requires files from ftp://ftp.rgd.mcw.edu/pub/ontology/annotated_rgd_objects_by_ontology
-ogr-assoc  -T . -C gene disease -r doid -f homo_genes_do phenolog -R pw -F homo_genes_pw > PAIRS.txt
+ontobio-assoc.py  -T . -C gene disease -r doid -f homo_genes_do phenolog -R pw -F homo_genes_pw > PAIRS.txt
 ```
 
 """
@@ -61,8 +70,8 @@ def main():
                         help='ECO class')
     parser.add_argument('-p', '--properties', nargs='*', type=str, required=False,
                         help='Properties')
-    parser.add_argument('-s', '--search', type=str, default='', required=False,
-                        help='Search type. p=partial, r=regex')
+    parser.add_argument('-y', '--yamlconfig', type=str, required=False,
+                        help='Path to setup/configuration yaml file')
     parser.add_argument('-S', '--slim', type=str, default='', required=False,
                         help='Slim type. m=minimal')
     parser.add_argument('-c', '--container_properties', nargs='*', type=str, required=False,
@@ -136,6 +145,14 @@ def main():
     if args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
     logging.info("Welcome!")
+
+    if args.yamlconfig is not None:
+        logging.info("Setting config from: {}".format(args.yamlconfig))
+        # note this sets a global:
+        # we would not do this outside the context of a standalone script
+        from ontobio.config import set_config
+        set_config(args.yamlconfig)
+        
     
     handle = args.resource
 

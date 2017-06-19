@@ -114,7 +114,6 @@ class Ontology():
             for (o,s,m) in xg.edges(data=True):
                 g.add_edge(o,s,attr_dict=m)
             
-        
     def subgraph(self, nodes=[]):
         """
         Return an induced subgraph
@@ -139,12 +138,14 @@ class Ontology():
             list of relation IDs to include in subontology. If None, all are used
 
         """
-        g = self.get_graph()
+        g = None
         if nodes is not None:
-            g = g.subgraph(nodes)
+            g = self.subgraph(nodes)
+        else:
+            g = self.get_graph()            
         if minimal:
             from ontobio.slimmer import get_minimal_subgraph
-            g = get_minimal_subgraph(self.get_graph(), nodes)
+            g = get_minimal_subgraph(g, nodes)
             
         ont = Ontology(graph=g) # TODO - add metadata
         if relations is not None:
@@ -217,14 +218,43 @@ class Ontology():
             sids = sids.difference(self.ancestors(id, reflexive=False))
         return sids
     
-    def extract_subset(self, subset):
+    def extract_subset(self, subset, contract=True):
         """
         Return all nodes in a subset.
     
         We assume the oboInOwl encoding of subsets, and subset IDs are IRIs, or IR fragments
         """
-        pass
+        return [n for n in self.nodes() if subset in self.subsets(n, contract=contract)]
 
+    def subsets(self, nid, contract=True):
+        """
+        Retrieves subset ids for a class or ontology object
+        """
+        n = self.node(nid)
+        subsets = []
+        meta = self._meta(nid)
+        if 'subsets' in meta:
+            subsets = meta['subsets']
+        else:
+            subsets = []
+        if contract:
+            subsets = [self._contract_subset(s) for s in subsets]
+        return subsets
+
+    def _contract_subset(self, s):
+        if s.find("#") > -1:
+            return s.split('#')[-1]
+        else:
+            return s
+        
+    def _meta(self, nid):
+        n = self.node(nid)
+        if 'meta' in n:
+            return n['meta']
+        else:
+            return {}
+        
+    
     def prefixes(self):
         """
         list all prefixes used
@@ -262,6 +292,19 @@ class Ontology():
         """
         return self.get_graph().node[id]
 
+    def has_node(self, id):
+        """
+        True if id identifies a node in the ontology graph
+        """
+        return id in self.get_graph().node
+    
+    def sorted_nodes(self):
+        """
+        Returns all nodes in ontology, after topological sort
+
+        """
+        return nx.topological_sort(self.get_graph())
+      
     def relations_used(self):
         """
         Return list of all relations used to connect edges
@@ -283,13 +326,9 @@ class Ontology():
 
         Arguments
         ---------
-
         node: string
-
            identifier for node in ontology
-
         relations: list of strings
-
            list of relation (object property) IDs used to filter
 
         """
@@ -513,6 +552,67 @@ class Ontology():
         else:
             return []
 
+    def _get_meta_prop(self, nid, prop):
+        n = self.node(nid)
+        if 'meta' in n:
+            meta = n['meta']
+            if prop in meta:
+                return meta[prop]
+        return None
+
+    def _get_meta(self, nid):
+        n = self.node(nid)
+        if 'meta' in n:
+            return n['meta']
+        return None
+
+    def _get_basic_property_values(self, nid):
+        return self._get_meta_prop(nid, 'basicPropertyValues')
+    
+    def _get_basic_property_value(self, nid, prop):
+        bpvs = self._get_basic_property_values()
+        return [x['val'] for x in bpvs in x['pred'] == prop]
+    
+    def is_obsolete(self, nid):
+        """
+        True if node is obsolete
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+        """
+        dep = self._get_meta_prop(nid, 'deprecated')
+        return  dep is not None and dep
+
+    def replaced_by(self, nid, strict=True):
+        """
+        Returns value of 'replaced by' (IAO_0100001) property for obsolete nodes
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+        strict: bool
+            If true, raise error if cardinality>1. If false, return list if cardinality>1
+
+        Return
+        ------
+        None if no value set, otherwise returns node id (or list if multiple values, see strict setting)
+        """
+        vs = self._get_basic_property_value(nid, 'IAO:0100001')
+        if len(vs) == 0:
+            return None
+        elif len(vs) == 1:
+            return vs[0]
+        else:
+            msg = "replaced_by has multiple values: {}".format(vs)
+            if strict:
+                raise ValueError(msg)
+            else:
+                logging.error(msg)
+                return vs
+    
     def synonyms(self, nid, include_label=False):
         """
         Retrieves synonym objects for a class
@@ -539,6 +639,18 @@ class Ontology():
         if include_label:
             syns.append(Synonym(nid, val=self.label(nid), pred='label'))
         return syns
+    
+    def add_synonym(self, syn):
+        """
+        Adds a synonym for a node
+        """
+        n = self.node(syn.class_id)
+        if 'meta' not in n:
+            n['meta'] = {}
+        meta = n['meta']
+        if 'synonyms' not in meta:
+            meta['synonyms'] = []
+        meta['synonyms'].append({'val': syn.val,'pred': syn.pred})
 
     def all_synonyms(self, include_label=False):
         """

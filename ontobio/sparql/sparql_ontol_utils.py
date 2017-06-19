@@ -77,6 +77,8 @@ def get_edges(ont):
     edges = [(c,SUBCLASS_OF, d) for (c,d) in fetchall_isa(ont)]
     edges += fetchall_svf(ont)
     edges += [(c,SUBPROPERTY_OF, d) for (c,d) in fetchall_subPropertyOf(ont)]
+    if len(edges) == 0:
+        logging.warn("No edges for {}".format(ont))
     return edges
 
 def search(ont, searchterm):

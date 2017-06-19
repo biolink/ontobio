@@ -22,6 +22,7 @@ from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
+from ontobio.io.assocwriter import GpadWriter
 from ontobio.io import gafparser
 from ontobio.slimmer import get_minimal_subgraph
 import logging
@@ -40,6 +41,8 @@ def main():
                         help='Name of ontology')
     parser.add_argument('-f', '--file', type=str, required=False,
                         help='Name of input file for associations - currently GAF is assumed')
+    parser.add_argument('-F', '--format', type=str, required=False,
+                        help='Format of assoc file. One of GAF, GPAD or HPOA')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
     parser.add_argument('-m', '--messagefile', type=str, required=False,
@@ -65,6 +68,11 @@ def main():
 
     parser_n = subparsers.add_parser('filter', help='Filter associations')
     parser_n.set_defaults(function=filter_assocs)
+
+    parser_n = subparsers.add_parser('convert', help='Convert associations')
+    parser_n.set_defaults(function=convert_assocs)
+    parser_n.add_argument('-t', '--to', type=str, required=True,
+                          help='Format to convert to')
 
     parser_n = subparsers.add_parser('map2slim', help='Map to a subset/slim')
     parser_n.set_defaults(function=map2slim)
@@ -97,11 +105,29 @@ def main():
     # set configuration
     config = gafparser.AssocParserConfig(
         valid_taxa=args.taxon,
+        ontology=ont,
         class_idspaces=args.object_prefix,
         entity_idspaces=args.subject_prefix,
         filter_out_evidence=args.filter_out
     )
-    p = GafParser(config=config)
+    p = None
+    fmt = None
+    if args.format is None:
+        fmt = 'gaf'
+    else:
+        fmt = args.format.lower()
+
+    # TODO: use a factory
+    if fmt == 'gaf':
+        from ontobio.io.gafparser import GafParser        
+        p = GafParser()
+    elif fmt == 'gpad':
+        from ontobio.io.gafparser import GpadParser        
+        p = GpadParser()
+    elif fmt == 'hpoa':
+        from ontobio.io.gafparser import HpoaParser        
+        p = HpoaParser()
+    p.config = config
 
     outfh = None
     if args.outfile is not None:
@@ -121,6 +147,17 @@ def filter_assocs(ont, file, outfile, p, args):
 
 def validate_assocs(ont, file, outfile, p, args):
     assocs = p.parse(open(file, "r"), outfile)
+
+def convert_assocs(ont, file, outfile, p, args):
+    assocs = p.parse(open(file, "r"), None)
+    w = GpadWriter()
+    fmt = args.to
+    if fmt == 'gpad':
+        w = GpadWriter()
+    else:
+        raise ValueError("Not supported: {}".format(fmt))
+    w.file = outfile
+    w.write(assocs)
 
 def map2slim(ont, file, outfile, p, args):
     assocs = p.map_to_subset(open(file, "r"),

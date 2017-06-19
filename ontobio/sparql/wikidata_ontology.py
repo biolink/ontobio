@@ -1,79 +1,22 @@
 """
-Classes for representing ontologies backed by a SPARQL endpoint
+An ontology backed by a remote Wikidata SPARQL service.
 """
 
 import networkx as nx
 import logging
 import ontobio.ontol
 from ontobio.ontol import Ontology, Synonym
-from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_labels, OIO_SYNS
 from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
+from SPARQLWrapper import SPARQLWrapper, JSON, RDF
+from ontobio.sparql.rdflib_bridge import rdfgraph_to_ontol
 
-
-class RemoteSparqlOntology(Ontology):
+class WikidataOntology(Ontology):
     """
-    Local or remote ontology
+    An ontology backed by a remote Wikidata SPARQL service.
     """
 
-    def extract_subset(self, subset):
-        """
-        Find all nodes in a subset.
-    
-        We assume the oboInOwl encoding of subsets, and subset IDs are IRIs
-        """
-    
-        # note subsets have an unusual encoding
-        query = """
-        prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
-        SELECT ?c WHERE {{
-        GRAPH <{g}>  {{
-        ?c oboInOwl:inSubset ?s
-        FILTER regex(?s,'#{s}$','i')
-        }}
-        }}
-        """.format(s=subset, g=self.graph_name)
-        bindings = run_sparql(query)
-        return [r['c']['value'] for r in bindings]
 
-    def subsets(self):
-        """
-        Find all subsets for an ontology
-        """
-    
-        # note subsets have an unusual encoding
-        query = """
-        prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
-        SELECT DISTINCT ?s WHERE {{
-        GRAPH <{g}>  {{
-        ?c oboInOwl:inSubset ?s 
-        }}
-        }}
-        """.format(g=self.graph_name)
-        bindings = run_sparql(query)
-        return [r['s']['value'] for r in bindings]
-
-    def synonyms(self, nid, **args):
-        logging.info("lookup syns for {}".format(nid))
-        if self.all_synonyms_cache == None:
-            self.all_synonyms()
-        return super().synonyms(nid, **args) 
-    
-    # Override
-    def all_synonyms(self, include_label=False):
-        logging.debug("Fetching all syns...")
-        # TODO: include_label in cache
-        if self.all_synonyms_cache == None:
-            syntups = fetchall_syns(self.graph_name)
-            syns = [Synonym(t[0],pred=t[1], val=t[2]) for t in syntups]
-            for syn in syns:
-                self.add_synonym(syn)
-            if include_label:
-                #lsyns = [Synonym(t[0],pred='label', val=t[1]) for t in fetchall_labels(self.graph_name)]
-                lsyns = [Synonym(x, pred='label', val=self.label(x)) for x in self.nodes()]
-                syns = syns + lsyns
-            self.all_synonyms_cache = syns
-        return self.all_synonyms_cache
-
+    # TODO
     # Override
     def resolve_names(self, names, is_remote=False, synonyms=False, **args):
         if not is_remote:
@@ -89,6 +32,7 @@ class RemoteSparqlOntology(Ontology):
             logging.info("REMOTE RESULTS="+str(results))
             return list(results)
 
+    # TODO
     def _search(self, searchterm, pred, **args):
         """
         Search for things using labels
@@ -108,6 +52,7 @@ class RemoteSparqlOntology(Ontology):
         bindings = run_sparql(query)
         return [r['c']['value'] for r in bindings]
 
+    # TODO
     def sparql(self, select='*', body=None, inject_prefixes=[], single_column=False):
         """
         Execute a SPARQL query.
@@ -164,38 +109,61 @@ class RemoteSparqlOntology(Ontology):
                 return [r[c]['value'] for c in cols for r in bindings]
     
     
-class EagerRemoteSparqlOntology(RemoteSparqlOntology):
+class EagerWikidataOntology(WikidataOntology):
     """
-    Local or remote ontology
+    Eager Wikidata ontology implementation.
+
+    Caches all classes that are sub or super classes of a specified node
     """
 
     def __init__(self, handle=None):
         """
-        initializes based on an ontology name
+        initializes based on an ontology class ID (Q ID) in wikidata
         """
+        handle = handle.replace('wdq:','')
         self.handle = handle
-        logging.info("Creating eager-remote-sparql from "+str(handle))
-        g = get_digraph(handle, None, True)
-        logging.info("Graph:"+str(g))
-        if len(g.nodes()) == 0 and len(g.edges()) == 0:
-            logging.error("Empty graph for '{}' - did you use the correct id?".
-                          format(handle))
-        self.graph = g
-        self.graph_name = get_named_graph(handle)
-        self.xref_graph = get_xref_graph(handle)
-        self.all_logical_definitions = []
-        self.all_synonyms_cache = None
-        logging.info("Graph: {} LDs: {}".format(self.graph, self.all_logical_definitions))
+        logging.info("Creating eager-wikidata-ont from "+str(handle))
+        self.create_from_hub(handle)
 
     def __str__(self):
         return "h:{} g:{}".format(self.handle, self.graph)
 
+    def create_from_hub(self, hub_id):
+        if hub_id.find(":") == -1:
+            hub_id = 'wd:' + hub_id
+        if hub_id.startswith('http'):
+            hub_id = '<' + hub_id + '>'
+        q = """
+        PREFIX wd: <http://www.wikidata.org/entity/> 
+        CONSTRUCT {{
+        ?cls rdfs:label ?clsLabel .
+        ?cls a owl:Class .
+        ?superClass a owl:Class .
+        ?superClass rdfs:label ?superClassLabel .
+        ?cls rdfs:subClassOf ?superClass
+        }}
+        WHERE {{
+         {{  {{ ?cls wdt:P279* {hub_id} }} UNION
+             {{ {hub_id} wdt:P279* ?cls }} }}
+        ?cls wdt:P279 ?superClass
+        SERVICE wikibase:label {{
+          bd:serviceParam wikibase:language "en" .
+        }}
+        }}
+        """.format(hub_id=hub_id)
+        logging.info("QUER={}".format(q))
+        sparql = SPARQLWrapper("http://query.wikidata.org/sparql")
+        sparql.setQuery(q)
+        sparql.setReturnFormat(RDF)
+        rg = sparql.query().convert()
+        logging.info("RG={}".format(rg))
+        ont = rdfgraph_to_ontol(rg)
+        self.graph = ont.graph
+        
 
-
-
-class LazyRemoteSparqlOntology(RemoteSparqlOntology):
+class LazyWikidataOntology(WikidataOntology):
     """
-    Local or remote ontology
+    Non-caching wikidata-backed ontology TODO
     """
 
     def __init__(self):

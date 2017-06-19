@@ -5,8 +5,7 @@ Quick start
 
 .. currentmodule:: ontobio
 
-This guide assumes you have already installed both Flask and
-Flask-RESTPlus.  If not, then follow the steps in the
+This guide assumes you have already installed ontobio.  If not, then follow the steps in the
 :ref:`installation` section.
 
 Command Line
@@ -34,6 +33,9 @@ See the :ref:`notebooks` section for more details.
 
 Python
 ------
+
+This code example shows some of the basics of working with remote
+ontologies and associations
 
 .. code-block:: python
 

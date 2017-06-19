@@ -1,3 +1,6 @@
+"""
+Test in-memory map2slim
+"""
 from ontobio.io.gafparser import GafParser, GpadParser
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
@@ -23,16 +26,23 @@ def test_map2slim_gaf():
     ont = OntologyFactory().create(ONT)
     relations=['subClassOf', 'BFO:0000050']
     m = ont.create_slim_mapping(subset_nodes=SUBSET, relations=relations)
-    print(str(m))
+    #print(str(m))
     assert m['GO:0071423'] == ['GO:0006810']
     outfile = tempfile.NamedTemporaryFile(mode='w', delete=False)
     p.map_to_subset(open(f,"r"), class_map=m, outfile=outfile)
     for m in p.report.messages:
-        print("MESSAGE: {}".format(m))
+        logging.debug("MESSAGE1: {}".format(m))
+    for m in p.report.messages:
+        logging.debug("MESSAGE1: {}".format(m))
+    logging.info("MESSAGES: {}".format(len(p.report.messages)))
     p = GafParser()
+    logging.info("CLOSING: {}".format(outfile))
     outfile.close()
+    
     logging.info("Reading from: {}".format(outfile.name))
     assocs = p.parse(outfile.name)
+    for m in p.report.messages:
+        logging.debug("MESSAGE2: {}".format(m))
     assert len(assocs) > 100
     cls_ids = set()
     for a in assocs:
