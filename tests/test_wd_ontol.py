@@ -42,6 +42,6 @@ def test_factory():
     assert 'Fear of frogs' in labels
     from ontobio.io.ontol_renderers import GraphRenderer
     w = GraphRenderer.create('tree')
-    w.write_subgraph(ont, nodes, query_ids=qids)
+    w.write(ont, query_ids=qids)
 
             
