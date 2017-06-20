@@ -552,6 +552,12 @@ class Ontology():
         else:
             return []
 
+    def get_node_type(self, nid):
+        n = self.node(nid)
+        if 'type' in n:
+            return n['type']
+        return None
+        
     def _get_meta_prop(self, nid, prop):
         n = self.node(nid)
         if 'meta' in n:
