@@ -253,7 +253,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                  hl=True,
                  facet_fields=None,
                  search_fields=None,
-                 rows=100):
+                 rows=100,
+                 start=None):
         self.term = term
         self.category = category
         self.is_go = is_go
@@ -265,6 +266,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.facet_fields = facet_fields
         self.search_fields = search_fields
         self.rows = rows
+        self.start = start
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
 
@@ -324,6 +326,10 @@ class GolrSearchQuery(GolrAbstractQuery):
             "qf": qf,
             'rows': self.rows
         }
+        
+        if self.start is not None:
+            params['start'] = self.start
+            
         if self.hl:
             params['hl.simple.pre'] = "<em class=\"hilite\">"
             params['hl.snippets'] = "1000"
@@ -359,6 +365,7 @@ class GolrSearchQuery(GolrAbstractQuery):
             'highlighting': results.highlighting,
             'docs': results.docs
         }
+        logging.debug('Docs: {}'.format(len(results.docs)))
     
         return payload
                  
@@ -461,6 +468,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  pivot_subject_object=False,
                  unselect_evidence=False,
                  rows=10,
+                 start=None,
                  homology_type=None,
                  **kwargs):
 
@@ -506,6 +514,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.unselect_evidence=unselect_evidence
         self.max_rows=100000
         self.rows=rows
+        self.start=start
         self.homology_type = homology_type
         self.url = url
         # test if client explicitly passes a URL; do not override
@@ -789,6 +798,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             is_unlimited = True
             iterate = True
             rows = self.max_rows
+
         params = {
             'q': qstr,
             'fq': filter_queries,
@@ -799,6 +809,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
             'fl': ",".join(select_fields),
             'rows': rows
         }
+
+        if self.start is not None:
+            params['start'] = self.start
+        
         json_facet=self.json_facet
         if json_facet:
             params['json.facet'] = json.dumps(json_facet)
