@@ -6,3 +6,8 @@ CHANGES
 
 * added ecomap.py
 * fixes for planteome
+
+0.2.5
+-----
+
+* bugfix for processing gaf lines that do not have the right number of columns

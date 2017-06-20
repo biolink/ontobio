@@ -1,13 +1,16 @@
 
 ## Release instructions
 
+* Note: pandoc must be installed before this works. You can install with
+brew or apt-get or yum.
+
 This section is only relevant for project maintainers.
 To create a new release, do the following:
 
 1. Bump the `__version__` in [`ontobio/__init__.py`](ontobio/__init__.py).
 
 3. Run the following commands:
-    
+
   ```sh
   TAG=v`python setup.py --version`
   git add ontobio/__init__.py
