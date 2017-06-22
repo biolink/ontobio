@@ -433,7 +433,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  subject_category=None,
                  object_category=None,
                  relation=None,
-                 concepts=None,
+                 subject_or_object_ids=None,
                  subject=None,
                  subjects=None,
                  object=None,
@@ -480,7 +480,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.subject_category=subject_category
         self.object_category=object_category
         self.relation=relation
-        self.concepts=concepts
+        self.subject_or_object_ids=subject_or_object_ids
         self.subject=subject
         self.subjects=subjects
         self.object=object
@@ -545,10 +545,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
             fq = {}
         logging.info("TEMPx FQ={}".format(fq))
 
-        # concepts is a list of identifiers that can be matched to either subjects or objects
-        concepts = self.concepts
-        if concepts is not None:
-            concepts = [self.make_canonical_identifier(c) for c in concepts]
+        # subject_or_object_ids is a list of identifiers that can be matched to either subjects or objects
+        subject_or_object_ids = self.subject_or_object_ids
+        if subject_or_object_ids is not None:
+            subject_or_object_ids = [self.make_canonical_identifier(c) for c in subject_or_object_ids]
 
         # canonical form for MGI is a CURIE MGI:nnnn
         #if subject is not None and subject.startswith('MGI:MGI:'):
@@ -756,17 +756,16 @@ class GolrAssociationQuery(GolrAbstractQuery):
         filter_queries = [ '{}:{}'.format(k,solr_quotify(v)) for (k,v) in fq.items()]
 
         # We want to match all associations that have either a subject or object
-        # with an ID that is contained in concepts, and sort them by the number
-        # of hits to the ID's in concepts
+        # with an ID that is contained in subject_or_object_ids, and sort them by the number
+        # of hits to the ID's in subject_or_object_ids
         boost_function = None
-        if concepts is not None:
+        if subject_or_object_ids is not None:
             summands = ['termfreq(subject_closure, ' + c + ')' \
-                        'termfreq(object_closure, ' + c + ')' for c in concepts]
+                        'termfreq(object_closure, ' + c + ')' for c in subject_or_object_ids]
             boost_function = 'prod(sum('+ ','.join(summands) + '), 10)'
-            quoted_concepts = ['"' + c + '"' for c in concepts]
-            conceptDisjunction = " OR ".join(quoted_concepts)
-            disjunctive_query = 'subject_closure:(' + conceptDisjunction + ')' \
-                                ' OR object_closure:(' + conceptDisjunction + ')'
+            disjunction = " OR ".join(['"' + c + '"' for c in subject_or_object_ids])
+            disjunctive_query = 'subject_closure:(' + disjunction + ')' \
+                                ' OR object_closure:(' + disjunction + ')'
             filter_queries.append(disjunctive_query.strip())
 
         # unless caller specifies a field list, use default
