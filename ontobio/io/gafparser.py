@@ -405,9 +405,11 @@ class AssocParser():
         if " " in id:
             self.report.error(line, Report.INVALID_ID, id, "contains spaces")
             return False
+
+        # we assume that cardinality>1 fields have been split prior to this
         if id.find("|") > -1:
             # non-fatal
-            self.report.error(line, Report.INVALID_ID, id, "contains pipe in unexpected place")
+            self.report.error(line, Report.INVALID_ID, id, "contains pipe in identifier")
         if ':' not in id:
             self.report.error(line, Report.INVALID_ID, id, "must be CURIE/prefixed ID")
         idspace = self._get_id_prefix(id)
