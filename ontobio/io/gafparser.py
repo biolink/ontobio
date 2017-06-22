@@ -515,6 +515,8 @@ class GpadParser(AssocParser):
             rel = vals[2]
 
             negated, relation, _ = self._parse_qualifier(vals[2], None)
+
+            # never include NOTs in a skim
             if negated:
                 continue
             if self._is_exclude_relation(relation):
@@ -653,6 +655,8 @@ class GafParser(AssocParser):
                 logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
             negated, relation, _ = self._parse_qualifier(vals[3], vals[8])
+            
+            # never include NOTs in a skim
             if negated:
                 continue
             if self._is_exclude_relation(relation):
