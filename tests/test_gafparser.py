@@ -2,6 +2,7 @@ from ontobio.io.gafparser import GafParser, GpadParser
 from ontobio.io.assocwriter import GpadWriter
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
+from ontobio.ecomap import EcoMap
 import tempfile
 
 POMBASE = "tests/resources/truncated-pombase.gaf"
@@ -11,6 +12,7 @@ QGAF = "tests/resources/test-qualifiers.gaf"
 
 def test_skim_gaf():
     p = GafParser()
+    p.config.ecomap = EcoMap()
     results = p.skim(open(POMBASE,"r"))
     assert len(results) == 375
     for r in results:
@@ -21,6 +23,7 @@ def test_skim_gaf():
 
 def test_skim_gaf_qualifiers():
     p = GafParser()
+    p.config.ecomap = EcoMap()
     p.config.remove_double_prefixes = True
     results = p.skim(open(QGAF,"r"))
     for r in results:
@@ -43,6 +46,7 @@ def test_skim_gaf_qualifiers():
         
 def test_skim_gpad():
     p = GpadParser()
+    p.config.ecomap = EcoMap()
     results = p.skim(open(POMBASE_GPAD,"r"))
     assert len(results) == 1984
     for r in results:
@@ -57,6 +61,7 @@ def test_parse_gpad():
     parse_with(POMBASE_GPAD, GpadParser())
     
 def parse_with(f, p):
+    p.config.ecomap = EcoMap()
     is_gaf = f == POMBASE
     ont = OntologyFactory().create(ONT)
 
@@ -67,12 +72,13 @@ def parse_with(f, p):
     results = p.parse(open(f,"r"))
     r1 = results[0]
     # TODO: test datafile does not have ECOs yet!!
-    assert r1['evidence']['type'] == 'ISO' or r1['evidence']['type'] == ''
+    assert r1['evidence']['type'] == 'ISO' or r1['evidence']['type'] == 'ECO:0000201'
     assert r1['evidence']['with_support_from'] == ['SGD:S000001583']
     assert r1['evidence']['has_supporting_reference'] == ['GO_REF:0000024']
 
     if is_gaf:
         assert r1['subject']['label'] == 'ypf1'
+        assert r1['date'] == '2015-03-05'
 
     for r in results:
         #print(str(r))
@@ -92,6 +98,7 @@ def parse_with(f, p):
 
 def test_convert_gaf_to_gpad():
     p = GafParser()
+    p.config.ecomap = EcoMap()
     w  = GpadWriter()
     p2 = GpadParser()
     convert(POMBASE, p, w, p2)
@@ -161,4 +168,13 @@ def parse_with2(f, p):
     assert len([a for a in assocs if a['relation']['id'] == 'involved_in']) == 1
     assert len([a for a in assocs if a['relation']['id'] == 'contributes_to']) == 1
     
+def test_errors_gaf():
+    p = GafParser()
+    p.config.ecomap = EcoMap()
+    assocs = p.parse(open("tests/resources/errors.gaf","r"))
+    msgs = p.report.messages
+    print("MESSAGES: {}".format(len(msgs)))
+    for m in msgs:
+        print("MESSAGE: {}".format(m))
+    assert len(msgs) == 8
     

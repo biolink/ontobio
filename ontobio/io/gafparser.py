@@ -18,6 +18,7 @@ import io
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
 ANNOTATION = 'ANNOTATION'
+EXTENSION = 'EXTENSION'
 
 
 class AssocParserConfig():
@@ -32,6 +33,7 @@ class AssocParserConfig():
                  valid_taxa=None,
                  class_idspaces=None,
                  entity_idspaces=None,
+                 ecomap=None,
                  exclude_relations=[],
                  include_relations=[],
                  filter_out_evidence=[]):
@@ -41,6 +43,7 @@ class AssocParserConfig():
         self.entity_map=entity_map
         self.valid_taxa=valid_taxa
         self.class_idspaces=class_idspaces
+        self.ecomap=ecomap
         self.include_relations=include_relations
         self.exclude_relations=exclude_relations
         self.filter_out_evidence = filter_out_evidence
@@ -60,11 +63,15 @@ class Report():
     UNKNOWN_ID = "Unknown identifier"
     INVALID_IDSPACE = "Invalid identifier prefix"
     INVALID_TAXON = "Invalid taxon"
+    INVALID_SYMBOL = "Invalid symbol"
+    INVALID_DATE = "Invalid date"
     UNMAPPED_ID = "Unmapped identifier"
+    UNKNOWN_EVIDENCE_CLASS = "Unknown evidence class"
     OBSOLETE_CLASS = "Obsolete class"
     OBSOLETE_CLASS_NO_REPLACEMENT = "Obsolete class with no replacement"
     WRONG_NUMBER_OF_COLUMNS = "Wrong number of columns in this line"
-
+    EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
+    
     """
     3 warning levels
     """
@@ -198,7 +205,8 @@ class AssocParser():
                 continue
             line = line.strip("\n")
             if line == "":
-                logging.warn("EMPTY LINE")
+                self.report.warning(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+                                    msg="empty line")
                 continue
 
             parsed_line, new_assocs  = self.parse_line(line)
@@ -376,6 +384,22 @@ class AssocParser():
         # TODO: subclassof
         return id
 
+    def _normalize_gaf_date(self, date, line):
+        if date is None or date == "":
+            self.report.warning(line, Report.INVALID_DATE, date, "empty")
+            return date
+        if len(date) != 8:
+            self.report.warning(line, Report.INVALID_DATE, date, "must be 6 digits, got: {}".format(len(date)))
+            return date
+        # tuple on a string will turn each character into a slot
+        return '{}-{}-{}'.format(date[0:4],date[4:6],date[6:8])
+    
+    def _validate_symbol(self, symbol, line):
+        if symbol is None or symbol == "":
+            self.report.warning(line, Report.INVALID_SYMBOL, symbol, "empty")
+        if ' ' in symbol:
+            self.report.warning(line, Report.INVALID_SYMBOL, symbol, "should not contain spaces")
+    
 
     def _validate_id(self, id, line, context=None):
         if " " in id:
@@ -383,8 +407,12 @@ class AssocParser():
             return False
         if id.find("|") > -1:
             # non-fatal
-            self.report.error('', Report.INVALID_ID, id, "contains pipe in unexpected place")
+            self.report.error(line, Report.INVALID_ID, id, "contains pipe in unexpected place")
+        if ':' not in id:
+            self.report.error(line, Report.INVALID_ID, id, "must be CURIE/prefixed ID")
         idspace = self._get_id_prefix(id)
+        # ensure that the ID space of the annotation class (e.g. GO)
+        # conforms to what is expected
         if context == ANNOTATION and self.config.class_idspaces is not None:
             if idspace not in self.config.class_idspaces:
                 self.report.error(line, Report.INVALID_IDSPACE, id, "allowed: {}".format(self.config.class_idspaces))
@@ -434,10 +462,15 @@ class AssocParser():
             return file
 
 
-    def _parse_class_expression(self, x):
+    def _parse_class_expression(self, x, line=""):
         ## E.g. exists_during(GO:0000753)
         ## Atomic class expressions only
-        [(p,v)] = re.findall('(.*)\((.*)\)',x)
+        tuples = re.findall('(.*)\((.*)\)',x)
+        if len(tuples) != 1:
+            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
+            return None
+        (p,v) = tuples[0]
+        self._validate_id(v,line,EXTENSION)
         return {
             'property':p,
             'filler':v
@@ -513,6 +546,11 @@ class GpadParser(AssocParser):
 
         """
         vals = line.split("\t")
+        if len(vals) != 12:
+            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+                msg="There were {columns} columns found in this line, and there should be 12".format(columns=len(vals)))
+            return line, []
+        
         [db,
          db_object_id,
          qualifier,
@@ -533,6 +571,16 @@ class GpadParser(AssocParser):
         if not self._validate_id(goid, line, ANNOTATION):
             return line, []
 
+        date = self._normalize_gaf_date(date, line)
+
+        self._validate_id(evidence, line, None)
+        #TODO: ecomap is currently one-way only
+        #ecomap = self.config.ecomap
+        #if ecomap != None:
+        #    if ecomap.ecoclass_to_coderef(evidence) == (None,None):
+        #        self.report.error(line, Report.UNKNOWN_EVIDENCE_CLASS, evidence,
+        #                          msg="Expecting a known ECO class ID")
+        
         ## --
         ## qualifier
         ## --
@@ -545,7 +593,9 @@ class GpadParser(AssocParser):
             extns = []
             for xp_and in xp_ands:
                 if xp_and != "":
-                    extns.append(self._parse_class_expression(xp_and))
+                    expr = self._parse_class_expression(xp_and, line=line)
+                    if expr is not None:
+                        extns.append(expr)
             assoc = {
                 'source_line': line,
                 'subject': {
@@ -638,18 +688,18 @@ class GafParser(AssocParser):
 
         vals = line.split("\t")
 
-        if len(vals) != 15 and len(vals) != 17:
-            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(len(vals)))
-            return line, []
 
         # GAF v1 is defined as 15 cols, GAF v2 as 17.
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
         if len(vals) == 15:
             vals += ["",""]
+
         if len(vals) != 17:
-            logging.error("Wrong number of lines: {}".format(lines))
+            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+                msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
+            return line, []
+            
         [db,
          db_object_id,
          db_object_symbol,
@@ -678,11 +728,22 @@ class GafParser(AssocParser):
         if not self._validate_id(goid, line, ANNOTATION):
             return line, []
 
+        date = self._normalize_gaf_date(date, line)
+        
         # If the evidence code is one of the set we're filtering out (skipping)
         # then no association and return!
         if evidence.upper() in self.config.filter_out_evidence:
             return line, []
 
+        ecomap = self.config.ecomap
+        if ecomap != None:
+            if ecomap.coderef_to_ecoclass(evidence, reference) is None:
+                self.report.error(line, Report.UNKNOWN_EVIDENCE_CLASS, evidence,
+                                  msg="Expecting a known ECO GAF code, e.g ISS")
+        
+        # validation
+        self._validate_symbol(db_object_symbol, line)
+        
         # Example use case: mapping from UniProtKB to MOD ID
         if config.entity_map is not None:
             id = self.map_id(id, config.entity_map)
@@ -727,7 +788,9 @@ class GafParser(AssocParser):
             extns = []
             for xp_and in xp_ands:
                 if xp_and != "":
-                    extns.append(self._parse_class_expression(xp_and))
+                    expr = self._parse_class_expression(xp_and, line=line)
+                    if expr is not None:
+                        extns.append(expr)
 
             ## --
             ## qualifier
@@ -839,6 +902,11 @@ class HpoaParser(GafParser):
 
         # http://human-phenotype-ontology.github.io/documentation.html#annot
         vals = line.split("\t")
+        if len(vals) != 14:
+            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+                msg="There were {columns} columns found in this line, and there should be 14".format(columns=len(vals)))
+            return line, []
+        
         [db,
          db_object_id,
          db_object_symbol,
@@ -870,7 +938,12 @@ class HpoaParser(GafParser):
         if not self._validate_id(hpoid, line, ANNOTATION):
             return line, []
 
+        # validation
+        #self._validate_symbol(db_object_symbol, line)
 
+        #TODO: HPOA has different date styles
+        #date = self._normalize_gaf_date(date, line)
+        
         # Example use case: mapping from OMIM to Orphanet
         if config.entity_map is not None:
             id = self.map_id(id, config.entity_map)
