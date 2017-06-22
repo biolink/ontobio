@@ -854,7 +854,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             start = n_docs
             while n_docs >= self.rows:
                 logging.info("Iterating; start={}".format(start))
-                next_results = self.solr.search(**params, start=start)
+                next_results = self.solr.search(start=start, **params)
                 next_docs = next_results.docs
                 n_docs = len(next_docs)
                 docs += next_docs
