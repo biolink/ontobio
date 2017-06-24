@@ -1,0 +1,300 @@
+!gpi-version: 1.2
+!date: 12/02/2016 $
+!
+! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)
+!
+!  DB                     required  1             1             MGI
+!  DB_Object_ID           required  1             2/17          MGI:87870
+!  DB_Object_Symbol       required  1             3             Acat1
+!  DB_Object_Name         optional  0 or greater  10            acetyl-Coenzyme A acetyltransferase 1
+!  DB_Object_Synonym(s)   optional  0 or greater  11            Acat|6330585C21Rik
+!  DB_Object_Type         required  1             12            gene
+!  Taxon                  required  1             13            taxon:10090
+!  Parent_Object_ID       optional  0 or 1        -             if DB_Object_ID = Isoform, then MGI:id of the Isoform
+!  DB_Xref(s)             optional  0 or greater  -             if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform
+!  Properties             optional  0 or greater  -             blank
+
+!  DB_Object_Type = "gene", DB = "MGI", DB_Object_ID = "MGI:xxxx"
+!  DB_Object_Type = "protein", DB = "PR", DB_Object_ID = "xxxx", Parent_Object_ID = "MGI:MGI:xxxx", DB_Xref = "UniProtDB:xxx"
+!  DB_Object_Type = "transcript", DB = "EMBL", "RefSeq", "ENSEMBL", "VEGA", Parent_Object_ID = "MGI:MGI:xxxx"
+!
+MGI	MGI:87853	a	nonagouti	agouti|As|agouti signal protein|ASP	gene	taxon:10090		UniProtKB:Q03288	
+MGI	MGI:87854	Pzp	pregnancy zone protein		gene	taxon:10090		UniProtKB:Q61838	
+MGI	MGI:87855	Aal	active avoidance learning		gene	taxon:10090			
+MGI	MGI:87856	Aap	active avoidance performance		gene	taxon:10090			
+MGI	MGI:87859	Abl1	c-abl oncogene 1, non-receptor tyrosine kinase	c-Abl|E430008G22Rik	gene	taxon:10090		UniProtKB:P00520	
+MGI	MGI:87860	Abl2	v-abl Abelson murine leukemia viral oncogene 2 (arg, Abelson-related gene)	Arg|Abll	gene	taxon:10090		UniProtKB:Q4JIM5	
+MGI	MGI:87861	abn	abnormal		gene	taxon:10090			
+MGI	MGI:87862	Scgb1b27	secretoglobin, family 1B, member 27	Sal-1|Abp|Tcp|Abpa|Abpa27	gene	taxon:10090		UniProtKB:Q91WB5	
+MGI	MGI:87863	Scgb2b27	secretoglobin, family 2B, member 27	C2a|Abpb|Scgb2b5|Abpbg5|Abpbg27	gene	taxon:10090		UniProtKB:Q8R1E9	
+MGI	MGI:87864	Scgb2b26	secretoglobin, family 2B, member 26	C2d|Scgb2b4|Abpg|Abpbg4|Abpbg26	gene	taxon:10090		UniProtKB:Q8JZX1	
+MGI	MGI:87865	ac	absent corpus callosum		gene	taxon:10090			
+MGI	MGI:87866	Acadl	acyl-Coenzyme A dehydrogenase, long-chain	LCAD|C79855	gene	taxon:10090		UniProtKB:P51174	
+MGI	MGI:87867	Acadm	acyl-Coenzyme A dehydrogenase, medium chain	MCAD	gene	taxon:10090		UniProtKB:P45952	
+MGI	MGI:87868	Acads	acyl-Coenzyme A dehydrogenase, short chain	SCAD|Bcd-1|Bcd1|Hdlq8	gene	taxon:10090		UniProtKB:Q07417	
+MGI	MGI:87870	Acat1	acetyl-Coenzyme A acetyltransferase 1	Acat|6330585C21Rik	gene	taxon:10090		UniProtKB:Q8QZT1	
+MGI	MGI:87871	Acat2	acetyl-Coenzyme A acetyltransferase 2	Tcp-1x|Tcp1-rs1	gene	taxon:10090		UniProtKB:Q8CAY6	
+MGI	MGI:87872	Acc	anterior capsular cataract		gene	taxon:10090			
+MGI	MGI:87873	Acd	adrenocortical dysplasia		gene	taxon:10090		UniProtKB:Q5EE38	
+MGI	MGI:87874	Ace	angiotensin I converting enzyme (peptidyl-dipeptidase A) 1	CD143	gene	taxon:10090		UniProtKB:P09470	
+MGI	MGI:87876	Ache	acetylcholinesterase		gene	taxon:10090		UniProtKB:P21836	
+MGI	MGI:87878	Apoc4	apolipoprotein C-IV	Acl	gene	taxon:10090		UniProtKB:Q61268	
+MGI	MGI:87879	Aco1	aconitase 1	Irp1|Irebp|Aco-1	gene	taxon:10090		UniProtKB:P28271	
+MGI	MGI:87880	Aco2	aconitase 2, mitochondrial	Aco-2|Aco3|D10Wsu183e	gene	taxon:10090		UniProtKB:Q99KI0	
+MGI	MGI:87881	Acp1	acid phosphatase 1, soluble	LMW-PTP|Acp-1|4632432E04Rik|Lmptp	gene	taxon:10090		UniProtKB:Q9D358	
+MGI	MGI:87882	Acp2	acid phosphatase 2, lysosomal	Acp-2|LAP	gene	taxon:10090		UniProtKB:P24638	
+MGI	MGI:87883	Acp5	acid phosphatase 5, tartrate resistant	TRAP|TRACP	gene	taxon:10090		UniProtKB:Q05117	
+MGI	MGI:87884	Acr	acrosin prepropeptide	preproacrosin	gene	taxon:10090		UniProtKB:P23578	
+MGI	MGI:87885	Chrna1	cholinergic receptor, nicotinic, alpha polypeptide 1 (muscle)	Achr-1|Acra	gene	taxon:10090		UniProtKB:P04756	
+MGI	MGI:87886	Chrna2	cholinergic receptor, nicotinic, alpha polypeptide 2 (neuronal)	Acra-2|Acra2	gene	taxon:10090		UniProtKB:Q91X60	
+MGI	MGI:87887	Chrna3	cholinergic receptor, nicotinic, alpha polypeptide 3	neuronal nicotinic acetylcholine receptor, alpha 3 subunit|alpha 3|(a)3|Acra-3|Acra3|A730007P14Rik	gene	taxon:10090		UniProtKB:Q8R4G9	
+MGI	MGI:87888	Chrna4	cholinergic receptor, nicotinic, alpha polypeptide 4	alpha4 nAChR|Acra-4|Acra4|a4 nicotinic receptor|alpha4-nAChR	gene	taxon:10090		UniProtKB:O70174	
+MGI	MGI:87889	Chrna5	cholinergic receptor, nicotinic, alpha polypeptide 5	Acra-5|Acra5	gene	taxon:10090		UniProtKB:Q2MKA5	
+MGI	MGI:87890	Chrnb1	cholinergic receptor, nicotinic, beta polypeptide 1 (muscle)	Achr-2|Acrb|AChR beta	gene	taxon:10090		UniProtKB:P09690	
+MGI	MGI:87891	Chrnb2	cholinergic receptor, nicotinic, beta polypeptide 2 (neuronal)	[b]2-nAchR|Acrb-2|Acrb2|C030030P04Rik	gene	taxon:10090		UniProtKB:Q9ERK7	
+MGI	MGI:87892	Chrnb4	cholinergic receptor, nicotinic, beta polypeptide 4	Acrb-4|Acrb4	gene	taxon:10090		UniProtKB:Q8R493	
+MGI	MGI:87893	Chrnd	cholinergic receptor, nicotinic, delta polypeptide	Achr-4|Acrd	gene	taxon:10090		UniProtKB:P02716	
+MGI	MGI:87894	Chrne	cholinergic receptor, nicotinic, epsilon polypeptide	Acre|AChrepsilon	gene	taxon:10090		UniProtKB:P20782	
+MGI	MGI:87895	Chrng	cholinergic receptor, nicotinic, gamma polypeptide	Achr-3|Acrg	gene	taxon:10090		UniProtKB:P04760	
+MGI	MGI:87896	act	adult cataract		gene	taxon:10090			
+MGI	MGI:87902	Acta1	actin, alpha 1, skeletal muscle	Actsk-1|Acts	gene	taxon:10090		UniProtKB:P68134	
+MGI	MGI:87904	Actb	actin, beta	A-X actin-like protein|Actx|E430023M04Rik|beta-actin	gene	taxon:10090		UniProtKB:P60710	
+MGI	MGI:87905	Actc1	actin, alpha, cardiac muscle 1	Actc-1|alphac-actin	gene	taxon:10090		UniProtKB:P68033	
+MGI	MGI:87906	Actg1	actin, gamma, cytoplasmic 1	E51|Actl	gene	taxon:10090		UniProtKB:P63260	
+MGI	MGI:87909	Acta2	actin, alpha 2, smooth muscle, aorta	Actvs|a-SMA|0610041G09Rik|SMalphaA|alphaSMA	gene	taxon:10090		UniProtKB:P62737	
+MGI	MGI:87911	Acvr1	activin A receptor, type 1	ActR-I|ALK2|Acvr|Acvrlk2|ActRIA|Tsk7L|SKR1|D330013D15Rik|Alk8|Alk-2	gene	taxon:10090		UniProtKB:P37172	
+MGI	MGI:87912	Acvr2b	activin receptor IIB	ActRIIB	gene	taxon:10090		UniProtKB:P27040	
+MGI	MGI:87913	Acy1	aminoacylase 1	Acy-1|1110014J22Rik	gene	taxon:10090		UniProtKB:Q99JW2	
+MGI	MGI:87914	Aspa	aspartoacylase	aspartoacylase|Acy-2|Acy2|small lethargic|nur7	gene	taxon:10090		UniProtKB:Q8R3P0	
+MGI	MGI:87915	Ad	adult obesity and diabetes		gene	taxon:10090			
+MGI	MGI:87916	Ada	adenosine deaminase		gene	taxon:10090		UniProtKB:P03958	
+MGI	MGI:87917	Adcy6	adenylate cyclase 6	AC6	gene	taxon:10090		UniProtKB:Q01341	
+MGI	MGI:87918	Add1	adducin 1 (alpha)		gene	taxon:10090		UniProtKB:Q9QYC0	
+MGI	MGI:87919	Add2	adducin 2 (beta)	2900072M03Rik	gene	taxon:10090		UniProtKB:Q9QYB8	
+MGI	MGI:87920	Plin2	perilipin 2	Adrp|ADPH|adipophilin|Adfp	gene	taxon:10090		UniProtKB:P43883	
+MGI	MGI:87921	Adh1	alcohol dehydrogenase 1 (class I)	class I alcohol dehydrogenase|ADH-AA|Adh-1-t|Adh-1|Adh-1t|Adh1-e|Adh1-t|Adh-1e|Adh1tl	gene	taxon:10090		UniProtKB:P00329	
+MGI	MGI:87926	Adh7	alcohol dehydrogenase 7 (class IV), mu or sigma polypeptide	IV ADH|Adh-3|Adh-3t|Adt-1|Adh3|Adh3-e|Adh3-t|Adh4|Adh-3e	gene	taxon:10090		UniProtKB:Q64437	
+MGI	MGI:87929	Adh5	alcohol dehydrogenase 5 (class III), chi polypeptide	Adh-5|Adh3|GSNOR|S-nitrosoglutathione reductase	gene	taxon:10090		UniProtKB:P28474	
+MGI	MGI:87930	Adk	adenosine kinase	AK|5033405D03Rik|2310026J05Rik	gene	taxon:10090		UniProtKB:P55264	
+MGI	MGI:87931	Cfd	complement factor D (adipsin)	DF|D component (adipsin) of complement|factor D|Adn	gene	taxon:10090		UniProtKB:P03953	
+MGI	MGI:87934	Adra2a	adrenergic receptor, alpha 2a	alpha2A|alpha2A-adrenergic receptor|Adra-2a|Adra-2|alpha2A-AR|alpha(2A)AR	gene	taxon:10090		UniProtKB:Q01338	
+MGI	MGI:87935	Adra2b	adrenergic receptor, alpha 2b	alpha2B|[a]2B|Adra-2b|a2b-AR	gene	taxon:10090		UniProtKB:P30545	
+MGI	MGI:87936	Adra2c	adrenergic receptor, alpha 2c	subtype alpha2-C4|alpha2-C4|alpha2C|[a]2C|Adra-2c	gene	taxon:10090		UniProtKB:Q01337	
+MGI	MGI:87937	Adrb1	adrenergic receptor, beta 1	beta 1-AR|Adrb-1	gene	taxon:10090		UniProtKB:P34971	
+MGI	MGI:87938	Adrb2	adrenergic receptor, beta 2	beta 2-AR|Badm|Adrb-2|beta 2-adrenoceptor|Gpcr7	gene	taxon:10090		UniProtKB:P18762	
+MGI	MGI:87939	Adrb3	adrenergic receptor, beta 3	beta 3-AR|Beta-3 AR|Beta-3 adrenoceptor|beta3-adrenergic receptor|Adrb-3	gene	taxon:10090		UniProtKB:P25962	
+MGI	MGI:87940	Grk2	G protein-coupled receptor kinase 2	beta ARK|beta ARK1|beta-adrenergic receptor kinase-1|beta-AR kinase-1|Adrbk-1|Bark-1|betaARK1|Adrbk1	gene	taxon:10090		UniProtKB:Q99MK8	
+MGI	MGI:87941	Grk3	G protein-coupled receptor kinase 3	beta ARK2|Adrbk-2|Bark-2|4833444A01Rik|Adrbk2	gene	taxon:10090		UniProtKB:Q3UYH7	
+MGI	MGI:87947	Adssl1	adenylosuccinate synthetase like 1	Adss	gene	taxon:10090		UniProtKB:P28650	
+MGI	MGI:87948	Adss	adenylosuccinate synthetase, non muscle	AS	gene	taxon:10090		UniProtKB:P46664	
+MGI	MGI:87951	Afp	alpha fetoprotein	alpha-foetoprotein	gene	taxon:10090		UniProtKB:P02772	
+MGI	MGI:87953	Afr2	alpha fetoprotein regulation 2, inducibility	Rif|Afr-2	gene	taxon:10090			
+MGI	MGI:87954	Aft	abnormal feet and tail		gene	taxon:10090			
+MGI	MGI:87955	ag	agitans		gene	taxon:10090			
+MGI	MGI:87961	Agrn	agrin	NMF380|Agrin|nmf380	gene	taxon:10090		UniProtKB:A2ASQ1	
+MGI	MGI:87963	Agt	angiotensinogen (serpin peptidase inhibitor, clade A, member 8)	Aogen|Serpina8|angiotensin precursor	gene	taxon:10090		UniProtKB:P11859	
+MGI	MGI:87964	Agtr1a	angiotensin II receptor, type 1a	AT1a|Angtr-1a|Agtr-1a|Agtr1a|AT1|1810074K20Rik	gene	taxon:10090		UniProtKB:P29754	
+MGI	MGI:87965	Agtr1b	angiotensin II receptor, type 1b	Agtr-1b|AT1B|Angtr-1b	gene	taxon:10090		UniProtKB:P29755	
+MGI	MGI:87966	Agtr2	angiotensin II receptor, type 2	AT2 receptor	gene	taxon:10090		UniProtKB:P35374	
+MGI	MGI:87967	aha	autoimmune hemolytic anemia		gene	taxon:10090			
+MGI	MGI:87968	Ahcy	S-adenosylhomocysteine hydrolase	CuBP|SAHH	gene	taxon:10090		UniProtKB:P50247	
+MGI	MGI:87971	Ahi1	Abelson helper integration site 1	Ahi-1|1700015F03Rik|D10Bwg0629e|Jouberin	gene	taxon:10090		UniProtKB:Q8K3E5	
+MGI	MGI:87975	Air1	activator of immune response gene Ir1		gene	taxon:10090			
+MGI	MGI:87977	Ak1	adenylate kinase 1	Ak-1|B430205N08Rik	gene	taxon:10090		UniProtKB:Q9R0Y5	
+MGI	MGI:87978	Ak2	adenylate kinase 2	Ak-2|D4Ertd220e	gene	taxon:10090		UniProtKB:Q9WTP6	
+MGI	MGI:87979	Ak4	adenylate kinase 4	Ak-4|D4Ertd274e|Ak-3|Ak3l1	gene	taxon:10090		UniProtKB:Q9WUR9	
+MGI	MGI:87982	Akp1	alkaline phosphatase 1	Akp-1	gene	taxon:10090			
+MGI	MGI:87983	Alpl	alkaline phosphatase, liver/bone/kidney	Akp-2|TNSALP|Akp2|TNAP|ALP	gene	taxon:10090		UniProtKB:P09242	
+MGI	MGI:87984	Akp3	alkaline phosphatase 3, intestine, not Mn requiring	IAP|Akp-3	gene	taxon:10090		UniProtKB:P24822	
+MGI	MGI:87985	Akp4	alkaline phosphatase 4	Akp-4	gene	taxon:10090			
+MGI	MGI:87986	Akt1	thymoma viral proto-oncogene 1	PKB/Akt|Akt|PKBalpha|PKB	gene	taxon:10090		UniProtKB:P31750	
+MGI	MGI:87988	Al	alopecia		gene	taxon:10090			
+MGI	MGI:87989	Alas1	aminolevulinic acid synthase 1	5-aminolevulinate synthase|succinyl-CoA: glycine C-succinyl transferase|Alas-1|ALAS-N	gene	taxon:10090		UniProtKB:Q8VC19	
+MGI	MGI:87990	Alas2	aminolevulinic acid synthase 2, erythroid	ALAS|erythroid-specific ALAS|5-aminolevulinate synthase|Alas-2|ALAS-E|ALASE	gene	taxon:10090		UniProtKB:P08680	
+MGI	MGI:87991	Alb	albumin	Alb-1|Alb1	gene	taxon:10090		UniProtKB:P07724	
+MGI	MGI:87994	Aldoa	aldolase A, fructose-bisphosphate	Aldo-1|Aldo1	gene	taxon:10090		UniProtKB:P05064	
+MGI	MGI:87995	Aldob	aldolase B, fructose-bisphosphate	Aldo-2|Aldo2	gene	taxon:10090		UniProtKB:Q91Y97	
+MGI	MGI:87996	Alm	anterior lenticonus with microphthalmia		gene	taxon:10090			
+MGI	MGI:87997	Alox15	arachidonate 15-lipoxygenase	12-LO|L-12LO|Alox12l	gene	taxon:10090		UniProtKB:P39654	
+MGI	MGI:87998	Alox12	arachidonate 12-lipoxygenase	P-12LO|Alox12p|9930022G08Rik	gene	taxon:10090		UniProtKB:P39655	
+MGI	MGI:87999	Alox5	arachidonate 5-lipoxygenase	5LO|5-LOX|5LX	gene	taxon:10090		UniProtKB:P48999	
+MGI	MGI:88000	alp	alopecia, recessive		gene	taxon:10090			
+MGI	MGI:88001	am	amputated		gene	taxon:10090			
+MGI	MGI:88002	Ambp	alpha 1 microglobulin/bikunin	UTI|Urinary Trypsin Inhibitor|ulinastatin|HI-30|ASPI|Intin4|Itil	gene	taxon:10090		UniProtKB:Q07456	
+MGI	MGI:88004	Amd1	S-adenosylmethionine decarboxylase 1	AdoMetDC|Amd-1|SAMDC	gene	taxon:10090		UniProtKB:P0DMN7	
+MGI	MGI:88005	Amelx	amelogenin, X-linked	Amg|Amel|M100888|Rgsc888	gene	taxon:10090		UniProtKB:P63277	
+MGI	MGI:88006	Amh	anti-Mullerian hormone	MIS|Mullerian inhibiting substance	gene	taxon:10090			
+MGI	MGI:88015	Ampd1	adenosine monophosphate deaminase 1	Ampd-1	gene	taxon:10090		UniProtKB:Q3V1D3	
+MGI	MGI:88016	Ampd2	adenosine monophosphate deaminase 2	Ampd-2|1200014F01Rik|m4521Dajl	gene	taxon:10090		UniProtKB:Q9DBT5	
+MGI	MGI:88017	Mat1a	methionine adenosyltransferase I, alpha	AdoMet|MATA1|SAMS1|MAT|SAMS|Ams	gene	taxon:10090		UniProtKB:Q91X83	
+MGI	MGI:88019	Amy1	amylase 1, salivary	Amy-1	gene	taxon:10090		UniProtKB:P00687	
+MGI	MGI:88020	Amy2a5	amylase 2a5	Amy-2|Amy2|mAmy2-2	gene	taxon:10090			
+MGI	MGI:88022	Ang	angiogenin, ribonuclease, RNase A family, 5	Rnase5a|Ang1	gene	taxon:10090		UniProtKB:P21570	
+MGI	MGI:88024	Ank1	ankyrin 1, erythroid	Ank-1|pale	gene	taxon:10090		UniProtKB:Q02357	
+MGI	MGI:88025	Ank2	ankyrin 2, brain	ankyrin B|Ank-2|Ankyrin-2|Ankyrin-B|Gm4392	gene	taxon:10090		UniProtKB:Q8C8R3	
+MGI	MGI:88026	Ank3	ankyrin 3, epithelial	Ank-3|Ankyrin-3|AnkG|2900054D09Rik|Ankyrin-G	gene	taxon:10090		UniProtKB:G5E8K5	
+MGI	MGI:88029	anx	anorexia		gene	taxon:10090			
+MGI	MGI:88030	Anxa4	annexin A4	Anx4|Xanx-4|AIV|annexin IV	gene	taxon:10090		UniProtKB:P97429	
+MGI	MGI:88031	Anxa7	annexin A7	synexin|Anx7	gene	taxon:10090		UniProtKB:Q07076	
+MGI	MGI:88033	ao	apampischo		gene	taxon:10090			
+MGI	MGI:88034	Prdx3	peroxiredoxin 3	Mer5|TDXM|D0Tohi1|Ef2l|Aop1|Prx III|SP22	gene	taxon:10090		UniProtKB:P20108	
+MGI	MGI:88035	Aox1	aldehyde oxidase 1	retinal oxidase|Aox-1|Aox-2|Aox2	gene	taxon:10090		UniProtKB:O54754	
+MGI	MGI:88037	ap	alopecia periodica		gene	taxon:10090			
+MGI	MGI:88038	Fabp4	fatty acid binding protein 4, adipocyte	ALBP/Ap2|Ap2|Lbpl|422/aP2	gene	taxon:10090		UniProtKB:P04117	
+MGI	MGI:88039	Apc	adenomatosis polyposis coli	Min|CC1	gene	taxon:10090		UniProtKB:Q61315	
+MGI	MGI:88041	Apeh	acylpeptide hydrolase	N-acylaminoacyl peptide hydrolase	gene	taxon:10090		UniProtKB:Q8R146	
+MGI	MGI:88042	Apex1	apurinic/apyrimidinic endonuclease 1	HAP1|Ref-1	gene	taxon:10090		UniProtKB:P28352	
+MGI	MGI:88043	Alph1	alphaprotein 1	Aph-1|Aph1	gene	taxon:10090			
+MGI	MGI:88044	Alph2	alphaprotein 2	Aph-2|Aph2	gene	taxon:10090			
+MGI	MGI:88045	Apk	acid phosphatase, kidney		gene	taxon:10090			
+MGI	MGI:88046	Aplp1	amyloid beta (A4) precursor-like protein 1		gene	taxon:10090		UniProtKB:Q03157	
+MGI	MGI:88047	Aplp2	amyloid beta (A4) precursor-like protein 2		gene	taxon:10090		UniProtKB:Q06335	
+MGI	MGI:88048	Apo	anterior polar opacity		gene	taxon:10090			
+MGI	MGI:88049	Apoa1	apolipoprotein A-I	Alp-1|Apoa-1|Sep-1|Brp-14|Sep-2|Lvtw-1|Sep2|Ltw-1	gene	taxon:10090		UniProtKB:Q00623	
+MGI	MGI:88050	Apoa2	apolipoprotein A-II	ApoA-II|Alp-2|Apoa-2|Hdl-1	gene	taxon:10090		UniProtKB:P09813	
+MGI	MGI:88051	Apoa4	apolipoprotein A-IV	Apoa-4	gene	taxon:10090		UniProtKB:P06728	
+MGI	MGI:88052	Apob	apolipoprotein B	apob-48|apob-100	gene	taxon:10090		UniProtKB:E9Q414	
+MGI	MGI:88053	Apoc1	apolipoprotein C-I		gene	taxon:10090		UniProtKB:P34928	
+MGI	MGI:88054	Apoc2	apolipoprotein C-II		gene	taxon:10090			
+MGI	MGI:88055	Apoc3	apolipoprotein C-III		gene	taxon:10090		UniProtKB:P33622	
+MGI	MGI:88056	Apod	apolipoprotein D		gene	taxon:10090		UniProtKB:P51910	
+MGI	MGI:88057	Apoe	apolipoprotein E		gene	taxon:10090		UniProtKB:P08226	
+MGI	MGI:88058	Apoh	apolipoprotein H	beta-2-glycoprotein 1|beta-2-GPI|B2GPI	gene	taxon:10090		UniProtKB:Q01339	
+MGI	MGI:88059	App	amyloid beta (A4) precursor protein	betaAPP|Abeta|protease nexin II|Adap|Cvap|appican|E030013M08Rik	gene	taxon:10090		UniProtKB:P12023	
+MGI	MGI:88061	Aprt	adenine phosphoribosyl transferase		gene	taxon:10090		UniProtKB:P08030	
+MGI	MGI:88064	Ar	androgen receptor		gene	taxon:10090		UniProtKB:P19091	
+MGI	MGI:88065	Araf	Araf proto-oncogene, serine/threonine kinase	1200013E08Rik|A-Raf|Araf1	gene	taxon:10090		UniProtKB:P04627	
+MGI	MGI:88067	Arc	activity regulated cytoskeletal-associated protein	Arc3.1|arg 3.1	gene	taxon:10090		UniProtKB:Q9WV31	
+MGI	MGI:88068	Areg	amphiregulin	AR|Sdgf|Mcub	gene	taxon:10090		UniProtKB:P31955	
+MGI	MGI:88070	Arg1	arginase, liver	PGIF|Arg-1|AI	gene	taxon:10090		UniProtKB:Q61176	
+MGI	MGI:88071	Arnt	aryl hydrocarbon receptor nuclear translocator	Hif1b|ESTM42|D3Ertd557e|bHLHe2	gene	taxon:10090		UniProtKB:P53762	
+MGI	MGI:88075	Arsb	arylsulfatase B	As-1s|Ast-1|Asr-1|As-1t|As-1|As-1r|As1-s|As1|As1-r|As1-t|1110007C02Rik	gene	taxon:10090		UniProtKB:P50429	
+MGI	MGI:88077	Arsa	arylsulfatase A	As-2|ASA|As2|AS-A	gene	taxon:10090		UniProtKB:P50428	
+MGI	MGI:88078	asa	anti-sarcolemmal autoantibodies		gene	taxon:10090			
+MGI	MGI:88079	Asc1	anterior suture cataract 1	Asc-1	gene	taxon:10090			
+MGI	MGI:88080	Asc2	anterior suture cataract 2	Asc-2	gene	taxon:10090			
+MGI	MGI:88081	Asgr1	asialoglycoprotein receptor 1	Asgr|Asgr-1|ASGPR1	gene	taxon:10090		UniProtKB:P34927	
+MGI	MGI:88082	Asgr2	asialoglycoprotein receptor 2	Asgr|Asgr-2|ASGPR2	gene	taxon:10090		UniProtKB:P24721	
+MGI	MGI:88084	Asl	argininosuccinate lyase	2510006M18Rik	gene	taxon:10090		UniProtKB:Q91YI0	
+MGI	MGI:88085	asp1	audiogenic seizure prone 1	Ias|asp-1	gene	taxon:10090			
+MGI	MGI:88086	asp2	audiogenic seizure prone 2	asp|asp-2	gene	taxon:10090			
+MGI	MGI:88090	Ass1	argininosuccinate synthetase 1	ASS|Ass-1|fold	gene	taxon:10090		UniProtKB:P16460	
+MGI	MGI:88094	at	atrichosis		gene	taxon:10090			
+MGI	MGI:88095	Serpinc1	serine (or cysteine) peptidase inhibitor, clade C (antithrombin), member 1	ATIII|antithrombin|At-3|At3	gene	taxon:10090		UniProtKB:P32261	
+MGI	MGI:88096	Atf4	activating transcription factor 4	CREB2|C/ATF|TAXREB67|Atf-4	gene	taxon:10090		UniProtKB:Q06507	
+MGI	MGI:88105	Atp1a1	ATPase, Na+/K+ transporting, alpha 1 polypeptide	Atpa-1	gene	taxon:10090		UniProtKB:Q8VDN2	
+MGI	MGI:88106	Atp1a2	ATPase, Na+/K+ transporting, alpha 2 polypeptide	Atpa-3	gene	taxon:10090		UniProtKB:Q6PIE5	
+MGI	MGI:88107	Atp1a3	ATPase, Na+/K+ transporting, alpha 3 polypeptide	Atpa-2	gene	taxon:10090		UniProtKB:Q6PIC6	
+MGI	MGI:88108	Atp1b1	ATPase, Na+/K+ transporting, beta 1 polypeptide	sodium/potassium ATPase beta subunit|Atpb|Atpb-1	gene	taxon:10090		UniProtKB:P14094	
+MGI	MGI:88109	Atp1b2	ATPase, Na+/K+ transporting, beta 2 polypeptide	Amog|Atpb-2	gene	taxon:10090		UniProtKB:P14231	
+MGI	MGI:88110	Atp2a2	ATPase, Ca++ transporting, cardiac muscle, slow twitch 2	sarco/endoplasmic reticulum Ca2+-ATPase 2|SERCA2|9530097L16Rik|D5Wsu150e|SERCA2B|Serca2a	gene	taxon:10090		UniProtKB:O55143	
+MGI	MGI:88111	Atp2b4	ATPase, Ca++ transporting, plasma membrane 4	PMCA4	gene	taxon:10090		UniProtKB:Q6Q477	
+MGI	MGI:88113	Atp4a	ATPase, H+/K+ exchanging, gastric, alpha polypeptide	H+K+-transporting alpha 1|H+/K+-ATPase alpha	gene	taxon:10090		UniProtKB:Q64436	
+MGI	MGI:88114	Atp4b	ATPase, H+/K+ exchanging, beta polypeptide	H+,K+-ATPase|H,K-ATPase-Beta|H+/K+-ATPase beta	gene	taxon:10090		UniProtKB:P50992	
+MGI	MGI:88115	Atp5a1	ATP synthase, H+ transporting, mitochondrial F1 complex, alpha subunit 1	Atpm|D18Ertd206e|Mom2	gene	taxon:10090		UniProtKB:Q03265	
+MGI	MGI:88116	Atp6v0c	ATPase, H+ transporting, lysosomal V0 subunit C	proteolipid|PL16|H(+)-ATPase (mvp)|Atpl|Atpl-rs1|Atp6l|Atp6c2	gene	taxon:10090		UniProtKB:P63082	
+MGI	MGI:88117	Slc7a1	solute carrier family 7 (cationic amino acid transporter, y+ system), member 1	Rec-1|Rev-1|Atrc-1|Atrc1|4831426K01Rik|mCAT-1|Cat1	gene	taxon:10090		UniProtKB:Q09143	
+MGI	MGI:88121	Avp	arginine vasopressin	Vsp|Vp	gene	taxon:10090		UniProtKB:P35455	
+MGI	MGI:88123	Avpr2	arginine vasopressin receptor 2	nephrogenic diabetes insipidus|V2R|DI1|ND1	gene	taxon:10090		UniProtKB:O88721	
+MGI	MGI:88125	Axd	axial defects		gene	taxon:10090			
+MGI	MGI:88127	B2m	beta-2 microglobulin	beta 2 microglobulin|beta2-m|Ly-m11	gene	taxon:10090		UniProtKB:P01887	
+PR	Q04750	mTOP1	DNA topoisomerase 1 (mouse)		protein	taxon:10090	MGI:MGI:98788	UniProtKB:Q04750	
+PR	Q04758	mPKIB	cAMP-dependent protein kinase inhibitor beta (mouse)		protein	taxon:10090	MGI:MGI:101937	UniProtKB:Q04758	
+PR	Q9CPW0-1	mCNTNAP2/iso:m1	contactin-associated protein-like 2 isoform m1 (mouse)		protein	taxon:10090	MGI:MGI:1914047	UniProtKB:Q9CPW0-1	
+PR	B2RWW0	mTAGAP	T-cell activation Rho GTPase-activating protein (mouse)		protein	taxon:10090	MGI:MGI:3615484	UniProtKB:B2RWW0	
+PR	P46414	mCDKN1B	cyclin-dependent kinase inhibitor 1B (mouse)		protein	taxon:10090	MGI:MGI:104565	UniProtKB:P46414	
+PR	Q9WV54	mASAH1	acid ceramidase (mouse)		protein	taxon:10090	MGI:MGI:1277124	UniProtKB:Q9WV54	
+PR	P46412	mGPX3	glutathione peroxidase 3 (mouse)		protein	taxon:10090	MGI:MGI:105102	UniProtKB:P46412	
+PR	Q923Z4	mFERD3L	fer3-like protein (mouse)		protein	taxon:10090	MGI:MGI:2150010	UniProtKB:Q923Z4	
+PR	Q923Z3	mMTO1	protein MTO1 homolog, mitochondrial (mouse)		protein	taxon:10090	MGI:MGI:1915541	UniProtKB:Q923Z3	
+PR	P56473	mAGRP	agouti-related protein (mouse)		protein	taxon:10090	MGI:MGI:892013	UniProtKB:P56473	
+PR	Q923Z0	mGPRC5B	G-protein coupled receptor family C group 5 member B (mouse)		protein	taxon:10090	MGI:MGI:1927596	UniProtKB:Q923Z0	
+PR	Q9WV56	mGDF2	growth/differentiation factor 2 (mouse)		protein	taxon:10090	MGI:MGI:1321394	UniProtKB:Q9WV56	
+PR	P62897-1	mCYCS/iso:1	cytochrome c, somatic isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:88578	UniProtKB:P62897-1	
+PR	Q32MD9	mCDON	cell adhesion molecule-related/down-regulated by oncogenes (mouse)		protein	taxon:10090	MGI:MGI:1926387	UniProtKB:Q32MD9	
+PR	Q9QZJ6	mMFAP5	microfibrillar-associated protein 5 (mouse)		protein	taxon:10090	MGI:MGI:1354387	UniProtKB:Q9QZJ6	
+PR	P48168-1	mGLRB/iso:1	glycine receptor subunit beta isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:95751	UniProtKB:P48168-1	
+PR	Q60687-1	mFSHB/iso:1	follitropin subunit beta isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:95582	UniProtKB:Q60687-1	
+PR	P63085-1	mMAPK1/iso:1	mitogen-activated protein kinase 1 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1346858	UniProtKB:P63085-1	
+PR	A2RSQ1	mGLB1L3	beta-galactosidase-1-like protein 3 (mouse)		protein	taxon:10090	MGI:MGI:1918143	UniProtKB:A2RSQ1	
+PR	A2RSQ0	mDENND5B	DENN domain-containing protein 5B (mouse)		protein	taxon:10090	MGI:MGI:2444273	UniProtKB:A2RSQ0	
+PR	Q91ZS8-2	mADARB1/iso:2	double-stranded RNA-specific editase 1 isoform 2 (mouse)		protein	taxon:10090	MGI:MGI:891999	UniProtKB:Q91ZS8-2	
+PR	P17679-2	mGATA1/iso:2	erythroid transcription factor isoform 2 (mouse)	mGATA-1s|mGATA-1s	protein	taxon:10090	MGI:MGI:95661	UniProtKB:P17679-2	
+PR	Q8R0L1	mSTAP2	signal-transducing adaptor protein 2 (mouse)		protein	taxon:10090	MGI:MGI:2147039	UniProtKB:Q8R0L1	
+PR	P32037	mSLC2A3	solute carrier family 2, facilitated glucose transporter member 3 (mouse)		protein	taxon:10090	MGI:MGI:95757	UniProtKB:P32037	
+PR	Q9DAJ5	mDYNLRB2	dynein light chain roadblock-type 2 (mouse)		protein	taxon:10090	MGI:MGI:1922715	UniProtKB:Q9DAJ5	
+PR	Q9DAJ4	mWDR83	WD repeat domain-containing protein 83 (mouse)		protein	taxon:10090	MGI:MGI:1915086	UniProtKB:Q9DAJ4	
+PR	Q9DAJ2	mTEKT1	tektin-1 (mouse)		protein	taxon:10090	MGI:MGI:1333819	UniProtKB:Q9DAJ2	
+PR	P30545	mADRA2B	alpha-2B adrenergic receptor (mouse)		protein	taxon:10090	MGI:MGI:87935	UniProtKB:P30545	
+PR	Q923K4-2	mGTPBP3/iso:m2	tRNA modification GTPase GTPBP3, mitochondrial isoform m2 (mouse)		protein	taxon:10090	MGI:MGI:1917609	UniProtKB:Q923K4-2	
+PR	P30548	mTACR1	substance-P receptor (mouse)		protein	taxon:10090	MGI:MGI:98475	UniProtKB:P30548	
+PR	P30549	mTACR2	substance-K receptor (mouse)		protein	taxon:10090	MGI:MGI:98477	UniProtKB:P30549	
+PR	O35704-1	mSPTLC1/iso:1	serine palmitoyltransferase 1 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1099431	UniProtKB:O35704-1	
+PR	Q8K045	mPKN3	serine/threonine-protein kinase N3 (mouse)		protein	taxon:10090	MGI:MGI:2388285	UniProtKB:Q8K045	
+PR	Q8VHB5	mCA9	carbonic anhydrase 9 (mouse)		protein	taxon:10090	MGI:MGI:2447188	UniProtKB:Q8VHB5	
+PR	Q8JZV4-2	mRBM41/iso:m2	RNA-binding protein 41 isoform m2 (mouse)		protein	taxon:10090	MGI:MGI:2444923	UniProtKB:Q8JZV4-2	
+PR	Q8JZV4-3	mRBM41/iso:m3	RNA-binding protein 41 isoform m3 (mouse)		protein	taxon:10090	MGI:MGI:2444923	UniProtKB:Q8JZV4-3	
+PR	Q8JZV4-1	mRBM41/iso:1	RNA-binding protein 41 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:2444923	UniProtKB:Q8JZV4-1	
+PR	Q8JZV4-4	mRBM41/iso:m4	RNA-binding protein 41 isoform m4 (mouse)		protein	taxon:10090	MGI:MGI:2444923	UniProtKB:Q8JZV4-4	
+PR	Q02614	mSAP30BP	SAP30-binding protein (mouse)		protein	taxon:10090	MGI:MGI:1927479	UniProtKB:Q02614	
+PR	Q8R5M2-1	mWNT9A/iso:1	protein Wnt-9a isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:2446084	UniProtKB:Q8R5M2-1	
+PR	Q922H9	mZNF330	zinc finger protein 330 (mouse)		protein	taxon:10090	MGI:MGI:1353574	UniProtKB:Q922H9	
+PR	Q8R0C0-1	mPOLR3GL/iso:1	DNA-directed RNA polymerase III subunit RPC7-like isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1917120	UniProtKB:Q8R0C0-1	
+PR	Q922H4	mGMPPA	mannose-1-phosphate guanyltransferase alpha (mouse)		protein	taxon:10090	MGI:MGI:1916330	UniProtKB:Q922H4	
+PR	Q922H7	mRASL11B	ras-like protein family member 11B (mouse)		protein	taxon:10090	MGI:MGI:1916189	UniProtKB:Q922H7	
+PR	Q922H1	mPRMT3	protein arginine N-methyltransferase 3 (mouse)		protein	taxon:10090	MGI:MGI:1919224	UniProtKB:Q922H1	
+PR	Q922H2	mPDK3	[Pyruvate dehydrogenase (acetyl-transferring)] kinase isozyme 3, mitochondrial (mouse)		protein	taxon:10090	MGI:MGI:2384308	UniProtKB:Q922H2	
+PR	Q61211	mEIF2D	eukaryotic translation initiation factor 2D (mouse)		protein	taxon:10090	MGI:MGI:109342	UniProtKB:Q61211	
+PR	Q61614-1	mEDNRA/iso:1	endothelin-1 receptor isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:105923	UniProtKB:Q61614-1	
+PR	Q66K08-1	mCILP/iso:1	cartilage intermediate layer protein 1 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:2444507	UniProtKB:Q66K08-1	
+PR	Q9CQV7-2	mDNAJC19/iso:m2	mitochondrial import inner membrane translocase subunit TIM14 isoform m2 (mouse)		protein	taxon:10090	MGI:MGI:1914963	UniProtKB:Q9CQV7-2	
+PR	Q61210	mArhgef1	rho guanine nucleotide exchange factor 1 (mouse)		protein	taxon:10090	MGI:MGI:1353510	UniProtKB:Q61210	
+PR	Q9D823	mRPL37	60S ribosomal protein L37 (mouse)		protein	taxon:10090	MGI:MGI:1914531	UniProtKB:Q9D823	
+PR	Q9D820	mProrsd1	prolyl-tRNA synthetase associated domain-containing protein 1 (mouse)		protein	taxon:10090	MGI:MGI:1915189	UniProtKB:Q9D820	
+PR	Q9D826	mPIPOX	peroxisomal sarcosine oxidase (mouse)		protein	taxon:10090	MGI:MGI:1197006	UniProtKB:Q9D826	
+PR	Q9D824	mFIP1L1	pre-mRNA 3'-end-processing factor FIP1 (mouse)		protein	taxon:10090	MGI:MGI:1914149	UniProtKB:Q9D824	
+PR	O35674	mADAM19	disintegrin and metalloproteinase domain-containing protein 19 (mouse)		protein	taxon:10090	MGI:MGI:105377	UniProtKB:O35674	
+PR	Q80X71-1	mTMEM106B/iso:1	transmembrane protein 106B isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1919150	UniProtKB:Q80X71-1	
+PR	Q8K2D6	mDCTD	deoxycytidylate deaminase (mouse)		protein	taxon:10090	MGI:MGI:2444529	UniProtKB:Q8K2D6	
+PR	O35607-1	mBMPR2/iso:1	bone morphogenetic protein receptor type-2 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1095407	UniProtKB:O35607-1	
+PR	Q9CWQ2	mZSWIM7	zinc finger SWIM domain-containing protein 7 (mouse)		protein	taxon:10090	MGI:MGI:1916997	UniProtKB:Q9CWQ2	
+PR	Q99K82	mSMOX	spermine oxidase (mouse)		protein	taxon:10090	MGI:MGI:2445356	UniProtKB:Q99K82	
+PR	Q9CWQ8	mGATSL3	GATS-like protein 3 (mouse)		protein	taxon:10090	MGI:MGI:1919212	UniProtKB:Q9CWQ8	
+PR	Q8BSQ9-2	mPBRM1/iso:2	protein polybromo-1 isoform 2 (mouse)		protein	taxon:10090	MGI:MGI:1923998	UniProtKB:Q8BSQ9-2	
+PR	Q8BSQ9-1	mPBRM1/iso:1	protein polybromo-1 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1923998	UniProtKB:Q8BSQ9-1	
+PR	Q61636	mUTRN/iso:m2	utrophin isoform m2 (mouse)	utrophin isoform G (mouse)|G-utrophin (mouse)|utrophin isoform G (mouse)|G-utrophin (mouse)	protein	taxon:10090	MGI:MGI:104631	UniProtKB:Q61636	
+PR	Q8C5P5	mNT5DC1	5'-nucleotidase domain-containing protein 1 (mouse)		protein	taxon:10090	MGI:MGI:2442446	UniProtKB:Q8C5P5	
+PR	Q9D2F0	mTMEM210	transmembrane protein 210 (mouse)		protein	taxon:10090	MGI:MGI:1925467	UniProtKB:Q9D2F0	
+PR	Q64729	mTGFBR1	TGF-beta receptor type-1 (mouse)		protein	taxon:10090	MGI:MGI:98728	UniProtKB:Q64729	
+PR	Q76LL6-2	mFHOD3/iso:FHOS2S	FH1/FH2 domain-containing protein 3 isoform FHOS2S (mouse)	FHOS2S|FHOS2S	protein	taxon:10090	MGI:MGI:1925847	UniProtKB:Q76LL6-2	
+PR	Q99MS3-1	mMPV17L/iso:m1	mpv17-like protein isoform m1 (mouse)		protein	taxon:10090	MGI:MGI:2135951	UniProtKB:Q99MS3-1	
+PR	Q76LL6-1	mFHOD3/iso:FHOS2L	FH1/FH2 domain-containing protein 3 isoform FHOS2L (mouse)	FHOS2L|FHOS2L	protein	taxon:10090	MGI:MGI:1925847	UniProtKB:Q76LL6-1	
+PR	Q9JKD8	mTBX21	T-box transcription factor TBX21 (mouse)		protein	taxon:10090	MGI:MGI:1888984	UniProtKB:Q9JKD8	
+PR	Q99MS3-3	mMPV17L/iso:m3	mpv17-like protein isoform m3 (mouse)		protein	taxon:10090	MGI:MGI:2135951	UniProtKB:Q99MS3-3	
+PR	Q9ESE1	mLRBA	lipopolysaccharide-responsive and beige-like anchor protein (mouse)		protein	taxon:10090	MGI:MGI:1933162	UniProtKB:Q9ESE1	
+PR	Q9DBG3-1	mAP2B1/iso:1	AP-2 complex subunit beta isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1919020	UniProtKB:Q9DBG3-1	
+PR	Q9DBG3-2	mAP2B1/iso:2	AP-2 complex subunit beta isoform 2 (mouse)		protein	taxon:10090	MGI:MGI:1919020	UniProtKB:Q9DBG3-2	
+PR	P70126-1	mST8SIA5/iso:V-L	alpha-2,8-sialyltransferase 8E isoform V-L (mouse)		protein	taxon:10090	MGI:MGI:109243	UniProtKB:P70126-1	
+PR	Q8CBG9-3	mRNF170/iso:m3	E3 ubiquitin-protein ligase RNF170 isoform m3 (mouse)		protein	taxon:10090	MGI:MGI:1924983	UniProtKB:Q8CBG9-3	
+PR	P70126-3	mST8SIA5/iso:V-S	alpha-2,8-sialyltransferase 8E isoform V-S (mouse)		protein	taxon:10090	MGI:MGI:109243	UniProtKB:P70126-3	
+PR	P70126-2	mST8SIA5/iso:V-M	alpha-2,8-sialyltransferase 8E isoform V-M (mouse)		protein	taxon:10090	MGI:MGI:109243	UniProtKB:P70126-2	
+PR	Q6ZPF3-1	mTIAM2/iso:m1	T-lymphoma invasion and metastasis-inducing protein 2 isoform m1 (mouse)		protein	taxon:10090	MGI:MGI:1344338	UniProtKB:Q6ZPF3-1	
+PR	P47939-1	mRESP18/iso:1	regulated endocrine-specific protein 18 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1098222	UniProtKB:P47939-1	
+PR	P58749-1	mTM6SF1/iso:1	transmembrane 6 superfamily member 1 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1933209	UniProtKB:P58749-1	
+PR	P61982	mYWHAG	14-3-3 protein gamma (mouse)		protein	taxon:10090	MGI:MGI:108109	UniProtKB:P61982	
+PR	P31313	mHoxc11	homeobox protein Hox-C11 (mouse)		protein	taxon:10090	MGI:MGI:96193	UniProtKB:P31313	
+PR	P31311	mHOXA11	homeobox protein Hox-A11 (mouse)		protein	taxon:10090	MGI:MGI:96172	UniProtKB:P31311	
+PR	P31316	mGSX2	GS homeobox 2 (mouse)		protein	taxon:10090	MGI:MGI:95843	UniProtKB:P31316	
+PR	P31315	mGSX1	GS homeobox 1 (mouse)		protein	taxon:10090	MGI:MGI:95842	UniProtKB:P31315	
+PR	Q8C138	mAdtrp	androgen-dependent TFPI-regulating protein (mouse)		protein	taxon:10090	MGI:MGI:1924596	UniProtKB:Q8C138	
+PR	O88983-1	mSTX8/iso:1	syntaxin-8 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1890156	UniProtKB:O88983-1	
+PR	Q6ZPF3-4	mTIAM2/iso:m4	T-lymphoma invasion and metastasis-inducing protein 2 isoform m4 (mouse)		protein	taxon:10090	MGI:MGI:1344338	UniProtKB:Q6ZPF3-4	
+PR	Q9WUP4	mSRD5A3	polyprenol reductase (mouse)		protein	taxon:10090	MGI:MGI:1930252	UniProtKB:Q9WUP4	
+PR	Q8C131	mHCAR1	hydroxycarboxylic acid receptor 1 (mouse)		protein	taxon:10090	MGI:MGI:2441671	UniProtKB:Q8C131	
+PR	Q9WUP7	mUCHL5	ubiquitin carboxyl-terminal hydrolase isozyme L5 (mouse)		protein	taxon:10090	MGI:MGI:1914848	UniProtKB:Q9WUP7	
+PR	Q9WUP0	mRAMP2	receptor activity-modifying protein 2 (mouse)		protein	taxon:10090	MGI:MGI:1859650	UniProtKB:Q9WUP0	
+PR	Q9WUP1	mRAMP3	receptor activity-modifying protein 3 (mouse)		protein	taxon:10090	MGI:MGI:1860292	UniProtKB:Q9WUP1	
+PR	Q8BFU0-1	mRSPO2/iso:1	R-spondin-2 isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:1922667	UniProtKB:Q8BFU0-1	
+PR	Q8VDD8	mWash1	WAS protein family homolog 1 (mouse)		protein	taxon:10090	MGI:MGI:1916017	UniProtKB:Q8VDD8	
+PR	Q9WTP6-2	mAK2/iso:2	adenylate kinase 2, mitochondrial isoform 2 (mouse)		protein	taxon:10090	MGI:MGI:87978	UniProtKB:Q9WTP6-2	
+PR	Q61941-1	mNNT/iso:1	NAD(P) transhydrogenase, mitochondrial isoform 1 (mouse)		protein	taxon:10090	MGI:MGI:109279	UniProtKB:Q61941-1	

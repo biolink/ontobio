@@ -428,6 +428,13 @@ class AssocParser():
         ids = [id for id in ids if self._validate_id(id, '')]
         return ids
 
+    def _normalize_id(self, id):
+        toks = id.split(":")
+        if len(toks) > 1:
+            return self._pair_to_id(toks[0], ":".join(toks[1:]))
+        else:
+            return id
+    
     def _pair_to_id(self, db, localid):
         if self.config.remove_double_prefixes:
             ## Switch MGI:MGI:n to MGI:n
