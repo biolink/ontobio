@@ -40,7 +40,7 @@ def main():
         description='Command line interface to python-ontobio.golr library'
         """
 
-        Provides command line interface onto the ontobio.golr python library, a high level 
+        Provides command line interface onto the ontobio.golr python library, a high level
         abstraction layer over Monarch and GO solr indices.
         """,
         formatter_class=argparse.RawTextHelpFormatter)
@@ -67,15 +67,18 @@ def main():
 
     if args.verbosity >= 2:
         logging.basicConfig(level=logging.DEBUG)
-    if args.verbosity == 1:
+    elif args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+        
     logging.info("Welcome!")
 
     r = pivot_query_as_matrix(facet=args.facet,
                               fq=args.fq,
                               facet_pivot_fields=args.pivot,
                               url=args.url,
-                              is_go=args.legacy_solr,                              
+                              is_go=args.legacy_solr,
                               **args.qargs)
 
     print(str(r))
@@ -85,6 +88,6 @@ def main():
     data=[trace]
     py.plot(data, filename='pivot-heatmap')
 
-    
+
 if __name__ == "__main__":
     main()

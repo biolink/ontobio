@@ -63,12 +63,15 @@ def main():
 
     if args.verbosity >= 2:
         logging.basicConfig(level=logging.DEBUG)
-    if args.verbosity == 1:
+    elif args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+        
     logging.info("Welcome!")
-    
+
     handle = args.resource
-    
+
     factory = OntologyFactory()
     logging.info("Creating ont object from: {} {}".format(handle, factory))
     ont = factory.create(handle)
@@ -79,7 +82,7 @@ def main():
     if dirn == '' and args.to is not None:
         dirn = 'u'
     searchp = args.search
-    
+
     if args.level is not None:
         logging.info("Query for level: {}".format(args.level))
         qids = qids + ont.get_level(args.level, relations=args.properties, prefix=args.prefix)
@@ -98,14 +101,14 @@ def main():
                     cset = cset.intersection(terms)
             dset = dset.union(cset)
         qids = qids + list(dset)
-                    
-        
+
+
     if args.query is not None:
         qids = qids + ont.sparql(select='*',
                                  body=args.query,
                                  inject_prefixes = ont.prefixes(),
                                  single_column=True)
-        
+
     for id in ont.resolve_names(args.ids,
                                 is_remote = searchp.find('x') > -1,
                                 is_partial_match = searchp.find('p') > -1,
@@ -127,7 +130,7 @@ def cmd_cycles(handle, args):
 
     cycles = nx.simple_cycles(g)
     print(list(cycles))
-    
+
 def cmd_search(handle, args):
     for t in args.terms:
         results = search(handle, t)
@@ -147,7 +150,7 @@ def show_subgraph(ont, query_ids, args):
     w.write(ont, query_ids=query_ids, container_predicates=args.container_properties)
     #logging.info("Writing subgraph for {}, |nodes|={}".format(ont,len(nodes)))
     #w.write_subgraph(ont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
-            
+
 def resolve_ids(ont, ids, args):
     r_ids = []
     for id in ids:
@@ -158,6 +161,6 @@ def resolve_ids(ont, ids, args):
             r_ids += matches
     return r_ids
 
-    
+
 if __name__ == "__main__":
     main()

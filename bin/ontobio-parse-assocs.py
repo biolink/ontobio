@@ -89,6 +89,7 @@ def main():
         logging.basicConfig(level=logging.INFO)
     else:
         logging.basicConfig(level=logging.WARNING)
+
     logging.info("Welcome!")
 
     handle = args.resource

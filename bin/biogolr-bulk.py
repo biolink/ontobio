@@ -37,7 +37,7 @@ def main():
         description='Command line interface to python-ontobio.golr library'
         """
 
-        Provides command line interface onto the ontobio.golr python library, a high level 
+        Provides command line interface onto the ontobio.golr python library, a high level
         abstraction layer over Monarch and GO solr indices.
         """,
         formatter_class=argparse.RawTextHelpFormatter)
@@ -63,8 +63,11 @@ def main():
 
     if args.verbosity >= 2:
         logging.basicConfig(level=logging.DEBUG)
-    if args.verbosity == 1:
+    elif args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+        
     logging.info("Welcome!")
 
     [subject_category, object_category] = args.category
@@ -75,12 +78,12 @@ def main():
                         rows=args.limit,
                         slim=args.slim,
                         url=args.url)
-    
+
     for a in assocs:
         print("{}\t{}\t{}".format(a['subject'],
                                     a['relation'],
                                     ";".join(a['objects'])))
 
-    
+
 if __name__ == "__main__":
     main()
