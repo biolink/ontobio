@@ -43,6 +43,7 @@ class AssociationSet():
         self.subject_label_map = subject_label_map
         self.subject_to_inferred_map = {}
         self.meta = meta  # TODO
+        self.associations_by_subj_obj = None
         self.strict = False
         self.index()
         logging.info("Created {}".format(self))
@@ -287,6 +288,19 @@ class AssociationSet():
         Generates a sub-ontology based on associations
         """
         return self.ontology.subontology(self.objects, minimal=minimal)
+
+    # TODO
+    def get_assocations(self, subj, obj):
+        """
+        Given a subject-object pair (e.g. gene id to ontology class id), return all association
+        objects that match.
+
+        Status: not yet implemented
+        """
+        if self.associations_by_subj_obj is not None:
+            return self.associations_by_subj_obj[subj][obj]
+        else:
+            return []
     
     def enrichment_test(self, subjects=[], background=None, hypotheses=None, threshold=0.05, labels=False, direction='greater'):
         """
