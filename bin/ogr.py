@@ -119,7 +119,7 @@ def main():
     # deprecated
     #g = ont.get_filtered_graph(relations=args.properties)
     subont = ont.subontology(nodes, relations=args.properties)
-    show_subgraph(subont, qids, args)
+    render(subont, qids, args)
 
 
 def cmd_cycles(handle, args):
@@ -134,7 +134,7 @@ def cmd_search(handle, args):
         for r in results:
             print(r)
 
-def show_subgraph(ont, query_ids, args):
+def render(ont, query_ids, args):
     """
     Writes or displays graph
     """

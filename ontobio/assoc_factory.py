@@ -132,7 +132,6 @@ class AssociationSetFactory():
         results = p.skim(file)
         return self.create_from_tuples(results, **args)
 
-
     def create_from_phenopacket(self, file):
         """
         Creates from a phenopacket file

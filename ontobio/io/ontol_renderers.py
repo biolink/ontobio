@@ -200,14 +200,13 @@ class SimpleListGraphRenderer(GraphRenderer):
         super().__init__(**args)
 
     def render(self, ontol, **args):
-        g = ontol.get_graph() # TODO - use ontol methods directly
         s = ""
         for n in ontol.nodes():
             s += self.render_noderef(ontol, n, **args) + "\n"
-            for n2 in ontol.parents(n):
-                for _,ea in g[n2][n].items():
-                    s += '  {} {}'.format(str(ea['pred']), self.render_noderef(ontol, n2, **args))
-                    s += "\n"
+            #for n2 in ontol.parents(n):
+            #    for _,ea in g[n2][n].items():
+            #        s += '  {} {}'.format(str(ea['pred']), self.render_noderef(ontol, n2, **args))
+            #        s += "\n"
         return s
         
 class AsciiTreeGraphRenderer(GraphRenderer):
@@ -254,17 +253,7 @@ class OboFormatGraphRenderer(GraphRenderer):
         super().__init__(**args)
         
     def render(self, ontol, **args):
-        g = ontol.get_graph() # TODO - use ontol methods directly
-        ts = g.nodes()
-        ts.sort()
-        s = "ontology: auto\n\n"
-        for n in ts:
-            s += self.render_noderef(self, n, ontol, **args)
-        return s
-
-    def render(self, ontol, **args):
-        g = ontol.get_graph() # TODO - use ontol methods directly
-        ts = g.nodes()
+        ts = ontol.nodes()
         ts.sort()
         s = "ontology: auto\n\n"
         for n in ts:
@@ -272,20 +261,24 @@ class OboFormatGraphRenderer(GraphRenderer):
         return s
     
     def render_node(self, nid, ontol, **args):
-        g = ontol.get_graph() # TODO - use ontol methods directly
-        n = g.node[nid]
         s = "[Term]\n";
         s += self.tag('id', nid)
-        s += self._dtag('name', n, 'label')
-        for p in g.predecessors(nid):
-            for _,ea in g[p][nid].items():
-                pred = ea['pred']
-                if p in g and 'label' in g.node[p]:
-                    p = '{} ! {}'.format(p, g.node[p]['label'])
+        label = ontol.label(nid)
+        if label is not None:
+            s += self.tag('name', label)
+            
+        for p in ontol.parents(nid):
+            for pred in ontol.child_parent_relations(nid,p):
+                p_str = p
+                if p in ontol.nodes():
+                    p_label = ontol.label(p)
+                    if p_label is not None:
+                        p_str = '{} ! {}'.format(p, p_label)
+                    
                 if pred == 'subClassOf':
-                    s += self.tag('is_a', p)
+                    s += self.tag('is_a', p_str)
                 else:
-                    s += self.tag('relationship', pred, p)
+                    s += self.tag('relationship', pred, p_str)
         for ld in ontol.logical_definitions(nid):
             for gen in ld.genus_ids:
                 s += self.tag('intersection_of', gen)
