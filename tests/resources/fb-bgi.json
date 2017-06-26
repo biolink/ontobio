@@ -1,0 +1,514 @@
+{
+  "data": [
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000001]%3Efbrf",
+      "name": "4.5SRNA",
+      "primaryId": "FB:FBgn0000001",
+      "soTermId": "SO:0000011",
+      "symbol": "4.5SRNA",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000002]%3Efbrf",
+      "name": "5S ribosomal RNA",
+      "primaryId": "FB:FBgn0000002",
+      "soTermId": "SO:0000573",
+      "symbol": "5SrRNA",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "crossReferenceIds": [
+        "NCBI_Gene:3771948"
+      ],
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000003]%3Efbrf",
+      "genomeLocations": [
+        {
+          "assembly": "6.13",
+          "chromosome": "3R",
+          "endPosition": 6822796,
+          "startPosition": 6822497,
+          "strand": "+"
+        }
+      ],
+      "name": "Signal recognition particle 7SL RNA CR32864",
+      "primaryId": "FB:FBgn0000003",
+      "secondaryIds": [
+        "FB:CR32864"
+      ],
+      "soTermId": "SO:0000011",
+      "symbol": "7SLRNA:CR32864",
+      "synonyms": [
+        "CR32864",
+        "7SL RNA",
+        "7SLRNA",
+        "RNA 7SL"
+      ],
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "crossReferenceIds": [
+        "NCBI_Gene:43852"
+      ],
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000008]%3Efbrf",
+      "genomeLocations": [
+        {
+          "assembly": "6.13",
+          "chromosome": "2R",
+          "endPosition": 22172834,
+          "startPosition": 22136967,
+          "strand": "+"
+        }
+      ],
+      "name": "arc",
+      "primaryId": "FB:FBgn0000008",
+      "secondaryIds": [
+        "FB:CG6741"
+      ],
+      "soTermId": "SO:0000010",
+      "symbol": "a",
+      "synonyms": [
+        "Arc",
+        "bran",
+        "CG13505",
+        "CG6741",
+        "broad angular"
+      ],
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000009]%3Efbrf",
+      "name": "Abnormal abdomen",
+      "primaryId": "FB:FBgn0000009",
+      "soTermId": "SO:0000704",
+      "symbol": "Abnormal-abdomen",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000010]%3Efbrf",
+      "name": "anarista",
+      "primaryId": "FB:FBgn0000010",
+      "soTermId": "SO:0000704",
+      "symbol": "aa",
+      "synonyms": [
+        "al-b",
+        "aristaless-b"
+      ],
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000012]%3Efbrf",
+      "name": "abbreviated",
+      "primaryId": "FB:FBgn0000012",
+      "soTermId": "SO:0000704",
+      "symbol": "abb",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000013]%3Efbrf",
+      "name": "abdominal",
+      "primaryId": "FB:FBgn0000013",
+      "soTermId": "SO:0000704",
+      "symbol": "abd",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "crossReferenceIds": [
+        "NCBI_Gene:42037",
+        "UniProtKB:P29555"
+      ],
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000014]%3Efbrf",
+      "geneSynopsis": "Abdominal A is a homeobox-containing transcription factor component of the bithorax complex. It contributes to the developmental fate of embryonic segments.",
+      "genomeLocations": [
+        {
+          "assembly": "6.13",
+          "chromosome": "3R",
+          "endPosition": 16830049,
+          "startPosition": 16807213,
+          "strand": "-"
+        }
+      ],
+      "name": "abdominal A",
+      "primaryId": "FB:FBgn0000014",
+      "secondaryIds": [
+        "FB:CG10325"
+      ],
+      "soTermId": "SO:0000010",
+      "symbol": "abd-A",
+      "synonyms": [
+        "iab-3",
+        "iab3",
+        "iab4",
+        "ABD-A",
+        "Hab",
+        "iab2",
+        "Dmabda",
+        "iab-2",
+        "iab-4",
+        "Cbxd",
+        "abd-a",
+        "Abd-A",
+        "Abda",
+        "CG10325",
+        "DmabdA",
+        "AbdA",
+        "abda",
+        "iab",
+        "Fab-3",
+        "abd A",
+        "BX-C",
+        "Fab-4",
+        "l(3)89Ec",
+        "abdA",
+        "iab-5",
+        "abd_a",
+        "Abdominal-A",
+        "infraabdominal",
+        "abdominal-A",
+        "infra-abdominal 2",
+        "abdominal-a",
+        "AbdominalA",
+        "infra-abdominal 3",
+        "Ultraabdominal",
+        "abdominalA",
+        "Contrabithoraxoid",
+        "infra-abdominal 4",
+        "Hyperabdominal"
+      ],
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "crossReferenceIds": [
+        "NCBI_Gene:47763",
+        "UniProtKB:P09087"
+      ],
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000015]%3Efbrf",
+      "geneSynopsis": "Abdominal B is one of the 3 hox genes of the bithorax complex, specifying the identity of the posterior abdominal segments, the external genitalia and the gonads. It is also involved in regulating the post-mating-response.",
+      "genomeLocations": [
+        {
+          "assembly": "6.13",
+          "chromosome": "3R",
+          "endPosition": 16972236,
+          "startPosition": 16927211,
+          "strand": "-"
+        }
+      ],
+      "name": "Abdominal B",
+      "primaryId": "FB:FBgn0000015",
+      "secondaryIds": [
+        "FB:CG11648"
+      ],
+      "soTermId": "SO:0000010",
+      "symbol": "Abd-B",
+      "synonyms": [
+        "MCP",
+        "iab9",
+        "iab-6",
+        "DmAbdB",
+        "AbdB-II",
+        "iab6",
+        "iab5",
+        "AbdB-I",
+        "iab8",
+        "Iab-7",
+        "ABD-B",
+        "Fab-6",
+        "AdbB",
+        "iab",
+        "iab-8",
+        "Tab",
+        "AbdBm",
+        "FAB",
+        "Fab7",
+        "BX-C",
+        "ABDB",
+        "IAB8",
+        "Droabdb",
+        "Abd B",
+        "tuh-3",
+        "iab-5",
+        "AbdB",
+        "AbdB(CA)[[26]]",
+        "iab-8,9",
+        "abd-B",
+        "Abd0B",
+        "bex",
+        "iab-7",
+        "pH189",
+        "Sab",
+        "l(3)89Ed",
+        "CG10291",
+        "IAB5",
+        "Abd-b",
+        "Mcp",
+        "iab7",
+        "Uab-5[Sab]",
+        "CG11648",
+        "iab8.9",
+        "Abdb",
+        "twig",
+        "Fab-8",
+        "abdB",
+        "IAB 5",
+        "DROABDB",
+        "Fab-7",
+        "Mc",
+        "IAB7",
+        "Transabdominal",
+        "abdominal-b",
+        "abdominal-A",
+        "abdominal-B",
+        "infra-abdominal 6",
+        "AbdominalB",
+        "infra-abdominal 5",
+        "Abdominal-B",
+        "Microcephalus",
+        "infra-abdominal 8",
+        "Superabdominal",
+        "Miscadastral pigmentation",
+        "corset",
+        "infraabdominal-8.9",
+        "infra-abdominal 7",
+        "Male chauvinist pigmentation",
+        "infraabdominal",
+        "infra-abdominal 9"
+      ],
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "crossReferenceIds": [
+        "NCBI_Gene:45821",
+        "UniProtKB:P00522"
+      ],
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000017]%3Efbrf",
+      "geneSynopsis": "Abl tyrosine kinase is a non-receptor tyrosine kinase best known for its ortholog's role in human leukemia. It phosphorylates cell adhesion and cytoskeletal proteins and acts as a scaffold in a signaling complex to regulate both epithelial and nervous system morphogenesis.",
+      "genomeLocations": [
+        {
+          "assembly": "6.13",
+          "chromosome": "3L",
+          "endPosition": 16647882,
+          "startPosition": 16615865,
+          "strand": "-"
+        }
+      ],
+      "name": "Abl tyrosine kinase",
+      "primaryId": "FB:FBgn0000017",
+      "secondaryIds": [
+        "FB:CG4032"
+      ],
+      "soTermId": "SO:0000010",
+      "symbol": "Abl",
+      "synonyms": [
+        "ABL",
+        "D-abl",
+        "Ddash/abl",
+        "c-abl",
+        "l(3)04674",
+        "Abl1",
+        "l(3)c-abl",
+        "CG4032",
+        "DAbl",
+        "4674",
+        "Dash",
+        "cAbl",
+        "l(3)73Ba",
+        "Am ABL",
+        "D-Abl",
+        "Dabl",
+        "C-abl",
+        "dAbl",
+        "abl",
+        "DROTKABL3",
+        "D-ash",
+        "Dsrc7",
+        "abl1",
+        "Ableson",
+        "AblK",
+        "abelson",
+        "Abelson",
+        "Abelson Kinase",
+        "Abelson Tyrosine Kinase",
+        "D-abelson",
+        "Abelson tyrosine kinase",
+        "Abelson kinase",
+        "Abl oncogene",
+        "abl kinase",
+        "Abl"
+      ],
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "crossReferenceIds": [
+        "NCBI_Gene:44793"
+      ],
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000018]%3Efbrf",
+      "genomeLocations": [
+        {
+          "assembly": "6.13",
+          "chromosome": "2L",
+          "endPosition": 10975293,
+          "startPosition": 10973442,
+          "strand": "-"
+        }
+      ],
+      "name": "abnormal oocyte",
+      "primaryId": "FB:FBgn0000018",
+      "secondaryIds": [
+        "FB:CG6093"
+      ],
+      "soTermId": "SO:0000010",
+      "symbol": "abo",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000019]%3Efbrf",
+      "name": "abero",
+      "primaryId": "FB:FBgn0000019",
+      "soTermId": "SO:0000704",
+      "symbol": "abr",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000020]%3Efbrf",
+      "name": "abnormal tergites",
+      "primaryId": "FB:FBgn0000020",
+      "soTermId": "SO:0000704",
+      "symbol": "abt",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000021]%3Efbrf",
+      "name": "abnormal wings",
+      "primaryId": "FB:FBgn0000021",
+      "soTermId": "SO:0000704",
+      "symbol": "abw",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "crossReferenceIds": [
+        "NCBI_Gene:30981",
+        "UniProtKB:P10083"
+      ],
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000022]%3Efbrf",
+      "geneSynopsis": "Achaete is a BHLH transcription factor that interacts antagonistically with the Notch signaling pathway to promote neural precursor formation. Its major role is in nervous system development.",
+      "genomeLocations": [
+        {
+          "assembly": "6.13",
+          "chromosome": "X",
+          "endPosition": 370947,
+          "startPosition": 370030,
+          "strand": "+"
+        }
+      ],
+      "name": "achaete",
+      "primaryId": "FB:FBgn0000022",
+      "secondaryIds": [
+        "FB:CG3796"
+      ],
+      "soTermId": "SO:0000010",
+      "symbol": "ac",
+      "synonyms": [
+        "AS-C T5ac",
+        "Hw",
+        "AC",
+        "T5",
+        "sc/T5",
+        "CG3796",
+        "AS-C",
+        "EG:125H10.3",
+        "990 E5 F1",
+        "AS-C T5",
+        "ascT5",
+        "ASC",
+        "Ac",
+        "Hairy-wing",
+        "achete",
+        "achaete-scute",
+        "Achaete/Scute",
+        "Hairy wing",
+        "Achaete",
+        "asc",
+        "Acheate"
+      ],
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000023]%3Efbrf",
+      "name": "acclinal wing",
+      "primaryId": "FB:FBgn0000023",
+      "soTermId": "SO:0000704",
+      "symbol": "acclinal-wing",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "crossReferenceIds": [
+        "NCBI_Gene:41625",
+        "UniProtKB:P07140"
+      ],
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000024]%3Efbrf",
+      "geneSynopsis": "Acetylcholine esterase catalyzes the hydrolysis of the neurotransmitter acetylcholine to acetate and choline, thus resetting the neurotransmission mechanism at neuromuscular junctions.",
+      "genomeLocations": [
+        {
+          "assembly": "6.13",
+          "chromosome": "3R",
+          "endPosition": 13259517,
+          "startPosition": 13222950,
+          "strand": "-"
+        }
+      ],
+      "name": "Acetylcholine esterase",
+      "primaryId": "FB:FBgn0000024",
+      "secondaryIds": [
+        "FB:CG17907"
+      ],
+      "soTermId": "SO:0000010",
+      "symbol": "Ace",
+      "synonyms": [
+        "Dm_ace",
+        "AChE",
+        "AcChE",
+        "DmAChE",
+        "FBgn0000024",
+        "CG17907",
+        "AchE",
+        "dAChE",
+        "ace-2",
+        "ache",
+        "CHE",
+        "dmAChE",
+        "ace",
+        "l(3)87Ed",
+        "ACE",
+        "l(3)26",
+        "acetylcholine esterase",
+        "Acetylcholinesterase",
+        "acetylcholinesterase",
+        "acetyl choline esterase"
+      ],
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000025]%3Efbrf",
+      "name": "abnormal chemosensory jump 1",
+      "primaryId": "FB:FBgn0000025",
+      "soTermId": "SO:0000704",
+      "symbol": "acj1",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000026]%3Efbrf",
+      "name": "abnormal chemosensory jump 2",
+      "primaryId": "FB:FBgn0000026",
+      "soTermId": "SO:0000704",
+      "symbol": "acj2",
+      "taxonId": "NCBITaxon:7227"
+    },
+    {
+      "geneLiteratureUrl": "http://flybase.org/cgi-bin/uniq.html?query=[FBgn-FBID_KEY:FBgn0000027]%3Efbrf",
+      "name": "abnormal chemosensory jump 3",
+      "primaryId": "FB:FBgn0000027",
+      "soTermId": "SO:0000704",
+      "symbol": "acj3",
+      "taxonId": "NCBITaxon:7227"
+    }
+  ]
+}
