@@ -71,7 +71,7 @@ class Report():
     OBSOLETE_CLASS_NO_REPLACEMENT = "Obsolete class with no replacement"
     WRONG_NUMBER_OF_COLUMNS = "Wrong number of columns in this line"
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
-    
+
     """
     3 warning levels
     """
@@ -211,7 +211,7 @@ class AssocParser():
 
             parsed_line, new_assocs  = self.parse_line(line)
             if self._skipping_line(new_assocs): # Skip if there were no assocs
-                logging.warn("SKIPPING: {}".format(line))
+                logging.info("SKIPPING: {}".format(line))
                 skipped.append(line)
             else:
                 for a in new_assocs:
@@ -393,13 +393,13 @@ class AssocParser():
             return date
         # tuple on a string will turn each character into a slot
         return '{}-{}-{}'.format(date[0:4],date[4:6],date[6:8])
-    
+
     def _validate_symbol(self, symbol, line):
         if symbol is None or symbol == "":
             self.report.warning(line, Report.INVALID_SYMBOL, symbol, "empty")
         if ' ' in symbol:
             self.report.warning(line, Report.INVALID_SYMBOL, symbol, "should not contain spaces")
-    
+
 
     def _validate_id(self, id, line, context=None):
         if " " in id:
@@ -561,7 +561,7 @@ class GpadParser(AssocParser):
             self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
                 msg="There were {columns} columns found in this line, and there should be 12".format(columns=len(vals)))
             return line, []
-        
+
         [db,
          db_object_id,
          qualifier,
@@ -591,7 +591,7 @@ class GpadParser(AssocParser):
         #    if ecomap.ecoclass_to_coderef(evidence) == (None,None):
         #        self.report.error(line, Report.UNKNOWN_EVIDENCE_CLASS, evidence,
         #                          msg="Expecting a known ECO class ID")
-        
+
         ## --
         ## qualifier
         ## --
@@ -664,7 +664,7 @@ class GafParser(AssocParser):
                 logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
             negated, relation, _ = self._parse_qualifier(vals[3], vals[8])
-            
+
             # never include NOTs in a skim
             if negated:
                 continue
@@ -712,7 +712,7 @@ class GafParser(AssocParser):
             self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
                 msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
             return line, []
-            
+
         [db,
          db_object_id,
          db_object_symbol,
@@ -742,7 +742,7 @@ class GafParser(AssocParser):
             return line, []
 
         date = self._normalize_gaf_date(date, line)
-        
+
         # If the evidence code is one of the set we're filtering out (skipping)
         # then no association and return!
         if evidence.upper() in self.config.filter_out_evidence:
@@ -753,10 +753,10 @@ class GafParser(AssocParser):
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
                 self.report.error(line, Report.UNKNOWN_EVIDENCE_CLASS, evidence,
                                   msg="Expecting a known ECO GAF code, e.g ISS")
-        
+
         # validation
         self._validate_symbol(db_object_symbol, line)
-        
+
         # Example use case: mapping from UniProtKB to MOD ID
         if config.entity_map is not None:
             id = self.map_id(id, config.entity_map)
@@ -919,7 +919,7 @@ class HpoaParser(GafParser):
             self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
                 msg="There were {columns} columns found in this line, and there should be 14".format(columns=len(vals)))
             return line, []
-        
+
         [db,
          db_object_id,
          db_object_symbol,
@@ -956,7 +956,7 @@ class HpoaParser(GafParser):
 
         #TODO: HPOA has different date styles
         #date = self._normalize_gaf_date(date, line)
-        
+
         # Example use case: mapping from OMIM to Orphanet
         if config.entity_map is not None:
             id = self.map_id(id, config.entity_map)

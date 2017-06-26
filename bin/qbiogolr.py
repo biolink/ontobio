@@ -32,7 +32,7 @@ def main():
         description='Command line interface to python-ontobio.golr library'
         """
 
-        Provides command line interface onto the ontobio.golr python library, a high level 
+        Provides command line interface onto the ontobio.golr python library, a high level
         abstraction layer over Monarch and GO solr indices.
         """,
         formatter_class=argparse.RawTextHelpFormatter)
@@ -71,8 +71,11 @@ def main():
 
     if args.verbosity >= 2:
         logging.basicConfig(level=logging.DEBUG)
-    if args.verbosity == 1:
+    elif args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+        
     logging.info("Welcome!")
 
     ont = None
@@ -83,11 +86,11 @@ def main():
         factory = OntologyFactory()
         logging.info("Factory: {}".format(factory))
         ont = factory.create(handle)
-        logging.info("Created ont: {}".format(ont))    
+        logging.info("Created ont: {}".format(ont))
         g = ont.get_filtered_graph(relations=args.properties)
 
     w = GraphRenderer.create(args.to)
-    
+
     nodes = set()
 
     display = args.display
@@ -106,7 +109,7 @@ def main():
         assocs += this_assocs
 
     logging.info("Num assocs: {}".format(len(assocs)))
-    
+
     for a in assocs:
         print("{}\t{}\t{}\t{}".format(a['subject'],
                                   a['subject_label'],
@@ -120,7 +123,7 @@ def main():
 
             if display.find('r') > -1:
                 pass
-            
+
             if display.find('o') > -1:
                 for obj in objs:
                     nodes.add(obj)
@@ -150,7 +153,7 @@ def main():
 
         # display tree/graph
         show_graph(subg, nodes, objs, args)
-            
+
 # TODO
 def cmd_map2slim(ont, args):
 
@@ -167,7 +170,7 @@ def cmd_map2slim(ont, args):
             print(a)
             for x in a['objects']:
                 print('  '+pp_node(g,x,args))
-                
+
 
 def show_graph(g, nodes, query_ids, args):
     """
@@ -201,7 +204,7 @@ def search_compact_wrap(**args):
                                        **args
     )
     return searchresult['compact_associations'], searchresult['facet_counts']
-    
-    
+
+
 if __name__ == "__main__":
     main()

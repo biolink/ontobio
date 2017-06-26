@@ -41,7 +41,7 @@ def main():
         description='Command line interface to python-ontobio.golr library'
         """
 
-        Provides command line interface onto the ontobio.golr python library, a high level 
+        Provides command line interface onto the ontobio.golr python library, a high level
         abstraction layer over Monarch and GO solr indices.
         """,
         formatter_class=argparse.RawTextHelpFormatter)
@@ -67,13 +67,16 @@ def main():
 
     parser.add_argument('search', type=str,
                         help='Search terms')
-    
+
     args = parser.parse_args()
 
     if args.verbosity >= 2:
         logging.basicConfig(level=logging.DEBUG)
-    if args.verbosity == 1:
+    elif args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+        
     logging.info("Welcome!")
 
     facets = []
@@ -96,7 +99,7 @@ def main():
                                  fq=args.fq,
                                  facet_fields=facets,
                                  url=args.url)
-    
+
         results = q.exec()
         #print("RESULTS={}".format(results))
         docs = results['associations']
@@ -109,14 +112,14 @@ def main():
                             fq=args.fq,
                             facet_fields=facets,
                             url=args.url)
-    
+
         results = q.exec()
         #print("RESULTS={}".format(results))
         docs = results['docs']
         print("RESULTS: {}".format(len(docs)))
         for r in docs:
             print(" {} '{}' {} // {}".format(r['id'],r['label'],r['score'], r['category']))
-            
+
     if len(facets) > 0:
         #from collections import OrderedDict
         fcs = results['facet_counts']
@@ -126,6 +129,6 @@ def main():
             print("## FACET: {}".format(f))
             for k,v in sorted(d.items(), key=lambda t: -t[1]):
                 print("  {:5d}: {}".format(v,k))
-    
+
 if __name__ == "__main__":
     main()
