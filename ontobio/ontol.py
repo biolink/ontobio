@@ -114,7 +114,6 @@ class Ontology():
             for (o,s,m) in xg.edges(data=True):
                 g.add_edge(o,s,attr_dict=m)
             
-        
     def subgraph(self, nodes=[]):
         """
         Return an induced subgraph
@@ -128,23 +127,22 @@ class Ontology():
         """
         Return a new ontology that is an extract of this one
 
-        Arguments:
-
-        - Nodes: list
-
+        Arguments
+        ---------
+        - nodes: list
             list of node IDs to include in subontology. If None, all are used
-
-        - Relations: list
-
+        - relations: list
             list of relation IDs to include in subontology. If None, all are used
 
         """
-        g = self.get_graph()
+        g = None
         if nodes is not None:
-            g = g.subgraph(nodes)
+            g = self.subgraph(nodes)
+        else:
+            g = self.get_graph()            
         if minimal:
             from ontobio.slimmer import get_minimal_subgraph
-            g = get_minimal_subgraph(self.get_graph(), nodes)
+            g = get_minimal_subgraph(g, nodes)
             
         ont = Ontology(graph=g) # TODO - add metadata
         if relations is not None:
@@ -316,7 +314,32 @@ class Ontology():
     
     def neighbors(self, node, relations=None):
         return self.parents(node, relations=relations) + self.children(node, relations=relations)
+
+    def child_parent_relations(self, subj, obj, graph=None):
+        """
+        Get all relationship type ids between a subject and a parent.
+
+        Typically only one relation ID returned, but in some cases there may be more than one
         
+        Arguments
+        ---------
+        subj: string
+            Child (subject) id
+        obj: string
+            Parent (object) id
+
+        Returns
+        -------
+        list
+        """
+        if graph is None:
+            graph = self.get_graph()
+        preds = set()
+        for _,ea in graph[obj][subj].items():
+            preds.add(ea['pred'])
+        logging.debug('{}->{} = {}'.format(subj,obj,preds))
+        return preds
+    
     def parents(self, node, relations=None):
         """
         Return all direct parents of specified node.
@@ -331,14 +354,14 @@ class Ontology():
            list of relation (object property) IDs used to filter
 
         """
-        g = None
-        if relations is None:
-            g = self.get_graph()
-        else:
-            # TODO: make this more efficient
-            g = self.get_filtered_graph(relations)
+        g = self.get_graph()
         if node in g:
-            return g.predecessors(node)
+            parents = g.predecessors(node)
+            if relations is None:
+                return parents
+            else:
+                rset = set(relations)
+                return [p for p in parents if len(self.child_parent_relations(node, p, graph=g).intersection(rset)) > 0 ]
         else:
             return []
     
@@ -360,13 +383,14 @@ class Ontology():
            list of relation (object property) IDs used to filter
 
         """
-        g = None
-        if relations is None:
-            g = self.get_graph()
-        else:
-            g = self.get_filtered_graph(relations)
+        g = self.get_graph()
         if node in g:
-            return g.successors(node)
+            children = g.successors(node)
+            if relations is None:
+                return children
+            else:
+                rset = set(relations)
+                return [c for c in children if len(self.child_parent_relations(c, node, graph=g).intersection(rset)) > 0 ]
         else:
             return []
     
@@ -409,7 +433,7 @@ class Ontology():
 
     def descendants(self, node, relations=None, reflexive=False):
         """
-        Returns all ancestors of specified node.
+        Returns all descendants of specified node.
 
         The default implementation is to use networkx, but some
         implementations of the Ontology class may use a database or
@@ -431,8 +455,9 @@ class Ontology():
             descendant node IDs
         """
         if reflexive:
-            ancs = self.ancestors(node, relations, reflexive=False)
-            return ancs + [node]
+            decs = self.descendants(node, relations, reflexive=False)
+            decs.add(node)
+            return decs
         g = None
         if relations is None:
             g = self.get_graph()
@@ -530,7 +555,29 @@ class Ontology():
         for n in g:
             l.append([n] ++ g.predecessors(b))
         return l
-        
+
+    def text_definition(self, nid):
+        """
+        Retrieves logical definitions for a class or relation id
+
+        Arguments
+        ---------
+        nid : str
+            Node identifier for entity to be queried
+
+        Returns
+        -------
+        TextDefinition
+        """
+        tdefs = []
+        meta = self._meta(nid)
+        if 'definition' in meta:
+            obj = meta['definition']
+            return TextDefinition(nid, **obj)
+        else:
+            return None
+
+    
     def logical_definitions(self, nid):
         """
         Retrieves logical definitions for a class id
@@ -588,7 +635,12 @@ class Ontology():
             return defn['val']
     
 
-    
+    def get_node_type(self, nid):
+        n = self.node(nid)
+        if 'type' in n:
+            return n['type']
+        return None
+ 
     def _get_meta_prop(self, nid, prop):
         n = self.node(nid)
         if 'meta' in n:
@@ -676,6 +728,18 @@ class Ontology():
         if include_label:
             syns.append(Synonym(nid, val=self.label(nid), pred='label'))
         return syns
+    
+    def add_synonym(self, syn):
+        """
+        Adds a synonym for a node
+        """
+        n = self.node(syn.class_id)
+        if 'meta' not in n:
+            n['meta'] = {}
+        meta = n['meta']
+        if 'synonyms' not in meta:
+            meta['synonyms'] = []
+        meta['synonyms'].append({'val': syn.val,'pred': syn.pred})
 
     def all_synonyms(self, include_label=False):
         """
@@ -853,7 +917,47 @@ class LogicalDefinition():
     def __repr__(self):
         return self.__str__()
 
-class Synonym():
+class AbstractPropertyValue(object):
+    """
+    Abstract superclass of all property-value mapping classes.
+    These correspond to Annotations in OWL
+    """
+    def __str__(self):
+        return '{} "{}" {}'.format(self.subject, self.val, self.xrefs)
+    def __repr__(self):
+        return self.__str__()
+
+    def __cmp__(self, other):
+        (x,y) = (str(self),str(other))
+        if x > y:
+            return 1
+        elif x < y:
+            return -1
+        else:
+            return 0
+    
+class TextDefinition(AbstractPropertyValue):
+    """
+    Represents a textual definition for a class or relation
+    """
+
+    def __init__(self, subject, val=None, xrefs=None, ontology=None):
+        """
+        Arguments
+        ---------
+         - subject : string
+             id for the class or relation that is being defined
+         - val : string
+             the definition itself
+         - xrefs: list
+             Provenance or cross-references to same usage
+        """
+        self.subject = subject
+        self.val = val
+        self.xrefs = xrefs
+        self.ontology = ontology
+        
+class Synonym(AbstractPropertyValue):
     """
     Represents a synonym using the OBO model
     """
@@ -866,26 +970,17 @@ class Synonym():
 
     def __init__(self, class_id, val=None, pred=None, lextype=None, xrefs=None, ontology=None):
         """
-        Arguments:
-
+        Arguments
+        ---------
          - class_id : string
-
              the class that is being defined
-
-         - value : string
-
+         - val : string
              the synonym itself
-
          - pred: string
-
              oboInOwl predicate used to model scope. One of: has{Exact,Narrow,Related,Broad}Synonym - may also be 'label'
-
          - lextype: string
-
              From an open ended set of types
-
          - xrefs: list
-
              Provenance or cross-references to same usage
 
         """
@@ -904,6 +999,9 @@ class Synonym():
 
     def scope(self):
         return self.predmap[self.pred].upper()
+
+    def exact_or_label(self):
+        return self.pred == 'hasExactSynonym' or self.pred == 'label'
     
     def __cmp__(self, other):
         (x,y) = (str(self),str(other))

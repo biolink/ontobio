@@ -135,7 +135,7 @@ def solr_quotify(v):
     else:
         # TODO - escape quotes
         return '"{}"'.format(v)
-    
+
 
 # We take the monarch golr as default
 # Note that these can be overridden using a config object
@@ -224,7 +224,7 @@ class GolrAbstractQuery():
             from ontobio.config import Config, get_config
             self.config = get_config()
         return self.config
-    
+
     def _set_solr(self, endpoint):
         self.solr = pysolr.Solr(endpoint.url, timeout=endpoint.timeout)
         return self.solr
@@ -237,7 +237,7 @@ class GolrAbstractQuery():
             return True
         return False
 
-    
+
 class GolrSearchQuery(GolrAbstractQuery):
     """
     Queries over a search document
@@ -253,7 +253,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                  hl=True,
                  facet_fields=None,
                  search_fields=None,
-                 rows=100):
+                 rows=100,
+                 start=None):
         self.term = term
         self.category = category
         self.is_go = is_go
@@ -265,6 +266,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.facet_fields = facet_fields
         self.search_fields = search_fields
         self.rows = rows
+        self.start = start
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
 
@@ -281,7 +283,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         fq = {}
         if self.category is not None:
             fq['category'] = self.category
-        
+
         qf = []
         suffixes = ['std','kw','eng']
         if self.is_go:
@@ -302,16 +304,16 @@ class GolrSearchQuery(GolrAbstractQuery):
                 self._set_solr(self.get_config().solr_search)
             else:
                 self.solr = pysolr.Solr(self.url, timeout=2)
-        
+
         #if self.url is None:
         #    self.url = 'https://solr-dev.monarchinitiative.org/solr/search'
         #self.solr = pysolr.Solr(self.url, timeout=2)
-        
+
         for (f,relevancy) in self.search_fields.items():
             fmt="{}_{}^{}"
             for suffix in suffixes:
                 qf.append(fmt.format(f,suffix,relevancy))
-            
+
         select_fields = ["*","score"]
         params = {
             'q': self.term,
@@ -324,11 +326,15 @@ class GolrSearchQuery(GolrAbstractQuery):
             "qf": qf,
             'rows': self.rows
         }
+
+        if self.start is not None:
+            params['start'] = self.start
+
         if self.hl:
             params['hl.simple.pre'] = "<em class=\"hilite\">"
             params['hl.snippets'] = "1000"
             params['hl'] = 'on'
-            
+
         if fq is not None:
             filter_queries = [ '{}:{}'.format(k,solr_quotify(v)) for (k,v) in fq.items()]
             params['fq'] = filter_queries
@@ -337,7 +343,7 @@ class GolrSearchQuery(GolrAbstractQuery):
 
     def exec(self, **kwargs):
         """
-        Execute solr query         
+        Execute solr query
         """
 
         params = self.solr_params()
@@ -345,7 +351,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         results = self.solr.search(**params)
         n_docs = len(results.docs)
         logging.info("Docs found: {}".format(results.hits))
-    
+
         fcs = results.facets
 
         # map go-golr fields to standard
@@ -359,9 +365,10 @@ class GolrSearchQuery(GolrAbstractQuery):
             'highlighting': results.highlighting,
             'docs': results.docs
         }
-    
+        logging.debug('Docs: {}'.format(len(results.docs)))
+
         return payload
-                 
+
 
 class GolrAssociationQuery(GolrAbstractQuery):
     """
@@ -420,12 +427,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         See :ref:`Config` for details. The config object can be used
         to set values for the solr instance to be queried
-    
+
     """
     def __init__(self,
                  subject_category=None,
                  object_category=None,
                  relation=None,
+                 subject_or_object_ids=None,
                  subject=None,
                  subjects=None,
                  object=None,
@@ -461,6 +469,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  pivot_subject_object=False,
                  unselect_evidence=False,
                  rows=10,
+                 start=None,
                  homology_type=None,
                  **kwargs):
 
@@ -471,6 +480,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.subject_category=subject_category
         self.object_category=object_category
         self.relation=relation
+        self.subject_or_object_ids=subject_or_object_ids
         self.subject=subject
         self.subjects=subjects
         self.object=object
@@ -506,6 +516,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.unselect_evidence=unselect_evidence
         self.max_rows=100000
         self.rows=rows
+        self.start=start
         self.homology_type = homology_type
         self.url = url
         # test if client explicitly passes a URL; do not override
@@ -533,8 +544,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if fq is None:
             fq = {}
         logging.info("TEMPx FQ={}".format(fq))
-        
-        
+
+        # subject_or_object_ids is a list of identifiers that can be matched to either subjects or objects
+        subject_or_object_ids = self.subject_or_object_ids
+        if subject_or_object_ids is not None:
+            subject_or_object_ids = [self.make_canonical_identifier(c) for c in subject_or_object_ids]
+
         # canonical form for MGI is a CURIE MGI:nnnn
         #if subject is not None and subject.startswith('MGI:MGI:'):
         #    logging.info('Unhacking MGI ID presumably from GO:'+str(subject))
@@ -545,11 +560,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
         subjects=self.subjects
         if subjects is not None:
             subjects = [self.make_canonical_identifier(s) for s in subjects]
-    
+
         # temporary: for querying go solr, map fields. TODO
         object_category=self.object_category
         logging.info("Object category: {}".format(object_category))
-        
+
         object=self.object
         if object_category is None and object is not None and object.startswith('GO:'):
             # Infer category
@@ -563,7 +578,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 #self.solr = monarch_solr
             else:
                 self.solr = pysolr.Solr(self.url, timeout=5)
-                
+
         # URL to use for querying solr
         if self._use_amigo_schema(object_category):
             if self.url is None:
@@ -576,7 +591,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             # UNLESS this is a planteome golr
             if "planteome" in self.get_config().amigo_solr_assocs.url:
                 self.field_mapping[M.SUBJECT_CATEGORY] = 'type'
-                
+
             fq['document_category'] = 'annotation'
             if subject is not None:
                 subject = self.make_gostyle_identifier(subject)
@@ -590,7 +605,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 cc = self.get_config().get_category_class(object_category)
                 if cc is not None and object == None:
                     object = cc
-    
+
         ## subject params
         subject_taxon=self.subject_taxon
         subject_category=self.subject_category
@@ -598,12 +613,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # heuristic procedure to guess unspecified subject_category
         if subject_category is None and subject is not None:
             subject_category = self.infer_category(subject)
-        
+
         if subject_category is not None and subject_category == 'disease':
             if subject_taxon is not None and subject_taxon=='NCBITaxon:9606':
                 logging.info("Unsetting taxon, until indexed correctly")
                 subject_taxon = None
-    
+
         if self.invert_subject_object is None:
             # TODO: consider placing in a separate lookup
             p = (subject_category,object_category)
@@ -615,10 +630,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 self.invert_subject_object = False
             if self.invert_subject_object:
                 logging.info("Inferred that subject/object should be inverted for {}".format(p))
-                
+
         ## taxon of object of triple
         object_taxon=self.object_taxon
-        
+
         # typically information is stored one-way, e.g. model-disease;
         # sometimes we want associations from perspective of object
         if self.invert_subject_object:
@@ -631,7 +646,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         facet_on=self.facet_on
         facet_limit=self.facet_limit
         select_fields=self.select_fields
-            
+
         if self.use_compact_associations:
             facet_fields = []
             facet_on = 'off'
@@ -641,13 +656,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 M.SUBJECT_LABEL,
                 M.RELATION,
                 M.OBJECT]
-    
+
         if subject_category is not None:
             fq['subject_category'] = subject_category
         if object_category is not None:
             fq['object_category'] = object_category
-    
-    
+
+
         if object is not None:
             # TODO: make configurable whether to use closure
             fq['object_closure'] = object
@@ -664,7 +679,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['subject'] = subjects
             else:
                 fq['subject_closure'] = subjects
-                
+
         objects=self.objects
         if objects is not None:
             # lists are assumed to be disjunctive
@@ -684,7 +699,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['-evidence_object_closure'] = e.replace("-","")
             else:
                 fq['evidence_object_closure'] = e
-                
+
         if self.exclude_automatic_assertions:
             fq['-evidence_object_closure'] = 'ECO:0000501'
 
@@ -699,19 +714,19 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['relation_closure'] = \
             HomologyTypes.LeastDivergedOrtholog.value
 
-            
+
         ## pivots
         facet_pivot_fields=self.facet_pivot_fields
         if self.pivot_subject_object:
             facet_pivot_fields = [M.SUBJECT, M.OBJECT]
-    
-    
+
+
         # Map solr field names for fq. The generic Monarch schema is
         # canonical, GO schema is mapped to this using
         # field_mapping dictionary
         if self.field_mapping is not None:
             for (k,v) in self.field_mapping.items():
-    
+
                 # map fq[k] -> fq[k]
                 if k in fq:
                     if v is None:
@@ -719,7 +734,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     else:
                         fq[v] = fq[k]
                         del fq[k]
-    
+
                 # in solr, the fq field can be
                 # a negated expression, e.g. -evidence_object_closure:"ECO:0000501"
                 # ideally we would have a higher level representation rather than
@@ -733,13 +748,26 @@ class GolrAssociationQuery(GolrAbstractQuery):
                         fq[negv] = fq[negk]
                         del fq[negk]
 
-                        
+
         filter_queries = []
         qstr = "*:*"
         if self.q is not None:
             qstr = self.q
         filter_queries = [ '{}:{}'.format(k,solr_quotify(v)) for (k,v) in fq.items()]
-    
+
+        # We want to match all associations that have either a subject or object
+        # with an ID that is contained in subject_or_object_ids, and sort them by the number
+        # of hits to the ID's in subject_or_object_ids
+        boost_function = None
+        if subject_or_object_ids is not None:
+            summands = ['termfreq(subject_closure, ' + c + ')' \
+                        'termfreq(object_closure, ' + c + ')' for c in subject_or_object_ids]
+            boost_function = 'prod(sum('+ ','.join(summands) + '), 10)'
+            disjunction = " OR ".join(['"' + c + '"' for c in subject_or_object_ids])
+            disjunctive_query = 'subject_closure:(' + disjunction + ')' \
+                                ' OR object_closure:(' + disjunction + ')'
+            filter_queries.append(disjunctive_query.strip())
+
         # unless caller specifies a field list, use default
         if select_fields is None:
             select_fields = [
@@ -762,13 +790,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     M.EVIDENCE_OBJECT,
                     M.EVIDENCE_GRAPH
                 ]
-    
+
         if self.map_identifiers is not None:
             select_fields.append(M.SUBJECT_CLOSURE)
-    
+
         if self.slim is not None and len(self.slim)>0:
             select_fields.append(M.OBJECT_CLOSURE)
-    
+
         if self.field_mapping is not None:
             logging.info("Applying field mapping to SELECT: {}".format(self.field_mapping))
             select_fields = [ map_field(fn, self.field_mapping) for fn in select_fields ]
@@ -776,12 +804,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 logging.info("Applying field mapping to PIV: {}".format(facet_pivot_fields))
                 facet_pivot_fields = [ map_field(fn, self.field_mapping) for fn in facet_pivot_fields ]
                 logging.info("APPLIED field mapping to PIV: {}".format(facet_pivot_fields))
-                
+
         facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
-    
+
         ## true if iterate in windows of max_size until all results found
         iterate=self.iterate
-        
+
         #logging.info('FL'+str(select_fields))
         is_unlimited = False
         rows=self.rows
@@ -789,6 +817,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             is_unlimited = True
             iterate = True
             rows = self.max_rows
+
         params = {
             'q': qstr,
             'fq': filter_queries,
@@ -799,22 +828,30 @@ class GolrAssociationQuery(GolrAbstractQuery):
             'fl': ",".join(select_fields),
             'rows': rows
         }
+
+        # This enables us to sort the queries that are returned
+        if (boost_function != None):
+            params['bf'] = boost_function
+
+        if self.start is not None:
+            params['start'] = self.start
+
         json_facet=self.json_facet
         if json_facet:
             params['json.facet'] = json.dumps(json_facet)
-    
+
         facet_field_limits=self.facet_field_limits
         if facet_field_limits is not None:
             for (f,flim) in facet_field_limits.items():
                 params["f."+f+".facet.limit"] = flim
-    
-    
+
+
         if len(facet_pivot_fields) > 0:
             params['facet.pivot'] = ",".join(facet_pivot_fields)
             params['facet.pivot.mincount'] = 1
-            
+
         return params
-            
+
     def exec(self, **kwargs):
         """
         Execute solr query
@@ -826,7 +863,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
          - compact_associations : list
          - facet_counts
          - facet_pivot
-         
+
         """
 
         params = self.solr_params()
@@ -834,13 +871,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
         results = self.solr.search(**params)
         n_docs = len(results.docs)
         logging.info("Docs found: {}".format(results.hits))
-    
+
         if self.iterate:
             docs = results.docs
             start = n_docs
             while n_docs >= self.rows:
                 logging.info("Iterating; start={}".format(start))
-                next_results = self.solr.search(**params, start=start)
+                next_results = self.solr.search(start=start, **params)
                 next_docs = next_results.docs
                 n_docs = len(next_docs)
                 docs += next_docs
@@ -848,19 +885,19 @@ class GolrAssociationQuery(GolrAbstractQuery):
             results.docs = docs
 
         fcs = results.facets
-    
+
         payload = {
             'facet_counts': translate_facet_field(fcs),
             'pagination': {}
         }
-    
+
         include_raw=self.include_raw
         if include_raw:
             # note: this is not JSON serializable, do not send via REST
             payload['raw'] = results
-    
+
         # TODO - check if truncated
-    
+
         logging.info("COMPACT={} INV={}".format(self.use_compact_associations, self.invert_subject_object))
         if self.use_compact_associations:
             payload['compact_associations'] = self.translate_docs_compact(results.docs, field_mapping=self.field_mapping,
@@ -868,12 +905,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
                                                                      map_identifiers=self.map_identifiers, **kwargs)
         else:
             payload['associations'] = self.translate_docs(results.docs, field_mapping=self.field_mapping, map_identifiers=self.map_identifiers, **kwargs)
-    
+
         if 'facet_pivot' in fcs:
             payload['facet_pivot'] = fcs['facet_pivot']
         if 'facets' in results.raw_response:
             payload['facets'] = results.raw_response['facets']
-    
+
         # For solr, we implement this by finding all facets
         # TODO: no need to do 2nd query, see https://wiki.apache.org/solr/SimpleFacetParameters#Parameters
         fetch_objects=self.fetch_objects
@@ -895,7 +932,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             ofl = ff.get(object_field)
             # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
             payload['objects'] = ofl[0::2]
-    
+
         fetch_subjects=self.fetch_subjects
         if fetch_subjects:
             core_subject_field = M.SUBJECT
@@ -917,7 +954,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             payload['subjects'] = ofl[0::2]
             if len(payload['subjects']) == self.max_rows:
                 payload['is_truncated'] = True
-    
+
         if self.slim is not None and len(self.slim)>0:
             if 'objects' in payload:
                 payload['objects'] = [x for x in payload['objects'] if x in self.slim]
@@ -925,9 +962,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 for a in payload['associations']:
                     a['slim'] = [x for x in a['object_closure'] if x in self.slim]
                     del a['object_closure']
-    
+
         return payload
-            
+
     def infer_category(self, id):
         """
         heuristic to infer a category from an id, e.g. DOID:nnn --> disease
@@ -941,7 +978,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if c is not None:
             logging.info("Inferred category: {} based on id={}".format(c, id))
         return c
-        
+
 
     def make_canonical_identifier(self,id):
         """
@@ -964,8 +1001,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 if id.startswith(s):
                     return id.replace(s,k+':')
         return id
-        
-    
+
+
     def translate_objs(self,d,fname):
         """
         Translate a field whose value is expected to be a list
@@ -973,47 +1010,47 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if fname not in d:
             # TODO: consider adding arg for failure on null
             return None
-    
+
         #lf = M.label_field(fname)
-    
+
         v = d[fname]
         if not isinstance(v,list):
             v = [v]
         objs = [{'id': idval} for idval in v]
         # todo - labels
-    
+
         return objs
-    
-    
+
+
     def translate_obj(self,d,fname):
         """
         Translate a field value from a solr document.
-    
+
         This includes special logic for when the field value
         denotes an object, here we nest it
         """
         if fname not in d:
             # TODO: consider adding arg for failure on null
             return None
-    
+
         lf = M.label_field(fname)
-    
+
         gq = GolrAssociationQuery() ## TODO - make this a class method
-        id = d[fname]                
+        id = d[fname]
         id = self.make_canonical_identifier(id)
         #if id.startswith('MGI:MGI:'):
         #    id = id.replace('MGI:MGI:','MGI:')
         obj = {'id': id}
-    
+
         if lf in d:
             obj['label'] = d[lf]
-    
+
         cf = fname + "_category"
         if cf in d:
             obj['categories'] = [d[cf]]
-    
+
         return obj
-    
+
     def map_doc(self, d, field_mapping, invert_subject_object=False):
         if field_mapping is not None:
             for (k,v) in field_mapping.items():
@@ -1027,8 +1064,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
             flip(d,M.SUBJECT_LABEL,M.OBJECT_LABEL)
             flip(d,M.SUBJECT_CATEGORY,M.OBJECT_CATEGORY)
         return d
-    
-    
+
+
     def translate_doc(self, d, field_mapping=None, map_identifiers=None, **kwargs):
         """
         Translate a solr document (i.e. a single result row)
@@ -1037,14 +1074,14 @@ class GolrAssociationQuery(GolrAbstractQuery):
             self.map_doc(d, field_mapping)
         subject = self.translate_obj(d, M.SUBJECT)
         obj = self.translate_obj(d, M.OBJECT)
-    
+
         # TODO: use a more robust method; we need equivalence as separate field in solr
         if map_identifiers is not None:
             if M.SUBJECT_CLOSURE in d:
                 subject['id'] = self.map_id(subject, map_identifiers, d[M.SUBJECT_CLOSURE])
             else:
                 logging.info("NO SUBJECT CLOSURE IN: "+str(d))
-    
+
         if M.SUBJECT_TAXON in d:
             subject['taxon'] = self.translate_obj(d,M.SUBJECT_TAXON)
         if M.OBJECT_TAXON in d:
@@ -1064,8 +1101,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
             else:
                 d[M.RELATION] = None
 
-        negated = 'not' in qualifiers        
-        
+        negated = 'not' in qualifiers
+
         assoc = {'id':d.get(M.ID),
                  'subject': subject,
                  'object': obj,
@@ -1075,7 +1112,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         }
         if len(qualifiers) > 0:
             assoc['qualifiers'] = qualifiers
-            
+
         if M.OBJECT_CLOSURE in d:
             assoc['object_closure'] = d.get(M.OBJECT_CLOSURE)
         if M.IS_DEFINED_BY in d:
@@ -1090,14 +1127,14 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if M.EVIDENCE_GRAPH in d:
             assoc[M.EVIDENCE_GRAPH] = json.loads(d[M.EVIDENCE_GRAPH])
         return assoc
-    
+
     def translate_docs(self, ds, **kwargs):
         """
         Translate a set of solr results
         """
         return [self.translate_doc(d, **kwargs) for d in ds]
-    
-    
+
+
     def translate_docs_compact(self, ds, field_mapping=None, slim=None, map_identifiers=None, invert_subject_object=False, **kwargs):
         """
         Translate golr association documents to a compact representation
@@ -1106,24 +1143,24 @@ class GolrAssociationQuery(GolrAbstractQuery):
         logging.info("Translating docs to compact form. Slim={}".format(slim))
         for d in ds:
             self.map_doc(d, field_mapping, invert_subject_object=invert_subject_object)
-    
+
             subject = d[M.SUBJECT]
             subject_label = d[M.SUBJECT_LABEL]
-    
+
             # TODO: use a more robust method; we need equivalence as separate field in solr
             if map_identifiers is not None:
                 if M.SUBJECT_CLOSURE in d:
                     subject = self.map_id(subject, map_identifiers, d[M.SUBJECT_CLOSURE])
                 else:
                     logging.debug("NO SUBJECT CLOSURE IN: "+str(d))
-    
+
             rel = d.get(M.RELATION)
             skip = False
-    
+
             # TODO
             if rel == 'not' or rel == 'NOT':
                 skip = True
-    
+
             # this is a list in GO
             if isinstance(rel,list):
                 if 'not' in rel or 'NOT' in rel:
@@ -1131,15 +1168,15 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 if len(rel) > 1:
                     logging.warn(">1 relation: {}".format(rel))
                 rel = ";".join(rel)
-    
+
             if skip:
                 logging.debug("Skipping: {}".format(d))
                 continue
-    
+
             subject = self.make_canonical_identifier(subject)
             #if subject.startswith('MGI:MGI:'):
             #    subject = subject.replace('MGI:MGI:','MGI:')
-    
+
             k = (subject,rel)
             if k not in amap:
                 amap[k] = {'subject':subject,
@@ -1154,9 +1191,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 amap[k]['objects'].append(d[M.OBJECT])
         for k in amap.keys():
             amap[k]['objects'] = list(set(amap[k]['objects']))
-    
+
         return list(amap.values())
-    
+
     def map_id(self,id, prefix, closure_list):
         """
         Map identifiers based on an equivalence closure list.
@@ -1168,6 +1205,3 @@ class GolrAssociationQuery(GolrAbstractQuery):
             # default to input
             return id
         return ids[0]
-    
-
-    

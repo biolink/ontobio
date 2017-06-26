@@ -1,5 +1,4 @@
-from ontobio import OntologyFactory
-from ontobio import GraphRenderer
+from ontobio.ontol_factory import OntologyFactory
 import logging
 
 HAS_PART = 'BFO:0000051'
@@ -19,13 +18,13 @@ MORPHOLOGY = 'PATO:0000051'
 ABSENT = 'PATO:0000462'
 CONICAL = 'PATO:0002021'
 
-def test_remote_sparql_pato():
+def test_remote_sparql():
     """
     Load ontology from remote SPARQL endpoint
     """
     factory = OntologyFactory()
     print("Creating ont")
-    ont = factory.create('pato')
+    ont = factory.create('scigraph:ontology')
 
     ploidy = ont.node(PLOIDY)
     print("PLOIDY: {}".format(ploidy))
@@ -37,16 +36,9 @@ def test_remote_sparql_pato():
     assert [SHAPE] == search_results
 
     # implicit regexp
-    search_results = ont.search('%shape%')
+    search_results = ont.search('%lantern%')
     print("SEARCH (re, implicit): {}".format(search_results))
-    assert SHAPE in search_results
-    assert len(search_results)>10
-
-    # explicit regexp
-    search_results = ont.search('.*shape.*', is_regex=True)
-    print("SEARCH (re, explicit): {}".format(search_results))
-    assert SHAPE in search_results
-    assert len(search_results)>10
+    assert 'UBERON:0008253' in search_results
     
     # syns
     syn = 'cone-shaped'
@@ -57,15 +49,6 @@ def test_remote_sparql_pato():
     #print("SEARCH (with syns): {}".format(search_results))
     #assert [CONICAL] == search_results
     
-    num_nodes = 0
-    for n in ont.nodes():
-        num_nodes = num_nodes+1
-    assert num_nodes > 100
-
-    ancs = ont.ancestors(PLOIDY)
-    print("ANCS ploidy (all): {}".format(ancs))
-    assert QUALITY in ancs
-    assert PENTAPLOID not in ancs
 
     ancs = ont.ancestors(PLOIDY, relations=['subClassOf'])
     print("ANCS ploidy (subClassOf): {}".format(ancs))
@@ -79,17 +62,17 @@ def test_remote_sparql_pato():
     assert PROTRUDING in ancs
     assert len(ancs) == 2
 
-    ancs = ont.ancestors(SWOLLEN, relations=['subClassOf'])
+    ancs = ont.ancestors(SWOLLEN, relations=['subClassOf'], reflexive=False)
     print("ANCS swollen (has_part): {}".format(ancs))
     assert MORPHOLOGY in ancs
     assert QUALITY in ancs
     assert PROTRUDING not in ancs
     
-    decs = ont.descendants(PLOIDY)
-    print("DECS ploidy (all): {}".format(decs))
-    assert QUALITY not in decs
-    assert EUPLOID in decs
-    assert PENTAPLOID in decs
+    #decs = ont.descendants(PLOIDY)
+    #print("DECS ploidy (all): {}".format(decs))
+    #assert QUALITY not in decs
+    #assert EUPLOID in decs
+    #assert PENTAPLOID in decs
 
     # this is a non-use case
     ancs = ont.descendants(INCREASED_SIZE, relations=[HAS_PART])
@@ -97,39 +80,13 @@ def test_remote_sparql_pato():
     assert SWOLLEN in ancs
     assert len(ancs) == 1
 
-    subsets = ont.subsets()
-    print("SUBSETS: {}".format(subsets))
+    #subsets = ont.subsets()
+    #print("SUBSETS: {}".format(subsets))
 
-    slim = ont.extract_subset('absent_slim')
-    print("SLIM: {}".format(slim))
-    assert ABSENT in slim
-    assert QUALITY not in slim
-
-    syns = ont.synonyms(INCREASED_SIZE)
-    print("SYNS: {}".format(syns))
-    syn_vals = [syn.val for syn in syns]
-    assert 'big' in syn_vals
-    [bigsyn] = [syn for syn in syns if syn.val=='big']
-    # TODO xrefs
-    assert not bigsyn.exact_or_label()
-    assert bigsyn.scope() == 'RELATED'
-
-    w = GraphRenderer.create('obo')
-    w.write_subgraph(ont, [INCREASED_SIZE])
-    
-def test_dynamic_query():
-    """
-    Dynamic query
-    """
-    factory = OntologyFactory()
-    print("Creating ont")
-    ont = factory.create('pato')
-
-    ids = ont.sparql(body="{?x rdfs:subClassOf+ "+SHAPE+"}",
-                     inject_prefixes = ont.prefixes(),
-                     single_column=True)
-    assert Y_SHAPED in ids
-    assert ABSENT not in ids
+    #slim = ont.extract_subset('absent_slim')
+    #print("SLIM: {}".format(slim))
+    #assert ABSENT in slim
+    #assert QUALITY not in slim
 
 def test_subontology():
     """
@@ -137,7 +94,7 @@ def test_subontology():
     """
     factory = OntologyFactory()
     print("Creating ont")
-    ont = factory.create('go')
+    ont = factory.create('scigraph:ontology')
     print("ONT NODES: {}".format(ont.nodes()))
     subont = ont.subontology(relations=['subClassOf'])
     PERM = 'GO:1990578'
@@ -147,11 +104,8 @@ def test_subontology():
     for a in ancs:
         print(" ANC: {} '{}'".format(a,subont.label(a)))
     assert len(ancs) > 0
+    from ontobio.io.ontol_renderers import GraphRenderer
     w = GraphRenderer.create('tree')
     w.write_subgraph(ont, ancs)
 
-    # TODO: sub-ontology does not create
-    # full metadata
-    w = GraphRenderer.create('obo')
-    w.write_subgraph(ont, ancs)
     

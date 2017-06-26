@@ -1,4 +1,3 @@
-<[![Build Status](https://travis-ci.org/biolink/ontobio.svg?branch=master)](https://travis-ci.org/biolink/ontobio)
 [![DOI](https://zenodo.org/badge/13996/biolink/ontobio.svg)](https://zenodo.org/badge/latestdoi/13996/biolink/ontobio)
 [![PyPI](https://img.shields.io/pypi/v/ontobio.svg)](https://pypi.python.org/pypi/ontobio)
 

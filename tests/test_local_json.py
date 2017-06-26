@@ -46,6 +46,7 @@ def test_local_json_parse():
 NUCLEUS='GO:0005634'
 INTRACELLULAR='GO:0005622'
 INTRACELLULAR_PART='GO:0044424'
+IMBO = 'GO:0043231'
 CELL = 'GO:0005623'
 CELLULAR_COMPONENT = 'GO:0005575'
 WIKIPEDIA_CELL = 'Wikipedia:Cell_(biology)'
@@ -73,7 +74,7 @@ def test_graph():
     assert CELLULAR_COMPONENT in ancs
     assert INTRACELLULAR in ancs
     assert NUCLEUS not in ancs
-    
+        
     ancs = ont.ancestors(INTRACELLULAR_PART)
     print("ANCS intracellular part(all): {}".format(ancs))
     assert CELL in ancs
@@ -94,6 +95,20 @@ def test_graph():
     assert INTRACELLULAR in ancs
     assert CELL not in ancs
     assert NUCLEUS not in ancs
+
+    ancs = ont.parents(INTRACELLULAR_PART)
+    print("PARENTS intracellular (all): {}".format(ancs))
+    assert INTRACELLULAR in ancs
+    assert CELL_PART in ancs
+    assert CELLULAR_COMPONENT not in ancs
+    assert NUCLEUS not in ancs
+    
+    ancs = ont.parents(INTRACELLULAR_PART, relations=[PART_OF])
+    print("PARENTS intracellular (part_of): {}".format(ancs))
+    assert INTRACELLULAR in ancs
+    assert CELL_PART not in ancs
+    assert CELLULAR_COMPONENT not in ancs
+    assert NUCLEUS not in ancs
     
     decs = ont.descendants(INTRACELLULAR_PART)
     print("DECS: {}".format(decs))
@@ -106,6 +121,21 @@ def test_graph():
     assert NUCLEUS not in decs
     assert CELL not in decs
 
+    decs = ont.children(INTRACELLULAR)
+    print("CHILDREN (all): {}".format(decs))
+    assert [INTRACELLULAR_PART] == decs
+
+    decs = ont.children(CELL_PART)
+    print("CHILDREN (all): {}".format(decs))
+    assert INTRACELLULAR_PART in decs
+    assert INTRACELLULAR in decs
+    
+    decs = ont.children(INTRACELLULAR, relations=[PART_OF])
+    print("CHILDREN (po): {}".format(decs))
+    assert INTRACELLULAR_PART in decs
+    assert NUCLEUS not in decs
+    assert CELL not in decs
+    
     xrefs = ont.xrefs(CELL)
     print("XREFS (from GO): {}".format(xrefs))
     assert WIKIPEDIA_CELL in xrefs
@@ -129,6 +159,11 @@ def test_graph():
     print("XREFS (from WP): {}".format(xrefs))
     assert len(xrefs) == 0
     
+    tdef = ont.text_definition(NUCLEUS)
+    print("TDEF: {}".format(tdef))
+    assert tdef.xrefs == [ "GOC:go_curators" ]
+    assert tdef.val.startswith("A membrane-bounded organelle of eukaryotic cells in which")
+
     [ldef] = ont.logical_definitions(INTRACELLULAR_PART)
     print("LDEF: {}".format(ldef))
     assert ldef.genus_ids == [CELLULAR_COMPONENT]
@@ -158,6 +193,22 @@ def test_graph():
 
     assert ont.has_node(CELL_PART)
     assert not ont.has_node('FOO:123')
+
+    # ensure subontology retains properties
+    decs = ont.descendants(CELL, reflexive=True)
+    subont = ont.subontology(nodes=decs)
+
+    syns = subont.synonyms(CELL_PART, include_label=True)
+    print("SYNS: {}".format(syns))
+    [s1] = [x for x in syns if x.val == 'protoplast']
+    assert s1.pred == 'hasRelatedSynonym'
+    assert s1.xrefs == ['GOC:mah']
+
+    assert subont.parents(NUCLEUS) == [IMBO]
+    
+    from ontobio import GraphRenderer
+    w = GraphRenderer.create('obo')
+    w.write(subont, query_ids=[CELL, CELL_PART, NUCLEUS])
     
 def test_subontology():
     """

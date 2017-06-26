@@ -24,7 +24,7 @@ travis_test:
 	pytest tests/test_*local*.py tests/test_*parser*.py
 
 cleandist:
-	rm dist/*
+	rm dist/* || true
 
 # TODO: manually increment version in ontobio/__init__.sh, run . bump.sh, then this
 release: cleandist
@@ -34,5 +34,7 @@ release: cleandist
 nb:
 	PYTHONPATH=.. jupyter notebook
 
+# Hack: generate marshmallow schema from flaskrest serializers
+# used to make assoc_schema.py
 mm:
-	./bin/flask2marshmallow.pl ../biolink-api/biolink/datamodel/serializers.py 
+	./bin/flask2marshmallow.pl ../biolink-api/biolink/datamodel/serializers.py

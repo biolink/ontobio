@@ -84,7 +84,7 @@ def main():
         logging.info("Query for level: {}".format(args.level))
         qids = qids + ont.get_level(args.level, relations=args.properties, prefix=args.prefix)
 
-    if args.insubset is not None:
+    if args.insubset is not None and args.insubset != "":
         disjs = args.insubset.split("|")
         dset = set()
         for i in disjs:
@@ -116,8 +116,10 @@ def main():
     nodes = ont.traverse_nodes(qids, up=dirn.find("u") > -1, down=dirn.find("d") > -1,
                                relations=args.properties)
 
-    g = ont.get_filtered_graph(relations=args.properties)
-    show_subgraph(ont, nodes, qids, args)
+    # deprecated
+    #g = ont.get_filtered_graph(relations=args.properties)
+    subont = ont.subontology(nodes, relations=args.properties)
+    render(subont, qids, args)
 
 
 def cmd_cycles(handle, args):
@@ -132,7 +134,7 @@ def cmd_search(handle, args):
         for r in results:
             print(r)
 
-def show_subgraph(ont, nodes, query_ids, args):
+def render(ont, query_ids, args):
     """
     Writes or displays graph
     """
@@ -142,8 +144,9 @@ def show_subgraph(ont, nodes, query_ids, args):
     w = GraphRenderer.create(args.to)
     if args.outfile is not None:
         w.outfile = args.outfile
-    logging.info("Writing subgraph for {}, |nodes|={}".format(ont,len(nodes)))
-    w.write_subgraph(ont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
+    w.write(ont, query_ids=query_ids, container_predicates=args.container_properties)
+    #logging.info("Writing subgraph for {}, |nodes|={}".format(ont,len(nodes)))
+    #w.write_subgraph(ont, nodes, query_ids=query_ids, container_predicates=args.container_properties)
             
 def resolve_ids(ont, ids, args):
     r_ids = []

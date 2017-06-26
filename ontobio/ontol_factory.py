@@ -86,7 +86,8 @@ def create_ontology(handle=None, **args):
         ont = onts.pop()
         ont.merge(onts)
         return ont
-    
+
+    # TODO: consider replacing with plugin architecture
     if handle.find(".") > 0 and os.path.isfile(handle):
         logging.info("Fetching obograph-json file from filesystem")
         ont = translate_file_to_ontology(handle, **args)
@@ -108,6 +109,10 @@ def create_ontology(handle=None, **args):
         from ontobio.sparql.wikidata_ontology import EagerWikidataOntology
         logging.info("Fetching from Wikidata")
         ont = EagerWikidataOntology(handle=handle)
+    elif handle.startswith("scigraph:"):
+        from ontobio.neo.scigraph_ontology import RemoteScigraphOntology
+        logging.info("Fetching from SciGraph")
+        ont = RemoteScigraphOntology(handle=handle)
     elif handle.startswith("http:"):
         logging.info("Fetching from Web PURL: "+handle)
         encoded = hashlib.sha256(handle.encode()).hexdigest()
