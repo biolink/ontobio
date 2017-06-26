@@ -85,8 +85,10 @@ def main():
 
     if args.verbosity >= 2:
         logging.basicConfig(level=logging.DEBUG)
-    if args.verbosity == 1:
+    elif args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
     logging.info("Welcome!")
 
     handle = args.resource
@@ -119,13 +121,13 @@ def main():
 
     # TODO: use a factory
     if fmt == 'gaf':
-        from ontobio.io.gafparser import GafParser        
+        from ontobio.io.gafparser import GafParser
         p = GafParser()
     elif fmt == 'gpad':
-        from ontobio.io.gafparser import GpadParser        
+        from ontobio.io.gafparser import GpadParser
         p = GpadParser()
     elif fmt == 'hpoa':
-        from ontobio.io.gafparser import HpoaParser        
+        from ontobio.io.gafparser import HpoaParser
         p = HpoaParser()
     p.config = config
 
