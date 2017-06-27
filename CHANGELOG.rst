@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.2.8
+-----
+
+* Turned down logging from info to warn for skipped lines
+
 0.2.7
 -----
 
