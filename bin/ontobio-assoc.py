@@ -15,15 +15,15 @@ Examples:
 
 Find genes annotated to a GO class in human:
 
-ontobio-assoc.py -v -r go -T NCBITaxon:9606 -C gene function query -q GO:1903010 
+ontobio-assoc.py -v -r go -T NCBITaxon:9606 -C gene function query -q GO:1903010
 
 Analogous query in planteome:
 
 ontobio-assoc.py -v -y conf/planteome-config.yaml -r po -T NCBITaxon:3702 -C gene anatomy query -q PO:0025034
 
-ontobio-assoc.py -v -r go -T NCBITaxon:9606 -C gene function enrichment -q GO:1903010 
+ontobio-assoc.py -v -r go -T NCBITaxon:9606 -C gene function enrichment -q GO:1903010
 
-ontobio-assoc.py -v -r go -T NCBITaxon:10090 -C gene function dendrogram GO:0003700 GO:0005215 GO:0005634 GO:0005737 GO:0005739 GO:0005694 GO:0005730  GO:0000228 GO:0000262 
+ontobio-assoc.py -v -r go -T NCBITaxon:10090 -C gene function dendrogram GO:0003700 GO:0005215 GO:0005634 GO:0005737 GO:0005739 GO:0005694 GO:0005730  GO:0000228 GO:0000262
 
 ontobio-assoc.py -v -r go -T NCBITaxon:10090 -C gene function simmatrix MGI:1890081 MGI:97487 MGI:106593 MGI:97250 MGI:2151057 MGI:1347473
 
@@ -89,7 +89,7 @@ def main():
     parser_n = subparsers.add_parser('subontology', help='Extract sub-ontology')
     parser_n.add_argument('-M', '--minimal', dest='minimal', action='store_true', default=False, help='If set, remove non-MRCA nodes')
     parser_n.set_defaults(function=extract_ontology)
-    
+
     # ENRICHMENT
     parser_n = subparsers.add_parser('enrichment', help='Perform an enrichment test')
     parser_n.add_argument('-q', '--query',type=str, help='query all genes for this class an use as subject')
@@ -102,13 +102,13 @@ def main():
     parser_n.add_argument('-R', '--resource2',type=str, required=True, help='path to second GAF')
     parser_n.add_argument('-F', '--file2',type=str, required=True, help='handle for second ontology')
     parser_n.set_defaults(function=run_phenolog)
-    
+
     # QUERY
     parser_n = subparsers.add_parser('query', help='Query based on positive and negative terms')
     parser_n.add_argument('-q', '--query',nargs='*', help='positive classes')
     parser_n.add_argument('-N', '--negative',type=str, help='negative classes')
     parser_n.set_defaults(function=run_query)
-    
+
     # QUERY ASSOCIATIONS
     parser_n = subparsers.add_parser('associations', help='Query for association pairs')
     parser_n.add_argument('subjects',nargs='*', help='subject ids')
@@ -142,8 +142,11 @@ def main():
 
     if args.verbosity >= 2:
         logging.basicConfig(level=logging.DEBUG)
-    if args.verbosity == 1:
+    elif args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+        
     logging.info("Welcome!")
 
     if args.yamlconfig is not None:
@@ -152,8 +155,8 @@ def main():
         # we would not do this outside the context of a standalone script
         from ontobio.config import set_config
         set_config(args.yamlconfig)
-        
-    
+
+
     handle = args.resource
 
     # Ontology Factory
@@ -165,8 +168,8 @@ def main():
     evidence = args.evidence
     if evidence is not None and evidence.lower() == 'noiea':
         evidence = "-ECO:0000501"
-    
-    
+
+
     # Association Factory
     afactory = AssociationSetFactory()
     [subject_category, object_category] = args.category
@@ -181,8 +184,8 @@ def main():
                                subject_category=subject_category,
                                object_category=object_category,
                                taxon=args.taxon)
-    
-    
+
+
     func = args.function
     func(ont, aset, args)
 
@@ -191,7 +194,7 @@ def extract_ontology(ont, aset, args):
     w = GraphRenderer.create('obo')
     w.outfile = args.outfile
     w.write(ont)
-    
+
 def run_enrichment_test(ont, aset, args):
     subjects = args.subjects
     if args.query is not None:
@@ -225,7 +228,7 @@ def run_phenolog(ont, aset, args):
             for r in enr:
                 print("{:8.3g} {} {:20s} <-> {} {:20s}".format(r['p'],n,nl,r['c'],str(r['n'])))
 
-        
+
 def run_query(ont, aset, args):
     import plotly.plotly as py
     import plotly.graph_objs as go
@@ -274,7 +277,7 @@ def tuple_to_matrix(tups):
     for x in xset:
         xmap[x] = xi
         xi = xi+1
-        
+
     ymap = {}
     yi = 0
     for y in yset:
@@ -283,14 +286,14 @@ def tuple_to_matrix(tups):
 
     logging.info("Making {} x {}".format(len(xset), len(yset)))
     z = [ [0] * len(xset) for i1 in range(len(yset)) ]
-        
+
     for (x,y) in tups:
         z[ymap[y]][xmap[x]] = 1
     z = np.array(z)
     #z = -z
     return (z, xset, yset)
 
-        
+
 def create_intersection_matrix(ont, aset, args):
     xterms = args.xterms
     yterms = args.yterms
@@ -330,7 +333,7 @@ def plot_simmatrix(ont, aset, args):
     z = -z
     print("Z={}".format(z))
     plot_dendrogram(z, xaxis, yaxis)
-    
+
 def plot_term_intersection_dendrogram(ont, aset, args):
     import numpy as np
     # TODO: currently only works for xaxis=yaxis
@@ -339,7 +342,7 @@ def plot_term_intersection_dendrogram(ont, aset, args):
     z = -z
     print("Z={}".format(z))
     plot_dendrogram(z, xaxis, yaxis)
-    
+
 def plot_dendrogram(z, xaxis, yaxis):
     import plotly.plotly as py
     import plotly.figure_factory as FF
@@ -359,7 +362,7 @@ def plot_dendrogram(z, xaxis, yaxis):
     dendro_side = FF.create_dendrogram(z, orientation='right', labels=xaxis)
     for i in range(len(dendro_side['data'])):
         dendro_side['data'][i]['xaxis'] = 'x2'
-        
+
     # Add Side Dendrogram Data to Figure
     figure['data'].extend(dendro_side['data'])
 
@@ -370,7 +373,7 @@ def plot_dendrogram(z, xaxis, yaxis):
     heat_data = squareform(data_dist)
     #heat_data = heat_data[dendro_leaves,:]
     #heat_data = heat_data[:,dendro_leaves]
-    
+
     heatmap = go.Data([
         go.Heatmap(
             x = dendro_leaves,
@@ -423,7 +426,7 @@ def plot_dendrogram(z, xaxis, yaxis):
                                    'ticks':""}})
 
     py.plot(figure, filename='dendrogram_with_labels')
-    
+
 def mk_axis(terms, kb, args, spacechar="<br>"):
     # TODO - more elegant solution to blank node hack
     return [label_or_id(x, kb).replace(" ",spacechar).replace("some variant of ","") for x in terms]

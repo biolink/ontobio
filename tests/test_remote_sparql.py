@@ -1,4 +1,5 @@
-from ontobio.ontol_factory import OntologyFactory
+from ontobio import OntologyFactory
+from ontobio import GraphRenderer
 import logging
 
 HAS_PART = 'BFO:0000051'
@@ -18,7 +19,7 @@ MORPHOLOGY = 'PATO:0000051'
 ABSENT = 'PATO:0000462'
 CONICAL = 'PATO:0002021'
 
-def test_remote_sparql():
+def test_remote_sparql_pato():
     """
     Load ontology from remote SPARQL endpoint
     """
@@ -104,6 +105,18 @@ def test_remote_sparql():
     assert ABSENT in slim
     assert QUALITY not in slim
 
+    syns = ont.synonyms(INCREASED_SIZE)
+    print("SYNS: {}".format(syns))
+    syn_vals = [syn.val for syn in syns]
+    assert 'big' in syn_vals
+    [bigsyn] = [syn for syn in syns if syn.val=='big']
+    # TODO xrefs
+    assert not bigsyn.exact_or_label()
+    assert bigsyn.scope() == 'RELATED'
+
+    w = GraphRenderer.create('obo')
+    w.write_subgraph(ont, [INCREASED_SIZE])
+    
 def test_dynamic_query():
     """
     Dynamic query
@@ -134,8 +147,11 @@ def test_subontology():
     for a in ancs:
         print(" ANC: {} '{}'".format(a,subont.label(a)))
     assert len(ancs) > 0
-    from ontobio.io.ontol_renderers import GraphRenderer
     w = GraphRenderer.create('tree')
     w.write_subgraph(ont, ancs)
 
+    # TODO: sub-ontology does not create
+    # full metadata
+    w = GraphRenderer.create('obo')
+    w.write_subgraph(ont, ancs)
     
