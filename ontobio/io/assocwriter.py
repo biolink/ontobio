@@ -98,4 +98,59 @@ class GafWriter(AssocWriter):
     """
     Writes Associations in GAF format. Not yet implemented
     """
-    pass
+    def __init__(self, file=None):
+        self.file = file
+
+    def write_assoc(self, assoc):
+        """
+        Write a single association to a line in the output file
+        """
+        subj = assoc['subject']
+        
+        db, db_object_id = self._split_prefix(subj)
+
+        rel = assoc['relation']
+        qualifier = rel['id']
+        if assoc['negated']:
+            qualifier = 'NOT|' + qualifier
+
+        goid = assoc['object']['id']
+
+        ev = assoc['evidence']
+        evidence = ev['type']
+        withfrom = "|".join(ev['with_support_from'])
+        reference = "|".join(ev['has_supporting_reference'])
+
+        date = assoc['date']
+        assigned_by = assoc['provided_by']
+
+        annotation_xp = '' # TODO
+        annotation_properties = '' # TODO
+        interacting_taxon_id = '' ## TODO
+        gene_product_isoform = '' ## TODO
+
+        aspect = None
+        taxon = None
+        if 'taxon' in subj:
+            taxon = subj['taxon']['id']
+            
+        vals = [db,
+                db_object_id,
+                subj.get('label'),
+                qualifier,
+                goid,
+                reference,
+                evidence,
+                withfrom,
+                aspect,
+                subj.get('full_name'),
+                subj.get('synonyms'),
+                subj.get('type'),
+                taxon,
+                date,
+                assigned_by,
+                annotation_xp,
+                gene_product_isoform]
+
+        self._write_row(vals)
+
