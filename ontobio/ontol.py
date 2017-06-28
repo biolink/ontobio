@@ -619,11 +619,15 @@ class Ontology():
         return None
 
     def _get_basic_property_values(self, nid):
-        return self._get_meta_prop(nid, 'basicPropertyValues')
+        r =  self._get_meta_prop(nid, 'basicPropertyValues')
+        if r is None:
+            return []
+        else:
+            return r
     
     def _get_basic_property_value(self, nid, prop):
-        bpvs = self._get_basic_property_values()
-        return [x['val'] for x in bpvs in x['pred'] == prop]
+        bpvs = self._get_basic_property_values(nid)
+        return [x['val'] for x in bpvs if x['pred'] == prop]
     
     def is_obsolete(self, nid):
         """

@@ -219,3 +219,24 @@ def test_subontology():
     ancs = subont.ancestors(PERM)
     print(str(ancs))
     assert len(ancs) > 0
+
+def test_obsolete():
+    """
+    Test obsoletion metadata
+    """
+    factory = OntologyFactory()
+    print("Creating ont")
+    ont = factory.create('tests/resources/obsolete.json')
+    print("ONT NODES: {}".format(ont.nodes()))
+    n_obs = 0
+    for nid in ont.nodes():
+        is_obs = ont.is_obsolete(nid)
+        if is_obs:
+            print("OBS: {} {}".format(nid, ont.label(nid)))
+            n_obs += 1
+        rb = ont.replaced_by(nid)
+        if rb is not None:
+            print("REPLACED BY: {} {}".format(rb, ont.label(rb)))
+    assert ont.replaced_by('GO:2') == 'GO:1'
+    assert ont.replaced_by('GO:3') == 'GO:1'
+    assert n_obs == 3

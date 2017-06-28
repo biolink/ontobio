@@ -39,7 +39,7 @@ def add_obograph_digraph(og, digraph, node_type=None, predicates=None, xref_grap
         if 'lbl' in n:
             digraph.node[id]['label'] = n['lbl']
         if parse_meta and 'meta' in n:
-            meta = n['meta']
+            meta = transform_meta(n['meta'])
             if xref_graph is not None and 'xrefs' in meta:
                 for x in meta['xrefs']:
                     xref_graph.add_edge(contract_uri_wrap(x['val']), id, source=id)
@@ -71,7 +71,12 @@ def add_obograph_digraph(og, digraph, node_type=None, predicates=None, xref_grap
                                      contract_uri_wrap(x['fillerId'])) for x in a['restrictions'] if x is not None])
             logical_definitions.append(ld)
                                 
-        
+def transform_meta(m):
+    if 'basicPropertyValues' in m:
+        for x in m['basicPropertyValues']:
+            x['pred'] = contract_uri_wrap(x['pred'])
+            x['val'] = contract_uri_wrap(x['val'])
+    return m
 
 def convert_json_file(obographfile, **args):
     """
