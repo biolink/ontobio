@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.2.10
+------
+
+* Fixed bug with handling of replaced_by fields in obsolete nodes, #51
+
 0.2.9
 -----
 
