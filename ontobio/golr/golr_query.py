@@ -843,10 +843,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
             'rows': rows
         }
 
-        print()
-        print(filter_queries)
-        print()
-
         if self.start is not None:
             params['start'] = self.start
 
