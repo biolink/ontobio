@@ -764,23 +764,23 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # with an ID that is contained in subject_or_object_ids.
         if subject_or_object_ids is not None:
             quotified_ids = solr_quotify(subject_or_object_ids)
-            subject_query = '{}:{}'.format('subject', quotified_ids)
-            object_query = '{}:{}'.format('object', quotified_ids)
+            subject_id_filter = '{}:{}'.format('subject', quotified_ids)
+            object_id_filter = '{}:{}'.format('object', quotified_ids)
 
             # If subject_or_object_category is provided, we add it to the filter.
             if self.subject_or_object_category is not None:
                 quotified_categories = solr_quotify(self.subject_or_object_category)
-                subject_category_query = '{}:{}'.format('subject_category', quotified_categories)
-                object_category_query = '{}:{}'.format('object_category', quotified_categories)
+                subject_category_filter = '{}:{}'.format('subject_category', quotified_categories)
+                object_category_filter = '{}:{}'.format('object_category', quotified_categories)
 
                 filter_queries.append(
-                    '(' + subject_query + ' AND ' + object_category_query + ')' \
+                    '(' + subject_id_filter + ' AND ' + object_category_filter + ')' \
                     ' OR '                                                      \
-                    '(' + object_query + ' AND ' + subject_category_query + ')'
+                    '(' + object_id_filter + ' AND ' + subject_category_filter + ')'
                 )
 
             else:
-                filter_queries.append(subject_query + ' OR ' + object_query)
+                filter_queries.append(subject_id_filter + ' OR ' + object_id_filter)
 
         # unless caller specifies a field list, use default
         if select_fields is None:
