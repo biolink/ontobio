@@ -94,7 +94,9 @@ def main():
     parser_n = subparsers.add_parser('enrichment', help='Perform an enrichment test')
     parser_n.add_argument('-q', '--query',type=str, help='query all genes for this class an use as subject')
     parser_n.add_argument('-H', '--hypotheses',nargs='*', help='list of classes to test against')
-    parser_n.add_argument('subjects',nargs='*')
+    parser_n.add_argument('samples', nargs='*', help='list of gene IDs in sample set')
+    parser_n.add_argument('sample_file', type=str, help='file containing list of gene IDs in sample set')
+    parser_n.add_argument('background_file', type=str, help='file containing list of gene IDs in background set')
     parser_n.set_defaults(function=run_enrichment_test)
 
     # PHENOLOG
@@ -195,12 +197,23 @@ def extract_ontology(ont, aset, args):
     w.outfile = args.outfile
     w.write(ont)
 
+def read_ids_from_file(fn):
+    f = open(fn'r')
+    ids = [id.strip() for id in f.readlines()]
+    f.close()
+    return ids
+    
 def run_enrichment_test(ont, aset, args):
-    subjects = args.subjects
+    subjects = args.sample
+    background = None
+    if args.sample_file is not None:
+        subjects = read_ids_from_file(args.sample_file)
+    if args.background_file is not None:
+        subjects = read_ids_from_file(args.background_file)
     if args.query is not None:
         subjects = aset.query([args.query])
     print("SUBJECTS q={} : {}".format(args.query, subjects))
-    enr = aset.enrichment_test(subjects=subjects, hypotheses=args.hypotheses, labels=True)
+    enr = aset.enrichment_test(subjects=subjects, background=background, hypotheses=args.hypotheses, labels=True)
     for r in enr:
         print("{:8.3g} {} {:40s}".format(r['p'],r['c'],str(r['n'])))
 
