@@ -131,7 +131,10 @@ def flip(d, x, y):
 
 def solr_quotify(v):
     if isinstance(v, list):
-        return '({})'.format(" OR ".join([solr_quotify(x) for x in v]))
+        if len(v) == 1:
+            return solr_quotify(v[0])
+        else:
+            return '({})'.format(" OR ".join([solr_quotify(x) for x in v]))
     else:
         # TODO - escape quotes
         return '"{}"'.format(v)
@@ -434,6 +437,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  object_category=None,
                  relation=None,
                  subject_or_object_ids=None,
+                 subject_or_object_category=None,
                  subject=None,
                  subjects=None,
                  object=None,
@@ -481,6 +485,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.object_category=object_category
         self.relation=relation
         self.subject_or_object_ids=subject_or_object_ids
+        self.subject_or_object_category=subject_or_object_category
         self.subject=subject
         self.subjects=subjects
         self.object=object
@@ -756,17 +761,26 @@ class GolrAssociationQuery(GolrAbstractQuery):
         filter_queries = [ '{}:{}'.format(k,solr_quotify(v)) for (k,v) in fq.items()]
 
         # We want to match all associations that have either a subject or object
-        # with an ID that is contained in subject_or_object_ids, and sort them by the number
-        # of hits to the ID's in subject_or_object_ids
-        boost_function = None
+        # with an ID that is contained in subject_or_object_ids.
         if subject_or_object_ids is not None:
-            summands = ['termfreq(subject_closure, ' + c + ')' \
-                        'termfreq(object_closure, ' + c + ')' for c in subject_or_object_ids]
-            boost_function = 'prod(sum('+ ','.join(summands) + '), 10)'
-            disjunction = " OR ".join(['"' + c + '"' for c in subject_or_object_ids])
-            disjunctive_query = 'subject_closure:(' + disjunction + ')' \
-                                ' OR object_closure:(' + disjunction + ')'
-            filter_queries.append(disjunctive_query.strip())
+            quotified_ids = solr_quotify(subject_or_object_ids)
+            subject_id_filter = '{}:{}'.format('subject', quotified_ids)
+            object_id_filter = '{}:{}'.format('object', quotified_ids)
+
+            # If subject_or_object_category is provided, we add it to the filter.
+            if self.subject_or_object_category is not None:
+                quotified_categories = solr_quotify(self.subject_or_object_category)
+                subject_category_filter = '{}:{}'.format('subject_category', quotified_categories)
+                object_category_filter = '{}:{}'.format('object_category', quotified_categories)
+
+                filter_queries.append(
+                    '(' + subject_id_filter + ' AND ' + object_category_filter + ')' \
+                    ' OR '                                                      \
+                    '(' + object_id_filter + ' AND ' + subject_category_filter + ')'
+                )
+
+            else:
+                filter_queries.append(subject_id_filter + ' OR ' + object_id_filter)
 
         # unless caller specifies a field list, use default
         if select_fields is None:
@@ -828,10 +842,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
             'fl': ",".join(select_fields),
             'rows': rows
         }
-
-        # This enables us to sort the queries that are returned
-        if (boost_function != None):
-            params['bf'] = boost_function
 
         if self.start is not None:
             params['start'] = self.start
