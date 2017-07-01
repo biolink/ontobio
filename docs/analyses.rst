@@ -58,7 +58,22 @@ What if you have different IDs? Or what if you just have a list of
 gene symbols? In this case you will need to *map* these names or IDs,
 the subject of the next section.
 
-Further reading:
+Command line wrapper
+~~~~~~~~~~~~~~~~~~~~
+
+You can use the `ontobio-assoc` command to run enrichment
+analyses. Some examples:
+
+Create a gene set for all genes in "regulation of bone development"
+(GO:1903010). Find other terms for which this is enriched (in human)
+
+.. code-block:: 
+
+    ontobio-assoc.py -v -r go -T NCBITaxon:9606 -C gene function enrichment -q GO:1903010
+
+
+Further reading
+~~~~~~~~~~~~~~~
 
 For API docs, see `enrichment_test in AssociationSet model <http://ontobio.readthedocs.io/en/latest/api.html#assocation-object-model>`_
 
