@@ -70,6 +70,8 @@ def main():
                         help='ECO class')
     parser.add_argument('-p', '--properties', nargs='*', type=str, required=False,
                         help='Properties')
+    parser.add_argument('-P', '--plot', type=bool, default=False,
+                        help='if set, plot output (requires plotly)')
     parser.add_argument('-y', '--yamlconfig', type=str, required=False,
                         help='Path to setup/configuration yaml file')
     parser.add_argument('-S', '--slim', type=str, default='', required=False,
@@ -94,9 +96,10 @@ def main():
     parser_n = subparsers.add_parser('enrichment', help='Perform an enrichment test')
     parser_n.add_argument('-q', '--query',type=str, help='query all genes for this class an use as subject')
     parser_n.add_argument('-H', '--hypotheses',nargs='*', help='list of classes to test against')
-    parser_n.add_argument('samples', nargs='*', help='list of gene IDs in sample set')
-    parser_n.add_argument('sample_file', type=str, help='file containing list of gene IDs in sample set')
-    parser_n.add_argument('background_file', type=str, help='file containing list of gene IDs in background set')
+    parser_n.add_argument('-s', '--sample_file', type=str, help='file containing list of gene IDs in sample set')
+    parser_n.add_argument('-b', '--background_file', type=str, help='file containing list of gene IDs in background set')
+    parser_n.add_argument('-t', '--threshold', type=float, help='p-value threshold')
+    parser_n.add_argument('sample_ids', nargs='*', help='list of gene IDs in sample set')
     parser_n.set_defaults(function=run_enrichment_test)
 
     # PHENOLOG
@@ -197,14 +200,9 @@ def extract_ontology(ont, aset, args):
     w.outfile = args.outfile
     w.write(ont)
 
-def read_ids_from_file(fn):
-    f = open(fn'r')
-    ids = [id.strip() for id in f.readlines()]
-    f.close()
-    return ids
     
 def run_enrichment_test(ont, aset, args):
-    subjects = args.sample
+    subjects = args.sample_ids
     background = None
     if args.sample_file is not None:
         subjects = read_ids_from_file(args.sample_file)
@@ -213,7 +211,8 @@ def run_enrichment_test(ont, aset, args):
     if args.query is not None:
         subjects = aset.query([args.query])
     print("SUBJECTS q={} : {}".format(args.query, subjects))
-    enr = aset.enrichment_test(subjects=subjects, background=background, hypotheses=args.hypotheses, labels=True)
+    enr = aset.enrichment_test(subjects=subjects, background=background, hypotheses=args.hypotheses, threshold=args.threshold, labels=True)
+    print('ENRICHED_TERMS={}'.format(len(enr)))
     for r in enr:
         print("{:8.3g} {} {:40s}".format(r['p'],r['c'],str(r['n'])))
 
@@ -243,22 +242,24 @@ def run_phenolog(ont, aset, args):
 
 
 def run_query(ont, aset, args):
-    import plotly.plotly as py
-    import plotly.graph_objs as go
     subjects = aset.query(args.query, args.negative)
     for s in subjects:
         print("{} {}".format(s, str(aset.label(s))))
-    tups = aset.query_associations(subjects=subjects)
-    z, xaxis, yaxis = tuple_to_matrix(tups)
-    spacechar = " "
-    xaxis = mk_axis(xaxis, aset, args, spacechar=" ")
-    yaxis = mk_axis(yaxis, aset, args, spacechar=" ")
-    logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
-    trace = go.Heatmap(z=z,
-                       x=xaxis,
-                       y=yaxis)
-    data=[trace]
-    py.plot(data, filename='labelled-heatmap')
+
+    if args.plot:
+        import plotly.plotly as py
+        import plotly.graph_objs as go
+        tups = aset.query_associations(subjects=subjects)
+        z, xaxis, yaxis = tuple_to_matrix(tups)
+        spacechar = " "
+        xaxis = mk_axis(xaxis, aset, args, spacechar=" ")
+        yaxis = mk_axis(yaxis, aset, args, spacechar=" ")
+        logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
+        trace = go.Heatmap(z=z,
+                           x=xaxis,
+                           y=yaxis)
+        data=[trace]
+        py.plot(data, filename='labelled-heatmap')
 
 def run_query_associations(ont, aset, args):
     import plotly.plotly as py
@@ -451,5 +452,11 @@ def label_or_id(x, kb):
     else:
         return label
 
+def read_ids_from_file(fn):
+    f = open(fn, 'r')
+    ids = [id.strip() for id in f.readlines()]
+    f.close()
+    return ids
+    
 if __name__ == "__main__":
     main()
