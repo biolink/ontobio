@@ -61,6 +61,11 @@ class AssociationSet():
         You do not need to call this yourself; called on initialization
         """
         self.subjects = list(self.association_map.keys())
+
+        # ensure annotations unique
+        for (subj,terms) in self.association_map.items():
+            self.association_map[subj] = list(set(self.association_map[subj]))
+            
         logging.info("Indexing {} items".format(len(self.subjects)))
         n = 0
         all_objs = set()
