@@ -14,19 +14,7 @@ pattern = re.compile(r"^__version__ = ['\"]([^'\"]*)['\"]", re.MULTILINE)
 version = pattern.search(text).group(1)
 
 # long_description
-readme_path = os.path.join(directory, 'README.md')
-try:
-    # copied from dhimmel/obonet:
-    # Try to create an reStructuredText long_description from README.md
-    args = 'pandoc', '--from', 'markdown', '--to', 'rst', readme_path
-    long_description = subprocess.check_output(args)
-    long_description = long_description.decode()
-except Exception as error:
-    # Fallback to markdown (unformatted on PyPI) long_description
-    print('README.md conversion to reStructuredText failed. Error:')
-    print(error)
-    with open(readme_path) as read_file:
-        long_description = read_file.read()
+readme_path = os.path.join(directory, 'README.rst')
 
 setuptools.setup(
     name='ontobio',
