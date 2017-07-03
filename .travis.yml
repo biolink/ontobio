@@ -25,7 +25,7 @@ script:
 #  coveralls
 
 # whitelist
-branches:
-  only:
-    - master
+#branches:
+#  only:
+#    - master
     
