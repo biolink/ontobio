@@ -15,6 +15,7 @@ taxa of interest or evidence criteria.
 import logging
 import scipy.stats # TODO - move
 import scipy as sp # TODO - move
+import pandas as pd
 
 class UnknownSubjectException():
     pass
@@ -43,6 +44,7 @@ class AssociationSet():
         self.subject_label_map = subject_label_map
         self.subject_to_inferred_map = {}
         self.meta = meta  # TODO
+        self.associations_by_subj = None
         self.associations_by_subj_obj = None
         self.strict = False
         self.index()
@@ -249,6 +251,11 @@ class AssociationSet():
         return ilist
 
     def intersectionlist_to_matrix(self, ilist, xterms, yterms):
+        """
+        WILL BE DEPRECATED
+
+        Replace with method to return pandas dataframe
+        """
         z = [ [0] * len(xterms) for i1 in range(len(yterms)) ]
     
         xmap = {}
@@ -268,6 +275,24 @@ class AssociationSet():
             
         logging.debug("Z={}".format(z))
         return (z,xterms,yterms)
+    
+    def as_dataframe(self):
+        """
+        Return association set as pandas DataFrame
+
+        Each row is a subject (e.g. gene)
+        Each column is the inferred class used to describe the subject
+        """
+        entries = []
+        subjs = self.subjects
+        for s in subjs:
+            vmap = {}
+            for c in self.inferred_types(s):
+                vmap[c] = 1
+            entries.append(vmap)
+        df = pd.DataFrame(entries, index=subjs)
+        df = df.fillna(0)
+        return df
 
     def label(self, id):
         """
@@ -289,22 +314,27 @@ class AssociationSet():
         """
         return self.ontology.subontology(self.objects, minimal=minimal)
 
-    # TODO
-    def get_assocations(self, subj, obj):
+    def associations(self, subject, object=None):
         """
         Given a subject-object pair (e.g. gene id to ontology class id), return all association
         objects that match.
 
-        Status: not yet implemented
         """
-        if self.associations_by_subj_obj is not None:
-            return self.associations_by_subj_obj[subj][obj]
+        if object is None:
+            if self.associations_by_subj is not None:
+                return self.associations_by_subj[subject]
+            else:
+                return []
         else:
-            return []
-    
+            if self.associations_by_subj_obj is not None:
+                return self.associations_by_subj_obj[(subject,object)]
+            else:
+                return []
+
+    # TODO: consider moving to other module
     def enrichment_test(self, subjects=[], background=None, hypotheses=None, threshold=0.05, labels=False, direction='greater'):
         """
-        Performs term enrichment analysis
+        Performs term enrichment analysis. 
 
         Arguments
         ---------
