@@ -13,8 +13,6 @@ with open(init_path) as read_file:
 pattern = re.compile(r"^__version__ = ['\"]([^'\"]*)['\"]", re.MULTILINE)
 version = pattern.search(text).group(1)
 
-# long_description
-readme_path = os.path.join(directory, 'README.rst')
 
 setuptools.setup(
     name='ontobio',
@@ -23,7 +21,7 @@ setuptools.setup(
     author_email='cmungall@gmail.com',
     url='https://github.com/biolink/ontobio',
     description='Library for working with OBO Library Ontologies and associations',
-    long_description=long_description,
+    long_description=open("README.rst").read(),
     license='BSD',
     #packages=['ontobio'],
     packages=setuptools.find_packages(),
