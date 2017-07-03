@@ -286,3 +286,13 @@ def calculate_information_content(**kwargs):
         freq = fc/pop_size
         icmap[f] = -math.log(freq, 2)
     return icmap
+
+from ontobio.vocabulary.relations import HomologyTypes
+
+def get_homologs(gene, relation=HomologyTypes.Ortholog.value):
+    search_associations(subject_category='gene',
+                        object_category='gene',
+                        relation=relation,
+                        subject=gene)
+                        
+    
