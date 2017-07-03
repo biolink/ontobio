@@ -107,6 +107,7 @@ def main():
         for r in docs:
             print(str(r))
     else:
+        logging.info("FQ={}".format(args.fq))
         q = GolrSearchQuery(args.search,
                             is_go=args.legacy_solr,
                             fq=args.fq,
