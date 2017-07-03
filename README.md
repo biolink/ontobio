@@ -1,4 +1,3 @@
-[![DOI](https://zenodo.org/badge/13996/biolink/ontobio.svg)](https://zenodo.org/badge/latestdoi/13996/biolink/ontobio)
 [![PyPI](https://img.shields.io/pypi/v/ontobio.svg)](https://pypi.python.org/pypi/ontobio)
 
 # ontobio - a python API for working with ontologies and associations
