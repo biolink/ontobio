@@ -252,7 +252,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                  url=None,
                  solr=None,
                  config=None,
-                 fq=None,
+                 fq={},
                  hl=True,
                  facet_fields=None,
                  search_fields=None,
@@ -283,7 +283,7 @@ class GolrSearchQuery(GolrAbstractQuery):
     def solr_params(self):
         #facet_fields = [ map_field(fn, self.field_mapping) for fn in self.facet_fields ]
 
-        fq = {}
+        fq = self.fq
         if self.category is not None:
             fq['category'] = self.category
 
@@ -324,6 +324,7 @@ class GolrSearchQuery(GolrAbstractQuery):
             'facet': 'on',
             'facet.field': self.facet_fields,
             'facet.limit': 25,
+            'facet.mincount': 1,
             'fl': ",".join(select_fields),
             "defType": "edismax",
             "qf": qf,

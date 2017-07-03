@@ -72,7 +72,7 @@ analyses. Some examples:
 Create a gene set for all genes in "regulation of bone development"
 (GO:1903010). Find other terms for which this is enriched (in human)
 
-.. code-block:: 
+.. code-block:: console
 
     # find all mouse genes that have 'abnormal synaptic transmission' phenotype
     # (using remote sparql service for MP, and default (Monarch) for associations

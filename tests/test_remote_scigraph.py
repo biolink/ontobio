@@ -88,7 +88,8 @@ def test_remote_sparql():
     #assert ABSENT in slim
     #assert QUALITY not in slim
 
-def test_subontology():
+#def test_subontology():
+def todo_subontology():
     """
     subontology
     """
@@ -96,6 +97,8 @@ def test_subontology():
     print("Creating ont")
     ont = factory.create('scigraph:ontology')
     print("ONT NODES: {}".format(ont.nodes()))
+
+    # TODO: implement this for SciGraph:
     subont = ont.subontology(relations=['subClassOf'])
     PERM = 'GO:1990578'
     print("NODES: {}".format(subont.nodes()))
