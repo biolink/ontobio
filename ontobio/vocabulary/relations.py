@@ -19,9 +19,18 @@ class Evidence():
     evidence_with_support_from =  'RO:0002614'
     has_supporting_reference =  'SEPIO:0000124'
     information_artefact = 'IAO:0000311'
+
+    _prefixmap = {
+        'SEPIO': 'http://purl.obolibrary.org/obo/SEPIO_',
+        'IAO': 'http://purl.obolibrary.org/obo/IAO_',
+        'IAO': 'RO://purl.obolibrary.org/obo/RO_',
+    }
     
 class OboRO():
     part_of = 'BFO:0000050'
     occurs_in = 'BFO:0000066'
     enabled_by = 'RO:0002333'
+    enables = 'RO:0002327'
+    involved_in = 'RO:0002331'
     in_taxon = 'RO:0002162'
+    colocalizes_with = 'RO:0002325'

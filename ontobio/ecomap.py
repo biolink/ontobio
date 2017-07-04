@@ -71,7 +71,7 @@ class EcoMap():
         """
         mcls = None
         for (this_code,this_ref,cls) in self.mappings():
-            if this_code == code:
+            if str(this_code) == str(code):
                 if this_ref  == reference:
                     return cls
                 if this_ref is None:
