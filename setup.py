@@ -1,8 +1,12 @@
 import os
+import sys
 import re
 import subprocess
 
 import setuptools
+
+if sys.version_info.major < 3:
+    sys.exit("Error: Python 3 is required")
 
 directory = os.path.dirname(os.path.abspath(__file__))
 
