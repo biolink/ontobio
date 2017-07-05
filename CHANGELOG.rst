@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+0.2.11
+------
+
+* #63, added rdf generation
+* #62, python version check, @diekhans
+* using rst for README
+* #56 , assocmodel now allows retrieval of full association objects
+* Added GPI writer
+
 0.2.10
 ------
 
