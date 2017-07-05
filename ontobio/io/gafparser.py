@@ -15,10 +15,25 @@ import subprocess
 import logging
 import io
 
+from gafparser.io.gaf import GafParser
+
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
 ANNOTATION = 'ANNOTATION'
 EXTENSION = 'EXTENSION'
+
+
+def write_to_file(optional_file, text):
+    if optional_file:
+        optional_file.write(text)
+
+
+class ParseResult(object):
+
+    def __init__(self, parsed_line, associations, skipped):
+        self.parsed_line = parsed_line
+        self.associations = associations
+        self.skipped = skipped
 
 
 class AssocParserConfig():
@@ -97,6 +112,9 @@ class Report():
                               'type':type,
                               'message':msg,
                               'obj':obj})
+
+    def add_associations(self, associations):
+        pass
 
     def to_report_json(self):
         """
@@ -199,32 +217,18 @@ class AssocParser():
         n_lines = 0
         for line in file:
             n_lines += 1
-            if line.startswith("!"):
-                if outfile is not None:
-                    outfile.write(line)
-                continue
-            line = line.strip("\n")
-            if line == "":
-                self.report.warning(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
-                                    msg="empty line")
-                continue
 
-            parsed_line, new_assocs  = self.parse_line(line)
-            if self._skipping_line(new_assocs): # Skip if there were no assocs
+            parsed_result = self.parse_line(line)
+            parsed_line = parsed_result.parsed_line
+            new_assocs = parsed_line.associations
+
+            if parsed_result.skipped: # Skip if there were no assocs
                 logging.info("SKIPPING: {}".format(line))
                 skipped.append(line)
             else:
-                for a in new_assocs:
-                    self._validate_assoc(a)
-                    rpt = self.report
-                    rpt.subjects.add(a['subject']['id'])
-                    rpt.objects.add(a['object']['id'])
-                    rpt.references.update(a['evidence']['has_supporting_reference'])
-                    if 'taxon' in a['subject']:
-                        rpt.taxa.add(a['subject']['taxon']['id'])
+                self.add_associations(new_assocs)
                 assocs += new_assocs
-                if outfile is not None:
-                    outfile.write(parsed_line + "\n")
+                write_to_file(outfile, parsed_line + "\n")
 
         self.report.skipped += skipped
         self.report.n_lines += n_lines
@@ -236,8 +240,24 @@ class AssocParser():
         file.close()
         return assocs
 
+    def validate_line(self, line):
+        if line == "":
+            self.report.warning(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+                                msg="empty line")
+            return ParseResult(line, [], True)
+
     def _validate_assoc(self, assoc):
         self._validate_ontology_class_id(assoc['object']['id'], assoc['source_line'])
+
+    def add_associations(self, associations):
+        for a in new_assocs:
+            self._validate_assoc(a)
+            self.report.subjects.add(a['subject']['id'])
+            self.report.objects.add(a['object']['id'])
+            self.report.references.update(a['evidence']['has_supporting_reference'])
+            if 'taxon' in a['subject']:
+                self.report.taxa.add(a['subject']['taxon']['id'])
+
 
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
@@ -376,7 +396,7 @@ class AssocParser():
                 rb = ont.replaced_by(id, strict=False)
                 if isinstance(rb,str):
                     self.report.warning(line, Report.OBSOLETE_CLASS, id)
-                    id =  rb
+                    id = rb
                 else:
                     self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id)
             else:
@@ -434,7 +454,7 @@ class AssocParser():
             return self._pair_to_id(toks[0], ":".join(toks[1:]))
         else:
             return id
-    
+
     def _pair_to_id(self, db, localid):
         if self.config.remove_double_prefixes:
             ## Switch MGI:MGI:n to MGI:n
@@ -640,243 +660,7 @@ class GpadParser(AssocParser):
             assocs.append(assoc)
         return line, assocs
 
-class GafParser(AssocParser):
-    """
-    Parser for GO GAF format
-    """
 
-    ANNOTATION_CLASS_COLUMN=4
-
-    def __init__(self,config=None):
-        """
-        Arguments:
-        ---------
-
-        config : a AssocParserConfig object
-        """
-        if config == None:
-            config = AssocParserConfig()
-        self.config = config
-        self.report = Report()
-
-    def skim(self, file):
-        file = self._ensure_file(file)
-        tuples = []
-        for line in file:
-            if line.startswith("!"):
-                continue
-            vals = line.split("\t")
-            if len(vals) < 15:
-                logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
-
-            negated, relation, _ = self._parse_qualifier(vals[3], vals[8])
-
-            # never include NOTs in a skim
-            if negated:
-                continue
-            if self._is_exclude_relation(relation):
-                continue
-            id = self._pair_to_id(vals[0], vals[1])
-            if not self._validate_id(id, line, ENTITY):
-                continue
-            n = vals[2]
-            t = vals[4]
-            tuples.append( (id,n,t) )
-        return tuples
-
-
-    def parse_line(self, line):
-        """
-        Parses a single line of a GAF
-
-        Return a tuple `(processed_line, associations)`. Typically
-        there will be a single association, but in some cases there
-        may be none (invalid line) or multiple (disjunctive clause in
-        annotation extensions)
-
-        Note: most applications will only need to call this directly if they require fine-grained control of parsing. For most purposes,
-        :method:`parse_file` can be used over the whole file
-
-        Arguments
-        ---------
-        line : str
-            A single tab-seperated line from a GPAD file
-
-        """
-        config = self.config
-
-        vals = line.split("\t")
-
-
-        # GAF v1 is defined as 15 cols, GAF v2 as 17.
-        # We treat everything as GAF2 by adding two blank columns.
-        # TODO: check header metadata to see if columns corresponds to declared dataformat version
-        if len(vals) == 15:
-            vals += ["",""]
-
-        if len(vals) != 17:
-            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
-            return line, []
-
-        [db,
-         db_object_id,
-         db_object_symbol,
-         qualifier,
-         goid,
-         reference,
-         evidence,
-         withfrom,
-         aspect,
-         db_object_name,
-         db_object_synonym,
-         db_object_type,
-         taxon,
-         date,
-         assigned_by,
-         annotation_xp,
-         gene_product_isoform] = vals
-
-        ## --
-        ## db + db_object_id. CARD=1
-        ## --
-        id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, line, ENTITY):
-            return line, []
-
-        if not self._validate_id(goid, line, ANNOTATION):
-            return line, []
-
-        date = self._normalize_gaf_date(date, line)
-
-        # If the evidence code is one of the set we're filtering out (skipping)
-        # then no association and return!
-        if evidence.upper() in self.config.filter_out_evidence:
-            return line, []
-
-        ecomap = self.config.ecomap
-        if ecomap != None:
-            if ecomap.coderef_to_ecoclass(evidence, reference) is None:
-                self.report.error(line, Report.UNKNOWN_EVIDENCE_CLASS, evidence,
-                                  msg="Expecting a known ECO GAF code, e.g ISS")
-
-        # validation
-        self._validate_symbol(db_object_symbol, line)
-
-        # Example use case: mapping from UniProtKB to MOD ID
-        if config.entity_map is not None:
-            id = self.map_id(id, config.entity_map)
-            toks = id.split(":")
-            db = toks[0]
-            db_object_id = toks[1:]
-            vals[1] = db_object_id
-
-        ## --
-        ## end of line re-processing
-        ## --
-        # regenerate line post-mapping
-        line = "\t".join(vals)
-
-        ## --
-        ## taxon CARD={1,2}
-        ## --
-        ## if a second value is specified, this is the interacting taxon
-        taxa = [self._taxon_id(x) for x in taxon.split("|")]
-        taxon = taxa[0]
-        in_taxa = taxa[1:]
-        self._validate_taxon(taxon, line)
-
-        ## --
-        ## db_object_synonym CARD=0..*
-        ## --
-        synonyms = db_object_synonym.split("|")
-        if db_object_synonym == "":
-            synonyms = []
-
-        ## --
-        ## process associations
-        ## --
-        ## note that any disjunctions in the annotation extension
-        ## will result in the generation of multiple associations
-        assocs = []
-        xp_ors = annotation_xp.split("|")
-        for xp_or in xp_ors:
-
-            # gather conjunctive expressions in extensions field
-            xp_ands = xp_or.split(",")
-            extns = []
-            for xp_and in xp_ands:
-                if xp_and != "":
-                    expr = self._parse_class_expression(xp_and, line=line)
-                    if expr is not None:
-                        extns.append(expr)
-
-            ## --
-            ## qualifier
-            ## --
-            negated, relation, other_qualifiers = self._parse_qualifier(qualifier, aspect)
-
-            ## --
-            ## goid
-            ## --
-            # TODO We shouldn't overload buildin keywords/functions
-            object = {'id':goid,
-                      'taxon': taxon}
-
-            # construct subject dict
-            subject = {
-                'id':id,
-                'label':db_object_symbol,
-                'type': db_object_type,
-                'fullname': db_object_name,
-                'synonyms': synonyms,
-                'taxon': {
-                    'id': taxon
-                }
-            }
-
-            ## --
-            ## gene_product_isoform
-            ## --
-            ## This is mapped to a more generic concept of subject_extensions
-            subject_extns = []
-            if gene_product_isoform is not None and gene_product_isoform != '':
-                subject_extns.append({'property':'isoform', 'filler':gene_product_isoform})
-
-            ## --
-            ## evidence
-            ## reference
-            ## withfrom
-            ## --
-            evidence_obj = {
-                'type': evidence,
-                'has_supporting_reference': self._split_pipe(reference)
-            }
-            evidence_obj['with_support_from'] = self._split_pipe(withfrom)
-
-            ## Construct main return dict
-            assoc = {
-                'source_line': line,
-                'subject': subject,
-                'object': object,
-                'negated': negated,
-                'qualifiers': other_qualifiers,
-                'aspect': aspect,
-                'relation': {
-                    'id': relation
-                },
-                'evidence': evidence_obj,
-                'provided_by': assigned_by,
-                'date': date,
-
-            }
-            if len(subject_extns) > 0:
-                assoc['subject_extensions'] = subject_extns
-            if len(extns) > 0:
-                assoc['object_extensions'] = extns
-
-            assocs.append(assoc)
-        return line, assocs
 
 class HpoaParser(GafParser):
     """
