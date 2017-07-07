@@ -15,6 +15,7 @@ from ontobio.golr.golr_associations import bulk_fetch
 from ontobio.assocmodel import AssociationSet, AssociationSetMetadata
 import ontobio.io.gafparser as px
 from ontobio.io.gafparser import GafParser
+from collections import defaultdict
 
 SHELF_LIFE = datetime.timedelta(days=3)
 
@@ -96,7 +97,32 @@ class AssociationSetFactory():
         aset = AssociationSet(subject_label_map=subject_label_map, association_map=amap, **args)
         return aset
     
-    def create_from_file(self, file=None, fmt='gaf', **args):
+    def create_from_assocs(self, assocs, **args):
+        """
+        Creates from a list of association objects
+        """
+        amap = defaultdict(list)
+        subject_label_map = {}
+        for a in assocs:
+            subj = a['subject']
+            subj_id = subj['id']
+            subj_label = subj['label']
+            subject_label_map[subj_id] = subj_label
+            if not a['negated']:
+                amap[subj_id].append(a['object']['id'])
+        
+        aset = AssociationSet(subject_label_map=subject_label_map, association_map=amap, **args)
+        aset.associations_by_subj = defaultdict(list)
+        aset.associations_by_subj_obj = defaultdict(list)
+        for a in assocs:
+            sub_id = a['subject']['id']
+            obj_id = a['object']['id']
+            aset.associations_by_subj[sub_id].append(a)
+            aset.associations_by_subj_obj[(sub_id,obj_id)].append(a)
+        
+        return aset
+    
+    def create_from_file(self, file=None, fmt='gaf', skim=True, **args):
         """
         Creates from a file.
 
@@ -108,9 +134,6 @@ class AssociationSetFactory():
             name of format e.g. gaf
         
         """
-        if isinstance(file,str):
-            file = open(file,"r")
-
         p = None
         if fmt == 'gaf':
             p = px.GafParser()
@@ -121,16 +144,20 @@ class AssociationSetFactory():
         else:
             logging.error("Format not recognized: {}".format(fmt))
         logging.info("Parsing {} with {}/{}".format(file, fmt, p))
-        results = p.skim(file)
-        return self.create_from_tuples(results, **args)
+        if skim:
+            results = p.skim(file)
+            return self.create_from_tuples(results, **args)
+        else:
+            assocs = p.parse(file)
+            return self.create_from_assocs(assocs, **args)
+
+            
     
     def create_from_gaf(self, file, **args):
         """
         Creates from a GAF file
         """
-        p = GafParser()
-        results = p.skim(file)
-        return self.create_from_tuples(results, **args)
+        return self.create_from_file(file, fmt='gaf', **args)
 
     def create_from_phenopacket(self, file):
         """
@@ -143,6 +170,17 @@ class AssociationSetFactory():
         Creates from a simple json rendering
         """
         pass
+    
+    def create_from_remote_file(self, group, snapshot=True, **args):
+        """
+        Creates from remote GAF
+        """
+        import requests
+        url = "http://snapshot.geneontology.org/annotations/{}.gaf.gz".format(group)
+        r = requests.get(url, stream=True)
+        p = px.GafParser()
+        results = p.skim(r.raw)
+        return self.create_from_tuples(results, **args)
 
 
 @cachier(stale_after=SHELF_LIFE)

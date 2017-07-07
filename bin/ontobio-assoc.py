@@ -70,6 +70,8 @@ def main():
                         help='ECO class')
     parser.add_argument('-p', '--properties', nargs='*', type=str, required=False,
                         help='Properties')
+    parser.add_argument('-P', '--plot', type=bool, default=False,
+                        help='if set, plot output (requires plotly)')
     parser.add_argument('-y', '--yamlconfig', type=str, required=False,
                         help='Path to setup/configuration yaml file')
     parser.add_argument('-S', '--slim', type=str, default='', required=False,
@@ -86,52 +88,63 @@ def main():
     subparsers = parser.add_subparsers(dest='subcommand', help='sub-command help')
 
     # EXTRACT ONTOLOGY
-    parser_n = subparsers.add_parser('subontology', help='Extract sub-ontology')
+    parser_n = subparsers.add_parser('subontology',
+                                     help='Extract sub-ontology, include only annotated nodes or their descendants')
     parser_n.add_argument('-M', '--minimal', dest='minimal', action='store_true', default=False, help='If set, remove non-MRCA nodes')
     parser_n.set_defaults(function=extract_ontology)
 
     # ENRICHMENT
-    parser_n = subparsers.add_parser('enrichment', help='Perform an enrichment test')
+    parser_n = subparsers.add_parser('enrichment',
+                                     help='Perform an enrichment test over a sample set of annotated entities')
     parser_n.add_argument('-q', '--query',type=str, help='query all genes for this class an use as subject')
     parser_n.add_argument('-H', '--hypotheses',nargs='*', help='list of classes to test against')
-    parser_n.add_argument('subjects',nargs='*')
+    parser_n.add_argument('-s', '--sample_file', type=str, help='file containing list of gene IDs in sample set')
+    parser_n.add_argument('-b', '--background_file', type=str, help='file containing list of gene IDs in background set')
+    parser_n.add_argument('-t', '--threshold', type=float, help='p-value threshold')
+    parser_n.add_argument('sample_ids', nargs='*', help='list of gene IDs in sample set')
     parser_n.set_defaults(function=run_enrichment_test)
 
     # PHENOLOG
-    parser_n = subparsers.add_parser('phenolog', help='Perform multiple enrichment tests')
+    parser_n = subparsers.add_parser('phenolog',
+                                     help='Perform multiple enrichment tests, using a second ontology and assoc set to build gene sets')
     parser_n.add_argument('-R', '--resource2',type=str, required=True, help='path to second GAF')
     parser_n.add_argument('-F', '--file2',type=str, required=True, help='handle for second ontology')
     parser_n.set_defaults(function=run_phenolog)
 
     # QUERY
-    parser_n = subparsers.add_parser('query', help='Query based on positive and negative terms')
+    parser_n = subparsers.add_parser('query',
+                                     help='Query for entities (e.g. genes) based on positive and negative terms')
     parser_n.add_argument('-q', '--query',nargs='*', help='positive classes')
     parser_n.add_argument('-N', '--negative',type=str, help='negative classes')
     parser_n.set_defaults(function=run_query)
 
     # QUERY ASSOCIATIONS
-    parser_n = subparsers.add_parser('associations', help='Query for association pairs')
+    parser_n = subparsers.add_parser('associations',
+                                     help='Query for associations for a set of entities (e.g. genes)')
     parser_n.add_argument('subjects',nargs='*', help='subject ids')
     parser_n.set_defaults(function=run_query_associations)
 
     # INTERSECTIONS
-    parser_n = subparsers.add_parser('intersections', help='Query intersections')
+    parser_n = subparsers.add_parser('intersections',
+                                     help='Query intersections')
     parser_n.add_argument('-X', '--xterms',nargs='*', help='x classes')
     parser_n.add_argument('-Y', '--yterms',nargs='*', help='y classes')
     parser_n.add_argument('--useids',type=bool, default=False, help='if true, use IDs not labels on axes')
     parser_n.add_argument('terms',nargs='*', help='all terms (x and y)')
     parser_n.set_defaults(function=plot_intersections)
 
-    # INTERSECTION DENDROGRAM
-    parser_n = subparsers.add_parser('dendrogram', help='Plot dendrogram from intersections')
+    # INTERSECTION DENDROGRAM (TODO: merge into previous?)
+    parser_n = subparsers.add_parser('intersection-dendrogram',
+                                     help='Plot dendrogram from intersections')
     parser_n.add_argument('-X', '--xterms',nargs='*', help='x classes')
     parser_n.add_argument('-Y', '--yterms',nargs='*', help='y classes')
     parser_n.add_argument('--useids',type=bool, default=False, help='if true, use IDs not labels on axes')
     parser_n.add_argument('terms',nargs='*', help='all terms (x and y)')
     parser_n.set_defaults(function=plot_term_intersection_dendrogram)
 
-    # SIMILARITY MATRIX
-    parser_n = subparsers.add_parser('simmatrix', help='Plot dendrogram for similarities between subjects')
+    # SIMILARITY MATRIX (may move to another module)
+    parser_n = subparsers.add_parser('simmatrix',
+                                     help='Plot dendrogram for similarities between subjects')
     parser_n.add_argument('-X', '--xsubjects',nargs='*', help='x subjects')
     parser_n.add_argument('-Y', '--ysubjects',nargs='*', help='y subjects')
     parser_n.add_argument('--useids',type=bool, default=False, help='if true, use IDs not labels on axes')
@@ -195,16 +208,29 @@ def extract_ontology(ont, aset, args):
     w.outfile = args.outfile
     w.write(ont)
 
+    
 def run_enrichment_test(ont, aset, args):
-    subjects = args.subjects
+    """
+    Runs aset.enrichment_test, printing results
+    """
+    subjects = args.sample_ids
+    background = None
+    if args.sample_file is not None:
+        subjects = read_ids_from_file(args.sample_file)
+    if args.background_file is not None:
+        subjects = read_ids_from_file(args.background_file)
     if args.query is not None:
         subjects = aset.query([args.query])
     print("SUBJECTS q={} : {}".format(args.query, subjects))
-    enr = aset.enrichment_test(subjects=subjects, hypotheses=args.hypotheses, labels=True)
+    enr = aset.enrichment_test(subjects=subjects, background=background, hypotheses=args.hypotheses, threshold=args.threshold, labels=True)
+    print('ENRICHED_TERMS={}'.format(len(enr)))
     for r in enr:
         print("{:8.3g} {} {:40s}".format(r['p'],r['c'],str(r['n'])))
 
 def run_phenolog(ont, aset, args):
+    """
+    Like run_enrichment_test, but uses classes from a 2nd ontology/assocset to build the gene set.
+    """
     ofactory = OntologyFactory()
     ont2 = ofactory.create(args.resource2)
 
@@ -212,6 +238,7 @@ def run_phenolog(ont, aset, args):
     aset2 = afactory.create(ontology=ont2,
                             file=args.file2)
 
+    # only test for genes (or other subjects of statements) in common
     common = set(aset.subjects).intersection(aset2.subjects)
     num_common = len(common)
     logging.info("Genes in common between two KBs: {}/\{} = {}".format(len(aset.subjects), len(aset2.subjects), num_common))
@@ -230,22 +257,27 @@ def run_phenolog(ont, aset, args):
 
 
 def run_query(ont, aset, args):
-    import plotly.plotly as py
-    import plotly.graph_objs as go
+    """
+    Basic querying by positive/negative class lists
+    """
     subjects = aset.query(args.query, args.negative)
     for s in subjects:
         print("{} {}".format(s, str(aset.label(s))))
-    tups = aset.query_associations(subjects=subjects)
-    z, xaxis, yaxis = tuple_to_matrix(tups)
-    spacechar = " "
-    xaxis = mk_axis(xaxis, aset, args, spacechar=" ")
-    yaxis = mk_axis(yaxis, aset, args, spacechar=" ")
-    logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
-    trace = go.Heatmap(z=z,
-                       x=xaxis,
-                       y=yaxis)
-    data=[trace]
-    py.plot(data, filename='labelled-heatmap')
+
+    if args.plot:
+        import plotly.plotly as py
+        import plotly.graph_objs as go
+        tups = aset.query_associations(subjects=subjects)
+        z, xaxis, yaxis = tuple_to_matrix(tups)
+        spacechar = " "
+        xaxis = mk_axis(xaxis, aset, args, spacechar=" ")
+        yaxis = mk_axis(yaxis, aset, args, spacechar=" ")
+        logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
+        trace = go.Heatmap(z=z,
+                           x=xaxis,
+                           y=yaxis)
+        data=[trace]
+        py.plot(data, filename='labelled-heatmap')
 
 def run_query_associations(ont, aset, args):
     import plotly.plotly as py
@@ -262,6 +294,7 @@ def run_query_associations(ont, aset, args):
     py.plot(data, filename='labelled-heatmap')
     #plot_dendrogram(z, xaxis, yaxis)
 
+# TODO: fix this really dumb implementation
 def tuple_to_matrix(tups):
     import numpy as np
     xset = set()
@@ -438,5 +471,11 @@ def label_or_id(x, kb):
     else:
         return label
 
+def read_ids_from_file(fn):
+    f = open(fn, 'r')
+    ids = [id.strip() for id in f.readlines()]
+    f.close()
+    return ids
+    
 if __name__ == "__main__":
     main()

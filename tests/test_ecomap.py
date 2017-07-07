@@ -13,3 +13,4 @@ def test_ecomap():
     assert m.coderef_to_ecoclass('BADCODE',None) == None
     assert m.coderef_to_ecoclass('BADCODE','GO_REF:xxx') == None
     assert m.ecoclass_to_coderef('ECO:9999999999999999999') == (None,None)
+    assert m.coderef_to_ecoclass('ISO',None) == 'ECO:0000266'

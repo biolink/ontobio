@@ -4,6 +4,7 @@ from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.ecomap import EcoMap
 import tempfile
+import logging
 
 POMBASE = "tests/resources/truncated-pombase.gaf"
 POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
@@ -178,3 +179,29 @@ def test_errors_gaf():
         print("MESSAGE: {}".format(m))
     assert len(msgs) == 8
     
+from ontobio.assoc_factory import AssociationSetFactory
+def test_factory():
+    afa = AssociationSetFactory()
+    ont = OntologyFactory().create(ONT)
+    aset = afa.create_from_file(POMBASE, ontology=ont, skim=False)
+
+    found = 0
+    for s in aset.subjects:
+        print('{} {}'.format(s,aset.label(s)))
+        for c in aset.annotations(s):
+            print('  {} {}'.format(c,ont.label(c)))
+            for a in aset.associations(s,c):
+                e = a['evidence']
+                print('    {} {} {}'.format(e['type'],e['with_support_from'], e['has_supporting_reference']))
+                if s == 'PomBase:SPBC2D10.10c' and c == 'GO:0005730':
+                    if e['type'] == 'ISO':
+                        if e['with_support_from'] == ['SGD:S000002172'] and e['has_supporting_reference'] == ['GO_REF:0000024']:
+                            found +=1
+                            logging.info('** FOUND: {}'.format(a))
+                    if e['type'] == 'IDA':
+                        if e['has_supporting_reference'] == ['PMID:16823372']:
+                            found +=1
+                            logging.info('** FOUND: {}'.format(a))
+
+    assert len(aset.associations_by_subj) > 0
+    assert found  == 2

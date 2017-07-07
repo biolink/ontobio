@@ -462,7 +462,13 @@ class AssocParser():
                     logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
                     ok = resp.status_code == 200
                     if ok:
-                        return io.StringIO(resp.text)
+                        logging.debug("HEADER: {}".format(resp.headers))
+                        if file.endswith(".gz"):
+                            import gzip
+                            return io.StringIO(str(gzip.decompress(resp.content),'utf-8'))
+                        else:
+                            out = io.StringIO(resp.content)
+                            return out
                     else:
                         return None
             else:
@@ -842,11 +848,11 @@ class GafParser(AssocParser):
             ## reference
             ## withfrom
             ## --
-            evidence = {
+            evidence_obj = {
                 'type': evidence,
                 'has_supporting_reference': self._split_pipe(reference)
             }
-            evidence['with_support_from'] = self._split_pipe(withfrom)
+            evidence_obj['with_support_from'] = self._split_pipe(withfrom)
 
             ## Construct main return dict
             assoc = {
@@ -859,7 +865,7 @@ class GafParser(AssocParser):
                 'relation': {
                     'id': relation
                 },
-                'evidence': evidence,
+                'evidence': evidence_obj,
                 'provided_by': assigned_by,
                 'date': date,
 
