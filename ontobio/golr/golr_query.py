@@ -764,8 +764,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # with an ID that is contained in subject_or_object_ids.
         if subject_or_object_ids is not None:
             quotified_ids = solr_quotify(subject_or_object_ids)
-            subject_id_filter = '{}:{}'.format('subject', quotified_ids)
-            object_id_filter = '{}:{}'.format('object', quotified_ids)
+            subject_id_filter = '{}:{}'.format('subject_closure', quotified_ids)
+            object_id_filter = '{}:{}'.format('object_closure', quotified_ids)
 
             # If subject_or_object_category is provided, we add it to the filter.
             if self.subject_or_object_category is not None:
