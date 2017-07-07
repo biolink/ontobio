@@ -15,7 +15,7 @@ import subprocess
 import logging
 import io
 
-from gafparser.io.gaf import GafParser
+# from ontobio.io.gaf import GafParser
 
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
@@ -30,10 +30,11 @@ def write_to_file(optional_file, text):
 
 class ParseResult(object):
 
-    def __init__(self, parsed_line, associations, skipped):
+    def __init__(self, parsed_line, associations, skipped, evidence_used=None):
         self.parsed_line = parsed_line
         self.associations = associations
         self.skipped = skipped
+        self.evidence_used = evidence_used
 
 
 class AssocParserConfig():
@@ -51,7 +52,9 @@ class AssocParserConfig():
                  ecomap=None,
                  exclude_relations=[],
                  include_relations=[],
-                 filter_out_evidence=[]):
+                 filter_out_evidence=[],
+                 filtered_evidence_file=None):
+
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
         self.repair_obsoletes=repair_obsoletes
@@ -62,6 +65,7 @@ class AssocParserConfig():
         self.include_relations=include_relations
         self.exclude_relations=exclude_relations
         self.filter_out_evidence = filter_out_evidence
+        self.filtered_evidence_file = filtered_evidence_file
 
 class Report():
     """
@@ -114,7 +118,36 @@ class Report():
                               'obj':obj})
 
     def add_associations(self, associations):
-        pass
+        for a in associations:
+            self.add_association(a)
+
+    def add_association(self, association):
+        self.n_assocs += 1
+        self.subjects.add(association['subject']['id'])
+        self.objects.add(association['object']['id'])
+        self.references.update(association['evidence']['has_supporting_reference'])
+        if 'taxon' in association['subject']:
+            self.taxa.add(association['subject']['taxon']['id'])
+
+    def report_parsed_result(self, result, output_file, evidence_filtered_file, evidence_to_filter):
+
+        self.n_lines += 1
+        if result.skipped:
+            print("wa wa skipping for some reason not related to evidence!")
+            logging.info("SKIPPING: {}".format(result.parsed_line))
+            self.skipped.append(result.parsed_line)
+        else:
+            self.add_associations(result.associations)
+            write_to_file(output_file, result.parsed_line)
+            if result.evidence_used not in evidence_to_filter:
+                print("Line has evidence {} which is not one of {}".format(result.evidence_used, evidence_to_filter))
+                write_to_file(evidence_filtered_file, result.parsed_line)
+            else:
+                print("Skipping line in {} since {} is filtered in {}".format(evidence_filtered_file.name, result.evidence_used, evidence_to_filter))
+
+
+    def short_summary(self):
+        return "Parsed {} assocs from {} lines. Skipped: {}".format(self.n_assocs, self.n_lines, len(self.skipped))
 
     def to_report_json(self):
         """
@@ -187,7 +220,7 @@ class Report():
 
 # TODO avoid using names that are builtin python: file, id
 
-class AssocParser():
+class AssocParser(object):
     """
     Abstract superclass of all association parser classes
     """
@@ -213,32 +246,16 @@ class AssocParser():
         """
         file = self._ensure_file(file)
         assocs = []
-        skipped = []
-        n_lines = 0
+
         for line in file:
-            n_lines += 1
-
             parsed_result = self.parse_line(line)
-            parsed_line = parsed_result.parsed_line
-            new_assocs = parsed_line.associations
+            self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
+            assocs.extend(parsed_result.associations)
 
-            if parsed_result.skipped: # Skip if there were no assocs
-                logging.info("SKIPPING: {}".format(line))
-                skipped.append(line)
-            else:
-                self.add_associations(new_assocs)
-                assocs += new_assocs
-                write_to_file(outfile, parsed_line + "\n")
-
-        self.report.skipped += skipped
-        self.report.n_lines += n_lines
-        self.report.n_assocs += len(assocs)
-        logging.info("Parsed {} assocs from {} lines. Skipped: {}".
-                     format(len(assocs),
-                            n_lines,
-                            len(skipped)))
+        logging.info(self.report.short_summary())
         file.close()
         return assocs
+
 
     def validate_line(self, line):
         if line == "":
@@ -247,17 +264,7 @@ class AssocParser():
             return ParseResult(line, [], True)
 
     def _validate_assoc(self, assoc):
-        self._validate_ontology_class_id(assoc['object']['id'], assoc['source_line'])
-
-    def add_associations(self, associations):
-        for a in new_assocs:
-            self._validate_assoc(a)
-            self.report.subjects.add(a['subject']['id'])
-            self.report.objects.add(a['object']['id'])
-            self.report.references.update(a['evidence']['has_supporting_reference'])
-            if 'taxon' in a['subject']:
-                self.report.taxa.add(a['subject']['taxon']['id'])
-
+        self.report_ontology_id(assoc['object']['id'])
 
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
@@ -394,15 +401,28 @@ class AssocParser():
         if ont.is_obsolete(id):
             if self.config.repair_obsoletes:
                 rb = ont.replaced_by(id, strict=False)
-                if isinstance(rb,str):
+                if len(rb) == 1:
                     self.report.warning(line, Report.OBSOLETE_CLASS, id)
-                    id = rb
+                    id = rb[0]
                 else:
                     self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id)
             else:
                 self.report.warning(line, Report.OBSOLETE_CLASS, id)
         # TODO: subclassof
         return id
+
+
+    def report_ontology_id(self, go_id):
+        if not self.config.ontology.has_node(go_id):
+            return Report.UNKNOWN_ID
+
+        if self.config.ontology.is_obsolete(go_id):
+            if len(self.config.ontology.replaced_by(go_id)) == 1:
+                return Report.OBSOLETE_CLASS
+            else:
+                return Report.OBSOLETE_CLASS_NO_REPLACEMENT
+
+        return ""
 
     def _normalize_gaf_date(self, date, line):
         if date is None or date == "":
@@ -661,7 +681,7 @@ class GpadParser(AssocParser):
         return line, assocs
 
 
-
+from ontobio.io.gaf import GafParser
 class HpoaParser(GafParser):
     """
     Parser for HPOA format
