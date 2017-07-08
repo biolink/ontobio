@@ -142,6 +142,11 @@ def test_graph():
     assert NIF_CELL in xrefs
     assert len(xrefs) == 2
 
+    def_val = ont.definition_val(CELL)
+    assert def_val.startswith("The basic structural and functional unit of all organisms")
+
+    defn = ont.definition(CELL)
+    assert defn['xrefs'] == [ "GOC:go_curators" ]
     
     # xrefs are bidirectional
     xrefs = ont.xrefs(WIKIPEDIA_CELL, bidirectional=True)
