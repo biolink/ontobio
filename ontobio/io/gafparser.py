@@ -15,6 +15,8 @@ import subprocess
 import logging
 import io
 
+from ontobio import ontol
+
 # from ontobio.io.gaf import GafParser
 
 TAXON = 'TAXON'
@@ -43,7 +45,7 @@ class AssocParserConfig():
     """
     def __init__(self,
                  remove_double_prefixes=False,
-                 ontology=None,
+                 ontology=ontol.Ontology(),
                  repair_obsoletes=True,
                  entity_map=None,
                  valid_taxa=None,
@@ -133,18 +135,13 @@ class Report():
 
         self.n_lines += 1
         if result.skipped:
-            print("wa wa skipping for some reason not related to evidence!")
             logging.info("SKIPPING: {}".format(result.parsed_line))
             self.skipped.append(result.parsed_line)
         else:
             self.add_associations(result.associations)
             write_to_file(output_file, result.parsed_line)
             if result.evidence_used not in evidence_to_filter:
-                print("Line has evidence {} which is not one of {}".format(result.evidence_used, evidence_to_filter))
                 write_to_file(evidence_filtered_file, result.parsed_line)
-            else:
-                print("Skipping line in {} since {} is filtered in {}".format(evidence_filtered_file.name, result.evidence_used, evidence_to_filter))
-
 
     def short_summary(self):
         return "Parsed {} assocs from {} lines. Skipped: {}".format(self.n_assocs, self.n_lines, len(self.skipped))
@@ -546,15 +543,13 @@ class GpadParser(AssocParser):
 
     ANNOTATION_CLASS_COLUMN=3
 
-    def __init__(self,config=None):
+    def __init__(self,config=AssocParserConfig()):
         """
         Arguments:
         ---------
 
         config : a AssocParserConfig object
         """
-        if config == None:
-            config = AssocParserConfig()
         self.config = config
         self.report = Report()
 
@@ -602,11 +597,19 @@ class GpadParser(AssocParser):
             A single tab-seperated line from a GPAD file
 
         """
+
+        parsed = super().validate_line(line)
+        if parsed:
+            return parsed
+
+        if self.is_header(line):
+            return ParseResult(line, [], False)
+
         vals = line.split("\t")
         if len(vals) != 12:
             self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
                 msg="There were {columns} columns found in this line, and there should be 12".format(columns=len(vals)))
-            return line, []
+            return ParseReslt(line, [], True)
 
         [db,
          db_object_id,
@@ -623,10 +626,10 @@ class GpadParser(AssocParser):
 
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, line, ENTITY):
-            return line, []
+            return ParseResult(line, [], True)
 
         if not self._validate_id(goid, line, ANNOTATION):
-            return line, []
+            return ParseResult(line, [], True)
 
         date = self._normalize_gaf_date(date, line)
 
@@ -677,8 +680,15 @@ class GpadParser(AssocParser):
             }
             if len(other_qualifiers) > 0:
                 assoc['qualifiers'] = other_qualifiers
+
+            if self.report_ontology_id(assoc["object"]["id"]):
+                self.report.warning(line, self.report_ontology_id(assoc["object"]["id"]), assoc["object"]["id"])
+
             assocs.append(assoc)
-        return line, assocs
+        return ParseResult(line, assocs, False)
+
+    def is_header(self, line):
+        return line.startswith("!")
 
 
 from ontobio.io.gaf import GafParser
@@ -756,7 +766,7 @@ class HpoaParser(GafParser):
         ## --
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, line, ENTITY):
-            return line, []
+            return ParseResult(line, [], True)
 
         if not self._validate_id(hpoid, line, ANNOTATION):
             return line, []

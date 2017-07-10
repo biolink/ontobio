@@ -1,4 +1,5 @@
-from ontobio.io.gafparser import GafParser, GpadParser
+from ontobio.io.gafparser import GpadParser
+from ontobio.io.gaf import GafParser
 from ontobio.io.assocwriter import GpadWriter
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
@@ -42,9 +43,9 @@ def test_skim_gaf_qualifiers():
         assert o.startswith('GO:')
         assert s.startswith('MGI:') or s.startswith('PomBase')
     assert len(results) == 2 # ensure NOTs and excludes relations skipped
-    
-    
-        
+
+
+
 def test_skim_gpad():
     p = GpadParser()
     p.config.ecomap = EcoMap()
@@ -55,12 +56,12 @@ def test_skim_gpad():
         (s,sn,o) = r
         assert o.startswith('GO:')
         assert s.startswith('PomBase:') or s.startswith('PR:')
-        
+
 def test_parse_gaf():
     parse_with(POMBASE, GafParser())
 def test_parse_gpad():
     parse_with(POMBASE_GPAD, GpadParser())
-    
+
 def parse_with(f, p):
     p.config.ecomap = EcoMap()
     is_gaf = f == POMBASE
@@ -115,9 +116,8 @@ def convert(file, p, w, p2):
     for a in assocs2:
         print("REPARSED: {}".format(a))
     len(assocs) == len(assocs2)
-    
 
-        
+
 def test_invalid_goid():
     # Note: this ontology is a subset of GO extracted using the GAF, not GPAD
     ont = OntologyFactory().create(ONT)
@@ -126,11 +126,11 @@ def test_invalid_goid():
     results = p.parse(open(POMBASE_GPAD,"r"))
 
     # we expect errors since ONT is not tuned for the GPAD file
-    for m in p.report.messages:
-        print("MESSAGE: {}".format(m))
+    # for m in p.report.messages:
+    #     print("MESSAGE: {}".format(m))
     assert len(p.report.messages) > 500
     print(p.report.to_markdown())
-    
+
 def test_validate_go_idspaces():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
@@ -148,18 +148,18 @@ def test_validate_go_idspaces():
     # ensure config is not preserved
     p = GafParser()
     assert p.config.class_idspaces == None
-    
+
 #POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
 
 def test_qualifiers_gaf():
     parse_with2(QGAF, GafParser())
 #def test_qualifiers_gpad():
 #    parse_with2(POMBASE_GPAD, GpadParser())
-    
+
 def parse_with2(f, p):
     is_gaf = f == POMBASE
     ont = OntologyFactory().create(ONT)
-    
+
     p.config.ontology = ont
     assocs = p.parse(open(f,"r"))
     neg_assocs = [a for a in assocs if a['negated'] == True]
@@ -168,7 +168,7 @@ def parse_with2(f, p):
         print('REL: {}'.format(a['relation']))
     assert len([a for a in assocs if a['relation']['id'] == 'involved_in']) == 1
     assert len([a for a in assocs if a['relation']['id'] == 'contributes_to']) == 1
-    
+
 def test_errors_gaf():
     p = GafParser()
     p.config.ecomap = EcoMap()
@@ -178,7 +178,7 @@ def test_errors_gaf():
     for m in msgs:
         print("MESSAGE: {}".format(m))
     assert len(msgs) == 8
-    
+
 from ontobio.assoc_factory import AssociationSetFactory
 def test_factory():
     afa = AssociationSetFactory()

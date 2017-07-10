@@ -90,7 +90,7 @@ class GafParser(gafparser.AssocParser):
             vals += ["",""]
 
         if len(vals) != 17:
-            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+            self.report.error(line, gafparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
                 msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
             return gafparser.ParseResult(line, [], True)
 
@@ -129,7 +129,7 @@ class GafParser(gafparser.AssocParser):
         ecomap = self.config.ecomap
         if ecomap != None:
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
-                self.report.error(line, Report.UNKNOWN_EVIDENCE_CLASS, evidence,
+                self.report.error(line, gafparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
                                   msg="Expecting a known ECO GAF code, e.g ISS")
 
         # validation

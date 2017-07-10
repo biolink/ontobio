@@ -21,7 +21,7 @@ class Ontology():
 
     """
 
-    def __init__(self, handle=None, graph=None, xref_graph=None, payload=None, graphdoc=None):
+    def __init__(self, handle=None, graph=nx.Graph(), xref_graph=None, payload=None, graphdoc=None):
         """
         initializes based on an ontology name.
 
