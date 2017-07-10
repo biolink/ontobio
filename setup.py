@@ -1,8 +1,12 @@
 import os
+import sys
 import re
 import subprocess
 
 import setuptools
+
+if sys.version_info.major < 3:
+    sys.exit("Error: Python 3 is required")
 
 directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -13,20 +17,6 @@ with open(init_path) as read_file:
 pattern = re.compile(r"^__version__ = ['\"]([^'\"]*)['\"]", re.MULTILINE)
 version = pattern.search(text).group(1)
 
-# long_description
-readme_path = os.path.join(directory, 'README.md')
-try:
-    # copied from dhimmel/obonet:
-    # Try to create an reStructuredText long_description from README.md
-    args = 'pandoc', '--from', 'markdown', '--to', 'rst', readme_path
-    long_description = subprocess.check_output(args)
-    long_description = long_description.decode()
-except Exception as error:
-    # Fallback to markdown (unformatted on PyPI) long_description
-    print('README.md conversion to reStructuredText failed. Error:')
-    print(error)
-    with open(readme_path) as read_file:
-        long_description = read_file.read()
 
 setuptools.setup(
     name='ontobio',
@@ -35,7 +25,7 @@ setuptools.setup(
     author_email='cmungall@gmail.com',
     url='https://github.com/biolink/ontobio',
     description='Library for working with OBO Library Ontologies and associations',
-    long_description=long_description,
+    long_description=open("README.rst").read(),
     license='BSD',
     #packages=['ontobio'],
     packages=setuptools.find_packages(),

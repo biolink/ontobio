@@ -2,7 +2,7 @@
 Test Generate RDF from Assocs
 """
 from ontobio.io.gafparser import GafParser
-from ontobio.rdfgen.assoc_rdfgen import SimpleAssocGenerator,CamGenerator
+from ontobio.rdfgen.assoc_rdfgen import SimpleAssocRdfTransform, CamRdfTransform
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 
@@ -13,8 +13,12 @@ def test_parse():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     assocs = p.parse(open(POMBASE,"r"))
-    gen1 = SimpleAssocGenerator()
-    gen2 = CamGenerator()
+    gen(assocs,SimpleAssocRdfTransform(),'simple')
+    gen(assocs,CamRdfTransform(),'cam')
+
+def gen(assocs, tr, n):
+    fn = 'tests/resources/{}.rdf'.format(n)
+    tr.emit_header()
     for a in assocs:
-        gen1.translate(a)
-        #gen2.translate(a)
+        tr.translate(a)
+    tr.writer.serialize(fn, 'ntriples')
