@@ -15,19 +15,26 @@ SUBSET = [
     'GO:0006810', ## transport
     'GO:0005730', ## nucleolus
     'GO:0016604', ## nuclear body
-    'GO:0023052'  ## signaling
+    'GO:0023052', ## signaling
+    'GO:0003674', ## molecular_function
+    'GO:0008150'  ## BP
 
 ]
-    
+
+NESRA = 'GO:0005049' ## nuclear export signal receptor activity
+
 def test_map2slim_gaf():
     f = POMBASE
     p = GafParser()
     is_gaf = f == POMBASE
     ont = OntologyFactory().create(ONT)
     relations=['subClassOf', 'BFO:0000050']
+
+    # creates a basic JSON dictionary
     m = ont.create_slim_mapping(subset_nodes=SUBSET, relations=relations)
-    #print(str(m))
+
     assert m['GO:0071423'] == ['GO:0006810']
+    assert m[NESRA] == ['GO:0051169']
     outfile = tempfile.NamedTemporaryFile(mode='w', delete=False)
     p.map_to_subset(open(f,"r"), class_map=m, outfile=outfile)
     for m in p.report.messages:

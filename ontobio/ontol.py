@@ -201,9 +201,8 @@ class Ontology():
         m = {}
         for n in subont.nodes():
             ancs = subont.ancestors(n, reflexive=True)
-            #logging.info("  M: {} -> {}".format(n, ancs))
             ancs_in_subset = subset_nodes.intersection(ancs)
-            m[n] = list(ancs_in_subset)
+            m[n] = list(subont.filter_redundant(ancs_in_subset))
         return m
 
     def filter_redundant(self, ids):
