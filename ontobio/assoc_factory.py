@@ -13,7 +13,8 @@ from cachier import cachier
 import datetime
 from ontobio.golr.golr_associations import bulk_fetch
 from ontobio.assocmodel import AssociationSet, AssociationSetMetadata
-import ontobio.io.gafparser as px
+from ontobio.io.hpoaparser import HpoaParser
+from ontobio.io.gpadparser import GpadParser
 from ontobio.io.gafparser import GafParser
 from collections import defaultdict
 
@@ -44,12 +45,12 @@ class AssociationSetFactory():
         subject_category: string representing category of subjects (e.g. gene, disease, variant)
         object_category: string representing category of objects (e.g. function, phenotype, disease)
         taxon:           string holding NCBITaxon:nnnn ID
-        
+
         """
         meta = AssociationSetMetadata(subject_category=subject_category,
                                       object_category=object_category,
                                       taxon=taxon)
-        
+
         if file is not None:
             return self.create_from_file(file=file,
                                          fmt=fmt,
@@ -64,8 +65,8 @@ class AssociationSetFactory():
 
         logging.info("Creating map for {} subjects".format(len(assocs)))
 
-        
-        
+
+
         amap = {}
         subject_label_map = {}
         for a in assocs:
@@ -74,7 +75,7 @@ class AssociationSetFactory():
             subject_label_map[subj] = a['subject_label']
             amap[subj] = a['objects']
 
-            
+
         aset = AssociationSet(ontology=ontology,
                               meta=meta,
                               subject_label_map=subject_label_map,
@@ -93,10 +94,10 @@ class AssociationSetFactory():
             if subj not in amap:
                 amap[subj] = []
             amap[subj].append(a[2])
-        
+
         aset = AssociationSet(subject_label_map=subject_label_map, association_map=amap, **args)
         return aset
-    
+
     def create_from_assocs(self, assocs, **args):
         """
         Creates from a list of association objects
@@ -110,7 +111,7 @@ class AssociationSetFactory():
             subject_label_map[subj_id] = subj_label
             if not a['negated']:
                 amap[subj_id].append(a['object']['id'])
-        
+
         aset = AssociationSet(subject_label_map=subject_label_map, association_map=amap, **args)
         aset.associations_by_subj = defaultdict(list)
         aset.associations_by_subj_obj = defaultdict(list)
@@ -119,9 +120,9 @@ class AssociationSetFactory():
             obj_id = a['object']['id']
             aset.associations_by_subj[sub_id].append(a)
             aset.associations_by_subj_obj[(sub_id,obj_id)].append(a)
-        
+
         return aset
-    
+
     def create_from_file(self, file=None, fmt='gaf', skim=True, **args):
         """
         Creates from a file.
@@ -132,17 +133,18 @@ class AssociationSetFactory():
             input file or filename
         format : str
             name of format e.g. gaf
-        
+
         """
         p = None
         if fmt == 'gaf':
-            p = px.GafParser()
+            p = GafParser()
         elif fmt == 'gpad':
-            p = px.GpadParser()
+            p = GpadParser()
         elif fmt == 'hpoa':
-            p = px.HpoaParser()
+            p = HpoaParser()
         else:
             logging.error("Format not recognized: {}".format(fmt))
+
         logging.info("Parsing {} with {}/{}".format(file, fmt, p))
         if skim:
             results = p.skim(file)
@@ -151,8 +153,8 @@ class AssociationSetFactory():
             assocs = p.parse(file)
             return self.create_from_assocs(assocs, **args)
 
-            
-    
+
+
     def create_from_gaf(self, file, **args):
         """
         Creates from a GAF file
@@ -170,7 +172,7 @@ class AssociationSetFactory():
         Creates from a simple json rendering
         """
         pass
-    
+
     def create_from_remote_file(self, group, snapshot=True, **args):
         """
         Creates from remote GAF
@@ -178,7 +180,7 @@ class AssociationSetFactory():
         import requests
         url = "http://snapshot.geneontology.org/annotations/{}.gaf.gz".format(group)
         r = requests.get(url, stream=True)
-        p = px.GafParser()
+        p = GafParser()
         results = p.skim(r.raw)
         return self.create_from_tuples(results, **args)
 
@@ -187,4 +189,3 @@ class AssociationSetFactory():
 def bulk_fetch_cached(**args):
         logging.info("Fetching assocs from store (will be cached)")
         return bulk_fetch(**args)
-    

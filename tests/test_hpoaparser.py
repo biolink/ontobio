@@ -1,4 +1,4 @@
-from ontobio.io.gafparser import HpoaParser
+from ontobio.io.hpoaparser import HpoaParser
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 
@@ -20,7 +20,7 @@ def test_skim():
         (s,sn,o) = r
         assert o.startswith('HP:')
         assert s.startswith('DECIPHER:') or s.startswith('OMIM:') or s.startswith('ORPHANET:')
-    
+
 def test_parse_hpoa():
     p = HpoaParser()
     f = ANNFILE
@@ -45,7 +45,7 @@ def test_parse_hpoa():
         print("MESSAGE: {}".format(m))
     assert len(p.report.messages) == 0
     print(p.report.to_markdown())
-    
+
 def test_validate_hp_idspaces():
     ont = OntologyFactory().create(ONT)
     p = HpoaParser()
@@ -59,9 +59,8 @@ def test_validate_hp_idspaces():
     assert summary['association_count'] == 0
     assert summary['line_count'] > 300
     print(p.report.to_markdown())
-    
+
     p = HpoaParser()
     p.config.class_idspaces = ['HP']
     assocs = p.parse(open(ANNFILE,"r"))
     assert len(assocs) > 0
-    

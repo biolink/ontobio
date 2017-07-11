@@ -37,7 +37,7 @@ def test_local_json_parse():
     print("SEARCH (re, explicit): {}".format(search_results))
     assert SHAPE in search_results
     assert len(search_results)>10
-    
+
     num_nodes = 0
     for n in ont.nodes():
         num_nodes = num_nodes+1
@@ -74,13 +74,13 @@ def test_graph():
     assert CELLULAR_COMPONENT in ancs
     assert INTRACELLULAR in ancs
     assert NUCLEUS not in ancs
-        
+
     ancs = ont.ancestors(INTRACELLULAR_PART)
     print("ANCS intracellular part(all): {}".format(ancs))
     assert CELL in ancs
     assert CELLULAR_COMPONENT in ancs
     assert NUCLEUS not in ancs
-    
+
     ancs = ont.ancestors(INTRACELLULAR_PART, relations=['subClassOf'])
     print("ANCS intracellular part(subclass): {}".format(ancs))
     assert CELLULAR_COMPONENT in ancs
@@ -102,14 +102,14 @@ def test_graph():
     assert CELL_PART in ancs
     assert CELLULAR_COMPONENT not in ancs
     assert NUCLEUS not in ancs
-    
+
     ancs = ont.parents(INTRACELLULAR_PART, relations=[PART_OF])
     print("PARENTS intracellular (part_of): {}".format(ancs))
     assert INTRACELLULAR in ancs
     assert CELL_PART not in ancs
     assert CELLULAR_COMPONENT not in ancs
     assert NUCLEUS not in ancs
-    
+
     decs = ont.descendants(INTRACELLULAR_PART)
     print("DECS: {}".format(decs))
     assert NUCLEUS in decs
@@ -129,31 +129,31 @@ def test_graph():
     print("CHILDREN (all): {}".format(decs))
     assert INTRACELLULAR_PART in decs
     assert INTRACELLULAR in decs
-    
+
     decs = ont.children(INTRACELLULAR, relations=[PART_OF])
     print("CHILDREN (po): {}".format(decs))
     assert INTRACELLULAR_PART in decs
     assert NUCLEUS not in decs
     assert CELL not in decs
-    
+
     xrefs = ont.xrefs(CELL)
     print("XREFS (from GO): {}".format(xrefs))
     assert WIKIPEDIA_CELL in xrefs
     assert NIF_CELL in xrefs
     assert len(xrefs) == 2
 
-    
+
     # xrefs are bidirectional
     xrefs = ont.xrefs(WIKIPEDIA_CELL, bidirectional=True)
     print("XREFS (from WP, bidi): {}".format(xrefs))
     assert CELL in xrefs
     assert len(xrefs) == 1
-    
+
     # xrefs queries unidirectional by default
     xrefs = ont.xrefs(WIKIPEDIA_CELL)
     print("XREFS (from WP): {}".format(xrefs))
     assert len(xrefs) == 0
-    
+
     tdef = ont.text_definition(NUCLEUS)
     print("TDEF: {}".format(tdef))
     assert tdef.xrefs == [ "GOC:go_curators" ]
@@ -180,7 +180,7 @@ def test_graph():
     print("IN SLIM: {}".format(in_slim))
     assert len(in_slim) > 0
     assert NUCLEUS in in_slim
-    
+
     #logging.basicConfig(level=logging.DEBUG)
 
     assert [] == ont.search('protoplast', synonyms=False)
@@ -200,11 +200,11 @@ def test_graph():
     assert s1.xrefs == ['GOC:mah']
 
     assert subont.parents(NUCLEUS) == [IMBO]
-    
+
     from ontobio import GraphRenderer
     w = GraphRenderer.create('obo')
     w.write(subont, query_ids=[CELL, CELL_PART, NUCLEUS])
-    
+
 def test_subontology():
     """
     Load extracting subontology
@@ -237,6 +237,6 @@ def test_obsolete():
         rb = ont.replaced_by(nid)
         if rb is not None:
             print("REPLACED BY: {} {}".format(rb, ont.label(rb)))
-    assert ont.replaced_by('GO:2') == 'GO:1'
-    assert ont.replaced_by('GO:3') == 'GO:1'
+    assert ont.replaced_by('GO:2') == ['GO:1']
+    assert ont.replaced_by('GO:3') == ['GO:1']
     assert n_obs == 3

@@ -22,8 +22,10 @@ from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
+from ontobio.io.gpadparser import GpadParser
+from ontobio.io.hpoaparser import HpoaParser
 from ontobio.io.assocwriter import GpadWriter
-from ontobio.io import gafparser
+from ontobio.io import assocparser
 from ontobio.slimmer import get_minimal_subgraph
 import logging
 
@@ -51,6 +53,8 @@ def main():
                         help='Output to (tree, dot, ...)')
     parser.add_argument("--filter-out", nargs="+", required=False, default=[], metavar="EVIDENCE",
                         help="List of any evidence codes to filter out of the GAF. E.G. --filter-out IEA IMP")
+    parser.add_argument("--filtered-file", required=False, default=None, metavar="FILTERED_FILE",
+                        help="File to write the filtered out evidence GAF to")
     parser.add_argument('-T', '--taxon', nargs='*', required=False,
                         help='valid taxon (NCBITaxon ID) - validate against this')
     parser.add_argument('--subject_prefix', nargs='*', required=False,
@@ -106,12 +110,14 @@ def main():
     args.filter_out = [code.upper() for code in args.filter_out]
 
     # set configuration
-    config = gafparser.AssocParserConfig(
+    filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
+    config = assocparser.AssocParserConfig(
         valid_taxa=args.taxon,
         ontology=ont,
         class_idspaces=args.object_prefix,
         entity_idspaces=args.subject_prefix,
-        filter_out_evidence=args.filter_out
+        filter_out_evidence=args.filter_out,
+        filtered_evidence_file=filtered_evidence_file
     )
     p = None
     fmt = None
@@ -122,13 +128,10 @@ def main():
 
     # TODO: use a factory
     if fmt == 'gaf':
-        from ontobio.io.gafparser import GafParser
         p = GafParser()
     elif fmt == 'gpad':
-        from ontobio.io.gafparser import GpadParser
         p = GpadParser()
     elif fmt == 'hpoa':
-        from ontobio.io.gafparser import HpoaParser
         p = HpoaParser()
     p.config = config
 
@@ -136,6 +139,7 @@ def main():
     if args.outfile is not None:
         outfh = open(args.outfile, "w")
     func(ont, args.file, outfh, p, args)
+    filtered_evidence_file.close()
     if outfh is not None:
         outfh.close()
     if args.messagefile is not None:

@@ -1,4 +1,4 @@
-from ontobio.io.gafparser import AssocParser, AssocParserConfig, Report, ENTITY
+from ontobio.io.assocparser import AssocParser, AssocParserConfig, Report, ENTITY
 import logging
 import json
 
@@ -61,10 +61,10 @@ class EntityParser(AssocParser):
                             len(skipped)))
         file.close()
         return ents
-    
+
 
 class GpiParser(EntityParser):
-    
+
     def __init__(self,config=None):
         """
         Arguments:
@@ -76,8 +76,8 @@ class GpiParser(EntityParser):
             config = AssocParserConfig()
         self.config = config
         self.report = Report()
-        
-    def parse_line(self, line):            
+
+    def parse_line(self, line):
         """Parses a single line of a GPI.
 
         Return a tuple `(processed_line, entities)`. Typically
@@ -128,11 +128,11 @@ class GpiParser(EntityParser):
             parents = [self._normalize_id(x) for x in parents]
             for p in parents:
                 self._validate_id(p,line,ENTITY)
-            
+
         xref_ids = xrefs.split("|")
         if xrefs == "":
             xref_ids = []
-        
+
         obj = {
             'id': id,
             'label': db_object_symbol,
@@ -149,9 +149,9 @@ class GpiParser(EntityParser):
 
 class BgiParser(EntityParser):
     """
-    BGI (basic gene info) 
+    BGI (basic gene info)
     """
-    
+
     def __init__(self,config=None):
         """
         Arguments:
@@ -163,7 +163,7 @@ class BgiParser(EntityParser):
             config = AssocParserConfig()
         self.config = config
         self.report = Report()
-        
+
     def parse(self, file, outfile=None):
         """Parse a BGI (basic gene info) JSON file
         """
@@ -187,10 +187,8 @@ class BgiParser(EntityParser):
             obj['synonyms'] = item['synonyms']
         if 'crossReferenceIds' in item:
             obj['xrefs'] = [self._normalize_id(x) for x in item['crossReferenceIds']]
-            
+
         # TODO: synonyms
         # TODO: genomeLocations
         # TODO: geneLiteratureUrl
         return obj
-        
-    
