@@ -1,5 +1,5 @@
-from ontobio.io.gafparser import GpadParser
-from ontobio.io.gaf import GafParser
+from ontobio.io.gpadparser import GpadParser
+from ontobio.io.gafparser import GafParser
 from ontobio.io.assocwriter import GpadWriter
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory

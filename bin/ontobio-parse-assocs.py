@@ -22,8 +22,10 @@ from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
+from ontobio.io.gpadparser import GpadParser
+from ontobio.io.hpoaparser import HpoaParser
 from ontobio.io.assocwriter import GpadWriter
-from ontobio.io import gafparser
+from ontobio.io import assocparser
 from ontobio.slimmer import get_minimal_subgraph
 import logging
 
@@ -109,7 +111,7 @@ def main():
 
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
-    config = gafparser.AssocParserConfig(
+    config = assocparser.AssocParserConfig(
         valid_taxa=args.taxon,
         ontology=ont,
         class_idspaces=args.object_prefix,
@@ -126,13 +128,10 @@ def main():
 
     # TODO: use a factory
     if fmt == 'gaf':
-        from ontobio.io.gafparser import GafParser
         p = GafParser()
     elif fmt == 'gpad':
-        from ontobio.io.gafparser import GpadParser
         p = GpadParser()
     elif fmt == 'hpoa':
-        from ontobio.io.gafparser import HpoaParser
         p = HpoaParser()
     p.config = config
 
