@@ -449,6 +449,8 @@ class AssocParser(object):
             self.report.error(line, Report.INVALID_ID, id, "contains pipe in identifier")
         if ':' not in id:
             self.report.error(line, Report.INVALID_ID, id, "must be CURIE/prefixed ID")
+            return False
+
         idspace = self._get_id_prefix(id)
         # ensure that the ID space of the annotation class (e.g. GO)
         # conforms to what is expected
@@ -456,6 +458,7 @@ class AssocParser(object):
             if idspace not in self.config.class_idspaces:
                 self.report.error(line, Report.INVALID_IDSPACE, id, "allowed: {}".format(self.config.class_idspaces))
                 return False
+
         return True
 
     def _split_pipe(self, v):
@@ -733,12 +736,19 @@ class HpoaParser(GafParser):
         """
         config = self.config
 
+        parsed = super().validate_line(line)
+        if parsed:
+            return parsed
+
+        if self.is_header(line):
+            return gafparser.ParseResult(line, [], False)
+
         # http://human-phenotype-ontology.github.io/documentation.html#annot
         vals = line.split("\t")
         if len(vals) != 14:
             self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
                 msg="There were {columns} columns found in this line, and there should be 14".format(columns=len(vals)))
-            return line, []
+            return ParseResult(line, [], True)
 
         [db,
          db_object_id,
@@ -769,7 +779,7 @@ class HpoaParser(GafParser):
             return ParseResult(line, [], True)
 
         if not self._validate_id(hpoid, line, ANNOTATION):
-            return line, []
+            return ParseResult(line, [], True)
 
         # validation
         #self._validate_symbol(db_object_symbol, line)
@@ -869,4 +879,4 @@ class HpoaParser(GafParser):
 
         }
 
-        return line, [assoc]
+        return ParseResult(line, [assoc], False)

@@ -71,6 +71,7 @@ def parse_with(f, p):
         # only do ontology checking on GAF parse;
         # this is because ontology is made from GAF
         p.config.ontology = ont
+
     results = p.parse(open(f,"r"))
     r1 = results[0]
     # TODO: test datafile does not have ECOs yet!!
@@ -92,8 +93,8 @@ def parse_with(f, p):
         if is_gaf:
             assert r['subject']['taxon']['id'] =='NCBITaxon:4896'
 
-    for m in p.report.messages:
-        print("MESSAGE: {}".format(m))
+    # for m in p.report.messages:
+    #     print("MESSAGE: {}".format(m))
     assert len(p.report.messages) == 0
     print(p.report.to_markdown())
 
