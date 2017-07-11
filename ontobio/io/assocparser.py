@@ -260,8 +260,13 @@ class AssocParser(object):
                                 msg="empty line")
             return ParseResult(line, [], True)
 
-    def _validate_assoc(self, assoc):
-        self.report_ontology_id(assoc['object']['id'])
+    def _validate_assoc(self, assoc, line):
+        """
+        This adds a warning to the Report if report_ontology_id() returns anything to report.
+        """
+        report = self.report_ontology_id(assoc["object"]["id"])
+        if report:
+            self.report.warning(line, self.report_ontology_id(assoc["object"]["id"]), assoc["object"]["id"])
 
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
@@ -410,6 +415,10 @@ class AssocParser(object):
 
 
     def report_ontology_id(self, go_id):
+
+        if self.config.ontology.is_empty():
+            return ""
+
         if not self.config.ontology.has_node(go_id):
             return Report.UNKNOWN_ID
 
