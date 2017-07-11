@@ -476,6 +476,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  rows=10,
                  start=None,
                  homology_type=None,
+                 non_null_fields=[],
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -527,6 +528,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.url = url
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
+        self.non_null_fields=non_null_fields
 
         if self.facet_fields is None:
             self.facet_fields = [
@@ -765,8 +767,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # with an ID that is contained in subject_or_object_ids.
         if subject_or_object_ids is not None:
             quotified_ids = solr_quotify(subject_or_object_ids)
-            subject_id_filter = '{}:{}'.format('subject', quotified_ids)
-            object_id_filter = '{}:{}'.format('object', quotified_ids)
+            subject_id_filter = '{}:{}'.format('subject_closure', quotified_ids)
+            object_id_filter = '{}:{}'.format('object_closure', quotified_ids)
 
             # If subject_or_object_category is provided, we add it to the filter.
             if self.subject_or_object_category is not None:
@@ -832,6 +834,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
             is_unlimited = True
             iterate = True
             rows = self.max_rows
+
+        for field in self.non_null_fields:
+            filter_queries.append(field + ":['' TO *]")
 
         params = {
             'q': qstr,
