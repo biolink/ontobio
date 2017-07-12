@@ -35,7 +35,7 @@ class CategorySchema(Schema):
     @post_load
     def make_object(self, data):
         return Category(**data)
-    
+
 class ConfigSchema(Schema):
     """
     Marshmallow schema for configuration objects.
@@ -51,7 +51,7 @@ class ConfigSchema(Schema):
     ontologies = fields.List(fields.Nested(OntologyConfigSchema))
     categories = fields.List(fields.Nested(CategorySchema))
     use_amigo_for = fields.List(fields.Str(description="category to use amigo for"))
-    
+
     @post_load
     def make_object(self, data):
         return Config(**data)
@@ -77,7 +77,7 @@ class OntologyConfig():
         self.id = id
         self.handle = handle
         self.pre_load  = pre_load
-        
+
 class Category():
     """
     Maps category to class
@@ -87,7 +87,7 @@ class Category():
                  superclass = None):
         self.id = id
         self.superclass = superclass
-    
+
 class Config():
     """
     A configuration object determines which external service URLs are used
@@ -129,7 +129,7 @@ class Config():
         if len(matches) > 0:
             return matches[0]
         return None
-        
+
     def get_solr_search_url(self, use_amigo=False):
         """
         Return solr URL to be used for lexical entity searches
@@ -145,7 +145,7 @@ class Config():
         if use_amigo:
             url = self.endpoint_url(self.amigo_solr_search)
         return url
-            
+
     def get_solr_assocs_url(use_amigo=False):
         """
         Return solr URL to be used for assocation (enhanced triple) queries
@@ -187,8 +187,8 @@ def get_config():
             logging.info("LOADING FROM: {}".format(path))
             session.config = load_config(path)
         else:
-            session.config = Session()
-            logging.info("using default session: {}, path does not exist: {}".format(session, path))            
+            session.config = Config()
+            logging.info("using default session: {}, path does not exist: {}".format(session, path))
     else:
         logging.info("Using pre-loaded object: {}".format(session.config))
     return session.config
