@@ -266,7 +266,7 @@ class AssocParser(object):
         """
         report = self.report_ontology_id(assoc["object"]["id"])
         if report:
-            self.report.warning(line, self.report_ontology_id(assoc["object"]["id"]), assoc["object"]["id"])
+            self.report.warning(line, report, assoc["object"]["id"])
 
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
