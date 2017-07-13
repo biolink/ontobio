@@ -51,9 +51,11 @@ def get_digraph(ont, relations=None, writecache=False):
     Creates a basic graph object corresponding to a remote ontology
     """
     digraph = networkx.MultiDiGraph()
+    logging.info("Getting edges (may be cached)")
     for (s,p,o) in get_edges(ont):
         if relations is None or p in relations:
             digraph.add_edge(o,s,pred=p)
+    logging.info("Getting labels (may be cached)")
     for (n,label) in fetchall_labels(ont):
         digraph.add_node(n, attr_dict={'label':label})
     return digraph
