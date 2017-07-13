@@ -242,8 +242,7 @@ class GafParser(assocparser.AssocParser):
             if len(extns) > 0:
                 assoc['object_extensions'] = extns
 
-            if self.report_ontology_id(assoc["object"]["id"]):
-                self.report.warning(line, self.report_ontology_id(assoc["object"]["id"]), assoc["object"]["id"])
+            self._validate_assoc(assoc, line)
 
             assocs.append(assoc)
 
