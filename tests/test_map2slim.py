@@ -1,7 +1,8 @@
 """
 Test in-memory map2slim
 """
-from ontobio.io.gafparser import GafParser, GpadParser
+from ontobio.io.gafparser import GafParser
+from ontobio.io.gpadparser import GpadParser
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 import tempfile
@@ -45,7 +46,7 @@ def test_map2slim_gaf():
     p = GafParser()
     logging.info("CLOSING: {}".format(outfile))
     outfile.close()
-    
+
     logging.info("Reading from: {}".format(outfile.name))
     assocs = p.parse(outfile.name)
     for m in p.report.messages:
