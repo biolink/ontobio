@@ -148,8 +148,7 @@ class GpadParser(assocparser.AssocParser):
             if len(other_qualifiers) > 0:
                 assoc['qualifiers'] = other_qualifiers
 
-            if self.report_ontology_id(assoc["object"]["id"]):
-                self.report.warning(line, self.report_ontology_id(assoc["object"]["id"]), assoc["object"]["id"])
+            self._validate_assoc(assoc, line)
 
             assocs.append(assoc)
         return assocparser.ParseResult(line, assocs, False)

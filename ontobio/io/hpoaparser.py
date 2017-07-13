@@ -185,6 +185,7 @@ class HpoaParser(GafParser):
 
         }
 
+        self._validate_assoc(assoc, line)
 
         return assocparser.ParseResult(line, [assoc], False)
 
