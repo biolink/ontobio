@@ -50,7 +50,8 @@ setuptools.setup(
         'cachier',
         'prefixcommons',
         'marshmallow',
-        'scipy'
+        'scipy',
+        'pandas'
     ],
 
     # List additional groups of dependencies here (e.g. development

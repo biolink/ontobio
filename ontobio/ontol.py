@@ -279,7 +279,7 @@ class Ontology():
         Wraps networkx, and checks the number of nodes in the graph.
         """
 
-        return self.graph == None or len(self.get_graph().nodes()) == 0
+        return self.graph == None or len(self.get_graph()) == 0
 
     def nodes(self):
         """
