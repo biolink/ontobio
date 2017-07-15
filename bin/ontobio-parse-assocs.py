@@ -150,10 +150,10 @@ def main():
         print(p.report.to_markdown())
 
 def filter_assocs(ont, file, outfile, p, args):
-    assocs = p.parse(open(file, "r"), outfile)
+    p.generate_associations(open(file, "r"), outfile)
 
 def validate_assocs(ont, file, outfile, p, args):
-    assocs = p.parse(open(file, "r"), outfile)
+    p.generate_associations(open(file, "r"), outfile)
 
 def convert_assocs(ont, file, outfile, p, args):
     assocs = p.parse(open(file, "r"), None)

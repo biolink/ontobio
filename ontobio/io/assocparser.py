@@ -241,18 +241,24 @@ class AssocParser(object):
         list
             Associations generated from the file
         """
+        return list(generate_associations(self, file, outfile=outfile))
+
+    def association_generator(self, file, outfile=None):
         file = self._ensure_file(file)
-        assocs = []
 
         for line in file:
             parsed_result = self.parse_line(line)
             self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
-            assocs.extend(parsed_result.associations)
+            for association in parsed_result.associations:
+                yield association
 
         logging.info(self.report.short_summary())
         file.close()
-        return assocs
 
+    def generate_associations(self, line, outfile=None):
+        associations = self.association_generator(line, outfile=outfile)
+        for association in associations:
+            pass
 
     def validate_line(self, line):
         if line == "":
