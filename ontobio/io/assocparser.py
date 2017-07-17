@@ -449,8 +449,6 @@ class AssocParser(object):
     def _validate_symbol(self, symbol, line):
         if symbol is None or symbol == "":
             self.report.warning(line, Report.INVALID_SYMBOL, symbol, "empty")
-        if ' ' in symbol:
-            self.report.warning(line, Report.INVALID_SYMBOL, symbol, "should not contain spaces")
 
 
     def _validate_id(self, id, line, context=None):
