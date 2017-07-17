@@ -281,7 +281,7 @@ class AssociationSet():
         logging.debug("Z={}".format(z))
         return (z,xterms,yterms)
     
-    def as_dataframe(self):
+    def as_dataframe(self, fillna=True):
         """
         Return association set as pandas DataFrame
 
@@ -295,8 +295,11 @@ class AssociationSet():
             for c in self.inferred_types(s):
                 vmap[c] = 1
             entries.append(vmap)
+        logging.debug("Creating DataFrame")
         df = pd.DataFrame(entries, index=subjs)
-        df = df.fillna(0)
+        if fillna:
+            logging.debug("Performing fillna...")
+            df = df.fillna(0)
         return df
 
     def label(self, id):
