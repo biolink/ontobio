@@ -107,17 +107,23 @@ class Report():
         self.objects = set()
         self.taxa = set()
         self.references = set()
+        self.max_messages = 10000
 
     def error(self, line, type, obj, msg=""):
         self.message(self.ERROR, line, type, obj, msg)
     def warning(self, line, type, obj, msg=""):
         self.message(self.WARNING, line, type, obj, msg)
     def message(self, level, line, type, obj, msg=""):
+        # Only keep max_messages number of messages
+        if len(self.messages) > self.max_messages:
+            # TODO: ensure the message is captured if we are streaming
+            return
         self.messages.append({'level':level,
                               'line':line,
                               'type':type,
                               'message':msg,
                               'obj':obj})
+
 
     def add_associations(self, associations):
         for a in associations:
@@ -125,11 +131,11 @@ class Report():
 
     def add_association(self, association):
         self.n_assocs += 1
-        self.subjects.add(association['subject']['id'])
-        self.objects.add(association['object']['id'])
-        self.references.update(association['evidence']['has_supporting_reference'])
-        if 'taxon' in association['subject']:
-            self.taxa.add(association['subject']['taxon']['id'])
+        # self.subjects.add(association['subject']['id'])
+        # self.objects.add(association['object']['id'])
+        # self.references.update(association['evidence']['has_supporting_reference'])
+        # if 'taxon' in association['subject']:
+        #     self.taxa.add(association['subject']['taxon']['id'])
 
     def report_parsed_result(self, result, output_file, evidence_filtered_file, evidence_to_filter):
 
