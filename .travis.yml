@@ -25,10 +25,10 @@ script:
 #  coveralls
 
 # whitelist
-#branches:
-#  only:
-#    - master
 branches:
-  except:
-  - notravis
+  only:
+    - master
+#branches:
+#  except:
+#  - notravis
 
