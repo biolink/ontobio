@@ -31,3 +31,4 @@ Mailing list
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/ontobio.svg
    :target: https://pypi.python.org/pypi/ontobio
+   
