@@ -137,7 +137,8 @@ def main():
 
     outfh = None
     if args.outfile is not None:
-        outfh = open(args.outfile, "w")
+        two_mb = 2097152
+        outfh = open(args.outfile, "w", buffering=two_mb)
     func(ont, args.file, outfh, p, args)
     filtered_evidence_file.close()
     if outfh is not None:

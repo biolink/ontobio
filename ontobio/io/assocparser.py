@@ -107,6 +107,7 @@ class Report():
         self.objects = set()
         self.taxa = set()
         self.references = set()
+        self.size = 10
 
     def error(self, line, type, obj, msg=""):
         self.message(self.ERROR, line, type, obj, msg)
@@ -119,17 +120,21 @@ class Report():
                               'message':msg,
                               'obj':obj})
 
+        # Only keep self.size number of most recent messages
+        if len(self.messages) > self.size:
+            del self.messages[0]
+
     def add_associations(self, associations):
         for a in associations:
             self.add_association(a)
 
     def add_association(self, association):
         self.n_assocs += 1
-        self.subjects.add(association['subject']['id'])
-        self.objects.add(association['object']['id'])
-        self.references.update(association['evidence']['has_supporting_reference'])
-        if 'taxon' in association['subject']:
-            self.taxa.add(association['subject']['taxon']['id'])
+        # self.subjects.add(association['subject']['id'])
+        # self.objects.add(association['object']['id'])
+        # self.references.update(association['evidence']['has_supporting_reference'])
+        # if 'taxon' in association['subject']:
+        #     self.taxa.add(association['subject']['taxon']['id'])
 
     def report_parsed_result(self, result, output_file, evidence_filtered_file, evidence_to_filter):
 
@@ -151,7 +156,6 @@ class Report():
         Generate a summary in json format
         """
 
-        N = 10
         report = dict(
             summary = dict(association_count = self.n_assocs,
                            line_count = self.n_lines,
@@ -160,9 +164,9 @@ class Report():
                                         object_count=len(self.objects),
                                         taxon_count=len(self.taxa),
                                         reference_count=len(self.references),
-                                        taxon_sample=list(self.taxa)[0:N],
-                                        subject_sample=list(self.subjects)[0:N],
-                                        object_sample=list(self.objects)[0:N])
+                                        taxon_sample=list(self.taxa)[0:self.size],
+                                        subject_sample=list(self.subjects)[0:self.size],
+                                        object_sample=list(self.objects)[0:self.size])
         )
 
         # grouped messages
