@@ -247,7 +247,8 @@ class AssocParser(object):
         list
             Associations generated from the file
         """
-        return list(generate_associations(self, file, outfile=outfile))
+        associations = self.association_generator(file, outfile=outfile)
+        return list(associations)
 
     def association_generator(self, file, outfile=None):
         file = self._ensure_file(file)
