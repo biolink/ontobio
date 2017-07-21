@@ -28,5 +28,7 @@ script:
 #branches:
 #  only:
 #    - master
-
+branches:
+  except:
+  - notravis
 
