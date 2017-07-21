@@ -107,22 +107,23 @@ class Report():
         self.objects = set()
         self.taxa = set()
         self.references = set()
-        self.size = 10
+        self.max_messages = 10000
 
     def error(self, line, type, obj, msg=""):
         self.message(self.ERROR, line, type, obj, msg)
     def warning(self, line, type, obj, msg=""):
         self.message(self.WARNING, line, type, obj, msg)
     def message(self, level, line, type, obj, msg=""):
+        # Only keep max_messages number of messages
+        if len(self.messages) > self.max_messages:
+            # TODO: ensure the message is captured if we are streaming
+            return
         self.messages.append({'level':level,
                               'line':line,
                               'type':type,
                               'message':msg,
                               'obj':obj})
 
-        # Only keep self.size number of most recent messages
-        if len(self.messages) > self.size:
-            del self.messages[0]
 
     def add_associations(self, associations):
         for a in associations:
@@ -156,6 +157,7 @@ class Report():
         Generate a summary in json format
         """
 
+        N = 10
         report = dict(
             summary = dict(association_count = self.n_assocs,
                            line_count = self.n_lines,
@@ -164,9 +166,9 @@ class Report():
                                         object_count=len(self.objects),
                                         taxon_count=len(self.taxa),
                                         reference_count=len(self.references),
-                                        taxon_sample=list(self.taxa)[0:self.size],
-                                        subject_sample=list(self.subjects)[0:self.size],
-                                        object_sample=list(self.objects)[0:self.size])
+                                        taxon_sample=list(self.taxa)[0:N],
+                                        subject_sample=list(self.subjects)[0:N],
+                                        object_sample=list(self.objects)[0:N])
         )
 
         # grouped messages
