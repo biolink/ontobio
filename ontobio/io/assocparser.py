@@ -251,6 +251,13 @@ class AssocParser(object):
         return list(associations)
 
     def association_generator(self, file, outfile=None):
+        """
+        Returns a generator that yields successive associations from file
+
+        Yields
+        ------
+        association
+        """
         file = self._ensure_file(file)
 
         for line in file:
