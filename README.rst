@@ -33,4 +33,3 @@ Mailing list
    :target: https://pypi.python.org/pypi/ontobio
    
    
-
