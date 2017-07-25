@@ -95,16 +95,25 @@ class GpiParser(EntityParser):
 
         """
         vals = line.split("\t")
-        [db,
-         db_object_id,
-         db_object_symbol,
-         db_object_name,
-         db_object_synonym,
-         db_object_type,
-         taxon,
-         parent_object_id,
-         xrefs,
-         properties] = vals
+        print(vals)
+
+        if len(vals) < 10 and len(vals) >= 7:
+            missing_columns = 10 - len(vals)
+            vals += ["" for i in range(missing_columns)]
+
+        [
+            db,
+            db_object_id,
+            db_object_symbol,
+            db_object_name,
+            db_object_synonym,
+            db_object_type,
+            taxon,
+            parent_object_id,
+            xrefs,
+            properties
+        ] = vals
+
 
         ## --
         ## db + db_object_id. CARD=1

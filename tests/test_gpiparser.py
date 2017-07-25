@@ -4,7 +4,7 @@ from ontobio.ontol_factory import OntologyFactory
 
 ONT = "tests/resources/go-truncated-pombase.json"
 GPI = "tests/resources/truncated-mgi.gpi"
-    
+
 def test_parse_gpi():
     ont = OntologyFactory().create(ONT)
     p = GpiParser()
@@ -21,11 +21,9 @@ def test_parse_gpi():
 
     r2 = results[-1]
     assert r2['parents'] == ['MGI:109279']
-    
-    
+
+
     for m in p.report.messages:
         print("MESSAGE: {}".format(m))
     assert len(p.report.messages) == 0
     print(p.report.to_markdown())
-    
-    
