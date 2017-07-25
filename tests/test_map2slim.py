@@ -35,7 +35,9 @@ def test_map2slim_gaf():
     m = ont.create_slim_mapping(subset_nodes=SUBSET, relations=relations)
 
     assert m['GO:0071423'] == ['GO:0006810']
-    assert m[NESRA] == ['GO:0051169']
+    assert len(m[NESRA]) == 2
+    assert 'GO:0051169' in m[NESRA]
+    assert 'GO:0003674' in m[NESRA]
     outfile = tempfile.NamedTemporaryFile(mode='w', delete=False)
     p.map_to_subset(open(f,"r"), class_map=m, outfile=outfile)
     for m in p.report.messages:
