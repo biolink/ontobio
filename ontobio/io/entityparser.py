@@ -97,7 +97,7 @@ class GpiParser(EntityParser):
         vals = line.split("\t")
 
         if len(vals) < 7:
-            self.report.error(line, type, obj)
+            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "")
             return line, []
 
         if len(vals) < 10 and len(vals) >= 7:

@@ -27,3 +27,9 @@ def test_parse_gpi():
         print("MESSAGE: {}".format(m))
     assert len(p.report.messages) == 0
     print(p.report.to_markdown())
+
+def test_gpi_skips_lines_with_incorrect_collumns():
+    parser = GpiParser()
+    parsed = parser.parse_line("hello\tworld\tfoo\tbar")
+
+    assert parsed[1] == []
