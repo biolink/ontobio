@@ -21,6 +21,7 @@ import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
+from ontobio.io import entityparser
 from ontobio.io.gafparser import GafParser
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.hpoaparser import HpoaParser
@@ -133,6 +134,10 @@ def main():
         p = GpadParser()
     elif fmt == 'hpoa':
         p = HpoaParser()
+    elif fmt == "gpi":
+        p = entityparser.GpiParser()
+        func = validate_entity
+
     p.config = config
 
     outfh = None
@@ -140,7 +145,9 @@ def main():
         two_mb = 2097152
         outfh = open(args.outfile, "w", buffering=two_mb)
     func(ont, args.file, outfh, p, args)
-    filtered_evidence_file.close()
+    if filtered_evidence_file:
+        filtered_evidence_file.close()
+        
     if outfh is not None:
         outfh.close()
     if args.messagefile is not None:
@@ -155,6 +162,9 @@ def filter_assocs(ont, file, outfile, p, args):
 
 def validate_assocs(ont, file, outfile, p, args):
     p.generate_associations(open(file, "r"), outfile)
+
+def validate_entity(ont, file, outfile, p, args):
+    p.parse(open(file, "r"), outfile)
 
 def convert_assocs(ont, file, outfile, p, args):
     assocs = p.parse(open(file, "r"), None)
