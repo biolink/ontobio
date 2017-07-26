@@ -95,7 +95,10 @@ class GpiParser(EntityParser):
 
         """
         vals = line.split("\t")
-        print(vals)
+
+        if len(vals) < 7:
+            self.report.error(line, type, obj)
+            return line, []
 
         if len(vals) < 10 and len(vals) >= 7:
             missing_columns = 10 - len(vals)
