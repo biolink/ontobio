@@ -118,6 +118,7 @@ def convert_json_object(obographdoc, **args):
     logging.info("CONTEXT: {}".format(context))
     mapper = OboJsonMapper(digraph=digraph, context=context)
     for og in obographdoc['graphs']:
+        # TODO: refactor this
         mapper.add_obograph_digraph(og, xref_graph=xref_graph,
                                     logical_definitions=logical_definitions, **args)
 
