@@ -1,3 +1,6 @@
+"""
+Lexical mapping of ontology classes
+"""
 import networkx
 import logging
 import re
@@ -120,12 +123,14 @@ class LexicalMapEngine():
 
     def get_xref_graph(self):
         """
-        Generate mappings based on lexical properties and return as networkx graph
+        Generate mappings based on lexical properties and return as networkx graph.
+
+        Edges are annotated with metadata about how match was found
 
         Returns
         -------
-        MultiGraph
-            networkx multigraph (bidirectional)
+        MultiDiGraph
+            networkx multigraph (directional)
         """
 
         # initial graph; all matches
