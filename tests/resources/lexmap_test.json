@@ -1,11 +1,11 @@
 {
     "@context": {
-        "http://purl.obolibrary.org/obo/A_": "A",
-        "http://purl.obolibrary.org/obo/B_": "B",
-        "http://purl.obolibrary.org/obo/X_": "X",
-        "http://purl.obolibrary.org/obo/Y_": "Y",
-        "http://purl.obolibrary.org/obo/Z_": "Z",
-        "http://purl.obolibrary.org/obo/ZZ_": "ZZ"
+        "A": "http://purl.obolibrary.org/obo/A_",
+        "B": "http://purl.obolibrary.org/obo/B_",
+        "C": "http://purl.obolibrary.org/obo/X_",
+        "D": "http://purl.obolibrary.org/obo/Y_",
+        "Z": "http://purl.obolibrary.org/obo/Z_",
+        "ZZ": "http://purl.obolibrary.org/obo/ZZ_"
     },
   "graphs" : [ {
     "nodes" : [ {
