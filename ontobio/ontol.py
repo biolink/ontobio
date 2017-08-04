@@ -110,7 +110,7 @@ class Ontology():
             g = self.get_graph()
             xg = ont.get_graph()
             for n in xg.nodes():
-                g.add_node(n)
+                g.add_node(n, attr_dict=xg.node[n])
             for (o,s,m) in xg.edges(data=True):
                 g.add_edge(o,s,attr_dict=m)
 
@@ -729,7 +729,7 @@ class Ontology():
         """
         syns = []
         for n in self.nodes():
-            syns = syns + self.synonyms(n)
+            syns = syns + self.synonyms(n, include_label=include_label)
         return syns
 
     def label(self, nid, id_if_null=False):
@@ -935,6 +935,7 @@ class Synonym(AbstractPropertyValue):
     """
 
     predmap = dict(
+        label='label',
         hasExactSynonym='exact',
         hasBroadSynonym='broad',
         hasNarrowSynonym='narrow',
@@ -972,6 +973,9 @@ class Synonym(AbstractPropertyValue):
     def scope(self):
         return self.predmap[self.pred].upper()
 
+    def is_label(self):
+        return self.pred == 'label'
+    
     def exact_or_label(self):
         return self.pred == 'hasExactSynonym' or self.pred == 'label'
 
