@@ -60,16 +60,18 @@ class LexicalMapEngine():
         self.wsmap = wsmap
         self.npattern = re.compile('[\W_]+')
         self.exclude_obsolete = True
+        self.ontology_pairs = None
 
     def index_ontology(self, ont):
         """
         Adds an ontology to the index
+
+        This iterates through all labels and synonyms in the ontology, creating an index
         """
         syns = ont.all_synonyms(include_label=True)
         logging.info("Indexing {} syns in {}".format(len(syns),ont))
         for syn in syns:
             self.index_synonym(syn, ont)
-            # TODO: stem
 
     def index_synonym(self, syn, ont):
         """
@@ -125,7 +127,27 @@ class LexicalMapEngine():
         """
         Generate mappings based on lexical properties and return as networkx graph.
 
-        Edges are annotated with metadata about how match was found
+        Algorithm
+        ~~~~~~~~~
+
+        - A dictionary is stored between ref:`Synonym` values and synonyms. See ref:`index_synonym`.
+          Note that Synonyms include the primary label
+
+        - Each key in the dictionary is examined to determine if there exist two Synonyms from
+          different ontology classes
+
+        This avoids N^2 pairwise comparisons: instead the time taken is linear
+
+        Edge properties
+        ~~~~~~~~~~~~~~~
+        The return object is a networkx graph, connecting pairs of ontology classes.
+
+        Edges are annotated with metadata about how the match was found:
+
+        syns: pair
+            pair of `Synonym` objects, corresponding to the synonyms for the two nodes
+        score: int
+            score indicating strength of mapping, between 0 and 100
 
         Returns
         -------
@@ -140,8 +162,7 @@ class LexicalMapEngine():
         for (v,syns) in self.lmap.items():
             for s1 in syns:
                 for s2 in syns:
-                    # TODO: allow configuration of which takes precedence
-                    if s1.class_id < s2.class_id:
+                    if self._is_comparable(s1,s2):
                         g.add_edge(s1.class_id, s2.class_id, syns=(s1,s2))
 
         # graph of best matches
@@ -159,10 +180,45 @@ class LexicalMapEngine():
                         bestm = m
                 if not xg.has_edge(i,j):
                     syns = g[i][j][0]['syns']
-                    xg.add_edge(i,j,best=best,syns=syns)
+                    xg.add_edge(i,j,score=best,syns=syns)
 
         return xg
+
+    # true if syns s1 and s2 should be compared.
+    #  - if ontology_pairs is set, then only consider (s1,s2) if their respective source ontologies are in the list of pairs
+    #  - otherwise compare all classes, but only in one direction
+    def _is_comparable(self, s1, s2):
+        if s1.class_id == s2.class_id:
+            return False
+        if self.ontology_pairs is not None:
+            logging.debug('TEST: {}{} in {}'.format(s1.ontology.id, s2.ontology.id, self.ontology_pairs))
+            return (s1.ontology.id, s2.ontology.id) in self.ontology_pairs
+        else:
+            return s1.class_id < s2.class_id
     
+    def score_xrefs_by_semsim(self, xg, ont):
+        """
+        Given an xref graph (see ref:`get_xref_graph`), this will adjust scores based on
+        the semantic similarity of matches.
+        """
+        for (i,j,d) in xg.edges_iter(data=True):
+            #ont1 = i.ontology
+            #ont2 = j.ontology
+            ancs1 = ont.ancestors(i) + ont.descendants(i)
+            ancs2 = ont.ancestors(j) + ont.descendants(j)
+            s1 = self._sim(xg, ancs1, ancs2)
+            s2 = self._sim(xg, ancs2, ancs1)
+            s = s1*s2
+            logging.debug("Score {} x {} = {} x {} = {} // {}".format(i,j,s1,s2,s, d))
+            xg[i][j][0]['score'] *= s
+
+    def _sim(self, xg, ancs1, ancs2):
+        xancs1 = set()
+        for a in ancs1:
+            if a in xg:
+                xancs1.update(xg.neighbors(a))
+        return (1+len(xancs1.intersection(ancs2))) / (1+len(xancs1))
+            
     def grouped_mappings(self,id):
         """
         return all mappings for a node, grouped by ID prefix
@@ -199,11 +255,11 @@ class LexicalMapEngine():
     ## TODO: allow this to be weighted by ontology
     def _pred_score(self,p):
         if p == 'label':
-            return 10
+            return 100
         if p == LABEL_OR_EXACT:
-            return 9
+            return 90
         if p == 'hasExactSynonym':
-            return 9
-        return 5
+            return 90
+        return 50
                         
         

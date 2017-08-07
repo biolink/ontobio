@@ -38,6 +38,8 @@ def main():
                         help='Output to (tree, dot, ...)')
     parser.add_argument('-l', '--labels', type=str,
                         help='If set, then include node labels in results')
+    parser.add_argument('-s', '--scoring', default='sim', type=str,
+                        help='Score weighting scheme. Default=sim')
     parser.add_argument('-P', '--prefix', type=str, required=False,
                         help='Prefix to constrain traversal on, e.g. PATO, ENVO')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
@@ -63,14 +65,23 @@ def main():
     if len(onts) == 0:
         raise ValueException("must pass one or more ontologies")
     else:
+        logging.info("Indexing ontologies: {}".format(onts))
         for ont in onts:
             lexmap.index_ontology(ont)
-
+        oid0 = onts[0].id
+        pairs = [(oid0,oid0)]
+        if len(onts) > 1:
+            pairs = [(oid0, ont.id) for ont in onts[1:]]
+        logging.info("Comparing the followsing pairs of ontologies: {}".format(pairs))
+        lexmap.ontology_pairs = pairs
     mo = Ontology()
     mo.merge(onts)
     
     g = lexmap.get_xref_graph()
-
+    
+    if args.scoring == 'sim':
+        lexmap.score_xrefs_by_semsim(g, mo)
+    
     if args.to == 'obo':
         write_obo(g,mo,args)
     else:
@@ -81,7 +92,7 @@ def write_tsv(g,mo,args):
         vals = [x,y]
         if args.labels:
             vals = [x,mo.label(x),y,mo.label(y)]
-        score=str(d['best'])
+        score=str(d['score'])
         (s1,s2)=d['syns']
         vals += [score,s1.val,s2.val]
         print("{}".format("\t".join(vals)))
