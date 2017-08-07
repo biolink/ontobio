@@ -173,6 +173,7 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         """
         initializes based on an ontology name
         """
+        self.id = get_named_graph(handle)
         self.handle = handle
         logging.info("Creating eager-remote-sparql from "+str(handle))
         g = get_digraph(handle, None, True)
