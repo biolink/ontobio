@@ -439,7 +439,7 @@ class Ontology():
         """
         if reflexive:
             ancs = self.ancestors(node, relations, reflexive=False)
-            ancs.add(node)
+            ancs.append(node)
             return ancs
 
         g = None
@@ -477,7 +477,7 @@ class Ontology():
         """
         if reflexive:
             decs = self.descendants(node, relations, reflexive=False)
-            decs.add(node)
+            decs.append(node)
             return decs
         g = None
         if relations is None:
