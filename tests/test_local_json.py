@@ -60,7 +60,8 @@ def test_graph():
     factory = OntologyFactory()
     print("Creating ont")
     ont = factory.create('tests/resources/nucleus.json')
-
+    assert ont.id == 'http://purl.obolibrary.org/obo/go-test.owl'
+    
     icp = ont.node(INTRACELLULAR_PART)
     print("ICP: {}".format(icp))
     assert ont.label(INTRACELLULAR_PART) == 'intracellular part'

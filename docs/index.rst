@@ -26,6 +26,11 @@ Compatibility
 
 ontobio requires Python 3.4+.
 
+Contributing
+============
+
+https://github.com/biolink/ontobio
+
 Installation
 ============
 

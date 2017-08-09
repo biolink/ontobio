@@ -27,6 +27,9 @@ def test_remote_sparql_pato():
     print("Creating ont")
     ont = factory.create('pato')
 
+    ont_id = ont.id
+    assert 'pato' in ont_id.lower()
+    
     ploidy = ont.node(PLOIDY)
     print("PLOIDY: {}".format(ploidy))
     assert ont.label(PLOIDY) == 'ploidy'

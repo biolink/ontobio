@@ -21,13 +21,25 @@ class Ontology():
 
     """
 
-    def __init__(self, handle=None, graph=nx.Graph(), xref_graph=None, payload=None, graphdoc=None):
+    def __init__(self,
+                 handle=None,
+                 id=None,
+                 graph=nx.Graph(),
+                 xref_graph=None,
+                 payload=None,
+                 graphdoc=None):
         """
         initializes based on an ontology name.
 
         **Note**: do not call this directly, use OntologyFactory instead
         """
         self.handle = handle
+        if id is None:
+            if payload is not None:
+                id = payload.get('id')
+            if id is None:
+                id = handle
+        self.id = id
 
         # networkx object
         self.graph = graph
@@ -40,6 +52,7 @@ class Ontology():
 
         # alternatively accept a payload object
         if payload is not None:
+            self.meta = payload.get('meta')
             self.graph = payload.get('graph')
             self.xref_graph = payload.get('xref_graph')
             self.graphdoc = payload.get('graphdoc')
@@ -426,7 +439,7 @@ class Ontology():
         """
         if reflexive:
             ancs = self.ancestors(node, relations, reflexive=False)
-            ancs.add(node)
+            ancs.append(node)
             return ancs
 
         g = None
@@ -435,7 +448,7 @@ class Ontology():
         else:
             g = self.get_filtered_graph(relations)
         if node in g:
-            return nx.ancestors(g, node)
+            return list(nx.ancestors(g, node))
         else:
             return []
 
@@ -464,7 +477,7 @@ class Ontology():
         """
         if reflexive:
             decs = self.descendants(node, relations, reflexive=False)
-            decs.add(node)
+            decs.append(node)
             return decs
         g = None
         if relations is None:
@@ -472,7 +485,7 @@ class Ontology():
         else:
             g = self.get_filtered_graph(relations)
         if node in g:
-            return nx.descendants(g, node)
+            return list(nx.descendants(g, node))
         else:
             return []
 

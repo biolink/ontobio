@@ -5,7 +5,7 @@ Ontology-Based Analyses
 
 .. warning ::
 
-    In the future the analysis methods may migrate from the `Ontology`
+    In the future the analysis methods may migrate from the `AssociationSet`
     class to dedicated analysis engine classes.
 
 Enrichment
@@ -123,4 +123,15 @@ Graph Reduction
 Lexical Analyses
 ----------------
 
-**TODO**
+NOTE: this capability may move to an independent package.
+
+See the package lexmap.py for details.
+
+You can also use the command line:
+
+.. code-block:: console
+
+   ontobio-lexmap.py -l true  ont1.json ont2.json > mappings.tsv
+
+The inputs can be any kind of handle - a local ontology file or a
+remote ontology accessed via services. See :ref:`inputs` for more details.

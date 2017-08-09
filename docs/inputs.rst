@@ -6,7 +6,9 @@ Inputs
 Ontobio is designed to work with either *local* files or with *remote*
 information accessed via Services.
 
-Access is generally mediated using a *factory* object.
+Access is generally mediated using a *factory* object. The client
+requests an ontology via a *handle* to the factory, and the factory
+will return with the relevant implementation instantiated.
 
 .. currentmodule:: ontobio.ontol_factory
 
