@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.2.15
+------
+
+* lexical mappings #88 #89
+* set ontology id when retrieving from JSON or SPARQL
+
 0.2.11
 ------
 
