@@ -798,7 +798,7 @@ class Ontology():
             if bidirectional:
                 return xg.neighbors(nid)
             else:
-                return [x for x in xg.neighbors(nid) if xg[nid][x]['source'] == nid]
+                return [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
 
         return []
 
