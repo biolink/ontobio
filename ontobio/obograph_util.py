@@ -112,7 +112,7 @@ def convert_json_object(obographdoc, **args):
 
     """
     digraph = networkx.MultiDiGraph()
-    xref_graph = networkx.Graph()
+    xref_graph = networkx.MultiGraph()
     logical_definitions = []
     context = obographdoc.get('@context',{})
     logging.info("CONTEXT: {}".format(context))
