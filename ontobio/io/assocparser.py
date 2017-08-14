@@ -14,6 +14,7 @@ from contextlib import closing
 import subprocess
 import logging
 import io
+import gzip
 
 from ontobio import ontol
 
@@ -515,6 +516,7 @@ class AssocParser(object):
          return id
 
     def _ensure_file(self, file):
+        logging.info("Ensure file: {}".format(file)        )
         if isinstance(file,str):
             # TODO Let's fix this if/elseif chain.
             if file.startswith("ftp"):
@@ -531,7 +533,6 @@ class AssocParser(object):
                     if ok:
                         logging.debug("HEADER: {}".format(resp.headers))
                         if file.endswith(".gz"):
-                            import gzip
                             return io.StringIO(str(gzip.decompress(resp.content),'utf-8'))
                         else:
                             out = io.StringIO(resp.content)
@@ -539,7 +540,11 @@ class AssocParser(object):
                     else:
                         return None
             else:
-                 return open(file, "r")
+                logging.info("Testing suffix of {}".format(file))
+                if file.endswith(".gz"):
+                    return gzip.open(file, "rt")
+                else:
+                    return open(file, "r")
         else:
             return file
 
