@@ -94,7 +94,8 @@ def write_tsv(g,mo,args):
             vals = [x,mo.label(x),y,mo.label(y)]
         score=str(d['score'])
         (s1,s2)=d['syns']
-        vals += [score,s1.val,s2.val]
+        (ss1,ss2)=d['simscores']
+        vals += [score,s1.val,s2.val,str(ss1),str(ss2)]
         print("{}".format("\t".join(vals)))
         
 def write_obo(g,mo,args):
