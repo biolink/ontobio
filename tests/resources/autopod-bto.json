@@ -1,0 +1,271 @@
+{
+  "graphs" : [ {
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0005078",
+      "type" : "CLASS",
+      "lbl" : "foot sole"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0002351",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "digitus tertius (III) pedis",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "digitus tertius pedis"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0002350",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "digitus secundus (II) pedis",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "digitus secundus pedis"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0004670",
+      "type" : "CLASS",
+      "lbl" : "interdigit"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0002353",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "little toe",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "digitus quintus (V) pedis",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "digitum minimus pedis"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0003994",
+      "type" : "CLASS",
+      "lbl" : "hoof"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0002352",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "digitus quartus (IV) pedis",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "digitus quartis pedis"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0004025",
+      "type" : "CLASS",
+      "lbl" : "claw muscle"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0002772",
+      "type" : "CLASS",
+      "lbl" : "chela"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0001719",
+      "type" : "CLASS",
+      "lbl" : "claw"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0001919",
+      "type" : "CLASS",
+      "lbl" : "tube foot"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0003997",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "hoof laminae",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hoof lamina"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0004668",
+      "type" : "CLASS",
+      "lbl" : "hand"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
+      "type" : "PROPERTY",
+      "lbl" : "has_related_synonym"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0004669",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "forelimb digit",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "digit",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "finger"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0000476",
+      "type" : "CLASS",
+      "lbl" : "foot"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0003995",
+      "type" : "CLASS",
+      "lbl" : "horny lamina"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0002348",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "digitipedis",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "hindlimb digit",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "toe"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0004359",
+      "type" : "CLASS",
+      "lbl" : "paw"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0003996",
+      "type" : "CLASS",
+      "lbl" : "sensitive lamina"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0002349",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "digitus primus (I) pedis",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "great toe",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hallux"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0001337",
+      "type" : "CLASS",
+      "lbl" : "extensor digitorum brevis"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/BTO_0000436",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "extensor digitorum longus muscle",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "extensor digitorum longus"
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0003994",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0000476"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0002351",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0002348"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0004670",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0004668"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0005078",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0000476"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0004670",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0000476"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0002349",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0002348"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0001337",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0000476"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0002352",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0002348"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0003997",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0003994"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0001919",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0000476"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0004359",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0000476"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0000436",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0000476"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0004669",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0004668"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0002353",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0002348"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0004025",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0001719"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0003995",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0003997"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0002772",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0001719"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0001719",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0002348"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0002348",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0000476"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0002350",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0002348"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/BTO_0003996",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/BTO_0003997"
+    } ],
+    "id" : "http://purl.obolibrary.org/obo/auto.owl",
+    "meta" : {
+      "subsets" : [ ],
+      "xrefs" : [ ],
+      "basicPropertyValues" : [ ]
+    },
+    "equivalentNodesSets" : [ ],
+    "logicalDefinitionAxioms" : [ ],
+    "domainRangeAxioms" : [ ],
+    "propertyChainAxioms" : [ ]
+  } ]
+}

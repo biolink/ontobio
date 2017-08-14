@@ -7,7 +7,7 @@
         "Z": "http://purl.obolibrary.org/obo/Z_",
         "ZZ": "http://purl.obolibrary.org/obo/ZZ_"
     },
-  "graphs" : [ {
+   "graphs" : [ {
     "nodes" : [ {
       "id" : "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
       "type" : "PROPERTY",
@@ -57,13 +57,13 @@
       "type" : "CLASS",
       "lbl" : "z 1"
     }, {
-      "id" : "http://purl.obolibrary.org/obo/X_3",
-      "type" : "CLASS",
-      "lbl" : "heart development"
-    }, {
       "id" : "http://purl.obolibrary.org/obo/Y_2",
       "type" : "CLASS",
       "lbl" : "LUNG"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/X_3",
+      "type" : "CLASS",
+      "lbl" : "heart development"
     }, {
       "id" : "http://purl.obolibrary.org/obo/Z_2",
       "meta" : {
@@ -80,6 +80,10 @@
       "type" : "CLASS",
       "lbl" : "development of heart"
     }, {
+      "id" : "http://purl.obolibrary.org/obo/Y_0",
+      "type" : "CLASS",
+      "lbl" : "organ"
+    }, {
       "id" : "http://purl.obolibrary.org/obo/X_1",
       "type" : "CLASS",
       "lbl" : "heart"
@@ -92,11 +96,39 @@
       "type" : "CLASS",
       "lbl" : "heart"
     }, {
+      "id" : "http://purl.obolibrary.org/obo/X_0",
+      "type" : "CLASS",
+      "lbl" : "organ"
+    }, {
       "id" : "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
       "type" : "PROPERTY",
       "lbl" : "has_related_synonym"
     } ],
-    "edges" : [ ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/Y_3",
+      "pred" : "http://purl.obolibrary.org/obo/lexmap_test#has_participant",
+      "obj" : "http://purl.obolibrary.org/obo/Y_1"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/X_2",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/X_0"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/Y_1",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/Y_0"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/X_3",
+      "pred" : "http://purl.obolibrary.org/obo/lexmap_test#has_participant",
+      "obj" : "http://purl.obolibrary.org/obo/X_1"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/X_1",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/X_0"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/Y_2",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/Y_0"
+    } ],
     "id" : "http://purl.obolibrary.org/obo/lexmap_test.owl",
     "meta" : {
       "subsets" : [ ],

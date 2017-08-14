@@ -1,0 +1,1084 @@
+{
+  "graphs" : [ {
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002056",
+      "type" : "CLASS",
+      "lbl" : "toe 4 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002055",
+      "type" : "CLASS",
+      "lbl" : "toe 4 metatarsal pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002058",
+      "type" : "CLASS",
+      "lbl" : "toe 5 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002057",
+      "type" : "CLASS",
+      "lbl" : "toe 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002059",
+      "type" : "CLASS",
+      "lbl" : "toe 5 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002050",
+      "type" : "CLASS",
+      "lbl" : "toe 3 metatarsal pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002052",
+      "type" : "CLASS",
+      "lbl" : "toe 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002051",
+      "type" : "CLASS",
+      "lbl" : "toe 3 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002054",
+      "type" : "CLASS",
+      "lbl" : "toe 4 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002053",
+      "type" : "CLASS",
+      "lbl" : "toe 4 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000546",
+      "type" : "CLASS",
+      "lbl" : "foot region"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000547",
+      "type" : "CLASS",
+      "lbl" : "footplate apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000548",
+      "type" : "CLASS",
+      "lbl" : "footplate epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000549",
+      "type" : "CLASS",
+      "lbl" : "footplate mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002045",
+      "type" : "CLASS",
+      "lbl" : "toe 2 metatarsal pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002044",
+      "type" : "CLASS",
+      "lbl" : "toe 2 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002047",
+      "type" : "CLASS",
+      "lbl" : "toe 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000540",
+      "type" : "CLASS",
+      "lbl" : "finger 5 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002046",
+      "type" : "CLASS",
+      "lbl" : "toe 2 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002049",
+      "type" : "CLASS",
+      "lbl" : "toe 3 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002048",
+      "type" : "CLASS",
+      "lbl" : "toe 3 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003491",
+      "type" : "CLASS",
+      "lbl" : "finger 5 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003490",
+      "type" : "CLASS",
+      "lbl" : "finger 4 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002041",
+      "type" : "CLASS",
+      "lbl" : "toe 1 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002040",
+      "type" : "CLASS",
+      "lbl" : "toe 1 metatarsal pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002043",
+      "type" : "CLASS",
+      "lbl" : "toe 2 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002042",
+      "type" : "CLASS",
+      "lbl" : "toe 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000853",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 4 and 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000854",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 4 and 5 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000855",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 4 and 5 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000218",
+      "type" : "CLASS",
+      "lbl" : "carpal region"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000856",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 1 and 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000857",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 1 and 2 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000219",
+      "type" : "CLASS",
+      "lbl" : "carpal region epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000858",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 1 and 2 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000859",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 2 and 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000850",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 3 and 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000851",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 3 and 4 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000730",
+      "type" : "CLASS",
+      "lbl" : "handplate epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000852",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 3 and 4 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000731",
+      "type" : "CLASS",
+      "lbl" : "handplate mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000729",
+      "type" : "CLASS",
+      "lbl" : "handplate apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002228",
+      "type" : "CLASS",
+      "lbl" : "foot region skeleton"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000844",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 1 and 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000845",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 1 and 2 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000846",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 1 and 2 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000847",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 2 and 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000848",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 2 and 3 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000849",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between fingers 2 and 3 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000728",
+      "type" : "CLASS",
+      "lbl" : "hand region"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002227",
+      "type" : "CLASS",
+      "lbl" : "hand region skeleton"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002061",
+      "type" : "CLASS",
+      "lbl" : "toe 5 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002060",
+      "type" : "CLASS",
+      "lbl" : "toe 5 metatarsal pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000512",
+      "type" : "CLASS",
+      "lbl" : "finger 1 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000513",
+      "type" : "CLASS",
+      "lbl" : "finger 1 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000514",
+      "type" : "CLASS",
+      "lbl" : "finger 1 metacarpus cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000515",
+      "type" : "CLASS",
+      "lbl" : "finger 1 metacarpus pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000516",
+      "type" : "CLASS",
+      "lbl" : "finger 1 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000517",
+      "type" : "CLASS",
+      "lbl" : "finger 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000518",
+      "type" : "CLASS",
+      "lbl" : "finger 2 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000519",
+      "type" : "CLASS",
+      "lbl" : "finger 2 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000511",
+      "type" : "CLASS",
+      "lbl" : "finger 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003462",
+      "type" : "CLASS",
+      "lbl" : "footplate mesenchyme from somatopleure mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003461",
+      "type" : "CLASS",
+      "lbl" : "footplate mesenchyme from myotomes"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000864",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 3 and 4 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000865",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 4 and 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000866",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 4 and 5 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000867",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 4 and 5 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000220",
+      "type" : "CLASS",
+      "lbl" : "carpal region mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000221",
+      "type" : "CLASS",
+      "lbl" : "carpus cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000860",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 2 and 3 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000222",
+      "type" : "CLASS",
+      "lbl" : "carpus pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000861",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 2 and 3 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000862",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 3 and 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000863",
+      "type" : "CLASS",
+      "lbl" : "interdigital region between toes 3 and 4 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000534",
+      "type" : "CLASS",
+      "lbl" : "finger 4 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000535",
+      "type" : "CLASS",
+      "lbl" : "finger 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000536",
+      "type" : "CLASS",
+      "lbl" : "finger 5 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000537",
+      "type" : "CLASS",
+      "lbl" : "finger 5 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000538",
+      "type" : "CLASS",
+      "lbl" : "finger 5 metacarpus cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000539",
+      "type" : "CLASS",
+      "lbl" : "finger 5 metacarpus pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003486",
+      "type" : "CLASS",
+      "lbl" : "toe 5 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003485",
+      "type" : "CLASS",
+      "lbl" : "toe 4 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003488",
+      "type" : "CLASS",
+      "lbl" : "finger 2 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003487",
+      "type" : "CLASS",
+      "lbl" : "finger 1 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000530",
+      "type" : "CLASS",
+      "lbl" : "finger 4 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002038",
+      "type" : "CLASS",
+      "lbl" : "toe 1 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000531",
+      "type" : "CLASS",
+      "lbl" : "finger 4 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002037",
+      "type" : "CLASS",
+      "lbl" : "toe 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003489",
+      "type" : "CLASS",
+      "lbl" : "finger 3 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000532",
+      "type" : "CLASS",
+      "lbl" : "finger 4 metacarpus cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000533",
+      "type" : "CLASS",
+      "lbl" : "finger 4 metacarpus pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0002039",
+      "type" : "CLASS",
+      "lbl" : "toe 1 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003480",
+      "type" : "CLASS",
+      "lbl" : "carpal region mesenchyme from myotomes"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003482",
+      "type" : "CLASS",
+      "lbl" : "toe 1 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003481",
+      "type" : "CLASS",
+      "lbl" : "carpal region mesenchyme from somatopleure mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003484",
+      "type" : "CLASS",
+      "lbl" : "toe 3 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003483",
+      "type" : "CLASS",
+      "lbl" : "toe 2 apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000523",
+      "type" : "CLASS",
+      "lbl" : "finger 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000524",
+      "type" : "CLASS",
+      "lbl" : "finger 3 epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0001978",
+      "type" : "CLASS",
+      "lbl" : "tarsus pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000404",
+      "type" : "CLASS",
+      "lbl" : "digital region"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000525",
+      "type" : "CLASS",
+      "lbl" : "finger 3 mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000405",
+      "type" : "CLASS",
+      "lbl" : "digital region apical ectodermal ridge"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0001977",
+      "type" : "CLASS",
+      "lbl" : "tarsus cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000526",
+      "type" : "CLASS",
+      "lbl" : "finger 3 metacarpus cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000527",
+      "type" : "CLASS",
+      "lbl" : "finger 3 metacarpus pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000406",
+      "type" : "CLASS",
+      "lbl" : "digital region epithelium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000528",
+      "type" : "CLASS",
+      "lbl" : "finger 3 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000407",
+      "type" : "CLASS",
+      "lbl" : "digital region mesenchyme"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000529",
+      "type" : "CLASS",
+      "lbl" : "finger 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000520",
+      "type" : "CLASS",
+      "lbl" : "finger 2 metacarpus cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000521",
+      "type" : "CLASS",
+      "lbl" : "finger 2 metacarpus pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0000522",
+      "type" : "CLASS",
+      "lbl" : "finger 2 phalanx pre-cartilage condensation"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003473",
+      "type" : "CLASS",
+      "lbl" : "handplate mesenchyme from myotomes"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/EHDAA2_0003472",
+      "type" : "CLASS",
+      "lbl" : "handplate mesenchyme from somatopleure mesenchyme"
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000860",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000548"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002051",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000221",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002049",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002047"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002061",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003482",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000528",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002039",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000523",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000511",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000731",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000728"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002050",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000222",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000539",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000532",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000531"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000535",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000516",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002048",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002047"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002060",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002059",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002057"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003490",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000529"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000527",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002038",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000730",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000728"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0001977",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000861",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000859"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002042",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002056",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002054"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000533",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000531"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000512",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000511"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000538",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000515",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002046",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000524",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000523"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002058",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002057"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000526",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0001978",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000860",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000859"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000534",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000531"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000513",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000511"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000547",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000536",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000535"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000514",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000513"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000514",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002050",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002049"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003486",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002057"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000405",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000525",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000523"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000526",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000525"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002037",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002061",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002059"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002040",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002039"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002055",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000515",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000513"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000537",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000535"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000548",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000538",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000537"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000406",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000859",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000219",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000218"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000527",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000525"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002227",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000728"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002060",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002059"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003483",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002042"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000549",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000516",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000513"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000539",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000537"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000518",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000517"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002047",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000407",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002041",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003484",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002047"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000528",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000525"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003491",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000535"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000517",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000519",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000517"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000534",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002040",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000847",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002057",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000529",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000522",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000858",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000549"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000533",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000857",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000548"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003480",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000220"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000856",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000521",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000729",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000728"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000849",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000847"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000532",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002046",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003488",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000517"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000520",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000848",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000847"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000858",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000856"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003462",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000549"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002045",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000844",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000867",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000549"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000846",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000844"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000865",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003473",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000731"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000857",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000856"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000867",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000865"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000866",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000548"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003485",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002052"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003461",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000549"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002051",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002049"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000845",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000844"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0001977",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000549"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000855",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000853"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002056",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002228"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002041",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002039"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000530",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000529"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000220",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000218"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003472",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000731"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000866",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000865"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002054",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002052"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002055",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002054"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000540",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002227"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000540",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000537"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000520",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000519"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000854",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000853"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000864",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000862"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0001978",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000549"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000864",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000549"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002052",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002044",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002042"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002045",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000531",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000529"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000221",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000218"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000853",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000852",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000850"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000863",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000548"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000862",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002053",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002052"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000521",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000519"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003489",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000523"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000863",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000862"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002043",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0002042"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000851",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000850"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000222",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000218"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0002228",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000546"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000522",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000519"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000218",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000728"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000850",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000404"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003487",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000511"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0003481",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000220"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000861",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000549"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/EHDAA2_0000404",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/EHDAA2_0000728"
+    } ],
+    "id" : "http://purl.obolibrary.org/obo/auto.owl",
+    "meta" : {
+      "subsets" : [ ],
+      "xrefs" : [ ],
+      "basicPropertyValues" : [ ]
+    },
+    "equivalentNodesSets" : [ ],
+    "logicalDefinitionAxioms" : [ ],
+    "domainRangeAxioms" : [ ],
+    "propertyChainAxioms" : [ ]
+  } ]
+}
