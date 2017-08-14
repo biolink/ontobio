@@ -12,6 +12,7 @@ Note: you should not need to use this directly. An `OntologyFactory` object will
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 from prefixcommons.curie_util import contract_uri, expand_uri
+from ontobio.vocabulary.relations import map_legacy_pred
 from functools import lru_cache
 import networkx
 from cachier import cachier
@@ -53,6 +54,7 @@ def get_digraph(ont, relations=None, writecache=False):
     digraph = networkx.MultiDiGraph()
     logging.info("Getting edges (may be cached)")
     for (s,p,o) in get_edges(ont):
+        p = map_legacy_pred(p)
         if relations is None or p in relations:
             digraph.add_edge(o,s,pred=p)
     logging.info("Getting labels (may be cached)")
