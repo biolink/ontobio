@@ -92,6 +92,10 @@ class Ontology():
         nx.MultiDiGraph
             A networkx MultiDiGraph object representing the filtered ontology
         """
+
+        # trigger synonym cache
+        self.all_synonyms()
+        
         # default method - wrap get_graph
         srcg = self.get_graph()
         if prefix is not None:
@@ -102,6 +106,7 @@ class Ontology():
         logging.info("Filtering {} for {}".format(self, relations))
         g = nx.MultiDiGraph()
 
+        # TODO: copy full metadata
         logging.info("copying nodes")
         for n,d in srcg.nodes_iter(data=True):
             g.add_node(n, attr_dict=d)
@@ -724,7 +729,7 @@ class Ontology():
         meta = n['meta']
         if 'synonyms' not in meta:
             meta['synonyms'] = []
-        meta['synonyms'].append({'val': syn.val,'pred': syn.pred})
+        meta['synonyms'].append(syn.as_dict())
 
     def all_synonyms(self, include_label=False):
         """
@@ -992,6 +997,17 @@ class Synonym(AbstractPropertyValue):
     def exact_or_label(self):
         return self.pred == 'hasExactSynonym' or self.pred == 'label'
 
+    def as_dict(self):
+        """
+        Returns Synonym as obograph dict
+        """
+        # TODO: complete metadata
+        return {
+            'pred': self.pred,
+            'val': self.val,
+            'xrefs': self.xrefs
+        }
+    
     def __cmp__(self, other):
         (x,y) = (str(self),str(other))
         if x > y:
