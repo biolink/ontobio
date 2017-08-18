@@ -21,7 +21,7 @@ def test_lexmap_basic():
     for x in g.nodes():
         print("{} --> {}".format(x,lexmap.grouped_mappings(x)))
     assert g.has_edge('Z:2','ZZ:2') # roman numerals
-    assert g.has_edge('Z:2','D:2')  # case insensitivity
+    assert g.has_edge('Z:2','Y:2')  # case insensitivity
     assert g.has_edge('A:1','B:1')  # synonyms
     lexmap.score_xrefs_by_semsim(g)
     for x,y,d in g.edges_iter(data=True):

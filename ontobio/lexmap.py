@@ -166,12 +166,12 @@ class LexicalMapEngine():
 
         Returns
         -------
-        MultiDiGraph
-            networkx multigraph (directional)
+        DiGraph
+            networkx graph (directional)
         """
 
         # initial graph; all matches
-        g = networkx.MultiGraph()
+        g = networkx.MultiDiGraph()
 
         # lmap collects all syns by token
         for (v,syns) in self.lmap.items():
@@ -182,19 +182,19 @@ class LexicalMapEngine():
 
         # graph of best matches
         # TODO: configurability
-        xg = networkx.MultiDiGraph()
+        xg = networkx.DiGraph()
         for i in g.nodes():
             for j in networkx.neighbors(g,i):
                 best = 0
                 bestm = None
-                for ix,m in g[i][j].items():
+                for m in g[i][j].values():
                     (s1,s2) = m['syns']
                     score = self._combine_syns(s1,s2)
                     if score > best:
                         best = score
                         bestm = m
                 if not xg.has_edge(i,j):
-                    syns = g[i][j][0]['syns']
+                    syns = bestm['syns']
                     xg.add_edge(i,j,score=best,syns=syns)
 
         return xg
@@ -232,9 +232,9 @@ class LexicalMapEngine():
             s2 = self._sim(xg, ancs2, ancs1)
             s = 1 - ((1-s1) * (1-s2))
             logging.debug("Score {} x {} = {} x {} = {} // {}".format(i,j,s1,s2,s, d))
-            xg[i][j][0]['lexscore'] = xg[i][j][0]['score']
-            xg[i][j][0]['simscores'] = (s1,s2)
-            xg[i][j][0]['score'] *= s
+            xg[i][j]['lexscore'] = xg[i][j]['score']
+            xg[i][j]['simscores'] = (s1,s2)
+            xg[i][j]['score'] *= s
 
     def _sim(self, xg, ancs1, ancs2):
         xancs1 = set()
@@ -249,7 +249,7 @@ class LexicalMapEngine():
     def _neighbors_by_ontology(self, xg, nid):
         xrefmap = defaultdict(list)
         for x in xg.neighbors(nid):
-            score = xg[nid][x][0]['score']
+            score = xg[nid][x]['score']
             for ont in self.id_to_ontology_map[x]:
                 xrefmap[ont.id].append( (score,x) )
         return xrefmap
@@ -262,8 +262,8 @@ class LexicalMapEngine():
                 (bscore,bx) = pairs[0]
                 logging.info("BEST: {}".format(bx))
                 # TODO: refactor for directional
-                xg[bx][i][0]['is_bestA'] = True
-                xg[i][bx][0]['is_bestB'] = True
+                #xg[bx][i]['is_bestA'] = True
+                xg[i][bx]['is_bestB'] = True
         
     def grouped_mappings(self,id):
         """
