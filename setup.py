@@ -42,7 +42,7 @@ setuptools.setup(
 
     # Dependencies
     install_requires=[
-        'networkx',
+        'networkx==1.11',
         'pyyaml',
         'pysolr',
         'requests',
