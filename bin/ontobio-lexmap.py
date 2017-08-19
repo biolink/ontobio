@@ -79,9 +79,6 @@ def main():
     
     g = lexmap.get_xref_graph()
     
-    if args.scoring == 'sim':
-        lexmap.score_xrefs_by_semsim(g, mo)
-    
     if args.to == 'obo':
         write_obo(g,mo,args)
     else:
@@ -95,8 +92,9 @@ def write_tsv(g,mo,args):
         score=str(d['score'])
         (s1,s2)=d['syns']
         (ss1,ss2)=d['simscores']
-        vals += [score,s1.val,s2.val,str(ss1),str(ss2)]
-        print("{}".format("\t".join(vals)))
+        ancs = nx.ancestors(g,x)
+        vals += [score,s1.val,s2.val,ss1,ss2,d.get('reciprocal_score',0),d.get('cpr'),len(ancs)]
+        print("{}".format("\t".join([str(v) for v in vals])))
         
 def write_obo(g,mo,args):
     for x,y,d in g.edges_iter(data=True):

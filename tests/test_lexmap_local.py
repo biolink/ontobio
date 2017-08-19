@@ -1,5 +1,6 @@
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.lexmap import LexicalMapEngine
+import networkx as nx
 import logging
 
 def test_lexmap_basic():
@@ -23,10 +24,11 @@ def test_lexmap_basic():
     assert g.has_edge('Z:2','ZZ:2') # roman numerals
     assert g.has_edge('Z:2','Y:2')  # case insensitivity
     assert g.has_edge('A:1','B:1')  # synonyms
-    lexmap.score_xrefs_by_semsim(g)
+    assert g.has_edge('B:1','A:1')  # bidirectional
     for x,y,d in g.edges_iter(data=True):
         print("{}<->{} :: {}".format(x,y,d))
-    # TODO
+        cpr = d[lexmap.CONDITIONAL_PR]
+        assert cpr > 0 and cpr <= 1.0
 
 def test_lexmap_multi():
     """
@@ -43,9 +45,14 @@ def test_lexmap_multi():
     g = lexmap.get_xref_graph()
     for x in g.nodes():
         print("{} --> {}".format(x,lexmap.grouped_mappings(x)))
-    lexmap.score_xrefs_by_semsim(g)
-    lexmap.assign_best_matches(g)
     for x,y,d in g.edges_iter(data=True):
-        print("{} '{}' <-> {} '{}' :: {}".format(x,lexmap.label(x),y,lexmap.label(y),d))
+        cl = nx.ancestors(g,x)
+        print("{} '{}' <-> {} '{}' :: {} CLOSURE={}".format(x,lexmap.label(x),y,lexmap.label(y),d,len(cl)))
+        cpr = d[lexmap.CONDITIONAL_PR]
+        assert cpr > 0 and cpr <= 1.0
+    unmapped = lexmap.unmapped_nodes(g)
+    print('U: {}'.format(len(unmapped)))
+    unmapped = lexmap.unmapped_nodes(g, rs_threshold=4)
+    print('U4: {}'.format(len(unmapped)))
 
     

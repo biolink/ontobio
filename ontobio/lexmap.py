@@ -1,7 +1,21 @@
+"""Lexical mapping of ontology classes
+
+The core data structure used here is a Mapping Graph. This is a
+networkx Graph object (i.e. singly labeled, non-directional) that
+connects lexically mapped nodes between two ontologies.
+
+Edge Properties
+---------------
+
+idpair: (string,string)
+    the pair of identifiers mapped
+score: number
+    Number between 0 and 100 indicating strength of match based on multiple criteria
+synonyms: (Synonym,Synonym)
+    pair of Synonym objects (including primary labels) used to create mapping
+
 """
-Lexical mapping of ontology classes
-"""
-import networkx
+import networkx as nx
 import logging
 import re
 from ontobio.ontol import Synonym, Ontology
@@ -45,6 +59,12 @@ class LexicalMapEngine():
     """
     generates lexical matches between pairs of ontology classes
     """
+
+    SCORE='score'
+    LEXSCORE='lexscore'
+    SIMSCORES='simscores'
+    CONDITIONAL_PR='cpr'
+    
     def __init__(self, nweight=1.0, wsmap=default_wsmap()):
         """
         Arguments
@@ -140,7 +160,8 @@ class LexicalMapEngine():
 
     def get_xref_graph(self):
         """
-        Generate mappings based on lexical properties and return as networkx graph.
+
+        Generate mappings based on lexical properties and return as nx graph.
 
         Algorithm
         ~~~~~~~~~
@@ -153,9 +174,11 @@ class LexicalMapEngine():
 
         This avoids N^2 pairwise comparisons: instead the time taken is linear
 
+        After initial mapping is made, additional scoring is performed on each mapping
+
         Edge properties
         ~~~~~~~~~~~~~~~
-        The return object is a networkx graph, connecting pairs of ontology classes.
+        The return object is a nx graph, connecting pairs of ontology classes.
 
         Edges are annotated with metadata about how the match was found:
 
@@ -166,12 +189,12 @@ class LexicalMapEngine():
 
         Returns
         -------
-        DiGraph
-            networkx graph (directional)
+        Graph
+            nx graph (bidirectional)
         """
 
         # initial graph; all matches
-        g = networkx.MultiDiGraph()
+        g = nx.MultiDiGraph()
 
         # lmap collects all syns by token
         for (v,syns) in self.lmap.items():
@@ -181,10 +204,9 @@ class LexicalMapEngine():
                         g.add_edge(s1.class_id, s2.class_id, syns=(s1,s2))
 
         # graph of best matches
-        # TODO: configurability
-        xg = networkx.DiGraph()
+        xg = nx.Graph()
         for i in g.nodes():
-            for j in networkx.neighbors(g,i):
+            for j in nx.neighbors(g,i):
                 best = 0
                 bestm = None
                 for m in g[i][j].values():
@@ -193,10 +215,15 @@ class LexicalMapEngine():
                     if score > best:
                         best = score
                         bestm = m
-                if not xg.has_edge(i,j):
-                    syns = bestm['syns']
-                    xg.add_edge(i,j,score=best,syns=syns)
+                syns = bestm['syns']
+                xg.add_edge(i, j,
+                            score=best,
+                            lexscore=best,
+                            syns=syns,
+                            idpair=(i,j))
 
+        self.score_xrefs_by_semsim(xg)
+        self.assign_best_matches(xg)
         return xg
 
     # true if syns s1 and s2 should be compared.
@@ -232,9 +259,8 @@ class LexicalMapEngine():
             s2 = self._sim(xg, ancs2, ancs1)
             s = 1 - ((1-s1) * (1-s2))
             logging.debug("Score {} x {} = {} x {} = {} // {}".format(i,j,s1,s2,s, d))
-            xg[i][j]['lexscore'] = xg[i][j]['score']
-            xg[i][j]['simscores'] = (s1,s2)
-            xg[i][j]['score'] *= s
+            xg[i][j][self.SIMSCORES] = (s1,s2)
+            xg[i][j][self.SCORE] *= s
 
     def _sim(self, xg, ancs1, ancs2):
         xancs1 = set()
@@ -249,21 +275,47 @@ class LexicalMapEngine():
     def _neighbors_by_ontology(self, xg, nid):
         xrefmap = defaultdict(list)
         for x in xg.neighbors(nid):
-            score = xg[nid][x]['score']
+            score = xg[nid][x][self.SCORE]
             for ont in self.id_to_ontology_map[x]:
                 xrefmap[ont.id].append( (score,x) )
         return xrefmap
+
+    def _dirn(self, edge, i, j):
+        if edge['idpair'] == (i,j):
+            return 'fwd'
+        elif edge['idpair'] == (j,i):
+            return 'rev'
+        else:
+            return None
         
     def assign_best_matches(self, xg):
+        """
+        For each node in the xref graph, tag best match edges
+        """
         for i in xg.nodes():
             xrefmap = self._neighbors_by_ontology(xg, i)
-            for (ontid,pairs) in xrefmap.items():
-                pairs.sort()
-                (bscore,bx) = pairs[0]
-                logging.info("BEST: {}".format(bx))
-                # TODO: refactor for directional
-                #xg[bx][i]['is_bestA'] = True
-                xg[i][bx]['is_bestB'] = True
+            for (ontid,score_node_pairs) in xrefmap.items():
+                score_node_pairs.sort()
+                (best_score,best_node) = score_node_pairs[0]
+                logging.info("BEST for {}: {} in {} from {}".format(i, best_node, ontid, score_node_pairs))
+                edge = xg[i][best_node]
+                dirn = self._dirn(edge, i, best_node)
+                best_kwd = 'best_' + dirn
+                if len(score_node_pairs) == 1 or score_node_pairs[0] > score_node_pairs[1]:
+                    edge[best_kwd] = 2
+                else:
+                    edge[best_kwd] = 1
+                for (score,j) in score_node_pairs:
+                    edge_ij = xg[i][j]
+                    dirn_ij = self._dirn(edge_ij, i, j)
+                    edge_ij['cpr_'+dirn_ij] = score / sum([s for s,_ in score_node_pairs])
+        for (i,j,edge) in xg.edges_iter(data=True):
+            # reciprocal score is set if (A) i is best for j, and (B) j is best for i
+            rs = 0
+            if 'best_fwd' in edge and 'best_rev' in edge:
+                rs = edge['best_fwd'] * edge['best_rev']
+            edge['reciprocal_score'] = rs
+            edge['cpr'] = edge['cpr_fwd'] * edge['cpr_rev']
         
     def grouped_mappings(self,id):
         """
@@ -278,6 +330,18 @@ class LexicalMapEngine():
             m[prefix].append(n)
         return m
 
+    def unmapped_nodes(self, xg, rs_threshold=0):
+        unmapped_list = []
+        for nid in self.merged_ontology.nodes():
+            if nid in xg:
+                for (j,edge) in xg[nid].items():
+                    rs = edge.get('reciprocal_score',0)
+                    if rs < rs_threshold:
+                        unmapped_list.append(nid)
+            else:
+                unmapped_list.append(nid)
+        return unmapped_list
+    
     def _combine_syns(self, s1,s2):
         cpred = self._combine_preds(s1.pred, s1.pred)
         s = self._pred_score(cpred)

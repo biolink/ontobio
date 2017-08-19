@@ -3,7 +3,7 @@
         "A": "http://purl.obolibrary.org/obo/A_",
         "B": "http://purl.obolibrary.org/obo/B_",
         "C": "http://purl.obolibrary.org/obo/X_",
-        "D": "http://purl.obolibrary.org/obo/Y_",
+        "Y": "http://purl.obolibrary.org/obo/Y_",
         "Z": "http://purl.obolibrary.org/obo/Z_",
         "ZZ": "http://purl.obolibrary.org/obo/ZZ_"
     },
