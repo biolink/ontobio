@@ -13,6 +13,14 @@ score: number
     Number between 0 and 100 indicating strength of match based on multiple criteria
 synonyms: (Synonym,Synonym)
     pair of Synonym objects (including primary labels) used to create mapping
+simscores: (number, number)
+    Semantic similarity A to B and B to A respectively.
+    Note that false positives or negatives in the ancestors or descendants in the xref graph will lead to bias in these scores.
+reciprocal_score: int
+    A number between 0 and 4 that indicates whether this was a reciprocal best match (RBM), with additional gradation based on whether
+    ties are included. We distinguish between a true BM and a tied BM. 4 indicates true RBM. 1 indicates reciprocal tied BM (ie both are tied BMs). 2 indicates a combo of
+    a true BM and a tied BM.
+    Note that ties are less likely if semantic similarity is considered in the match.
 
 """
 import networkx as nx

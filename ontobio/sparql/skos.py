@@ -13,6 +13,11 @@ from ontobio.ontol import Ontology, Synonym
 GEMET = Namespace('http://www.eionet.europa.eu/gemet/2004/06/gemet-schema.rdf#')
 
 class Skos(object):
+    """
+    SKOS is an RDF data model for representing thesauri and terminologies.
+
+    See https://www.w3.org/TR/skos-primer/ for more details
+    """
 
     def __init__(self, prefixmap={}, lang='en'):
         self.prefixmap = prefixmap
@@ -31,6 +36,9 @@ class Skos(object):
         return s
 
     def process_file(self,filename=None, format=None):
+        """
+        Parse a file into an ontology object, using rdflib
+        """
         rdfgraph = rdflib.Graph()
         if format is None:
             if filename.endswith(".ttl"):
@@ -41,6 +49,18 @@ class Skos(object):
         return self.process_rdfgraph(rdfgraph)
         
     def process_rdfgraph(self, rg, ont=None):
+        """
+        Transform a skos terminology expressed in an rdf graph into an Ontology object
+
+        Arguments
+        ---------
+        rg: rdflib.Graph
+            graph object
+
+        Returns
+        -------
+        Ontology
+        """
         # TODO: ontology metadata
         if ont is None:
             ont = Ontology()
@@ -52,14 +72,14 @@ class Skos(object):
             
         subset_map = {}
         for concept in rg.subjects(RDF.type, SKOS.Concept):
-            for s in self.get_schemes(rg, concept):
+            for s in self._get_schemes(rg, concept):
                 subset_map[self._uri2id(s)] = s
                 
         for concept in sorted(list(rg.subjects(RDF.type, SKOS.Concept))):
             concept_uri = str(concept)
             id=self._uri2id(concept)
             logging.info("ADDING: {}".format(id))
-            ont.add_node(id, self.get_label(rg,concept))
+            ont.add_node(id, self._get_label(rg,concept))
                     
             for defn in rg.objects(concept, SKOS.definition):
                 if (defn.language == self.lang):
@@ -79,17 +99,17 @@ class Skos(object):
                 syn = Synonym(id, val=self._uri2id(m))
                 ont.add_synonym(syn)
                 
-            for s in self.get_schemes(rg,concept):
+            for s in self._get_schemes(rg,concept):
                 ont.add_to_subset(id, self._uri2id(s))
                 
         return ont
     
-    def get_schemes(self, rg, concept):
+    def _get_schemes(self, rg, concept):
         schemes = set(rg.objects(concept, SKOS.inScheme))
         schemes.update(rg.objects(concept, GEMET.group))
         return schemes
     
-    def get_label(self, rg,concept):
+    def _get_label(self, rg,concept):
         labels = sorted(rg.preferredLabel(concept, lang=self.lang))
         if len(labels) == 0:
             return None
