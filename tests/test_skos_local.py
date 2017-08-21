@@ -12,7 +12,7 @@ def test_skos():
 
     
     fn = 'tests/resources/skos_example.rdf'
-    ont = skos.process_file(fn)
+    ont = skos.process_file(fn, format='ttl')
 
     for n in ont.nodes():
         print('{}'.format(n))
