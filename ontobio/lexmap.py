@@ -233,7 +233,7 @@ class LexicalMapEngine():
         if s1.class_id == s2.class_id:
             return False
         if self.ontology_pairs is not None:
-            logging.debug('TEST: {}{} in {}'.format(s1.ontology.id, s2.ontology.id, self.ontology_pairs))
+            #logging.debug('TEST: {}{} in {}'.format(s1.ontology.id, s2.ontology.id, self.ontology_pairs))
             return (s1.ontology.id, s2.ontology.id) in self.ontology_pairs
         else:
             return s1.class_id < s2.class_id
