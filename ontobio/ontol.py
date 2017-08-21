@@ -24,7 +24,7 @@ class Ontology():
     def __init__(self,
                  handle=None,
                  id=None,
-                 graph=nx.Graph(),
+                 graph=nx.MultiDiGraph(),
                  xref_graph=None,
                  payload=None,
                  graphdoc=None):
@@ -719,6 +719,42 @@ class Ontology():
             syns.append(Synonym(nid, val=self.label(nid), pred='label'))
         return syns
 
+    def add_node(self, id, label=None, type='CLASS', meta={}):
+        """
+        Add a new node to the ontology
+        """
+        g = self.get_graph()
+        g.add_node(id, label=label, type=type, meta=meta)
+
+    def add_text_definition(self, textdef):
+        """
+        Add a new text definition to the ontology
+        """
+        self._add_meta_element(textdef.subject, 'definition', textdef.as_dict())
+
+    def _add_meta_element(self, id, k, edict):
+        n = self.node(nid)
+        if n is None:
+            raise ValueError('no such node {}'.format(id))
+        if 'meta' not in n:
+            n['meta'] = {}
+        n['meta'][k] = edict
+        
+    def add_parent(self, id, pid, relation='subClassOf'):
+        """
+        Add a new edge to the ontology
+        """
+        g = self.get_graph()
+        g.add_edge(pid, id, pred=relation)
+
+    def add_xref(self, id, xref):
+        """
+        Adds an xref to the xref graph
+        """
+        if self.xref_graph is None:
+            self.xref_graph = nx.MultiGraph()
+        self.xref_graph.add_edge(xref, id)
+        
     def add_synonym(self, syn):
         """
         Adds a synonym for a node
@@ -731,6 +767,18 @@ class Ontology():
             meta['synonyms'] = []
         meta['synonyms'].append(syn.as_dict())
 
+    def add_to_subset(self, id, s):
+        """
+        Adds a node to a subset
+        """
+        n = self.node(id)
+        if 'meta' not in n:
+            n['meta'] = {}
+        meta = n['meta']
+        if 'subsets' not in meta:
+            meta['subsets'] = []
+        meta['subsets'].append(s)
+        
     def all_synonyms(self, include_label=False):
         """
         Retrieves all synonyms
@@ -947,6 +995,15 @@ class TextDefinition(AbstractPropertyValue):
         self.xrefs = xrefs
         self.ontology = ontology
 
+    def as_dict(self):
+        """
+        Returns TextDefinition as obograph dict
+        """
+        return {
+            'val': self.val,
+            'xrefs': self.xrefs
+        }
+        
 class Synonym(AbstractPropertyValue):
     """
     Represents a synonym using the OBO model
@@ -959,7 +1016,7 @@ class Synonym(AbstractPropertyValue):
         hasNarrowSynonym='narrow',
         hasRelatedSynonym='related')
 
-    def __init__(self, class_id, val=None, pred=None, lextype=None, xrefs=None, ontology=None):
+    def __init__(self, class_id, val=None, pred='hasRelatedSynonym', lextype=None, xrefs=None, ontology=None):
         """
         Arguments
         ---------
