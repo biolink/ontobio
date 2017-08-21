@@ -132,9 +132,9 @@ class LexicalMapEngine():
         v = syn.val.lower()
         nv = self._normalize(v, self.wsmap)
         
+        self._index_synonym_val(syn, v)
         nweight = self._get_nweight(ont)
         if nweight > 0:
-            self._index_synonym_val(syn, v)
             if nv != v:
                 nsyn = Synonym(syn.class_id,
                                val=syn.val,

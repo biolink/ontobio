@@ -21,6 +21,7 @@ from ontobio.slimmer import get_minimal_subgraph
 from prefixcommons.curie_util import contract_uri, expand_uri
 from ontobio.lexmap import LexicalMapEngine
 import logging
+import yaml
 
 def main():
     """
@@ -49,6 +50,8 @@ def main():
                         help='Score weighting scheme. Default=sim')
     parser.add_argument('-P', '--prefix', type=str, required=False,
                         help='Prefix to constrain traversal on, e.g. PATO, ENVO')
+    parser.add_argument('-c', '--config', type=str, required=False,
+                        help='lexmap configuration file (yaml). See schema for details')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
@@ -69,7 +72,14 @@ def main():
     factory = OntologyFactory()
     onts = [factory.create(h) for h in args.ontologies]
 
-    lexmap = LexicalMapEngine()
+    config = {}
+    if args.config is not None:
+        f = open(args.config,'r')
+        config = yaml.load(f)
+        f.close()
+
+    
+    lexmap = LexicalMapEngine(config=config)
     if len(onts) == 0:
         raise ValueException("must pass one or more ontologies")
     else:
