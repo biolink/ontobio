@@ -1,7 +1,8 @@
 # See: https://caremad.io/posts/2013/07/setup-vs-requirement/
 # --index-url https://pypi.python.org/simple/
 # -e .
-marshmallow>=0.0
+marshmallow==3.0.0b3
+jsobject>=0.0
 prefixcommons>=0.1.4
 requests>=0.0
 pip>=9.0.1

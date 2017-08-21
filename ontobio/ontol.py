@@ -1016,7 +1016,7 @@ class Synonym(AbstractPropertyValue):
         hasNarrowSynonym='narrow',
         hasRelatedSynonym='related')
 
-    def __init__(self, class_id, val=None, pred='hasRelatedSynonym', lextype=None, xrefs=None, ontology=None):
+    def __init__(self, class_id, val=None, pred='hasRelatedSynonym', lextype=None, xrefs=None, ontology=None, confidence=1.0):
         """
         Arguments
         ---------
@@ -1039,6 +1039,7 @@ class Synonym(AbstractPropertyValue):
         self.lextype = lextype
         self.xrefs = xrefs
         self.ontology = ontology
+        self.confidence = confidence
 
     def __str__(self):
         return '{} "{}" {} {} {}'.format(self.class_id, self.val, self.pred, self.lextype, self.xrefs)

@@ -29,6 +29,7 @@ import re
 from ontobio.ontol import Synonym, Ontology
 from collections import defaultdict
 
+from marshmallow import Schema, fields, pprint, post_load
 
 LABEL_OR_EXACT = 'label_or_exact'
 
@@ -73,26 +74,26 @@ class LexicalMapEngine():
     SIMSCORES='simscores'
     CONDITIONAL_PR='cpr'
     
-    def __init__(self, nweight=1.0, wsmap=default_wsmap()):
+    def __init__(self, wsmap=default_wsmap(), config={}):
         """
         Arguments
         ---------
-        nweight: double
-            weight to apply to any normalized lexical values
         wdmap: dict
             maps words to normalized synonyms.
+        config: dict
+            A configuration conforming to LexicalMapConfigSchema
         """
         # maps label or syn value to Synonym object
         self.lmap = {}
         # maps node id to synonym objects
         self.smap = {}
-        self.nweight = nweight
         self.wsmap = wsmap
         self.npattern = re.compile('[\W_]+')
         self.exclude_obsolete = True
         self.ontology_pairs = None
         self.id_to_ontology_map = defaultdict(list)
         self.merged_ontology = Ontology()
+        self.config = config
 
     def index_ontologies(self, onts):
         logging.info('Indexing: {}'.format(onts))
@@ -130,14 +131,17 @@ class LexicalMapEngine():
         syn.ontology = ont
         v = syn.val.lower()
         nv = self._normalize(v, self.wsmap)
-        if self.nweight > 0:
+        
+        nweight = self._get_nweight(ont)
+        if nweight > 0:
             self._index_synonym_val(syn, v)
             if nv != v:
                 nsyn = Synonym(syn.class_id,
                                val=syn.val,
                                pred=syn.pred,
                                lextype=syn.lextype,
-                               ontology=ont)
+                               ontology=ont,
+                               confidence=syn.confidence * nweight)
                 self._index_synonym_val(nsyn, nv)
             
     def _index_synonym_val(self, syn, v):
@@ -162,6 +166,8 @@ class LexicalMapEngine():
         toks.sort()
         return " ".join(toks)
 
+    def _get_nweight(self, ont):
+        return self.config.get('normalized_form_confidence', 0.95)
         
     def find_equiv_sets(self):
         return self.lmap
@@ -349,10 +355,14 @@ class LexicalMapEngine():
             else:
                 unmapped_list.append(nid)
         return unmapped_list
-    
+
+    # scores a pairwise combination of synonyms. This will be a mix of
+    #  * individual confidence in the synonyms themselves
+    #  * confidence of equivalence based on scopes
     def _combine_syns(self, s1,s2):
         cpred = self._combine_preds(s1.pred, s1.pred)
         s = self._pred_score(cpred)
+        s *= s1.confidence * s2.confidence
         logging.debug("{} + {} = {}/{}".format(s1,s2,cpred,s))
         return s
     
@@ -379,5 +389,34 @@ class LexicalMapEngine():
         if p == 'hasExactSynonym':
             return 90
         return 50
+
+### MARSHMALLOW SCHEMAS
                         
+class ScopeConfidenceMapSchema(Schema):
+    """
+    Maps scope predicates (label, hasExactSynonym etc) to confidences (0<=1.0).
+
+    Typically labels and exact matches have higher confidence, although this
+    may vary with ontology
+    """
+    label = fields.Float(default=1.0, description="confidence of label matches")
+    hasExactSynonym = fields.Float(default=0.9, description="confidence of exact matches")
+    hasRelatedSynonym = fields.Float(default=0.5, description="confidence of related matches")
+    hasBroadSynonym = fields.Float(default=0.5, description="confidence of broad matches")
+    hasNarrowSynonym = fields.Float(default=0.5, description="confidence of narrow matches")
+    other = fields.Float(default=0.25, description="confidence of other kinds of matches")
+
+class OntologyConfigurationSchema(Schema):
+    """
+    configuration that is specific to an ontology
+    """
+    prefix = fields.String(description="prefix of IDs in ontology, e.g. UBERON")
+    scope_confidence_map = fields.Nested(ScopeConfidenceMapSchema(), description="local scope-confidence map")
         
+class LexicalMapConfigSchema(Schema):
+    """
+    global configuration
+    """
+    scope_confidence_map = fields.Nested(ScopeConfidenceMapSchema(), description="global scope-confidence map. May be overridden by ontologies")
+    ontology_configurations = fields.List(fields.Nested(OntologyConfigurationSchema()), description="configurations that are specific to an ontology")
+    normalized_form_confidence = fields.Float(default=0.85, description="confidence of a synonym value derived via normalization (e.g. canonical ordering of tokens)")

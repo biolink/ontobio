@@ -30,6 +30,15 @@ def test_lexmap_basic():
         cpr = d[lexmap.CONDITIONAL_PR]
         assert cpr > 0 and cpr <= 1.0
 
+    lexmap = LexicalMapEngine(config=dict(normalized_form_confidence=0.25))
+    ont.add_node('TEST:1', 'foo bar')
+    ont.add_node('TEST:2', 'bar foo')
+    lexmap.index_ontology(ont)
+    g = lexmap.get_xref_graph()
+    assert g.has_edge('TEST:1','TEST:2') # normalized
+    assert round(g['TEST:1']['TEST:2']['score']) == 25
+    
+    
 def test_lexmap_multi():
     """
     Text lexical mapping
