@@ -28,7 +28,14 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Wrapper for ontobio lexical mapping'
                                                  """
-                                                 ...
+                                                 Lexically maps one or more ontologies. Ontologies can be local or remote,
+                                                 any input handle can be specified, see docs for more details on handles.
+
+                                                 If multiple ontologies are specified, then each ontology in the list is compared against the first one.
+
+                                                 If a simgle ontology is specified, then all pairs in that ontology will be compared
+                                                 
+                                                 Output format to be documented - see lexmap.py for the various scoring attributes for now.
                                                  """,
                                      formatter_class=argparse.RawTextHelpFormatter)
 
@@ -45,7 +52,8 @@ def main():
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
-    parser.add_argument('ontologies',nargs='*')
+    parser.add_argument('ontologies',nargs='*',
+                        help='one or more ontologies to be aligned. Any input handle can be specified')
 
     args = parser.parse_args()
 
@@ -86,6 +94,9 @@ def main():
 
 def write_tsv(g,mo,args):
     for x,y,d in g.edges_iter(data=True):
+        # g is a non-directional Graph object.
+        # to get a deterministic ordering we use the idpair key
+        (x,y) = d['idpair']
         vals = [x,y]
         if args.labels:
             vals = [x,mo.label(x),y,mo.label(y)]
