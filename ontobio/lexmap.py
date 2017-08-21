@@ -167,7 +167,7 @@ class LexicalMapEngine():
         return " ".join(toks)
 
     def _get_nweight(self, ont):
-        return self.config.get('normalized_form_confidence', 0.95)
+        return self.config.get('normalized_form_confidence', 0.75)
         
     def find_equiv_sets(self):
         return self.lmap
@@ -360,13 +360,13 @@ class LexicalMapEngine():
     #  * individual confidence in the synonyms themselves
     #  * confidence of equivalence based on scopes
     def _combine_syns(self, s1,s2):
-        cpred = self._combine_preds(s1.pred, s1.pred)
+        cpred = self._combine_preds(s1.pred, s2.pred)
         s = self._pred_score(cpred)
         s *= s1.confidence * s2.confidence
-        logging.debug("{} + {} = {}/{}".format(s1,s2,cpred,s))
+        logging.debug("COMBINED: {} + {} = {}/{}".format(s1,s2,cpred,s))
         return s
     
-    def _rollup(p):
+    def _rollup(self, p):
         if p == 'label':
             return LABEL_OR_EXACT
         if p == 'hasExactSynonym':
@@ -376,8 +376,8 @@ class LexicalMapEngine():
     def _combine_preds(self, p1, p2):
         if p1 == p2:
             return p1
-        if _rollup(p1) == _rollup(p2):
-            return _rollup(p1)
+        if self._rollup(p1) == self._rollup(p2):
+            return self._rollup(p1)
         return p1 + p2
 
     ## TODO: allow this to be weighted by ontology

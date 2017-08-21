@@ -719,11 +719,13 @@ class Ontology():
             syns.append(Synonym(nid, val=self.label(nid), pred='label'))
         return syns
 
-    def add_node(self, id, label=None, type='CLASS', meta={}):
+    def add_node(self, id, label=None, type='CLASS', meta=None):
         """
         Add a new node to the ontology
         """
         g = self.get_graph()
+        if meta is None:
+            meta={}
         g.add_node(id, label=label, type=type, meta=meta)
 
     def add_text_definition(self, textdef):

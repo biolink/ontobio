@@ -1,4 +1,5 @@
 from ontobio.ontol_factory import OntologyFactory
+from ontobio.ontol import Synonym
 from ontobio.lexmap import LexicalMapEngine
 import networkx as nx
 import logging
@@ -33,11 +34,20 @@ def test_lexmap_basic():
     lexmap = LexicalMapEngine(config=dict(normalized_form_confidence=0.25))
     ont.add_node('TEST:1', 'foo bar')
     ont.add_node('TEST:2', 'bar foo')
+    ont.add_node('TEST:3', 'foo bar')
+    ont.add_node('TEST:4', 'wiz')
+    syn = Synonym('TEST:4', val='bar foo', pred='hasRelatedSynonym')
+    ont.add_synonym(syn)
+    for s in ont.synonyms('TEST:4'):
+        print('S={}'.format(s))
     lexmap.index_ontology(ont)
     g = lexmap.get_xref_graph()
+    for x,d in g['TEST:1'].items():
+        print('XREF: {} = {}'.format(x,d))
     assert g.has_edge('TEST:1','TEST:2') # normalized
-    assert round(g['TEST:1']['TEST:2']['score']) == 25
-    
+    assert int(g['TEST:1']['TEST:2']['score']) == 25
+    assert int(g['TEST:1']['TEST:3']['score']) == 100
+    assert int(g['TEST:1']['TEST:4']['score']) < 25
     
 def test_lexmap_multi():
     """
