@@ -167,7 +167,7 @@ class LexicalMapEngine():
         return " ".join(toks)
 
     def _get_nweight(self, ont):
-        return self.config.get('normalized_form_confidence', 0.75)
+        return self.config.get('normalized_form_confidence', 0.95)
         
     def find_equiv_sets(self):
         return self.lmap
