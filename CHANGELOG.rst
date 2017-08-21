@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+0.2.16
+------
+
+* Added ability to parse skos
+* Added more detailed scoring and documentation for lexical  mapping.
+* lexmap fixes: Fixed #93, #94
+
 0.2.15
 ------
 
