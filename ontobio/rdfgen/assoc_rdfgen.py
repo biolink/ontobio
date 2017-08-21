@@ -2,6 +2,7 @@ from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
 from ontobio.vocabulary.relations import OboRO, Evidence
 from ontobio.vocabulary.upper import UpperLevel
 from ontobio.ecomap import EcoMap
+from ontobio.ontol_factory import OntologyFactory
 from rdflib import Namespace
 from rdflib import BNode
 from rdflib import Literal
@@ -33,6 +34,7 @@ class RdfWriter(object):
     Abstract base class for all RdfWriters
     """
     pass
+        
 
 class TurtleRdfWriter(RdfWriter):
     """
@@ -64,6 +66,7 @@ class RdfTransform(object):
         self.ecomap = EcoMap()
         self._emit_header_done = False
         self.uribase = 'http://example.org/'
+        self.ro = None
 
     def genid(self):
         return URIRef(uuid.uuid4().urn)
@@ -77,6 +80,19 @@ class RdfTransform(object):
             return self.uri(id['id'])
         logging.info("Expand: {}".format(id))
         return URIRef(expand_uri(id))
+
+    def get_relation_ontology(self):
+        if self.ro is None:
+            ofa = OntologyFactory()
+            self.ro = ofa.create('ro')
+        return self.ro
+
+    def lookup_relation(self, label):
+        ro = self.get_relation_ontology()
+        label = label.replace('_',' ')
+        results = [self.uri(x) for x in ro.search(label)]
+        if len(results) > 0:
+            return results[0]
     
     def emit(self,s,p,o):
         logging.debug("TRIPLE: {} {} {}".format(s,p,o))
@@ -191,6 +207,14 @@ class CamRdfTransform(RdfTransform):
             pass
             # TODO
         # TODO: extensions
+        for ext in association.get('object_extensions',[]):
+            filler_inst = self.genid()
+            self.emit_type(filler_inst, self.uri(ext['filler']))
+            p = self.lookup_relation(ext['property'])
+            if p is None:
+                logging.warning("No such property {}".format(ext))
+            else:
+                self.emit(tgt_id, p, filler_inst)
         self.translate_evidence(association, stmt)
         
 class SimpleAssocRdfTransform(RdfTransform):

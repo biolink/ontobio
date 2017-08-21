@@ -95,6 +95,7 @@ def parse_with(f, p):
 
     # for m in p.report.messages:
     #     print("MESSAGE: {}".format(m))
+    print("MESSAGES (sample): {}".format(p.report.messages[0:5]))
     assert len(p.report.messages) == 0
     print(p.report.to_markdown())
 

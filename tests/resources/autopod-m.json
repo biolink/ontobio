@@ -1,0 +1,1071 @@
+{
+  "graphs" : [ {
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000629",
+      "type" : "CLASS",
+      "lbl" : "hand nerve"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000627",
+      "type" : "CLASS",
+      "lbl" : "hand interdigit region"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000628",
+      "type" : "CLASS",
+      "lbl" : "hand muscle"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0003104",
+      "type" : "CLASS",
+      "lbl" : "heel skin"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000630",
+      "type" : "CLASS",
+      "lbl" : "hand skin"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0003105",
+      "type" : "CLASS",
+      "lbl" : "foot pad skin"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0003112",
+      "type" : "CLASS",
+      "lbl" : "tarsal joint"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000647",
+      "type" : "CLASS",
+      "lbl" : "foot digit connective tissue"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
+      "type" : "PROPERTY",
+      "lbl" : "has_related_synonym"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000648",
+      "type" : "CLASS",
+      "lbl" : "foot digit muscle"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000645",
+      "type" : "CLASS",
+      "lbl" : "foot digit blood vessel"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001339",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "accessory carpal bone",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "pisiform"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000646",
+      "type" : "CLASS",
+      "lbl" : "foot digit bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000643",
+      "type" : "CLASS",
+      "lbl" : "foot bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000644",
+      "type" : "CLASS",
+      "lbl" : "foot connective tissue"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000642",
+      "type" : "CLASS",
+      "lbl" : "foot blood vessel"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001380",
+      "type" : "CLASS",
+      "lbl" : "foot distal phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001387",
+      "type" : "CLASS",
+      "lbl" : "foot proximal phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000452",
+      "type" : "CLASS",
+      "lbl" : "hand joint"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001388",
+      "type" : "CLASS",
+      "lbl" : "hand distal phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000453",
+      "type" : "CLASS",
+      "lbl" : "metacarpo-phalangeal joint"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001385",
+      "type" : "CLASS",
+      "lbl" : "foot digit 5 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000296",
+      "type" : "CLASS",
+      "lbl" : "carpal bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000297",
+      "type" : "CLASS",
+      "lbl" : "tarsal bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001386",
+      "type" : "CLASS",
+      "lbl" : "foot middle phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001383",
+      "type" : "CLASS",
+      "lbl" : "foot digit 3 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001384",
+      "type" : "CLASS",
+      "lbl" : "foot digit 4 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000050",
+      "type" : "CLASS",
+      "lbl" : "tarsus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001381",
+      "type" : "CLASS",
+      "lbl" : "foot digit 1 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001382",
+      "type" : "CLASS",
+      "lbl" : "foot digit 2 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000458",
+      "type" : "CLASS",
+      "lbl" : "hand digit 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000456",
+      "type" : "CLASS",
+      "lbl" : "hand digit 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000457",
+      "type" : "CLASS",
+      "lbl" : "hand digit 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000454",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "thumb",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hand digit 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001389",
+      "type" : "CLASS",
+      "lbl" : "hand digit 1 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000455",
+      "type" : "CLASS",
+      "lbl" : "hand digit 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000618",
+      "type" : "CLASS",
+      "lbl" : "hand blood vessel"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000619",
+      "type" : "CLASS",
+      "lbl" : "hand bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001390",
+      "type" : "CLASS",
+      "lbl" : "hand digit 2 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001391",
+      "type" : "CLASS",
+      "lbl" : "hand digit 3 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000464",
+      "type" : "CLASS",
+      "lbl" : "foot joint"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001394",
+      "type" : "CLASS",
+      "lbl" : "hand middle phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001395",
+      "type" : "CLASS",
+      "lbl" : "hand proximal phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001392",
+      "type" : "CLASS",
+      "lbl" : "hand digit 4 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001393",
+      "type" : "CLASS",
+      "lbl" : "hand digit 5 phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000625",
+      "type" : "CLASS",
+      "lbl" : "hand digit nerve"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000626",
+      "type" : "CLASS",
+      "lbl" : "hand digit skin"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000469",
+      "type" : "CLASS",
+      "lbl" : "foot digit 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000623",
+      "type" : "CLASS",
+      "lbl" : "hand digit connective tissue"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000624",
+      "type" : "CLASS",
+      "lbl" : "hand digit muscle"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000467",
+      "type" : "CLASS",
+      "lbl" : "foot digit 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000621",
+      "type" : "CLASS",
+      "lbl" : "hand digit blood vessel"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000468",
+      "type" : "CLASS",
+      "lbl" : "foot digit 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000622",
+      "type" : "CLASS",
+      "lbl" : "hand digit bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000465",
+      "type" : "CLASS",
+      "lbl" : "foot digit 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000620",
+      "type" : "CLASS",
+      "lbl" : "hand connective tissue"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000466",
+      "type" : "CLASS",
+      "lbl" : "foot digit 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001365",
+      "type" : "CLASS",
+      "lbl" : "metacarpal bone digit 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001366",
+      "type" : "CLASS",
+      "lbl" : "metacarpal bone digit 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001364",
+      "type" : "CLASS",
+      "lbl" : "metacarpal bone digit 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001369",
+      "type" : "CLASS",
+      "lbl" : "metatarsal bone digit 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001367",
+      "type" : "CLASS",
+      "lbl" : "metacarpal bone digit 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000037",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "forepaw",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hand"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001368",
+      "type" : "CLASS",
+      "lbl" : "metacarpal bone digit 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001376",
+      "type" : "CLASS",
+      "lbl" : "proximal sesamoid bone of foot"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001377",
+      "type" : "CLASS",
+      "lbl" : "proximal sesamoid bone of hand"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000044",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "hindpaw",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "foot"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001372",
+      "type" : "CLASS",
+      "lbl" : "metatarsal bone digit 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000041",
+      "type" : "CLASS",
+      "lbl" : "hand digit"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001373",
+      "type" : "CLASS",
+      "lbl" : "metatarsal bone digit 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000042",
+      "type" : "CLASS",
+      "lbl" : "metacarpus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001370",
+      "type" : "CLASS",
+      "lbl" : "metatarsal bone digit 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001371",
+      "type" : "CLASS",
+      "lbl" : "metatarsal bone digit 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000040",
+      "type" : "CLASS",
+      "lbl" : "carpus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000049",
+      "type" : "CLASS",
+      "lbl" : "metatarsus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000048",
+      "type" : "CLASS",
+      "lbl" : "foot digit"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000649",
+      "type" : "CLASS",
+      "lbl" : "foot digit nerve"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001343",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "unciform",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "hand distal carpal bone 4",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "uncinate",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hamate"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000650",
+      "type" : "CLASS",
+      "lbl" : "foot digit skin"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000651",
+      "type" : "CLASS",
+      "lbl" : "foot interdigit region"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001344",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "centrale",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "central carpal bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001341",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "lesser multiangular",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "hand distal carpal bone 2",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "trapezoid"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001342",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "hand distal carpal bone 3",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "capitate"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001340",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "greater multiangular",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "hand distal carpal bone 1",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "trapezium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001349",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "centrale",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "central tarsal bone",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "navicular"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001347",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "triangular",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "triquetrum",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "cuneiform of hand",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "ulnar carpal bone",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "triquetral"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0002558",
+      "type" : "CLASS",
+      "lbl" : "distal carpal bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000654",
+      "type" : "CLASS",
+      "lbl" : "foot skin"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001348",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "fibulare",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "calcaneus",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "calcaneum"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0002557",
+      "type" : "CLASS",
+      "lbl" : "proximal carpal bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0002556",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "semilunar",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "intermediate carpal bone",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "lunate"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000652",
+      "type" : "CLASS",
+      "lbl" : "foot muscle"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001345",
+      "type" : "CLASS",
+      "lbl" : "falciform carpal bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0002555",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "navicular of hand",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "radial carpal bone",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "scaphoid"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001346",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "intermedioradial carpal bone",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "scapholunate"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000653",
+      "type" : "CLASS",
+      "lbl" : "foot nerve"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001354",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "foor distal carpal bone 3",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "lateral cuneiform"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001355",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "foot distal carpal bone 4 and 5",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "cuboid"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001352",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "foot distal carpal bone 1",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "medial cuneiform"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001353",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "foot distal carpal bone 2",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "intermediate cuneiform"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001350",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "tibiale",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "medial tibial tarsal bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0001351",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "astragalus",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "talus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000306",
+      "type" : "CLASS",
+      "lbl" : "hand phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000305",
+      "type" : "CLASS",
+      "lbl" : "foot phalanx"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000302",
+      "type" : "CLASS",
+      "lbl" : "metacarpal bone"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/MA_0000303",
+      "type" : "CLASS",
+      "lbl" : "metatarsal bone"
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000467",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000646",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000643"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001351",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000297"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000626",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001391",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000306"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000297",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000643"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000618",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0002557",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000296"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000466",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000629",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001350",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000297"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000625",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0003112",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000050"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001390",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000306"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000048",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000465",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001353",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000297"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000306",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000622"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000628",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000624",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001381",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000305"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001393",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000306"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000464",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000049",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001352",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000297"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000623",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000305",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000646"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001392",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000306"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001380",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000305"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001346",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0002557"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000649",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0002558",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000296"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000303",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000643"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001355",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000297"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001383",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000305"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001395",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000306"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000453",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000452"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001347",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0002557"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001371",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000303"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001354",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000297"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001382",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000305"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001394",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000306"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000651",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000650",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000296",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000040"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001370",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000303"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001345",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000296"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001385",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000305"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0002556",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0001346"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001373",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000303"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000627",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001339",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0002557"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001344",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000296"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000622",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000619"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001384",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000305"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000452",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000297",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000050"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0002555",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0001346"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000619",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001372",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000303"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000302",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000042"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001387",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000305"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000654",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001348",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000297"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001377",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000622"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001388",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000306"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000050",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000642",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000041",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0003112",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000464"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001386",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000305"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000653",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001376",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000646"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000042",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000296",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000619"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000458",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0003104",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000654"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000620",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000652",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000302",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000619"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001365",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000302"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0003105",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000654"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000457",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001349",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000297"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001364",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000302"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001389",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000306"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000630",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000456",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001340",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0002558"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000622",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000648",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001367",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000302"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000455",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001341",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0002558"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000621",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000303",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000049"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001366",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000302"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000647",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000469",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000454",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000041"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001369",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000303"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001342",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0002558"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000644",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000646",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000468",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001343",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0002558"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0001368",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000302"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000645",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000048"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000643",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000044"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/MA_0000040",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/MA_0000037"
+    } ],
+    "id" : "http://purl.obolibrary.org/obo/auto.owl",
+    "meta" : {
+      "subsets" : [ ],
+      "xrefs" : [ ],
+      "basicPropertyValues" : [ ]
+    },
+    "equivalentNodesSets" : [ ],
+    "logicalDefinitionAxioms" : [ ],
+    "domainRangeAxioms" : [ ],
+    "propertyChainAxioms" : [ ]
+  } ]
+}

@@ -28,7 +28,14 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Wrapper for ontobio lexical mapping'
                                                  """
-                                                 ...
+                                                 Lexically maps one or more ontologies. Ontologies can be local or remote,
+                                                 any input handle can be specified, see docs for more details on handles.
+
+                                                 If multiple ontologies are specified, then each ontology in the list is compared against the first one.
+
+                                                 If a simgle ontology is specified, then all pairs in that ontology will be compared
+                                                 
+                                                 Output format to be documented - see lexmap.py for the various scoring attributes for now.
                                                  """,
                                      formatter_class=argparse.RawTextHelpFormatter)
 
@@ -45,7 +52,8 @@ def main():
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
-    parser.add_argument('ontologies',nargs='*')
+    parser.add_argument('ontologies',nargs='*',
+                        help='one or more ontologies to be aligned. Any input handle can be specified')
 
     args = parser.parse_args()
 
@@ -79,9 +87,6 @@ def main():
     
     g = lexmap.get_xref_graph()
     
-    if args.scoring == 'sim':
-        lexmap.score_xrefs_by_semsim(g, mo)
-    
     if args.to == 'obo':
         write_obo(g,mo,args)
     else:
@@ -89,13 +94,18 @@ def main():
 
 def write_tsv(g,mo,args):
     for x,y,d in g.edges_iter(data=True):
+        # g is a non-directional Graph object.
+        # to get a deterministic ordering we use the idpair key
+        (x,y) = d['idpair']
         vals = [x,y]
         if args.labels:
             vals = [x,mo.label(x),y,mo.label(y)]
         score=str(d['score'])
         (s1,s2)=d['syns']
-        vals += [score,s1.val,s2.val]
-        print("{}".format("\t".join(vals)))
+        (ss1,ss2)=d['simscores']
+        ancs = nx.ancestors(g,x)
+        vals += [score,s1.val,s2.val,ss1,ss2,d.get('reciprocal_score',0),d.get('cpr'),len(ancs)]
+        print("{}".format("\t".join([str(v) for v in vals])))
         
 def write_obo(g,mo,args):
     for x,y,d in g.edges_iter(data=True):

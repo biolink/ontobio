@@ -48,7 +48,7 @@ class OntologyFactory():
         """
         self.handle = handle
 
-    def create(self, handle=None, **args):
+    def create(self, handle=None, handle_type=None, **args):
         """
         Creates an ontology based on a handle
 
@@ -109,6 +109,12 @@ def create_ontology(handle=None, **args):
         from ontobio.sparql.wikidata_ontology import EagerWikidataOntology
         logging.info("Fetching from Wikidata")
         ont = EagerWikidataOntology(handle=handle)
+    elif handle.startswith("skos:"):
+        fn = handle.replace('skos:','')
+        from ontobio.sparql.skos import Skos
+        logging.info("Fetching from Skos file")
+        skos = Skos()
+        ont = skos.process_file(fn)
     elif handle.startswith("scigraph:"):
         from ontobio.neo.scigraph_ontology import RemoteScigraphOntology
         logging.info("Fetching from SciGraph")

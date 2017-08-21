@@ -10,7 +10,7 @@ import networkx
 import logging
 from prefixcommons.curie_util import contract_uri
 from ontobio.ontol import LogicalDefinition
-
+from ontobio.vocabulary.relations import map_legacy_pred
 
 class OboJsonMapper(object):
     def __init__(self,
@@ -52,6 +52,7 @@ class OboJsonMapper(object):
             sub = self.contract_uri(e['sub'])
             obj = self.contract_uri(e['obj'])
             pred = self.contract_uri(e['pred'])
+            pred = map_legacy_pred(pred)
             if pred == 'is_a':
                 pred = 'subClassOf'
             if predicates is None or pred in predicates:
@@ -93,6 +94,7 @@ class OboJsonMapper(object):
             return curies[0]
         else:
             return uri
+
     
 def convert_json_file(obographfile, **args):
     """

@@ -34,3 +34,14 @@ class OboRO():
     involved_in = 'RO:0002331'
     in_taxon = 'RO:0002162'
     colocalizes_with = 'RO:0002325'
+
+def map_legacy_pred(pred):
+    if '#' in pred:
+        lbl = pred.split('#')[-1]
+        if lbl == 'part_of':
+            return 'BFO:0000050'
+        if '_part_of' in lbl:
+            # for FMA
+            return 'BFO:0000050'
+    return pred
+    

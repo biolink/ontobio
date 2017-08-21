@@ -24,7 +24,7 @@ class Ontology():
     def __init__(self,
                  handle=None,
                  id=None,
-                 graph=nx.Graph(),
+                 graph=nx.MultiDiGraph(),
                  xref_graph=None,
                  payload=None,
                  graphdoc=None):
@@ -92,6 +92,10 @@ class Ontology():
         nx.MultiDiGraph
             A networkx MultiDiGraph object representing the filtered ontology
         """
+
+        # trigger synonym cache
+        self.all_synonyms()
+        
         # default method - wrap get_graph
         srcg = self.get_graph()
         if prefix is not None:
@@ -102,6 +106,7 @@ class Ontology():
         logging.info("Filtering {} for {}".format(self, relations))
         g = nx.MultiDiGraph()
 
+        # TODO: copy full metadata
         logging.info("copying nodes")
         for n,d in srcg.nodes_iter(data=True):
             g.add_node(n, attr_dict=d)
@@ -714,6 +719,42 @@ class Ontology():
             syns.append(Synonym(nid, val=self.label(nid), pred='label'))
         return syns
 
+    def add_node(self, id, label=None, type='CLASS', meta={}):
+        """
+        Add a new node to the ontology
+        """
+        g = self.get_graph()
+        g.add_node(id, label=label, type=type, meta=meta)
+
+    def add_text_definition(self, textdef):
+        """
+        Add a new text definition to the ontology
+        """
+        self._add_meta_element(textdef.subject, 'definition', textdef.as_dict())
+
+    def _add_meta_element(self, id, k, edict):
+        n = self.node(nid)
+        if n is None:
+            raise ValueError('no such node {}'.format(id))
+        if 'meta' not in n:
+            n['meta'] = {}
+        n['meta'][k] = edict
+        
+    def add_parent(self, id, pid, relation='subClassOf'):
+        """
+        Add a new edge to the ontology
+        """
+        g = self.get_graph()
+        g.add_edge(pid, id, pred=relation)
+
+    def add_xref(self, id, xref):
+        """
+        Adds an xref to the xref graph
+        """
+        if self.xref_graph is None:
+            self.xref_graph = nx.MultiGraph()
+        self.xref_graph.add_edge(xref, id)
+        
     def add_synonym(self, syn):
         """
         Adds a synonym for a node
@@ -724,8 +765,20 @@ class Ontology():
         meta = n['meta']
         if 'synonyms' not in meta:
             meta['synonyms'] = []
-        meta['synonyms'].append({'val': syn.val,'pred': syn.pred})
+        meta['synonyms'].append(syn.as_dict())
 
+    def add_to_subset(self, id, s):
+        """
+        Adds a node to a subset
+        """
+        n = self.node(id)
+        if 'meta' not in n:
+            n['meta'] = {}
+        meta = n['meta']
+        if 'subsets' not in meta:
+            meta['subsets'] = []
+        meta['subsets'].append(s)
+        
     def all_synonyms(self, include_label=False):
         """
         Retrieves all synonyms
@@ -942,6 +995,15 @@ class TextDefinition(AbstractPropertyValue):
         self.xrefs = xrefs
         self.ontology = ontology
 
+    def as_dict(self):
+        """
+        Returns TextDefinition as obograph dict
+        """
+        return {
+            'val': self.val,
+            'xrefs': self.xrefs
+        }
+        
 class Synonym(AbstractPropertyValue):
     """
     Represents a synonym using the OBO model
@@ -954,7 +1016,7 @@ class Synonym(AbstractPropertyValue):
         hasNarrowSynonym='narrow',
         hasRelatedSynonym='related')
 
-    def __init__(self, class_id, val=None, pred=None, lextype=None, xrefs=None, ontology=None):
+    def __init__(self, class_id, val=None, pred='hasRelatedSynonym', lextype=None, xrefs=None, ontology=None, confidence=1.0):
         """
         Arguments
         ---------
@@ -977,6 +1039,7 @@ class Synonym(AbstractPropertyValue):
         self.lextype = lextype
         self.xrefs = xrefs
         self.ontology = ontology
+        self.confidence = confidence
 
     def __str__(self):
         return '{} "{}" {} {} {}'.format(self.class_id, self.val, self.pred, self.lextype, self.xrefs)
@@ -992,6 +1055,17 @@ class Synonym(AbstractPropertyValue):
     def exact_or_label(self):
         return self.pred == 'hasExactSynonym' or self.pred == 'label'
 
+    def as_dict(self):
+        """
+        Returns Synonym as obograph dict
+        """
+        # TODO: complete metadata
+        return {
+            'pred': self.pred,
+            'val': self.val,
+            'xrefs': self.xrefs
+        }
+    
     def __cmp__(self, other):
         (x,y) = (str(self),str(other))
         if x > y:

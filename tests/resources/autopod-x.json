@@ -1,0 +1,469 @@
+{
+  "graphs" : [ {
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004418",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "claw of hind digit 2",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "claw of hindlimb digit 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0003208",
+      "type" : "CLASS",
+      "lbl" : "metacarpus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004419",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "claw of hind digit 3",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "claw of hindlimb digit 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004416",
+      "type" : "CLASS",
+      "lbl" : "claw primordium"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004417",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "claw of hind digit 1",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "claw of hindlimb digit 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0003207",
+      "type" : "CLASS",
+      "lbl" : "carpus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004414",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "hind digit 4",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe IV",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "pedal digit 4",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe 4",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hindlimb digit 4"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "type" : "PROPERTY",
+      "lbl" : "has_exact_synonym"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004415",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "pedal digit 5",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe V",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe 5",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "hind digit 5",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hindlimb digit 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004239",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "toe I",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "hallux",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe 1",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "pedal digit 1",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "hind digit 1",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hindlimb digit 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004412",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "hind digit 2",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe II",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe 2",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "pedal digit 2",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hindlimb digit 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0003103",
+      "type" : "CLASS",
+      "lbl" : "claw"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004478",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "manual digit 2",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "fore digit 2",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "forelimb digit 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004413",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "pedal digit 3",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe 3",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "toe III",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "hind digit 3",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hindlimb digit 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004479",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "fore digit 3",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "manual digit 3",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "forelimb digit 3"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004299",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "front foot",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hand"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004480",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "fore digit 4",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "manual digit 4",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "forelimb digit 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004421",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "claw of hind digit 5",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "claw of hindlimb digit 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0003211",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "tarsalia",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "tarsus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004300",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "hind foot",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "foot"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0003212",
+      "type" : "CLASS",
+      "lbl" : "metatarsus"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0003036",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "manual digit",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "fore digit",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "forelimb digit"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004420",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "claw of hind digit 4",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "claw of hindlimb digit 4"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0003035",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "toe",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "hind digit",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "pedal digit",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "hindlimb digit"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0004481",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "fore digit 5",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "manual digit 5",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "forelimb digit 5"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0005161",
+      "type" : "CLASS",
+      "lbl" : "prehallux"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/XAO_0005160",
+      "type" : "CLASS",
+      "lbl" : "prepollex"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
+      "type" : "PROPERTY",
+      "lbl" : "has_related_synonym"
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004417",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003103"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004479",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003036"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0003208",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004299"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004421",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003103"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0005161",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004300"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004414",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003035"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0003036",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004299"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004419",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004413"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004417",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004239"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0003211",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004300"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004478",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003036"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004418",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004412"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004420",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003103"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004413",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003035"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0003212",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004300"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004419",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003103"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004239",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003035"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004421",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004415"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004416",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003035"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004481",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003036"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004412",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003035"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004420",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004414"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0003103",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003035"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004418",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003103"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0003207",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004299"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004480",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003036"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0005160",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004299"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0004415",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0003035"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/XAO_0003035",
+      "pred" : "http://purl.obolibrary.org/obo/BFO_0000050",
+      "obj" : "http://purl.obolibrary.org/obo/XAO_0004300"
+    } ],
+    "id" : "http://purl.obolibrary.org/obo/auto.owl",
+    "meta" : {
+      "subsets" : [ ],
+      "xrefs" : [ ],
+      "basicPropertyValues" : [ ]
+    },
+    "equivalentNodesSets" : [ ],
+    "logicalDefinitionAxioms" : [ ],
+    "domainRangeAxioms" : [ ],
+    "propertyChainAxioms" : [ ]
+  } ]
+}

@@ -1,0 +1,80 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix map:  <http://www.w3c.rl.ac.uk/2003/11/21-skos-mapping#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix dc:  <http://purl.org/dc/elements/1.1/> .
+
+<http://vocab.lternet.edu>
+        rdf:type            skos:ConceptScheme ;
+        dc:title            "LTER Controlled Vocabulary" ;
+        dc:creator          "jporter" ;
+        dc:subject          "" ;
+        dc:description      " U.S. Long-Term Ecological Research Network " ;
+        dc:publisher        "jporter" ;
+        dc:date             "2011-01-14" ;
+        dc:language         "en" ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=799> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=651> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=698> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=667> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=693> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=655> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=643> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=694> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=173> ;
+        skos:hasTopConcept  <http://vocab.lternet.edu?tema=395> .
+
+<http://vocab.lternet.edu?tema=4>
+        rdf:type        skos:Concept ;
+        skos:prefLabel  "aboveground biomass"@en ;
+        skos:inScheme   <http://vocab.lternet.edu> ;
+        skos:broader    <http://vocab.lternet.edu?tema=68> ;
+        dct:created     "2011-01-14 17:12:32" ;
+        dct:modified    "0000-00-00 00:00:00" .
+
+<http://vocab.lternet.edu?tema=5>
+        rdf:type        skos:Concept ;
+        skos:prefLabel  "aboveground production"@en ;
+        skos:inScheme   <http://vocab.lternet.edu> ;
+        skos:broader    <http://vocab.lternet.edu?tema=449> ;
+        dct:created     "2011-01-14 17:12:32" ;
+        dct:modified    "0000-00-00 00:00:00" .
+
+<http://vocab.lternet.edu?tema=6>
+        rdf:type        skos:Concept ;
+        skos:prefLabel  "abundance"@en ;
+        skos:inScheme   <http://vocab.lternet.edu> ;
+        skos:broader    <http://vocab.lternet.edu?tema=674> ;
+        skos:narrower   <http://vocab.lternet.edu?tema=52> ;
+        skos:narrower   <http://vocab.lternet.edu?tema=462> ;
+        dct:created     "2011-01-14 17:12:32" ;
+        dct:modified    "0000-00-00 00:00:00" .
+
+<http://vocab.lternet.edu?tema=7>
+        rdf:type        skos:Concept ;
+        skos:prefLabel  "accretion"@en ;
+        skos:inScheme   <http://vocab.lternet.edu> ;
+        skos:related    <http://vocab.lternet.edu?tema=706> ;
+        skos:broader    <http://vocab.lternet.edu?tema=660> ;
+        dct:created     "2011-01-14 17:12:32" ;
+        dct:modified    "0000-00-00 00:00:00" .
+
+<http://vocab.lternet.edu?tema=8>
+        rdf:type        skos:Concept ;
+        skos:prefLabel  "accumulation"@en ;
+        skos:inScheme   <http://vocab.lternet.edu> ;
+        skos:broader    <http://vocab.lternet.edu?tema=655> ;
+        skos:narrower   <http://vocab.lternet.edu?tema=514> ;
+        dct:created     "2011-01-14 17:12:32" ;
+        dct:modified    "0000-00-00 00:00:00" .
+
+<http://vocab.lternet.edu?tema=9>
+        rdf:type          skos:Concept ;
+        skos:prefLabel    "acid neutralizing capacity"@en ;
+        skos:altLabel     "ANC"@en ;
+        skos:hiddenLabel  "ANC"@en ;
+        skos:inScheme     <http://vocab.lternet.edu> ;
+        skos:broader      <http://vocab.lternet.edu?tema=671> ;
+        dct:created       "2011-01-14 17:12:32" ;
+        dct:modified      "0000-00-00 00:00:00" .

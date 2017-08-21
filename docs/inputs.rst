@@ -50,6 +50,27 @@ Code example, using an :class:`OntologyFactory`
     from ontobio.ontol_factory import OntologyFactory
     ont = OntologyFactory().create("/path/to/my/file.owl")
 
+
+Local SKOS RDF Files
+--------------------
+
+SKOS is an RDF data model for representing thesauri and terminologies.
+
+See the `SKOS primer <https://www.w3.org/TR/skos-primer/>`_ for more details.
+
+Command line example:
+
+::
+
+   ogr.py -r path/to/my/skosfile.ttl
+
+Code example, using an :class:`OntologyFactory`
+
+.. code-block:: python
+
+    from ontobio.ontol_factory import OntologyFactory
+    ont = OntologyFactory().create("skos:/path/to/my/skosfile.ttl")
+    
 Remote SPARQL ontology access
 -----------------------------
 
