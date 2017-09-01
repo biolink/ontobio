@@ -12,9 +12,9 @@ def test_lexmap_basic():
     print("Creating ont")
     ont = factory.create('tests/resources/lexmap_test.json')
     lexmap = LexicalMapEngine()
-
     lexmap.index_ontology(ont)
 
+    
     print(lexmap.lmap)
     print(ont.all_synonyms())
     g = lexmap.get_xref_graph()
@@ -31,13 +31,15 @@ def test_lexmap_basic():
         cpr = d[lexmap.CONDITIONAL_PR]
         assert cpr > 0 and cpr <= 1.0
 
-    lexmap = LexicalMapEngine(config=dict(normalized_form_confidence=0.25))
+    lexmap = LexicalMapEngine(config=dict(normalized_form_confidence=0.25,
+                                          meaningful_ids=True))
     ont.add_node('TEST:1', 'foo bar')
     ont.add_node('TEST:2', 'bar foo')
     ont.add_node('TEST:3', 'foo bar')
     ont.add_node('TEST:4', 'wiz')
     syn = Synonym('TEST:4', val='bar foo', pred='hasRelatedSynonym')
     ont.add_synonym(syn)
+    ont.add_node('http://x.org/wiz#FooBar')
     for s in ont.synonyms('TEST:4'):
         print('S={}'.format(s))
     lexmap.index_ontology(ont)
@@ -48,6 +50,7 @@ def test_lexmap_basic():
     assert int(g['TEST:1']['TEST:2']['score']) == 25
     assert int(g['TEST:1']['TEST:3']['score']) == 100
     assert int(g['TEST:1']['TEST:4']['score']) < 25
+    assert g.has_edge('TEST:3','http://x.org/wiz#FooBar')  # IDs and CamelCase
     
 def test_lexmap_multi():
     """
@@ -74,4 +77,9 @@ def test_lexmap_multi():
     unmapped = lexmap.unmapped_nodes(g, rs_threshold=4)
     print('U4: {}'.format(len(unmapped)))
 
-    
+    cliques = lexmap.cliques(g)
+    maxc = max(cliques, key=len)
+    print('CLIQUES: {}'.format(cliques))
+    print('MAX CLIQUES: {}'.format(maxc))
+    df = lexmap.as_dataframe(g)
+    print(df.to_csv())

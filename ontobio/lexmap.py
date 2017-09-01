@@ -24,10 +24,12 @@ reciprocal_score: int
 
 """
 import networkx as nx
+from networkx.algorithms import strongly_connected_components
 import logging
 import re
 from ontobio.ontol import Synonym, Ontology
 from collections import defaultdict
+import pandas as pd
 
 from marshmallow import Schema, fields, pprint, post_load
 
@@ -108,6 +110,19 @@ class LexicalMapEngine():
         """
         self.merged_ontology.merge([ont])
         syns = ont.all_synonyms(include_label=True)
+        
+        include_id = self._is_meaningful_ids()
+        logging.info("Include IDs as synonyms: {}".format(include_id))
+        if include_id:
+            for n in ont.nodes():
+                v = n
+                # Get fragment
+                if v.startswith('http'):
+                    v = re.sub('.*/','',v)
+                    v = re.sub('.*#','',v)
+                syns.append(Synonym(n, val=v, pred='id'))
+                
+        
         logging.info("Indexing {} syns in {}".format(len(syns),ont))
         for syn in syns:
             self.index_synonym(syn, ont)
@@ -129,7 +144,16 @@ class LexicalMapEngine():
         if self.exclude_obsolete and ont.is_obsolete(syn.class_id):
             return
         syn.ontology = ont
-        v = syn.val.lower()
+
+        v = syn.val
+        
+        # Add spaces separating camelcased strings
+        v = re.sub('([a-z])([A-Z])',r'\1 \2',v)
+        
+        # always use lowercase when comparing
+        # we may want to make this configurable in future
+        v = v.lower()
+        
         nv = self._normalize(v, self.wsmap)
         
         self._index_synonym_val(syn, v)
@@ -168,7 +192,10 @@ class LexicalMapEngine():
 
     def _get_nweight(self, ont):
         return self.config.get('normalized_form_confidence', 0.95)
-        
+
+    def _is_meaningful_ids(self):
+        return self.config.get('meaningful_ids', False)
+    
     def find_equiv_sets(self):
         return self.lmap
 
@@ -389,6 +416,65 @@ class LexicalMapEngine():
         if p == 'hasExactSynonym':
             return 90
         return 50
+
+    def _in_clique(self, x, cliques):
+        for s in cliques:
+            if x in s:
+                return s
+        return set()
+    
+    def as_dataframe(self, xg):
+        cliques = self.cliques(xg)
+        ont = self.merged_ontology
+        items = []
+        for x,y,d in xg.edges_iter(data=True):
+            # xg is a non-directional Graph object.
+            # to get a deterministic ordering we use the idpair key
+            (x,y) = d['idpair']
+            (s1,s2)=d['syns']
+            (ss1,ss2)=d['simscores']
+            clique = self._in_clique(x, cliques)
+            #ancs = nx.ancestors(g,x)
+            item = {'left':x, 'left_label':ont.label(x),
+                    'right':y, 'right_label':ont.label(y),
+                    'score':d['score'],
+                    'left_simscore':ss1,
+                    'right_simscore':ss2,
+                    'reciprocal_score':d.get('reciprocal_score',0),
+                    'conditional_pr_equiv': d.get('cpr'),
+                    'equiv_clique_size': len(clique)}
+            items.append(item)
+
+        ix = ['left', 'left_label', 'right', 'right_label',
+              'score', 'left_simscore', 'right_simscore', 'reciprocal_score',
+              'conditional_pr_equiv', 'equiv_clique_size']
+        df = pd.DataFrame(items)
+        return df
+    
+    def cliques(self, xg):
+        """
+        Return all equivalence set cliques, assuming each edge in the xref graph is treated as equivalent,
+        and all edges in ontology are subClassOf
+
+        Arguments
+        ---------
+        xg : Graph
+            an xref graph
+
+        Returns
+        -------
+        list of sets
+        """
+        g = nx.DiGraph()
+        for x,y in self.merged_ontology.get_graph().edges():
+            g.add_edge(x,y)
+        for x,y in xg.edges():
+            g.add_edge(x,y)
+            g.add_edge(y,x)
+        return list(strongly_connected_components(g))
+        
+            
+        
 
 ### MARSHMALLOW SCHEMAS
                         

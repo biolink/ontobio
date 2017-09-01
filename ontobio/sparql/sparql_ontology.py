@@ -68,7 +68,6 @@ class RemoteSparqlOntology(Ontology):
             for syn in syns:
                 self.add_synonym(syn)
             if include_label:
-                #lsyns = [Synonym(t[0],pred='label', val=t[1]) for t in fetchall_labels(self.graph_name)]
                 lsyns = [Synonym(x, pred='label', val=self.label(x)) for x in self.nodes()]
                 syns = syns + lsyns
             self.all_synonyms_cache = syns
