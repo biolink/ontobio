@@ -90,7 +90,7 @@ def main():
         pairs = [(oid0,oid0)]
         if len(onts) > 1:
             pairs = [(oid0, ont.id) for ont in onts[1:]]
-        logging.info("Comparing the followsing pairs of ontologies: {}".format(pairs))
+        logging.info("Comparing the following pairs of ontologies: {}".format(pairs))
         lexmap.ontology_pairs = pairs
     mo = Ontology()
     mo.merge(onts)
@@ -103,21 +103,8 @@ def main():
         write_tsv(lexmap,g,mo,args)
 
 def write_tsv(lexmap,g,mo,args):
-    cliques = lexmap.cliques(g)
-    for x,y,d in g.edges_iter(data=True):
-        # g is a non-directional Graph object.
-        # to get a deterministic ordering we use the idpair key
-        (x,y) = d['idpair']
-        vals = [x,y]
-        if args.labels:
-            vals = [x,mo.label(x),y,mo.label(y)]
-        score=str(d['score'])
-        (s1,s2)=d['syns']
-        (ss1,ss2)=d['simscores']
-        clique = in_clique(x, cliques)
-        #ancs = nx.ancestors(g,x)
-        vals += [score,s1.val,s2.val,ss1,ss2,d.get('reciprocal_score',0),d.get('cpr'),len(clique)]
-        print("{}".format("\t".join([str(v) for v in vals])))
+    df=lexmap.as_dataframe(g)
+    print(df.to_csv(sep="\t"))
         
 def write_obo(g,mo,args):
     for x,y,d in g.edges_iter(data=True):

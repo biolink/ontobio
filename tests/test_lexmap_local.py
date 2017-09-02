@@ -32,7 +32,10 @@ def test_lexmap_basic():
         assert cpr > 0 and cpr <= 1.0
 
     lexmap = LexicalMapEngine(config=dict(normalized_form_confidence=0.25,
-                                          meaningful_ids=True))
+                                          meaningful_ids=True,
+                                          ontology_configurations=[dict(prefix='AA',
+                                                                        normalized_form_confidence=0)]))
+
     ont.add_node('TEST:1', 'foo bar')
     ont.add_node('TEST:2', 'bar foo')
     ont.add_node('TEST:3', 'foo bar')
@@ -40,6 +43,10 @@ def test_lexmap_basic():
     syn = Synonym('TEST:4', val='bar foo', pred='hasRelatedSynonym')
     ont.add_synonym(syn)
     ont.add_node('http://x.org/wiz#FooBar')
+    ont.add_node('TEST:6', '123')
+    ont.add_node('TEST:7', '123')
+    ont.add_node('AA:1', 'foo bar')
+    ont.add_node('AA:2', 'bar foo')
     for s in ont.synonyms('TEST:4'):
         print('S={}'.format(s))
     lexmap.index_ontology(ont)
@@ -51,6 +58,10 @@ def test_lexmap_basic():
     assert int(g['TEST:1']['TEST:3']['score']) == 100
     assert int(g['TEST:1']['TEST:4']['score']) < 25
     assert g.has_edge('TEST:3','http://x.org/wiz#FooBar')  # IDs and CamelCase
+    assert not g.has_edge('TEST:6','TEST:7') # should omit syns with no alphanumeric
+
+    # test exclude normalized form
+    assert not g.has_edge('AA:1','AA:2')
     
 def test_lexmap_multi():
     """
@@ -82,4 +93,4 @@ def test_lexmap_multi():
     print('CLIQUES: {}'.format(cliques))
     print('MAX CLIQUES: {}'.format(maxc))
     df = lexmap.as_dataframe(g)
-    print(df.to_csv())
+    print(df.to_csv(sep="\t"))

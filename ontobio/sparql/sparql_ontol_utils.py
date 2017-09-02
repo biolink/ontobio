@@ -289,7 +289,8 @@ def querybody_svf():
 
 def querybody_label():
     return """
-    { ?c rdfs:label ?l }
+    { ?c rdfs:label ?l
+    FILTER (!isBlank(?c))}
     """
 
 def querybody_syns():
@@ -301,6 +302,7 @@ def querybody_syns():
     ?r = oboInOwl:hasBroadSynonym OR
     ?r = oboInOwl:hasExactSynonym
     )
+    FILTER (!isBlank(?c))
     """
 
 def anyont_fetch_label(id):
