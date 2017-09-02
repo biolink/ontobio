@@ -25,7 +25,7 @@ from ontobio.io import entityparser
 from ontobio.io.gafparser import GafParser
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.hpoaparser import HpoaParser
-from ontobio.io.assocwriter import GpadWriter
+from ontobio.io.assocwriter import GafWriter, GpadWriter
 from ontobio.io import assocparser
 from ontobio.slimmer import get_minimal_subgraph
 import logging
@@ -81,7 +81,7 @@ def main():
 
     parser_n = subparsers.add_parser('map2slim', help='Map to a subset/slim')
     parser_n.set_defaults(function=map2slim)
-    parser_n.add_argument('-p', '--properties', nargs='*', type=str, required=False,
+    parser_n.add_argument('-p', '--properties', nargs='*', type=str, default=['subClassOf', 'BFO:0000050'],
                           help='Properties')
     parser_n.add_argument('-s', '--subset', type=str, required=True,
                           help='subset (e.g. map2slim)')
@@ -168,19 +168,25 @@ def validate_entity(ont, file, outfile, p, args):
 
 def convert_assocs(ont, file, outfile, p, args):
     assocs = p.parse(open(file, "r"), None)
+    write_assocs(assocs, outfile, args)
+
+def write_assocs(assocs, outfile, args):
     w = GpadWriter()
     fmt = args.to
-    if fmt == 'gpad':
+    if fmt is None or fmt == 'gaf':
+        w = GafWriter()
+    elif fmt == 'gpad':
         w = GpadWriter()
     else:
         raise ValueError("Not supported: {}".format(fmt))
     w.file = outfile
     w.write(assocs)
-
+    
 def map2slim(ont, file, outfile, p, args):
+    logging.info("Mapping to {}".format(args.subset))
     assocs = p.map_to_subset(open(file, "r"),
                              ontology=ont, outfile=outfile, subset=args.subset, relations=args.properties)
-
+    #write_assocs(assocs, outfile, args)
 
 def _default(something, default):
     if something is None:
