@@ -280,10 +280,31 @@ class Ontology():
                 pset.add(pfx)
         return list(pset)
 
+    def prefix_fragment(self, nid):
+        """
+        Return prefix and fragment/localid for a node
+        """
+        sep=':'
+        if nid.startswith('http'):
+            if '#' in nid:
+               sep='#' 
+            else:
+                sep='/'
+        parts = nid.split(sep)
+        frag = parts.pop()
+        prefix = sep.join(parts)
+        return prefix, frag
+
+    # TODO: reuse code above
     def prefix(self, nid):
         """
         Return prefix for a node
         """
+        if nid.startswith('http'):
+            if '#' in nid:
+                return re.sub('#.*','',nid)
+            else:
+                return re.sub('/.*','',nid)
         parts = nid.split(":")
         if len(parts) > 1:
             return parts[0]
