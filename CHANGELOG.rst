@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.2.17
+------
+
+* Fixed bug where CHEBI xref labels were treated as class labels
+* Various lexical mapping improvements #97 #95
+
 0.2.16
 ------
 
