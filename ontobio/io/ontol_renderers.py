@@ -20,8 +20,10 @@ class GraphRendererConfig():
                      'subPropertyOf': '%',
                      'BFO:0000050': '<',
                      'RO:0002202': '~',
-                 }):
+                 },
+                 show_text_definition=False):
         self.relsymbolmap = relsymbolmap
+        self.show_text_definition = show_text_definition
         
 
 class GraphRenderer():
@@ -89,12 +91,18 @@ class GraphRenderer():
         if n in query_ids:
             marker = " * "
         label = ontol.label(n)
+        s = None
         if label is not None:
-            return '{} ! {}{}'.format(str(n),
-                                      label,
-                                      marker)
+            s = '{} ! {}{}'.format(n,
+                                   label,
+                                   marker)
         else:
-            return str(n)
+            s = str(n)
+        if self.config.show_text_definition:
+            td = ontol.text_definition(n)
+            if td:
+                s += ' "{}"'.format(td.val)
+        return s
         
     @staticmethod
     def create(fmt):
@@ -284,7 +292,16 @@ class OboFormatGraphRenderer(GraphRenderer):
                 s += self.tag('intersection_of', gen)
             for pred,filler in ld.restrictions:
                 s += self.tag('intersection_of', pred, filler)
-                
+
+        td = ontol.text_definition(nid)
+        if td:
+            x = ""
+            if td.xrefs is not None:
+                x = ", ".join(td.xrefs)
+            s += 'def: "{}" [{}]\n'.format(self._escape_quotes(td.val),x)
+        else:
+            logging.debug("No text def for: {}".format(nid))    
+                                            
         for syn in ontol.synonyms(nid):
             t = ""
             if syn.lextype is not None:
