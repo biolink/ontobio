@@ -230,7 +230,7 @@ def fetchall_syns(ont):
     return rows
 
 @cachier(stale_after=SHELF_LIFE)
-def fetchall_text_defs(ont):
+def fetchall_textdefs(ont):
     """
     fetch all text defs for an ontology
     """
@@ -242,6 +242,7 @@ def fetchall_text_defs(ont):
     GRAPH <{g}>  {{
       ?c IAO:0000115 ?d
     }}
+    FILTER (!isBlank(?c))
     }}
     """.format(g=namedGraph)
     bindings = run_sparql(query)
@@ -259,6 +260,7 @@ def fetchall_xrefs(ont):
     prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
     SELECT * WHERE {{
     GRAPH <{g}>  {{ ?c oboInOwl:hasDbXref ?x }}
+    FILTER (!isBlank(?c))
     }}
     """.format(g=namedGraph)
     bindings = run_sparql(query)
