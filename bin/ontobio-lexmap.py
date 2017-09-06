@@ -22,6 +22,7 @@ from prefixcommons.curie_util import contract_uri, expand_uri
 from ontobio.lexmap import LexicalMapEngine
 import logging
 import yaml
+import json
 
 def main():
     """
@@ -40,18 +41,20 @@ def main():
                                                  """,
                                      formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument('-o', '--outfile', type=str, required=False,
+    parser.add_argument('-o', '--outfile', type=str, nargs='*', default=[], required=False,
                         help='Path to output file')
     parser.add_argument('-t', '--to', type=str, required=False, default='tsv',
                         help='Output to (tree, dot, ...)')
     parser.add_argument('-l', '--labels', type=str,
-                        help='If set, then include node labels in results')
+                        help='If set, then include node labels in results. DEPRECATED')
     parser.add_argument('-s', '--scoring', default='sim', type=str,
                         help='Score weighting scheme. Default=sim')
     parser.add_argument('-P', '--prefix', type=str, required=False,
                         help='Prefix to constrain traversal on, e.g. PATO, ENVO')
     parser.add_argument('-c', '--config', type=str, required=False,
                         help='lexmap configuration file (yaml). See schema for details')
+    parser.add_argument('-u', '--unmapped', type=str, required=False,
+                        help='File to export unmapped nodes to')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
@@ -70,8 +73,9 @@ def main():
     logging.info("Welcome!")
 
     factory = OntologyFactory()
-    onts = [factory.create(h) for h in args.ontologies]
+    onts = [filter_by_prefix(factory.create(h)) for h in args.ontologies]
 
+    
     config = {}
     if args.config is not None:
         f = open(args.config,'r')
@@ -102,13 +106,29 @@ def main():
     else:
         write_tsv(lexmap,g,mo,args)
 
+        
+    if args.unmapped:
+        udf = lexmap.unmapped_dataframe(g)
+        udf.to_csv(args.unmapped, sep="\t", index=False)
+        
 def write_tsv(lexmap,g,mo,args):
     df=lexmap.as_dataframe(g)
     print(df.to_csv(sep="\t"))
-        
+
+# TODO    
+def write_json(lexmap,g,fn,args):
+    nodes = []
+    for x,y,d in g.edges_iter(data=True):
+        nodes.append({'id':x,
+                      'meta':{
+                      }})
+    f = open(fn,'write')
+    json.dump({'graphs':{'nodes':nodes}},f)
+    f.close()
+    
 def write_obo(g,mo,args):
     for x,y,d in g.edges_iter(data=True):
-        score=str(d['best'])
+        score=str(d['score'])
         (s1,s2)=d['syns']
         print('[Term]')
         print('id: {} ! {}'.format(x,mo.label(x)))
@@ -120,6 +140,15 @@ def in_clique(x, cliques):
         if x in s:
             return s
     return set()
-        
+
+def filter_by_prefix(ont):
+    if ont.handle:
+        pfx = ont.handle
+        nids = [n for n in ont.nodes() if ont.prefix(n).lower() == pfx]
+        if len(nids) > 20:
+            logging.info("filtering {} to {} nodes with prefix {}".format(ont,len(nids),pfx))
+            ont = ont.subontology(nids)
+    return ont
+
 if __name__ == "__main__":
     main()
