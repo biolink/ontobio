@@ -117,6 +117,9 @@ def test_remote_sparql_pato():
     assert not bigsyn.exact_or_label()
     assert bigsyn.scope() == 'RELATED'
 
+    defn = ont.text_definition(INCREASED_SIZE)
+    assert defn is not None
+    
     w = GraphRenderer.create('obo')
     w.write_subgraph(ont, [INCREASED_SIZE])
     
