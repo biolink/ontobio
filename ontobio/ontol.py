@@ -222,7 +222,8 @@ class Ontology():
             ancs_in_subset = subset_nodes.intersection(ancs)
             m[n] = list(subont.filter_redundant(ancs_in_subset))
         return m
-
+        
+    
     def filter_redundant(self, ids):
         """
         Return all non-redundant ids from a list
@@ -295,22 +296,13 @@ class Ontology():
         prefix = sep.join(parts)
         return prefix, frag
 
-    # TODO: reuse code above
     def prefix(self, nid):
         """
         Return prefix for a node
         """
-        if nid.startswith('http'):
-            if '#' in nid:
-                return re.sub('#.*','',nid)
-            else:
-                return re.sub('/.*','',nid)
-        parts = nid.split(":")
-        if len(parts) > 1:
-            return parts[0]
-        else:
-            return None
-
+        pfx,_ = self.prefix_fragment(nid)
+        return pfx
+        
     def is_empty(self):
         """
         Returns True if the ontology has no statements.
@@ -515,6 +507,21 @@ class Ontology():
         else:
             return []
 
+
+    def equiv_graph(self):
+        """
+        Returns
+        -------
+        graph
+            bidirectional networkx graph of all equivalency relations
+        """
+        eg = nx.Graph()
+        for u,v,d in self.get_graph().edges_iter(data=True):
+            if d['pred'] == 'equivalentTo':
+                eg.add_edge(u,v)
+        return eg
+        
+        
     def traverse_nodes(self, qids, up=True, down=False, **args):
         """
         Traverse (optionally) up and (optionally) down from an input set of nodes
@@ -756,7 +763,7 @@ class Ontology():
         self._add_meta_element(textdef.subject, 'definition', textdef.as_dict())
 
     def _add_meta_element(self, id, k, edict):
-        n = self.node(nid)
+        n = self.node(id)
         if n is None:
             raise ValueError('no such node {}'.format(id))
         if 'meta' not in n:
