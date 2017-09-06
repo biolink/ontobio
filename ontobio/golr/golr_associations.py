@@ -142,7 +142,7 @@ def bulk_fetch(subject_category, object_category, taxon, rows=MAX_ROWS, **kwargs
                                          object_category=object_category,
                                          subject_taxon=taxon,
                                          rows=rows,
-                                         iterative=True,
+                                         iterate=True,
                                          **kwargs)
     logging.info("Rows retrieved: {}".format(len(assocs)))
     if len(assocs) == 0:
