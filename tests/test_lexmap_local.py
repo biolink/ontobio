@@ -31,11 +31,18 @@ def test_lexmap_basic():
         cpr = d[lexmap.CONDITIONAL_PR]
         assert cpr > 0 and cpr <= 1.0
 
-    lexmap = LexicalMapEngine(config=dict(normalized_form_confidence=0.25,
+    lexmap = LexicalMapEngine(config=dict(synsets=[dict(word="",
+                                                        synonym="ignoreme",
+                                                        confidence=0.1)],
+                                          normalized_form_confidence=0.25,
                                           meaningful_ids=True,
                                           ontology_configurations=[dict(prefix='AA',
                                                                         normalized_form_confidence=0)]))
 
+    assert len(lexmap._get_config_val('NULL','synsets')) == 1
+    assert lexmap._normalize('ignoreme foo', {'ignoreme':''}) == 'foo'
+    assert lexmap._normalize('replaceme foo', {'replaceme':'zz'}) == 'foo zz'
+    
     ont.add_node('TEST:1', 'foo bar')
     ont.add_node('TEST:2', 'bar foo')
     ont.add_node('TEST:3', 'foo bar')
@@ -45,6 +52,7 @@ def test_lexmap_basic():
     ont.add_node('http://x.org/wiz#FooBar')
     ont.add_node('TEST:6', '123')
     ont.add_node('TEST:7', '123')
+    ont.add_node('TEST:8', 'bar ignoreme foo')
     ont.add_node('AA:1', 'foo bar')
     ont.add_node('AA:2', 'bar foo')
     for s in ont.synonyms('TEST:4'):
@@ -62,6 +70,14 @@ def test_lexmap_basic():
 
     # test exclude normalized form
     assert not g.has_edge('AA:1','AA:2')
+
+    # test custom synsets are used
+    assert g.has_edge('TEST:8','TEST:2')
+    assert g.has_edge('TEST:8','AA:2')
+    assert not g.has_edge('TEST:8','AA:1') # do not normalize AAs
+
+    df = lexmap.unmapped_dataframe(g)
+    print(df.to_csv())
     
 def test_lexmap_multi():
     """
