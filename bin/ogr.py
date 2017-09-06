@@ -54,6 +54,10 @@ def main():
                         help='Query all nodes at level L in graph')
     parser.add_argument('-c', '--container_properties', nargs='*', type=str, required=False,
                         help='Properties to nest in graph')
+    parser.add_argument('-x', '--render', type=str, required=False,
+                        help='renderer settings.')
+    parser.add_argument('--showdefs', dest='showdefs', action='store_true',
+                        help='show text definitions.')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
@@ -145,6 +149,12 @@ def render(ont, query_ids, args):
         logging.info("SLIMMING")
         g = get_minimal_subgraph(g, query_ids)
     w = GraphRenderer.create(args.to)
+    if args.showdefs:
+        w.config.show_text_definition = True
+    if args.render:
+        if 'd' in args.render:
+            logging.info("Showing text defs")
+            w.config.show_text_definition = True
     if args.outfile is not None:
         w.outfile = args.outfile
     w.write(ont, query_ids=query_ids, container_predicates=args.container_properties)
