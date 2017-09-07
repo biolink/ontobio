@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+0.2.18
+------
+
+* lexmap output now excludes index column
+* allow custom synsets for lexmap
+* fixed bug whereby bulk golr fetch not iterated
+
 0.2.17
 ------
 
