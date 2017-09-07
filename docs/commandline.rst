@@ -19,6 +19,15 @@ For many operations you need to be connected to a network
 
 **Note**: command line interface may change
 
+
+Live Demo
+---------
+
+You can see the tour on asciinema:
+
+- `ontology querying tour <https://asciinema.org/a/136752>`_
+- `how remote sparql works https://asciinema.org/a/136748>`_
+  
 Ontologies
 ----------
 

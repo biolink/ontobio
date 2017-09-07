@@ -99,9 +99,10 @@ class RemoteSparqlOntology(Ontology):
     
     # Override
     def resolve_names(self, names, is_remote=False, synonyms=False, **args):
+        logging.debug("resolving via {}".format(self))
         if not is_remote:
             # TODO: ensure synonyms present
-            return super().resolve_names(names, **args)
+            return super().resolve_names(names, synonyms, **args)
         else:
             results = set()
             for name in names:

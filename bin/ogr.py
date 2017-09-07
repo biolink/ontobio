@@ -19,6 +19,7 @@ from ontobio.io.ontol_renderers import GraphRenderer
 from ontobio.slimmer import get_minimal_subgraph
 from prefixcommons.curie_util import contract_uri, expand_uri
 import logging
+import ontobio.xref_util as xu
 
 def main():
     """
@@ -56,6 +57,8 @@ def main():
                         help='Properties to nest in graph')
     parser.add_argument('-x', '--render', type=str, required=False,
                         help='renderer settings.')
+    parser.add_argument('-X', '--xrefs-as-edges', dest='xrefs_as_edges', action='store_true',
+                        help='render xrefs as edges.')
     parser.add_argument('--showdefs', dest='showdefs', action='store_true',
                         help='show text definitions.')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
@@ -81,6 +84,9 @@ def main():
     ont = factory.create(handle)
     logging.info("ont: {}".format(ont))
 
+    if args.xrefs_as_edges:
+        xu.materialize_xrefs_as_edges(ont)
+    
     qids = []
     dirn = args.direction
     if dirn == '' and args.to is not None:
@@ -113,7 +119,10 @@ def main():
                                  inject_prefixes = ont.prefixes(),
                                  single_column=True)
 
+    # TODO: make syns optional
+    logging.info("Main query terms: {}".format(args.ids))
     for id in ont.resolve_names(args.ids,
+                                synonyms=True,
                                 is_remote = searchp.find('x') > -1,
                                 is_partial_match = searchp.find('p') > -1,
                                 is_regex = searchp.find('r') > -1):

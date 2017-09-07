@@ -895,11 +895,13 @@ class Ontology():
         g = self.get_graph()
         r_ids = []
         for n in names:
-            if len(n.split(":")) ==2:
+            logging.debug("Searching for {} syns={}".format(n,synonyms))
+            if len(n.split(":")) == 2:
                 r_ids.append(n)
             else:
                 matches = set([nid for nid in g.nodes() if self._is_match(self.label(nid), n, **args)])
                 if synonyms:
+                    logging.debug("Searching syns for {}".format(names))
                     for nid in g.nodes():
                         for s in self.synonyms(nid):
                             if self._is_match(s.val, n, **args):

@@ -1,0 +1,183 @@
+{
+  "graphs" : [ {
+    "nodes" : [ {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "type" : "PROPERTY",
+      "lbl" : "has_exact_synonym"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+      "type" : "PROPERTY",
+      "lbl" : "database_cross_reference"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/C_3",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "Y:3"
+        } ]
+      },
+      "type" : "CLASS"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/ZZ_2",
+      "type" : "CLASS",
+      "lbl" : "z II"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/C_0",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "Y:0"
+        } ]
+      },
+      "type" : "CLASS"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/B_1",
+      "meta" : {
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "skin",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "b1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/OBS_1",
+      "meta" : {
+        "deprecated" : true
+      },
+      "type" : "CLASS",
+      "lbl" : "heart"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/C_1",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "Y:1"
+        } ]
+      },
+      "type" : "CLASS"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/A_1",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "B:1"
+        } ],
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "skin",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "a1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/Y_2",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "C:2"
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "LUNG"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/Z_1",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "Y:1"
+        }, {
+          "val" : "C:1"
+        } ],
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "heart",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "z 1"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/X_3",
+      "type" : "CLASS",
+      "lbl" : "heart development"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/Z_2",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "Y:2"
+        }, {
+          "val" : "ZZ:2"
+        }, {
+          "val" : "C:2"
+        } ],
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "lung",
+          "xrefs" : [ ]
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "z 2"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/Y_3",
+      "type" : "CLASS",
+      "lbl" : "development of heart"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/Y_0",
+      "type" : "CLASS",
+      "lbl" : "organ"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/X_1",
+      "type" : "CLASS",
+      "lbl" : "heart"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/X_2",
+      "type" : "CLASS",
+      "lbl" : "lung"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/Y_1",
+      "type" : "CLASS",
+      "lbl" : "heart"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/X_0",
+      "type" : "CLASS",
+      "lbl" : "organ"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
+      "type" : "PROPERTY",
+      "lbl" : "has_related_synonym"
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/Y_3",
+      "pred" : "http://purl.obolibrary.org/obo/lexmap_test#has_participant",
+      "obj" : "http://purl.obolibrary.org/obo/Y_1"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/X_2",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/X_0"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/Y_1",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/Y_0"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/X_3",
+      "pred" : "http://purl.obolibrary.org/obo/lexmap_test#has_participant",
+      "obj" : "http://purl.obolibrary.org/obo/X_1"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/X_1",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/X_0"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/Y_2",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/Y_0"
+    } ],
+    "id" : "http://purl.obolibrary.org/obo/lexmap_test.owl",
+    "meta" : {
+      "subsets" : [ ],
+      "xrefs" : [ ],
+      "basicPropertyValues" : [ ]
+    },
+    "equivalentNodesSets" : [ ],
+    "logicalDefinitionAxioms" : [ ],
+    "domainRangeAxioms" : [ ],
+    "propertyChainAxioms" : [ ]
+  } ]
+}
