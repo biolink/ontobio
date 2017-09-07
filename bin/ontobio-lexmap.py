@@ -113,7 +113,7 @@ def main():
         
 def write_tsv(lexmap,g,mo,args):
     df=lexmap.as_dataframe(g)
-    print(df.to_csv(sep="\t"))
+    print(df.to_csv(sep="\t", index=False))
 
 # TODO    
 def write_json(lexmap,g,fn,args):
