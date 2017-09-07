@@ -46,7 +46,7 @@ class AssocParserConfig():
     """
     def __init__(self,
                  remove_double_prefixes=False,
-                 ontology=ontol.Ontology(),
+                 ontology=None,
                  repair_obsoletes=True,
                  entity_map=None,
                  valid_taxa=None,
@@ -283,11 +283,11 @@ class AssocParser(object):
 
     def _validate_assoc(self, assoc, line):
         """
-        This adds a warning to the Report if report_ontology_id() returns anything to report.
+        Performs validation on an ontology association structure.
+
+        Currently the only validation is checking the ontology class (object) id against the loaded ontology
         """
-        report = self.report_ontology_id(assoc["object"]["id"])
-        if report:
-            self.report.warning(line, report, assoc["object"]["id"])
+        self._validate_ontology_class_id(assoc["object"]["id"], line)
 
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
@@ -433,23 +433,6 @@ class AssocParser(object):
                 self.report.warning(line, Report.OBSOLETE_CLASS, id)
         # TODO: subclassof
         return id
-
-
-    def report_ontology_id(self, go_id):
-
-        if self.config.ontology.is_empty():
-            return ""
-
-        if not self.config.ontology.has_node(go_id):
-            return Report.UNKNOWN_ID
-
-        if self.config.ontology.is_obsolete(go_id):
-            if len(self.config.ontology.replaced_by(go_id)) == 1:
-                return Report.OBSOLETE_CLASS
-            else:
-                return Report.OBSOLETE_CLASS_NO_REPLACEMENT
-
-        return ""
 
     def _normalize_gaf_date(self, date, line):
         if date is None or date == "":

@@ -303,15 +303,6 @@ class Ontology():
         pfx,_ = self.prefix_fragment(nid)
         return pfx
         
-    def is_empty(self):
-        """
-        Returns True if the ontology has no statements.
-
-        Wraps networkx, and checks the number of nodes in the graph.
-        """
-
-        return self.graph == None or len(self.get_graph()) == 0
-
     def nodes(self):
         """
         Return all nodes in ontology

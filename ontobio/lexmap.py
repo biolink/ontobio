@@ -455,7 +455,9 @@ class LexicalMapEngine():
                 equivs = set(eg.neighbors(n))
                 mapped_equivs = list(equivs - unodes)
             items.append(dict(id=n,label=ont.label(n),mapped_equivs=mapped_equivs))
-        return pd.DataFrame(items, columns=['id','label', 'mapped_equivs'])
+        df = pd.DataFrame(items, columns=['id','label', 'mapped_equivs'])
+        df = df.sort_values(["id"])
+        return df
             
     # scores a pairwise combination of synonyms. This will be a mix of
     #  * individual confidence in the synonyms themselves
@@ -529,6 +531,7 @@ class LexicalMapEngine():
               'score', 'left_simscore', 'right_simscore', 'reciprocal_score',
               'conditional_pr_equiv', 'equiv_clique_size']
         df = pd.DataFrame(items, columns=ix)
+        df = df.sort_values(["left","score","right"])
         return df
     
     def cliques(self, xg):

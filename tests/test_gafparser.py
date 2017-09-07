@@ -44,8 +44,6 @@ def test_skim_gaf_qualifiers():
         assert s.startswith('MGI:') or s.startswith('PomBase')
     assert len(results) == 2 # ensure NOTs and excludes relations skipped
 
-
-
 def test_skim_gpad():
     p = GpadParser()
     p.config.ecomap = EcoMap()
@@ -99,7 +97,20 @@ def parse_with(f, p):
     assert len(p.report.messages) == 0
     print(p.report.to_markdown())
 
-
+def test_flag_invalid_id():
+    ont = OntologyFactory().create(ONT)
+    p = GafParser()
+    p.config.ontology = ont
+    p._validate_ontology_class_id("FAKE:1", "fake")
+    assert len(p.report.messages) == 1
+    
+def test_no_flag_valid_id():
+    ont = OntologyFactory().create(ONT)
+    p = GafParser()
+    p.config.ontology = ont
+    p._validate_ontology_class_id("GO:0016070", "fake")
+    assert len(p.report.messages) == 0
+    
 def test_convert_gaf_to_gpad():
     p = GafParser()
     p.config.ecomap = EcoMap()
@@ -120,7 +131,7 @@ def convert(file, p, w, p2):
     len(assocs) == len(assocs2)
 
 
-def test_invalid_goid():
+def test_invalid_goid_in_gpad():
     # Note: this ontology is a subset of GO extracted using the GAF, not GPAD
     ont = OntologyFactory().create(ONT)
     p = GpadParser()
