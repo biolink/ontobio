@@ -96,5 +96,14 @@ GOlr Queries
 
 .. autoclass:: GolrSearchQuery
     :members:
-       
+
+
+Lexmap
+------
+
+.. currentmodule:: ontobio.lexmap
+
+.. autoclass:: LexicalMapEngine
+    :members:
+    
 

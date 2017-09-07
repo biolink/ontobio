@@ -123,15 +123,26 @@ Graph Reduction
 Lexical Analyses
 ----------------
 
-NOTE: this capability may move to an independent package.
-
-See the package lexmap.py for details.
+See the `lexmap API docs <http://ontobio.readthedocs.io/en/latest/api.html#lexmap>`_
 
 You can also use the command line:
 
 .. code-block:: console
 
-   ontobio-lexmap.py -l true  ont1.json ont2.json > mappings.tsv
+   ontobio-lexmap.py ont1.json ont2.json > mappings.tsv
 
 The inputs can be any kind of handle - a local ontology file or a
-remote ontology accessed via services. See :ref:`inputs` for more details.
+remote ontology accessed via services.
+
+For example, this will work:
+
+   ontobio-lexmap.py mp hp wbphenotype > mappings.tsv
+
+See :ref:`inputs` for more details.
+
+For examples of lexical mapping pipelines, see:
+
+- `<https://github.com/cmungall/sweet-obo-alignment>`_
+- `<https://github.com/monarch-initiative/monarch-disease-ontology/tree/master/src/icd10>_
+
+These have examples of customizing configuration using a yaml file.

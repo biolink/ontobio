@@ -5,8 +5,8 @@ Classes for representing ontologies backed by a SPARQL endpoint
 import networkx as nx
 import logging
 import ontobio.ontol
-from ontobio.ontol import Ontology, Synonym
-from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_labels, OIO_SYNS
+from ontobio.ontol import Ontology, Synonym, TextDefinition
+from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_textdefs, fetchall_labels, OIO_SYNS
 from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
 
 
@@ -52,6 +52,23 @@ class RemoteSparqlOntology(Ontology):
         bindings = run_sparql(query)
         return [r['s']['value'] for r in bindings]
 
+    def text_definition(self, nid):
+        logging.info("lookup defs for {}".format(nid))
+        if self.all_text_definitions_cache == None:
+            self.all_text_definitions()
+        return super().text_definition(nid) 
+
+    # Override
+    def all_text_definitions(self):
+        logging.debug("Fetching all textdefs...")
+        if self.all_text_definitions_cache == None:
+            vals = fetchall_textdefs(self.graph_name)
+            tds = [TextDefinition(c,v) for (c,v) in vals]
+            for td in tds:
+                self.add_text_definition(td)
+            self.all_text_definitions_cache = tds # TODO: check if still used
+        return self.all_text_definitions_cache
+    
     def synonyms(self, nid, **args):
         logging.info("lookup syns for {}".format(nid))
         if self.all_synonyms_cache == None:
@@ -70,9 +87,16 @@ class RemoteSparqlOntology(Ontology):
             if include_label:
                 lsyns = [Synonym(x, pred='label', val=self.label(x)) for x in self.nodes()]
                 syns = syns + lsyns
-            self.all_synonyms_cache = syns
+            self.all_synonyms_cache = syns # TODO: check if still used
         return self.all_synonyms_cache
 
+    # Override
+    def subontology(self, nodes=None, **args):
+        # ensure caches populated
+        self.all_synonyms()
+        self.all_text_definitions()
+        return super().subontology(nodes, **args)
+    
     # Override
     def resolve_names(self, names, is_remote=False, synonyms=False, **args):
         if not is_remote:
@@ -185,6 +209,7 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         self.xref_graph = get_xref_graph(handle)
         self.all_logical_definitions = []
         self.all_synonyms_cache = None
+        self.all_text_definitions_cache = None
         logging.info("Graph: {} LDs: {}".format(self.graph, self.all_logical_definitions))
 
     def __str__(self):

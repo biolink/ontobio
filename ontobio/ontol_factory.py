@@ -94,7 +94,11 @@ def create_ontology(handle=None, **args):
     elif handle.startswith("obo:"):
         logging.info("Fetching from OBO PURL")
         if handle.find(".") == -1:
-            handle += '.owl'
+            if handle == 'chebi' or handle == 'ncbitaxon' or handle == 'pr':
+                handle += '.obo'
+                logging.info("using obo for large ontology: {}".format(handle))
+            else:
+                handle += '.owl'
         fn = '/tmp/'+handle
         if not os.path.isfile(fn):
             url = handle.replace("obo:","http://purl.obolibrary.org/obo/")

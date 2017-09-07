@@ -156,7 +156,7 @@ class LexicalMapEngine():
 
         # chebi 'synonyms' are often not real synonyms
         # https://github.com/ebi-chebi/ChEBI/issues/3294
-        if not re.match('[a-zA-Z]',v):
+        if not re.match('.*[a-zA-Z]',v):
             if prefix != 'CHEBI':
                 logging.warning('Ignoring suspicous synonym: {}'.format(syn))
             return
@@ -167,8 +167,15 @@ class LexicalMapEngine():
         # always use lowercase when comparing
         # we may want to make this configurable in future
         v = v.lower()
-        
-        nv = self._normalize(v, self.wsmap)
+
+        # TODO: do this once ahead of time
+        wsmap = {}
+        for w,s in self.wsmap.items():
+            wsmap[w] = s
+        for ss in self._get_config_val(prefix,'synsets',[]):
+            # TODO: weights
+            wsmap[ss['synonym']] = ss['word']
+        nv = self._normalize(v, wsmap)
         
         self._index_synonym_val(syn, v)
         nweight = self._get_config_val(prefix, 'normalized_form_confidence', 0.85)
@@ -426,17 +433,32 @@ class LexicalMapEngine():
         return m
 
     def unmapped_nodes(self, xg, rs_threshold=0):
-        unmapped_list = []
+        unmapped_set = set()
         for nid in self.merged_ontology.nodes():
             if nid in xg:
                 for (j,edge) in xg[nid].items():
                     rs = edge.get('reciprocal_score',0)
                     if rs < rs_threshold:
-                        unmapped_list.append(nid)
+                        unmapped_set.add(nid)
             else:
-                unmapped_list.append(nid)
-        return unmapped_list
-
+                unmapped_set.add(nid)
+        return unmapped_set
+    
+    def unmapped_dataframe(self, xg, **args):
+        unodes = self.unmapped_nodes(xg, **args)
+        ont = self.merged_ontology
+        eg = ont.equiv_graph()
+        items = []
+        for n in unodes:
+            mapped_equivs = ''
+            if n in eg:
+                equivs = set(eg.neighbors(n))
+                mapped_equivs = list(equivs - unodes)
+            items.append(dict(id=n,label=ont.label(n),mapped_equivs=mapped_equivs))
+        df = pd.DataFrame(items, columns=['id','label', 'mapped_equivs'])
+        df = df.sort_values(["id"])
+        return df
+            
     # scores a pairwise combination of synonyms. This will be a mix of
     #  * individual confidence in the synonyms themselves
     #  * confidence of equivalence based on scopes
@@ -509,6 +531,7 @@ class LexicalMapEngine():
               'score', 'left_simscore', 'right_simscore', 'reciprocal_score',
               'conditional_pr_equiv', 'equiv_clique_size']
         df = pd.DataFrame(items, columns=ix)
+        df = df.sort_values(["left","score","right"])
         return df
     
     def cliques(self, xg):
