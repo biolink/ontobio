@@ -532,7 +532,8 @@ class AssocParser(object):
             return file
 
 
-    def _parse_class_expression(self, x, line=""):
+    def _parse_relationship_expression(self, x, line=""):
+        ## Parses an atomic relational expression
         ## E.g. exists_during(GO:0000753)
         ## Atomic class expressions only
         tuples = re.findall('(.*)\((.*)\)',x)
@@ -540,11 +541,14 @@ class AssocParser(object):
             self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
             return None
         (p,v) = tuples[0]
-        self._validate_id(v,line,EXTENSION)
-        return {
-            'property':p,
-            'filler':v
-        }
+        if self._validate_id(v,line,EXTENSION):
+            return {
+                'property':p,
+                'filler':v
+            }
+        else:
+            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="ID not valid")            
+            return None
 
 # TODO consider making an Association its own class too to give it a little more
 # TODO Semantic value?

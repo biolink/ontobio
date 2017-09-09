@@ -120,7 +120,7 @@ class GpadParser(assocparser.AssocParser):
             extns = []
             for xp_and in xp_ands:
                 if xp_and != "":
-                    expr = self._parse_class_expression(xp_and, line=line)
+                    expr = self._parse_relationship_expression(xp_and, line=line)
                     if expr is not None:
                         extns.append(expr)
             assoc = {

@@ -13,8 +13,12 @@ PomBase	SPAC977.10			GO:1990578	PMID:19171118	IDA		C	plasma membrane sodium ion/
 PomBase	SPAC977.10
 ! bad extension syntax
 PomBase	SPAC25B8.17	ypf1		GO:0000001	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo	
-! bad extension filler
+! bad extension filler: not a CURIE
 PomBase	SPAC25B8.17	ypf1		GO:0000001	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo(x)	
+! bad extension filler: space in ID
+PomBase	SPAC25B8.17	ypf1		GO:0000001	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo(X:9 X:8)	
+! bad extension filler: space in ID, with an additional valid expression
+PomBase	SPAC25B8.17	ypf1		GO:0000001	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo(X:9 X:8),foo(X:1)	
 ! Bad evidence code
 PomBase	SPAC25B8.17	ypf1		GO:0000001	GO_REF:0000024	MADEUP	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo(X:1)	
 ! Bad date

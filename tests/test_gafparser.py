@@ -190,7 +190,20 @@ def test_errors_gaf():
     print("MESSAGES: {}".format(len(msgs)))
     for m in msgs:
         print("MESSAGE: {}".format(m))
-    assert len(msgs) == 8
+    assert len(msgs) == 13
+
+    # we expect 4 
+    assert len(assocs) == 7
+    from ontobio.io import GafWriter
+    w = GafWriter()
+    w.write(assocs)
+    xs = [x for a in assocs for x in a.get('object_extensions',[]) ]
+    for x in xs:
+        print('X: {}'.format(x))
+        # ensure that invalid expressions have been eliminated
+        assert x['property'] == 'foo'
+        assert x['filler'] == 'X:1'
+    assert len(xs) == 3
 
 from ontobio.assoc_factory import AssociationSetFactory
 def test_factory():
