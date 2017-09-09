@@ -89,7 +89,6 @@ class GpadWriter(AssocWriter):
         date = assoc['date']
         assigned_by = assoc['provided_by']
 
-        annotation_xp = '' # TODO
         annotation_properties = '' # TODO
         interacting_taxon_id = '' ## TODO
         
@@ -103,7 +102,7 @@ class GpadWriter(AssocWriter):
                 interacting_taxon_id, # TODO
                 date,
                 assigned_by,
-                annotation_xp,
+                self._extension_expression(assoc),
                 annotation_properties]
 
         self._write_row(vals)
@@ -138,9 +137,6 @@ class GafWriter(AssocWriter):
         date = assoc['date']
         assigned_by = assoc['provided_by']
 
-        annotation_xp = self._extension_expression(assoc)
-        
-        
         annotation_properties = '' # TODO
         interacting_taxon_id = '' ## TODO
         gene_product_isoform = '' ## TODO
@@ -165,7 +161,7 @@ class GafWriter(AssocWriter):
                 taxon,
                 date,
                 assigned_by,
-                annotation_xp,
+                self._extension_expression(assoc),
                 gene_product_isoform]
 
         self._write_row(vals)
