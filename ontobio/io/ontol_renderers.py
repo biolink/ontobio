@@ -269,7 +269,11 @@ class OboFormatGraphRenderer(GraphRenderer):
         return s
     
     def render_node(self, nid, ontol, **args):
-        s = "[Term]\n";
+        st = 'Term'
+        if ontol.node_type == 'PROPERTY':
+            st = 'Typedef'
+            
+        s = "[{}]\n".format(st);
         s += self.tag('id', nid)
         label = ontol.label(nid)
         if label is not None:

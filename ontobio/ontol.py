@@ -332,6 +332,12 @@ class Ontology():
         """
         return nx.topological_sort(self.get_graph())
 
+    def node_type(self, id):
+        """
+        If stated, either CLASS, PROPERTY or INDIVIDUAL
+        """
+        return self.node(id)['type']
+    
     def relations_used(self):
         """
         Return list of all relations used to connect edges
