@@ -55,6 +55,8 @@ def main():
                         help='lexmap configuration file (yaml). See schema for details')
     parser.add_argument('-u', '--unmapped', type=str, required=False,
                         help='File to export unmapped nodes to')
+    parser.add_argument('-A', '--all-by-all', dest='all_by_all', action='store_true',
+                        help='compare all ontologies against all.')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
@@ -82,6 +84,7 @@ def main():
         config = yaml.load(f)
         f.close()
 
+    logging.info("ALL: {}".format(args.all_by_all))
     
     lexmap = LexicalMapEngine(config=config)
     if len(onts) == 0:
@@ -93,7 +96,16 @@ def main():
         oid0 = onts[0].id
         pairs = [(oid0,oid0)]
         if len(onts) > 1:
-            pairs = [(oid0, ont.id) for ont in onts[1:]]
+            if args.all_by_all:
+                logging.info("All vs ALL: {}".format(onts))
+                pairs = []
+                for i in onts:
+                    for j in onts:
+                        if i.id < j.id:
+                            pairs.append((i.id, j.id))
+            else:
+                logging.info("All vs first in list: {}".format(oid0))
+                pairs = [(oid0, ont.id) for ont in onts[1:]]
         logging.info("Comparing the following pairs of ontologies: {}".format(pairs))
         lexmap.ontology_pairs = pairs
     mo = Ontology()

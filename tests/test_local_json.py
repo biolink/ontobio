@@ -66,6 +66,8 @@ def test_graph():
     print("ICP: {}".format(icp))
     assert ont.label(INTRACELLULAR_PART) == 'intracellular part'
 
+    assert ont.node_type(INTRACELLULAR_PART) == 'CLASS'
+    
     graph = ont.get_graph()
     print("GRAPH: {}".format(graph.nodes))
 
@@ -190,6 +192,10 @@ def test_graph():
     assert ont.has_node(CELL_PART)
     assert not ont.has_node('FOO:123')
 
+    # relations
+    assert ont.label(PART_OF) == 'part of'
+    assert ont.node_type(PART_OF) == 'PROPERTY'
+    
     # ensure subontology retains properties
     decs = ont.descendants(CELL, reflexive=True)
     subont = ont.subontology(nodes=decs)
@@ -201,7 +207,7 @@ def test_graph():
     assert s1.xrefs == ['GOC:mah']
 
     assert subont.parents(NUCLEUS) == [IMBO]
-
+    
     from ontobio import GraphRenderer
     w = GraphRenderer.create('obo')
     w.write(subont, query_ids=[CELL, CELL_PART, NUCLEUS])

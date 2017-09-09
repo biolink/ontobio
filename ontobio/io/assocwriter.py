@@ -1,9 +1,14 @@
 """
 Classes for exporting associations.
 
-Currently only one implementation: GpadWriter
-
 """
+import logging
+
+def _str(v):
+    if v is None:
+        return ""
+    else:
+        return str(v)
 
 class AssocWriterConfig():
     """
@@ -21,8 +26,17 @@ class AssocWriter():
         return prefix, local_id
 
     def _write_row(self, vals):
-        line = "\t".join(vals)
-        self.file.write(line + "\n")
+        line = "\t".join([_str(v) for v in vals])
+        if self.file:
+            self.file.write(line+"\n")
+        else:
+            print(line)
+
+    def _extension_expression(self, assoc):
+        xs = []
+        for e in assoc.get('object_extensions',[]):
+            xs.append('{}({})'.format(e['property'],e['filler']))
+        return ",".join(xs)
 
     def write_assoc(self, assoc):
         """
@@ -124,7 +138,9 @@ class GafWriter(AssocWriter):
         date = assoc['date']
         assigned_by = assoc['provided_by']
 
-        annotation_xp = '' # TODO
+        annotation_xp = self._extension_expression(assoc)
+        
+        
         annotation_properties = '' # TODO
         interacting_taxon_id = '' ## TODO
         gene_product_isoform = '' ## TODO
@@ -143,8 +159,8 @@ class GafWriter(AssocWriter):
                 evidence,
                 withfrom,
                 aspect,
-                subj.get('full_name'),
-                subj.get('synonyms'),
+                "|".join(subj.get('full_name',[])),
+                "|".join(subj.get('synonyms',[])),
                 subj.get('type'),
                 taxon,
                 date,
