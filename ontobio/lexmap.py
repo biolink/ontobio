@@ -323,6 +323,10 @@ class LexicalMapEngine():
 
         self.score_xrefs_by_semsim(xg)
         self.assign_best_matches(xg)
+        if self.merged_ontology.xref_graph is not None:
+            self.compare_to_xrefs(xg, self.merged_ontology.xref_graph)
+        else:
+            logging.error("No xref graph for merged ontology")
         logging.info("finished xref graph")
         return xg
 
@@ -388,7 +392,50 @@ class LexicalMapEngine():
             return 'rev'
         else:
             return None
+
+    def _id_to_ontology(self, id):
+        onts = self.id_to_ontology_map[id]
+        if len(onts) > 1:
+            logging.warning(">1 ontology for {}".format(id))
         
+    def compare_to_xrefs(self, xg1, xg2):
+        """
+        Compares a base xref graph with another one
+        """
+        ont = self.merged_ontology
+        for i in xg1.nodes():
+            ont_i = self._id_to_ontology(i)
+            for j in xg1.neighbors(i):
+                ont_j = self._id_to_ontology(j)
+                unique_lr = True
+                num_xrefs_i = 0
+                same_i = False
+                if i in xg2:
+                    for j2 in xg2.neighbors(i):
+                        ont_j2 = self._id_to_ontology(j2)
+                        if ont_j2 == ont_j:
+                            unique_lr = False
+                            num_xrefs_i += 1
+                            if j2 == j:
+                                same_i = True
+                unique_rl = True
+                num_xrefs_j = 0
+                same_j = False
+                if j in xg2:
+                    for i2 in xg2.neighbors(j):
+                        ont_i2 = self._id_to_ontology(i2)
+                        if ont_i2 == ont_i:
+                            unique_rl = False
+                            num_xrefs_j += 1
+                            if i2 == i:
+                                same_j = True
+                xg1[i][j]['left_novel'] = num_xrefs_i==0
+                xg1[i][j]['right_novel'] = num_xrefs_j==0
+
+                
+                
+        
+    
     def assign_best_matches(self, xg):
         """
         For each node in the xref graph, tag best match edges
@@ -522,6 +569,7 @@ class LexicalMapEngine():
                     'right_simscore':ss2,
                     'reciprocal_score':d.get('reciprocal_score',0),
                     'conditional_pr_equiv': d.get('cpr'),
+                    'is_novel': d.get('is_novel'),
                     'equiv_clique_size': len(clique)}
             items.append(item)
 
@@ -529,7 +577,7 @@ class LexicalMapEngine():
               'left_match_type', 'right_match_type',
               'left_match_val', 'right_match_val', 
               'score', 'left_simscore', 'right_simscore', 'reciprocal_score',
-              'conditional_pr_equiv', 'equiv_clique_size']
+              'conditional_pr_equiv', 'is_novel', 'equiv_clique_size']
         df = pd.DataFrame(items, columns=ix)
         df = df.sort_values(["left","score","right"])
         return df

@@ -122,15 +122,20 @@ class Ontology():
 
     def merge(self, ontologies):
         """
-        TODO: incomplete
+        Merges specified ontology into current ontology
         """
         for ont in ontologies:
+            logging.info("Merging {} into {}".format(ont,self))
             g = self.get_graph()
-            xg = ont.get_graph()
-            for n in xg.nodes():
-                g.add_node(n, attr_dict=xg.node[n])
-            for (o,s,m) in xg.edges(data=True):
+            srcg = ont.get_graph()
+            for n in srcg.nodes():
+                g.add_node(n, attr_dict=srcg.node[n])
+            for (o,s,m) in srcg.edges(data=True):
                 g.add_edge(o,s,attr_dict=m)
+            for (o,s,m) in ont.xref_graph.edges(data=True):
+                if self.xref_graph is None:
+                    self.xref_graph = nx.MultiGraph()
+                self.xref_graph.add_edge(o,s,attr_dict=m)
 
     def subgraph(self, nodes=[]):
         """
