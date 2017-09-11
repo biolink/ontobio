@@ -43,6 +43,8 @@ class OboJsonMapper(object):
             if 'lbl' in n:
                 digraph.node[id]['label'] = n['lbl']
             if parse_meta and 'meta' in n:
+                if n['meta'] is None:
+                    n['meta'] = {}
                 meta = self.transform_meta(n['meta'])
                 if xref_graph is not None and 'xrefs' in meta:
                     for x in meta['xrefs']:

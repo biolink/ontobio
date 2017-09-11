@@ -6,7 +6,7 @@ import networkx as nx
 import logging
 import ontobio.ontol
 from ontobio.ontol import Ontology, Synonym, TextDefinition
-from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_textdefs, fetchall_labels, OIO_SYNS
+from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_textdefs, fetchall_labels, fetchall_obs, OIO_SYNS
 from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
 
 
@@ -68,6 +68,21 @@ class RemoteSparqlOntology(Ontology):
                 self.add_text_definition(td)
             self.all_text_definitions_cache = tds # TODO: check if still used
         return self.all_text_definitions_cache
+
+    def is_obsolete(self, nid):
+        logging.info("lookup obs for {}".format(nid))
+        if self.all_obsoletes_cache == None:
+            self.all_obsoletes()
+        return super().is_obsolete(nid)
+    
+    def all_obsoletes(self):
+        logging.debug("Fetching all obsoletes...")
+        if self.all_obsoletes_cache == None:
+            obsnodes = fetchall_obs(self.graph_name)
+            for n in obsnodes:
+                self.set_obsolete(n)
+            self.all_obsoletes_cache = obsnodes # TODO: check if still used
+        return self.all_obsoletes_cache
     
     def synonyms(self, nid, **args):
         logging.info("lookup syns for {}".format(nid))
@@ -211,6 +226,7 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         self.all_logical_definitions = []
         self.all_synonyms_cache = None
         self.all_text_definitions_cache = None
+        self.all_obsoletes_cache = None
         logging.info("Graph: {} LDs: {}".format(self.graph, self.all_logical_definitions))
 
     def __str__(self):

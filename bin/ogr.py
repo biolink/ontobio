@@ -32,7 +32,9 @@ def main():
                                      formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument('-r', '--resource', type=str, required=False,
-                        help='Name of ontology')
+                        help='Handle of ontology. See doc on inputs in RTD')
+    parser.add_argument('-R', '--resources', type=str, nargs='*', required=False,
+                        help='List of handles of ontologies (see -r)')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
     parser.add_argument('-t', '--to', type=str, required=False,
@@ -77,11 +79,21 @@ def main():
         
     logging.info("Welcome!")
 
+    if args.resource is None and args.resources is None:
+        logging.error("You must specify -r or -R")
     handle = args.resource
+    handles = args.resources
 
     factory = OntologyFactory()
     logging.info("Creating ont object from: {} {}".format(handle, factory))
-    ont = factory.create(handle)
+    ont = None
+    if handle:
+        ont = factory.create(handle)
+    else:
+        ont = factory.create(handles.pop())
+    if handles:
+        ont.merge([factory.create(h) for h in handles])
+        
     logging.info("ont: {}".format(ont))
 
     if args.xrefs_as_edges:

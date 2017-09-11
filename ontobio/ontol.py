@@ -26,6 +26,7 @@ class Ontology():
                  id=None,
                  graph=nx.MultiDiGraph(),
                  xref_graph=None,
+                 meta=None,
                  payload=None,
                  graphdoc=None):
         """
@@ -34,6 +35,7 @@ class Ontology():
         **Note**: do not call this directly, use OntologyFactory instead
         """
         self.handle = handle
+        self.meta = meta
         if id is None:
             if payload is not None:
                 id = payload.get('id')
@@ -58,6 +60,10 @@ class Ontology():
             self.graphdoc = payload.get('graphdoc')
             self.all_logical_definitions = payload.get('logical_definitions')
 
+    def __str__(self):
+        return '{} handle: {} meta: {}'.format(self.id, self.handle, self.meta)
+    def __repr__(self):
+        return self.__str__()
 
     def get_graph(self):
         """
@@ -95,6 +101,7 @@ class Ontology():
 
         # trigger synonym cache
         self.all_synonyms()
+        self.all_obsoletes()
         
         # default method - wrap get_graph
         srcg = self.get_graph()
@@ -124,8 +131,11 @@ class Ontology():
         """
         Merges specified ontology into current ontology
         """
+        if self.xref_graph is None:
+            self.xref_graph = nx.MultiGraph()
+        logging.info("Merging source: {} xrefs: {}".format(self, len(self.xref_graph.edges())))        
         for ont in ontologies:
-            logging.info("Merging {} into {}".format(ont,self))
+            logging.info("Merging {} into {}. xrefs: {}".format(ont, self, len(ont.xref_graph.edges())))
             g = self.get_graph()
             srcg = ont.get_graph()
             for n in srcg.nodes():
@@ -133,8 +143,6 @@ class Ontology():
             for (o,s,m) in srcg.edges(data=True):
                 g.add_edge(o,s,attr_dict=m)
             for (o,s,m) in ont.xref_graph.edges(data=True):
-                if self.xref_graph is None:
-                    self.xref_graph = nx.MultiGraph()
                 self.xref_graph.add_edge(o,s,attr_dict=m)
 
     def subgraph(self, nodes=[]):
@@ -167,10 +175,10 @@ class Ontology():
             from ontobio.slimmer import get_minimal_subgraph
             g = get_minimal_subgraph(g, nodes)
 
-        ont = Ontology(graph=g) # TODO - add metadata
+        ont = Ontology(graph=g, xref_graph=self.xref_graph) # TODO - add metadata
         if relations is not None:
             g = ont.get_filtered_graph(relations)
-            ont = Ontology(graph=g)
+            ont = Ontology(graph=g, xref_graph=self.xref_graph)
         return ont
 
     def create_slim_mapping(self, subset=None, subset_nodes=None, relations=None, disable_checks=False):
@@ -228,7 +236,6 @@ class Ontology():
             m[n] = list(subont.filter_redundant(ancs_in_subset))
         return m
         
-    
     def filter_redundant(self, ids):
         """
         Return all non-redundant ids from a list
@@ -697,6 +704,7 @@ class Ontology():
         dep = self._get_meta_prop(nid, 'deprecated')
         return  dep is not None and dep
 
+    
     def replaced_by(self, nid, strict=True):
         """
         Returns value of 'replaced by' (IAO_0100001) property for obsolete nodes
@@ -764,6 +772,11 @@ class Ontology():
         """
         self._add_meta_element(textdef.subject, 'definition', textdef.as_dict())
 
+    def set_obsolete(self, nid):
+        if nid not in self.get_graph():
+            self.add_node(nid)
+        self._add_meta_element(nid, 'deprecated', True)
+        
     def _add_meta_element(self, id, k, edict):
         n = self.node(id)
         if n is None:
@@ -771,6 +784,15 @@ class Ontology():
         if 'meta' not in n:
             n['meta'] = {}
         n['meta'][k] = edict
+
+    def inline_xref_graph(self):
+        """
+        Copy contents of xref_graph to inlined meta object for each node
+        """
+        xg = self.xref_graph
+        for n in self.nodes():
+            if n in xg:
+                self._add_meta_element(n, 'xrefs', [{'val':x} for x in xg.neighbors(n)])
         
     def add_parent(self, id, pid, relation='subClassOf'):
         """
@@ -783,6 +805,7 @@ class Ontology():
         """
         Adds an xref to the xref graph
         """
+        # note: does not update meta object
         if self.xref_graph is None:
             self.xref_graph = nx.MultiGraph()
         self.xref_graph.add_edge(xref, id)
@@ -830,6 +853,12 @@ class Ontology():
             syns = syns + self.synonyms(n, include_label=include_label)
         return syns
 
+    def all_obsoletes(self):
+        """
+        Returns all obsolete nodes
+        """
+        return [n for n in self.nodes() if self.is_obsolete(n)]
+        
     def label(self, nid, id_if_null=False):
         """
         Fetches label for a node
