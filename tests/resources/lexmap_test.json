@@ -7,11 +7,15 @@
         "Z": "http://purl.obolibrary.org/obo/Z_",
         "ZZ": "http://purl.obolibrary.org/obo/ZZ_"
     },
-   "graphs" : [ {
+  "graphs" : [ {
     "nodes" : [ {
       "id" : "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
       "type" : "PROPERTY",
       "lbl" : "has_exact_synonym"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+      "type" : "PROPERTY",
+      "lbl" : "database_cross_reference"
     }, {
       "id" : "http://purl.obolibrary.org/obo/ZZ_2",
       "type" : "CLASS",
@@ -37,6 +41,9 @@
     }, {
       "id" : "http://purl.obolibrary.org/obo/A_1",
       "meta" : {
+        "xrefs" : [ {
+          "val" : "X:1"
+        } ],
         "synonyms" : [ {
           "pred" : "hasRelatedSynonym",
           "val" : "skin",
@@ -58,6 +65,11 @@
       "lbl" : "z 1"
     }, {
       "id" : "http://purl.obolibrary.org/obo/Y_2",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "X:2"
+        } ]
+      },
       "type" : "CLASS",
       "lbl" : "LUNG"
     }, {

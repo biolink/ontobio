@@ -267,6 +267,23 @@ def fetchall_xrefs(ont):
     rows = [(r['c']['value'], r['x']['value']) for r in bindings]
     return rows
 
+@cachier(stale_after=SHELF_LIFE)
+def fetchall_obs(ont):
+    """
+    fetch all obsoletes for an ontology
+    """
+    logging.info("fetching obsoletes for: "+ont)
+    namedGraph = get_named_graph(ont)
+    query = """
+    SELECT ?c WHERE {{
+    GRAPH <{g}>  {{ ?c owl:deprecated "true"^^xsd:boolean }}
+    FILTER (!isBlank(?c))
+    }}
+    """.format(g=namedGraph)
+    bindings = run_sparql(query)
+    rows = [r['c']['value'] for r in bindings]
+    return rows
+
 def querybody_isa():
     return """
     { ?c rdfs:subClassOf ?d }
@@ -306,6 +323,7 @@ def querybody_syns():
     )
     FILTER (!isBlank(?c))
     """
+
 
 def anyont_fetch_label(id):
     """

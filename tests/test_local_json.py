@@ -247,3 +247,7 @@ def test_obsolete():
     assert ont.replaced_by('GO:2') == ['GO:1']
     assert ont.replaced_by('GO:3') == ['GO:1']
     assert n_obs == 3
+    subont = ont.subontology(nodes=['GO:2','GO:3'])
+    assert subont.replaced_by('GO:2') == ['GO:1']
+    assert subont.replaced_by('GO:3') == ['GO:1']
+

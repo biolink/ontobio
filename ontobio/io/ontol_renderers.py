@@ -305,7 +305,15 @@ class OboFormatGraphRenderer(GraphRenderer):
             s += 'def: "{}" [{}]\n'.format(self._escape_quotes(td.val),x)
         else:
             logging.debug("No text def for: {}".format(nid))    
-                                            
+
+        logging.info("Looking up xrefs for {}".format(nid))
+        for xref in ontol.xrefs(nid):
+            s += "xref: {}\n".format(xref)
+
+        if ontol.is_obsolete(nid):
+            s += "is_obsolete: true\n"
+            # TODO: consider links
+            
         for syn in ontol.synonyms(nid):
             t = ""
             if syn.lextype is not None:
@@ -361,6 +369,7 @@ class OboJsonGraphRenderer(GraphRenderer):
         super().__init__(**args)
         
     def to_json(self, ontol, **args):
+        ontol.inline_xref_graph()
         g = ontol.get_graph() # TODO - use ontol methods directly
         obj = {}
         node_objs = []
@@ -371,6 +380,7 @@ class OboJsonGraphRenderer(GraphRenderer):
         for e in g.edges_iter(data=True):
             edge_objs.append(self.edge_to_json(e, ontol, **args))
         obj['edges'] = edge_objs
+
         return {'graphs' : [obj]}
 
     def render(self, ontol, **args):
@@ -380,7 +390,8 @@ class OboJsonGraphRenderer(GraphRenderer):
     def node_to_json(self, nid, ontol, **args):
         label = ontol.label(nid)
         return {'id' : nid,
-                'lbl' : label}
+                'lbl' : label,
+                'meta': ontol.node(nid).get('meta')}
     
     def edge_to_json(self, e, ontol, **args):
         (obj,sub,meta) = e

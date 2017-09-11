@@ -1,8 +1,17 @@
-from ontobio.ontol_factory import OntologyFactory
-from ontobio.ontol import Synonym
+from ontobio import OntologyFactory
+from ontobio import Synonym, Ontology
 from ontobio.lexmap import LexicalMapEngine
 import networkx as nx
 import logging
+
+# TODO move this
+def test_merge():
+    factory = OntologyFactory()
+    print("Creating ont")
+    ont = factory.create('tests/resources/lexmap_test.json')
+    ont2 = Ontology()
+    ont2.merge([ont])
+    assert ont2.xref_graph is not None
 
 def test_lexmap_basic():
     """
@@ -31,6 +40,9 @@ def test_lexmap_basic():
         cpr = d[lexmap.CONDITIONAL_PR]
         assert cpr > 0 and cpr <= 1.0
 
+    df = lexmap.as_dataframe(g)
+    print(df.to_csv(sep="\t"))
+        
     lexmap = LexicalMapEngine(config=dict(synsets=[dict(word="",
                                                         synonym="ignoreme",
                                                         confidence=0.1)],

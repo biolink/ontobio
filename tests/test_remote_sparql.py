@@ -18,6 +18,7 @@ PROTRUDING = 'PATO:0001598'
 MORPHOLOGY = 'PATO:0000051'
 ABSENT = 'PATO:0000462'
 CONICAL = 'PATO:0002021'
+APOPTOTIC = 'PATO:0000638'
 
 def test_remote_sparql_pato():
     """
@@ -119,9 +120,16 @@ def test_remote_sparql_pato():
 
     defn = ont.text_definition(INCREASED_SIZE)
     assert defn is not None
+
+    assert ont.is_obsolete('PATO:0000000') == True
     
     w = GraphRenderer.create('obo')
     w.write_subgraph(ont, [INCREASED_SIZE])
+
+    assert len(ont.xref_graph.nodes()) > 1
+    assert 'GO:0006915' in ont.xrefs(APOPTOTIC)
+    w = GraphRenderer.create('obo')
+    w.write_subgraph(ont, [APOPTOTIC])
     
 def test_dynamic_query():
     """
@@ -144,6 +152,7 @@ def test_subontology():
     factory = OntologyFactory()
     print("Creating ont")
     ont = factory.create('go')
+    assert ont.is_obsolete('GO:0000267') == True
     print("ONT NODES: {}".format(ont.nodes()))
     subont = ont.subontology(relations=['subClassOf'])
     PERM = 'GO:1990578'
@@ -153,6 +162,9 @@ def test_subontology():
     for a in ancs:
         print(" ANC: {} '{}'".format(a,subont.label(a)))
     assert len(ancs) > 0
+
+    assert subont.is_obsolete('GO:0000267') == True
+    
     w = GraphRenderer.create('tree')
     w.write_subgraph(ont, ancs)
 
