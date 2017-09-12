@@ -541,13 +541,15 @@ class AssocParser(object):
             self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
             return None
         (p,v) = tuples[0]
+        v = v.replace(" ", "_")
+
         if self._validate_id(v,line,EXTENSION):
             return {
                 'property':p,
                 'filler':v
             }
         else:
-            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="ID not valid")            
+            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="ID not valid")
             return None
 
 # TODO consider making an Association its own class too to give it a little more
