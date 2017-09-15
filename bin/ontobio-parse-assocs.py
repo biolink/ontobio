@@ -147,7 +147,7 @@ def main():
     func(ont, args.file, outfh, p, args)
     if filtered_evidence_file:
         filtered_evidence_file.close()
-        
+
     if outfh is not None:
         outfh.close()
     if args.messagefile is not None:
@@ -161,7 +161,12 @@ def filter_assocs(ont, file, outfile, p, args):
     p.generate_associations(open(file, "r"), outfile)
 
 def validate_assocs(ont, file, outfile, p, args):
-    p.generate_associations(open(file, "r"), outfile)
+    gafwriter = GafWriter(file=outfile)
+
+    with open(file) as gafsource:
+        associations = p.association_generator(file=gafsource)
+        for assoc in associations:
+            gafwriter.write_assoc(assoc)
 
 def validate_entity(ont, file, outfile, p, args):
     p.parse(open(file, "r"), outfile)
@@ -181,7 +186,7 @@ def write_assocs(assocs, outfile, args):
         raise ValueError("Not supported: {}".format(fmt))
     w.file = outfile
     w.write(assocs)
-    
+
 def map2slim(ont, file, outfile, p, args):
     logging.info("Mapping to {}".format(args.subset))
     assocs = p.map_to_subset(open(file, "r"),
