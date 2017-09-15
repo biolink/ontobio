@@ -22,7 +22,7 @@ class AssocWriter():
     """
     def _split_prefix(self, ref):
         id = ref['id']
-        [prefix, local_id] = id.split(':')
+        [prefix, local_id] = id.split(':', maxsplit=1)
         return prefix, local_id
 
     def _write_row(self, vals):
@@ -35,7 +35,7 @@ class AssocWriter():
     def _extension_expression(self, assoc):
         xs = []
         for e in assoc.get('object_extensions',[]):
-            xs.append('{}({})'.format(e['property'],e['filler']))
+            xs.append('{}({})'.format(e['property'], e['filler']))
         return ",".join(xs)
 
     def write_assoc(self, assoc):
@@ -43,7 +43,7 @@ class AssocWriter():
         Write a single association to a line in the output file
         """
         pass  ## Implemented in subclasses
-    
+
     def write(self, assocs, meta=None):
         """
         Write a complete set of associations to a file
@@ -58,7 +58,7 @@ class AssocWriter():
         """
         for a in assocs:
             self.write_assoc(a)
-        
+
 class GpadWriter(AssocWriter):
     """
     Writes Associations in GPAD format
@@ -71,7 +71,7 @@ class GpadWriter(AssocWriter):
         Write a single association to a line in the output file
         """
         subj = assoc['subject']
-        
+
         db, db_object_id = self._split_prefix(subj)
 
         rel = assoc['relation']
@@ -91,7 +91,7 @@ class GpadWriter(AssocWriter):
 
         annotation_properties = '' # TODO
         interacting_taxon_id = '' ## TODO
-        
+
         vals = [db,
                 db_object_id,
                 qualifier,
@@ -106,7 +106,7 @@ class GpadWriter(AssocWriter):
                 annotation_properties]
 
         self._write_row(vals)
-    
+
 class GafWriter(AssocWriter):
     """
     Writes Associations in GAF format. Not yet implemented
@@ -119,7 +119,7 @@ class GafWriter(AssocWriter):
         Write a single association to a line in the output file
         """
         subj = assoc['subject']
-        
+
         db, db_object_id = self._split_prefix(subj)
 
         rel = assoc['relation']
@@ -145,7 +145,7 @@ class GafWriter(AssocWriter):
         taxon = None
         if 'taxon' in subj:
             taxon = subj['taxon']['id']
-            
+
         vals = [db,
                 db_object_id,
                 subj.get('label'),
@@ -165,4 +165,3 @@ class GafWriter(AssocWriter):
                 gene_product_isoform]
 
         self._write_row(vals)
-
