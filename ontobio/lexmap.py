@@ -467,7 +467,46 @@ class LexicalMapEngine():
                 rs = edge['best_fwd'] * edge['best_rev']
             edge['reciprocal_score'] = rs
             edge['cpr'] = edge['cpr_fwd'] * edge['cpr_rev']
-        
+
+    def weighted_axioms(self, x, y):
+        """
+        return a tuple (sub,sup,equiv,other) indicating estimated prior probabilities for an interpretation of a mapping
+        between x and y.
+
+        See kboom paper
+        """
+        # TODO: allow additional weighting
+        scope_pairs = [
+            ('exact',   'exact',   0.0, 0.0, 2.0,-0.5), 
+            ('exact',   'broad',   1.0,-1.0, 0.0, 0.0), 
+            ('exact',   'narrow',  0.0, 1.0, 0.0, 0.0), 
+            ('exact',   'related', 0.0, 0.0, 0.0, 1.0), 
+            ('related', 'broad',   0.5,-0.5, 0.0, 1.0), 
+            ('related', 'narrow', -0.5, 0.5, 0.0, 1.0), 
+            ('related', 'related', 0.0, 0.0, 0.0, 1.0), 
+            ('broad',   'broad',   0.0, 0.0, 0.0, 1.0), 
+            ('broad',   'narrow', -0.5, 0.5, 0.0, 0.2), 
+            ('narrow',  'narrow',  0.0, 0.0, 0.0, 1.0)
+        ]
+        # populate symmetric lookup matrix
+        scope_map = defaultdict(dict)
+        for (l,r,w1,w2,w3,w4) in scope_pairs:
+            l = l.upper()
+            r = r.upper()
+            scope_map[l][r] = (w1,w2,w3,w4)
+            scope_map[r][l] = (w2,w1,w3,w4)
+
+        (ws1,ws2,ws3,ws4) = (0,0,0,0)
+        smap = self.smap
+        for sx in smap[x]:
+            for sy in smap[y]:
+                if sx.val == sy.val:
+                    (w1,w2,w3,w4) = scope_map[sx.scope][sy.scope]
+                    ws1 += w1
+                    ws2 += w2
+                    ws3 += w3
+                    ws4 += w4
+
     def grouped_mappings(self,id):
         """
         return all mappings for a node, grouped by ID prefix
