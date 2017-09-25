@@ -13,6 +13,8 @@ For instructions
 
 import argparse
 import networkx as nx
+import pandas as pd
+import numpy as np
 from networkx.algorithms.dag import ancestors, descendants
 from ontobio.ontol import Ontology
 from ontobio.ontol_factory import OntologyFactory
@@ -53,6 +55,8 @@ def main():
                         help='Prefix to constrain traversal on, e.g. PATO, ENVO')
     parser.add_argument('-c', '--config', type=str, required=False,
                         help='lexmap configuration file (yaml). See schema for details')
+    parser.add_argument('-X', '--xref_weights', type=str, required=False,
+                        help='csv of curated per-xref weights')
     parser.add_argument('-u', '--unmapped', type=str, required=False,
                         help='File to export unmapped nodes to')
     parser.add_argument('-A', '--all-by-all', dest='all_by_all', action='store_true',
@@ -84,6 +88,25 @@ def main():
         config = yaml.load(f)
         f.close()
 
+    if args.xref_weights is not None:
+        if 'xref_weights' not in config:
+            config['xref_weights'] = []
+        xws = config['xref_weights']
+        df = pd.read_csv(args.xref_weights)
+        df = df.fillna(0.0)
+        for _, row in df.iterrows():
+            w = float(row['weight'])
+            WA = np.array((0.0, 0.0, 0.0, 0.0))
+            if w < 0:
+                WA[2] = w
+                WA[3] = abs(w)
+            else:
+                WA[2] = w
+                WA[3] = -w
+            xws.append({'left':row['left'],
+                        'right':row['right'],
+                        'weights':WA})
+        
     logging.info("ALL: {}".format(args.all_by_all))
     
     lexmap = LexicalMapEngine(config=config)

@@ -330,7 +330,7 @@ class OboFormatGraphRenderer(GraphRenderer):
 
     def _escape_quotes(self, v):
         # TODO: escape newlines etc
-        return v.replace('"',"z")
+        return v.replace('"',"z").replace("\n", " ")
         
     # TODO
     def render_xrefs(self, nid, ontol, **args):
