@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.2.19
+------
+
+* gaf parsing: reject expressions in extensions field that have bad IDs, fixes #99
+* lexical mapping: improved handling of xrefs
+
 0.2.18
 ------
 

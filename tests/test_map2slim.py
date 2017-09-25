@@ -19,7 +19,6 @@ SUBSET = [
     'GO:0023052', ## signaling
     'GO:0003674', ## molecular_function
     'GO:0008150'  ## BP
-
 ]
 
 NESRA = 'GO:0005049' ## nuclear export signal receptor activity

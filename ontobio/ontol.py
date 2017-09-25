@@ -24,7 +24,7 @@ class Ontology():
     def __init__(self,
                  handle=None,
                  id=None,
-                 graph=nx.MultiDiGraph(),
+                 graph=None,
                  xref_graph=None,
                  meta=None,
                  payload=None,
@@ -45,6 +45,9 @@ class Ontology():
 
         # networkx object
         self.graph = graph
+        if self.graph is None:
+            self.graph = nx.MultiDiGraph()
+        logging.info('Graph initialized, nodes={}'.format(self.graph.nodes()))
         self.xref_graph = xref_graph
 
         # obograph
@@ -135,15 +138,16 @@ class Ontology():
             self.xref_graph = nx.MultiGraph()
         logging.info("Merging source: {} xrefs: {}".format(self, len(self.xref_graph.edges())))        
         for ont in ontologies:
-            logging.info("Merging {} into {}. xrefs: {}".format(ont, self, len(ont.xref_graph.edges())))
+            logging.info("Merging {} into {}".format(ont, self))
             g = self.get_graph()
             srcg = ont.get_graph()
             for n in srcg.nodes():
                 g.add_node(n, attr_dict=srcg.node[n])
             for (o,s,m) in srcg.edges(data=True):
                 g.add_edge(o,s,attr_dict=m)
-            for (o,s,m) in ont.xref_graph.edges(data=True):
-                self.xref_graph.add_edge(o,s,attr_dict=m)
+            if ont.xref_graph is not None:
+                for (o,s,m) in ont.xref_graph.edges(data=True):
+                    self.xref_graph.add_edge(o,s,attr_dict=m)
 
     def subgraph(self, nodes=[]):
         """
@@ -1105,15 +1109,23 @@ class Synonym(AbstractPropertyValue):
         self.confidence = confidence
 
     def __str__(self):
-        return '{} "{}" {} {} {}'.format(self.class_id, self.val, self.pred, self.lextype, self.xrefs)
+        return '{} "{}" {} {} {} {}'.format(self.class_id, self.val, self.pred, self.lextype, self.xrefs, self.confidence)
     def __repr__(self):
         return self.__str__()
 
     def scope(self):
-        return self.predmap[self.pred].upper()
+        if self.pred in self.predmap:
+            return self.predmap[self.pred].upper()
+        else:
+            return self.pred.upper()
 
     def is_label(self):
         return self.pred == 'label'
+    
+    def is_abbreviation(self, v=None):
+        if v is not None:
+            self.lextype = 'abbreviation'
+        return self.lextype is not None and self.lextype.lower() == 'abbreviation'
     
     def exact_or_label(self):
         return self.pred == 'hasExactSynonym' or self.pred == 'label'
