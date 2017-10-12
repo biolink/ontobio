@@ -31,6 +31,23 @@ def test_go_assocs():
     assocs = payload['associations']
     assert len(assocs) > 0
 
+def test_go_assocs_negated():
+    """
+    Test NOT is handled correctly
+    """
+    payload = search_associations(subject='MGI:1332638',
+                                  object='GO:0005730',
+                                  object_category='function'
+    )
+    assocs = payload['associations']
+    assert len(assocs) > 0
+    # we expect at least one of these to be negative
+    neg_assocs = [a for a in assocs if a['negated']]
+    assert len(neg_assocs) > 0
+    # we also place NOT as a qualifier
+    neg_assocs2 = [a for a in assocs if 'not' in a['qualifiers']]
+    assert len(neg_assocs2) > 0
+    
 def test_go_assocs_compact():
     assocs = search_associations_compact(subject=TWIST_ZFIN,
                                           object_category='function'
