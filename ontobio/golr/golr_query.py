@@ -120,7 +120,8 @@ M=GolrFields()
 # normalize to what Monarch uses
 PREFIX_NORMALIZATION_MAP = {
     'MGI:MGI' : 'MGI',
-    'FB' : 'FlyBase'
+    'FB' : 'FlyBase',
+    'WB' : 'WormBase'
 }
 
 def flip(d, x, y):
