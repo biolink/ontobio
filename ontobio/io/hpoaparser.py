@@ -1,8 +1,8 @@
-from ontobio.io.gafparser import GafParser
+from ontobio.io.assocparser import AssocParser
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
 
-class HpoaParser(GafParser):
+class HpoaParser(AssocParser):
     """
     Parser for HPOA format
 
@@ -22,6 +22,31 @@ class HpoaParser(GafParser):
         self.config = config
         self.report = assocparser.Report()
 
+    def skim(self, file):
+        file = self._ensure_file(file)
+        tuples = []
+        for line in file:
+            if line.startswith("!"):
+                continue
+            vals = line.split("\t")
+            if len(vals) < 14:
+                logging.error("Unexpected number of vals: {}.".format(vals))
+
+            negated, relation, _ = self._parse_qualifier(vals[3], vals[8])
+
+            # never include NOTs in a skim
+            if negated:
+                continue
+            if self._is_exclude_relation(relation):
+                continue
+            id = self._pair_to_id(vals[0], vals[1])
+            if not self._validate_id(id, line, ENTITY):
+                continue
+            n = vals[2]
+            t = vals[4]
+            tuples.append( (id,n,t) )
+        return tuples
+    
     def parse_line(self, line):
         """
         Parses a single line of a HPOA file
