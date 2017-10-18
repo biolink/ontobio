@@ -132,7 +132,7 @@ class Report():
 
     def add_association(self, association):
         self.n_assocs += 1
-        # self.subjects.add(association['subject']['id'])
+        self.subjects.add(association['subject']['id'])
         # self.objects.add(association['object']['id'])
         # self.references.update(association['evidence']['has_supporting_reference'])
         # if 'taxon' in association['subject']:
