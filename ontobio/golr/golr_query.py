@@ -121,7 +121,6 @@ M=GolrFields()
 PREFIX_NORMALIZATION_MAP = {
     'MGI:MGI' : 'MGI',
     'FB' : 'FlyBase',
-    'WB' : 'WormBase'
 }
 
 def flip(d, x, y):
