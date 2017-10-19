@@ -28,6 +28,7 @@ from ontobio.io.hpoaparser import HpoaParser
 from ontobio.io.assocwriter import GafWriter, GpadWriter
 from ontobio.io import assocparser
 from ontobio.slimmer import get_minimal_subgraph
+import json
 import logging
 
 def main():
@@ -48,9 +49,9 @@ def main():
                         help='Format of assoc file. One of GAF, GPAD or HPOA')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
-    parser.add_argument("--report-md", type=str, required=False, dest="report_md"
+    parser.add_argument("--report-md", type=str, required=False, dest="report_md",
                         help="Path to report markdown file")
-    parser.add_argument("--report-json", type=str, required=False, dest="report_json"
+    parser.add_argument("--report-json", type=str, required=False, dest="report_json",
                         help="Path to report JSON file")
     parser.add_argument('-t', '--to', type=str, required=False,
                         help='Output to (tree, dot, ...)')
@@ -152,7 +153,7 @@ def main():
 
     if outfh is not None:
         outfh.close()
-        
+
     if args.report_md is not None:
         report_md = open(args.report_md, "w")
         report_md.write(p.report.to_markdown())
