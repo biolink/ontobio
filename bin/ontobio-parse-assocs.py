@@ -48,8 +48,10 @@ def main():
                         help='Format of assoc file. One of GAF, GPAD or HPOA')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
-    parser.add_argument('-m', '--messagefile', type=str, required=False,
-                        help='Path to messages (report) markdown file')
+    parser.add_argument("--report-md", type=str, required=False, dest="report_md"
+                        help="Path to report markdown file")
+    parser.add_argument("--report-json", type=str, required=False, dest="report_json"
+                        help="Path to report JSON file")
     parser.add_argument('-t', '--to', type=str, required=False,
                         help='Output to (tree, dot, ...)')
     parser.add_argument("--filter-out", nargs="+", required=False, default=[], metavar="EVIDENCE",
@@ -150,11 +152,16 @@ def main():
 
     if outfh is not None:
         outfh.close()
-    if args.messagefile is not None:
-        mfh = open(args.messagefile, "w")
-        mfh.write(p.report.to_markdown())
-        mfh.close()
-    else:
+        
+    if args.report_md is not None:
+        report_md = open(args.report_md, "w")
+        report_md.write(p.report.to_markdown())
+        report_md.close()
+    if args.report_json is not None:
+        report_json = open(args.report_json, "w")
+        report_json.write(json.dumps(p.report.to_report_json(), indent=4))
+        report_json.close()
+    if not (args.report_md or args.report_json):
         print(p.report.to_markdown())
 
 def filter_assocs(ont, file, outfile, p, args):
