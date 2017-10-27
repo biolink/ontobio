@@ -141,7 +141,7 @@ class GafWriter(AssocWriter):
         interacting_taxon_id = '' ## TODO
         gene_product_isoform = '' ## TODO
 
-        aspect = None
+        aspect = assoc['aspect']
         taxon = None
         if 'taxon' in subj:
             taxon = subj['taxon']['id']
