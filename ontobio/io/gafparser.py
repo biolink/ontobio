@@ -1,5 +1,6 @@
 import re
 import logging
+import json
 
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION

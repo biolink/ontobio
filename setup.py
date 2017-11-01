@@ -52,7 +52,8 @@ setuptools.setup(
         'prefixcommons',
         'marshmallow',
         'scipy',
-        'pandas'
+        'pandas',
+        'click'
     ],
 
     # List additional groups of dependencies here (e.g. development
@@ -63,7 +64,7 @@ setuptools.setup(
         'dev': ['plotly'],
         'test': ['pytest'],
     },
-    scripts=['bin/ogr.py', 'bin/ontobio-assoc.py', 'bin/ontobio-parse-assocs.py', 'bin/ontobio-lexmap.py']
+    scripts=['bin/ogr.py', 'bin/ontobio-assoc.py', 'bin/ontobio-parse-assocs.py', 'bin/ontobio-lexmap.py', 'bin/rdfgen.py']
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
