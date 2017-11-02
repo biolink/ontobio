@@ -281,7 +281,7 @@ class AssociationSet():
         logging.debug("Z={}".format(z))
         return (z,xterms,yterms)
     
-    def as_dataframe(self, fillna=True):
+    def as_dataframe(self, fillna=True, subjects=None):
         """
         Return association set as pandas DataFrame
 
@@ -289,14 +289,17 @@ class AssociationSet():
         Each column is the inferred class used to describe the subject
         """
         entries = []
-        subjs = self.subjects
-        for s in subjs:
+        selected_subjects = self.subjects
+        if subjects is not None:
+            selected_subjects = subjects
+            
+        for s in selected_subjects:
             vmap = {}
             for c in self.inferred_types(s):
                 vmap[c] = 1
             entries.append(vmap)
         logging.debug("Creating DataFrame")
-        df = pd.DataFrame(entries, index=subjs)
+        df = pd.DataFrame(entries, index=selected_subjects)
         if fillna:
             logging.debug("Performing fillna...")
             df = df.fillna(0)

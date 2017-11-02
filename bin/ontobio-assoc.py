@@ -78,9 +78,9 @@ def main():
                         help='Slim type. m=minimal')
     parser.add_argument('-c', '--container_properties', nargs='*', type=str, required=False,
                         help='Properties to nest in graph')
-    parser.add_argument('-C', '--category', nargs=2, type=str, required=True,
+    parser.add_argument('-C', '--category', nargs=2, type=str, required=False,
                         help='category tuple (SUBJECT OBJECT)')
-    parser.add_argument('-T', '--taxon', type=str, required=True,
+    parser.add_argument('-T', '--taxon', type=str, required=False,
                         help='Taxon of associations')
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
@@ -122,6 +122,7 @@ def main():
     parser_n = subparsers.add_parser('associations',
                                      help='Query for associations for a set of entities (e.g. genes)')
     parser_n.add_argument('subjects',nargs='*', help='subject ids')
+    parser_n.add_argument('-D', '--dendrogram',type=bool, default=False)
     parser_n.set_defaults(function=run_query_associations)
 
     # INTERSECTIONS
@@ -159,6 +160,11 @@ def main():
         logging.basicConfig(level=logging.INFO)
     else:
         logging.basicConfig(level=logging.WARNING)
+
+    if not args.assocfile:
+        if not args.taxon or not args.category:
+            raise ValueError("Must specify EITHER assocfile OR both taxon and category")
+            
         
     logging.info("Welcome!")
 
@@ -185,13 +191,13 @@ def main():
 
     # Association Factory
     afactory = AssociationSetFactory()
-    [subject_category, object_category] = args.category
     aset = None
     if args.assocfile is not None:
         aset = afactory.create_from_file(file=args.assocfile,
                                          fmt=args.assocformat,
                                          ontology=ont)
     else:
+        [subject_category, object_category] = args.category
         # create using GO/Monarch services
         aset = afactory.create(ontology=ont,
                                subject_category=subject_category,
@@ -280,12 +286,17 @@ def run_query(ont, aset, args):
         py.plot(data, filename='labelled-heatmap')
 
 def run_query_associations(ont, aset, args):
+    if args.dendrogram:
+        plot_subject_term_matrix(ont, aset, args)
+        return
     import plotly.plotly as py
     import plotly.graph_objs as go
     tups = aset.query_associations(subjects=args.subjects)
     for (s,c) in tups:
         print("{} {}".format(s, c))
     z, xaxis, yaxis = tuple_to_matrix(tups)
+    xaxis = mk_axis(xaxis, aset, args)
+    yaxis = mk_axis(yaxis, aset, args)
     logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
     trace = go.Heatmap(z=z,
                        x=xaxis,
@@ -293,7 +304,7 @@ def run_query_associations(ont, aset, args):
     data=[trace]
     py.plot(data, filename='labelled-heatmap')
     #plot_dendrogram(z, xaxis, yaxis)
-
+    
 # TODO: fix this really dumb implementation
 def tuple_to_matrix(tups):
     import numpy as np
@@ -365,8 +376,34 @@ def plot_simmatrix(ont, aset, args):
     z = np.array(z)
     z = -z
     print("Z={}".format(z))
+    logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
     plot_dendrogram(z, xaxis, yaxis)
 
+def plot_subject_term_matrix(ont, aset, args):
+    import numpy as np
+    import pandas as pd
+    import scipy.cluster.hierarchy as sch
+    import scipy.spatial as scs
+    df = aset.as_dataframe(subjects=args.subjects)
+    print('DF={}'.format(df))
+    d = scs.distance.pdist(df)
+    Z = sch.linkage(d, method='complete')
+    P = sch.dendrogram(Z)
+    print(P)
+
+def old_plot_subject_term_matrix(ont, aset, args):
+    import plotly.plotly as py
+    import plotly.graph_objs as go
+    tups = aset.query_associations(subjects=args.subjects)
+    for (s,c) in tups:
+        print("{} {}".format(s, c))
+    z, xaxis, yaxis = tuple_to_matrix(tups)
+    xaxis = mk_axis(xaxis, aset, args)
+    yaxis = mk_axis(yaxis, aset, args)
+    logging.info('z={}'.format(z))
+    logging.info("PLOTTING: {} x {} = {}".format(xaxis, yaxis, z))
+    plot_dendrogram(z, xaxis, yaxis)
+    
 def plot_term_intersection_dendrogram(ont, aset, args):
     import numpy as np
     # TODO: currently only works for xaxis=yaxis
