@@ -24,6 +24,7 @@ def convert(association, ontology, output, association_file):
 
     associations = parser.association_generator(file=association_file)
     for assoc in associations:
+        rdfTransformer.provenance()
         rdfTransformer.translate(assoc)
 
     rdfWriter.serialize(destination=output)

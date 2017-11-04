@@ -126,7 +126,8 @@ class GafParser(assocparser.AssocParser):
         if ecomap != None:
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
                 self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
-                                  msg="Expecting a known ECO GAF code, e.g ISS")
+                                msg="Expecting a known ECO GAF code, e.g ISS")
+                return assocparser.ParseResult(line, [], True)
 
         # validation
         self._validate_symbol(db_object_symbol, line)
