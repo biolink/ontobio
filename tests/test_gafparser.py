@@ -3,9 +3,11 @@ from ontobio.io.gafparser import GafParser
 from ontobio.io.assocwriter import GpadWriter
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
+
 from ontobio.ecomap import EcoMap
 import tempfile
 import logging
+import pytest
 
 POMBASE = "tests/resources/truncated-pombase.gaf"
 POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
@@ -103,14 +105,14 @@ def test_flag_invalid_id():
     p.config.ontology = ont
     p._validate_ontology_class_id("FAKE:1", "fake")
     assert len(p.report.messages) == 1
-    
+
 def test_no_flag_valid_id():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     p.config.ontology = ont
     p._validate_ontology_class_id("GO:0016070", "fake")
     assert len(p.report.messages) == 0
-    
+
 def test_convert_gaf_to_gpad():
     p = GafParser()
     p.config.ecomap = EcoMap()
@@ -190,9 +192,9 @@ def test_errors_gaf():
     print("MESSAGES: {}".format(len(msgs)))
     for m in msgs:
         print("MESSAGE: {}".format(m))
-    assert len(msgs) == 13
+    assert len(msgs) == 15
 
-    # we expect 4 
+    # we expect 4
     assert len(assocs) == 7
     from ontobio.io import GafWriter
     w = GafWriter()
@@ -205,7 +207,6 @@ def test_errors_gaf():
         assert x['filler'] == 'X:1'
     assert len(xs) == 3
 
-from ontobio.assoc_factory import AssociationSetFactory
 def test_factory():
     afa = AssociationSetFactory()
     ont = OntologyFactory().create(ONT)
@@ -231,3 +232,6 @@ def test_factory():
 
     assert len(aset.associations_by_subj) > 0
     assert found  == 2
+
+if __name__ == "__main__":
+    pytest.main(args=["tests/test_gafparser.py::test_parse_gaf"])

@@ -250,7 +250,8 @@ class AssocParser(object):
             Associations generated from the file
         """
         associations = self.association_generator(file, outfile=outfile)
-        return list(associations)
+        a = list(associations)
+        return a
 
     def association_generator(self, file, outfile=None):
         """
@@ -261,7 +262,6 @@ class AssocParser(object):
         association
         """
         file = self._ensure_file(file)
-
         for line in file:
             parsed_result = self.parse_line(line)
             self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
@@ -447,7 +447,7 @@ class AssocParser(object):
             try:
                 d = dateutil.parser.parse(date)
             except:
-                self.report.warning(line, Report.INVALID_DATE, date, "Could not parse date '{}' at all".format(date))
+                self.report.error(line, Report.INVALID_DATE, date, "Could not parse date '{}' at all".format(date))
                 return date
 
         return d.strftime("%Y-%m-%d")
