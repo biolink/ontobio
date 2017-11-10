@@ -63,6 +63,7 @@ class TurtleRdfWriter(RdfWriter):
         self.graph.serialize(destination, format, **args)
 
 
+
 class RdfTransform(object):
     """
     base class for all RDF generators
@@ -77,6 +78,7 @@ class RdfTransform(object):
         self._emit_header_done = False
         self.uribase = writer.base
         self.ro = None
+        self.ecomap.mappings()
 
     def blanknode(self):
         return BNode()
@@ -233,6 +235,10 @@ class CamRdfTransform(RdfTransform):
             else:
                 self.emit(tgt_id, p, filler_inst)
         self.translate_evidence(association, stmt)
+
+    def provenance(self):
+        self.writer.graph.bind("metago", "http://model.geneontology.org/")
+        self.writer.graph.add((self.writer.base, URIRef("http://model.geneontology.org/graphType"), URIRef("http://model.geneontology.org/gafCam")))
 
 class SimpleAssocRdfTransform(RdfTransform):
     """

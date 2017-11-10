@@ -1,6 +1,8 @@
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
 
+import logging
+
 class GpadParser(assocparser.AssocParser):
     """
     Parser for GO GPAD Format
@@ -64,7 +66,6 @@ class GpadParser(assocparser.AssocParser):
             A single tab-seperated line from a GPAD file
 
         """
-
         parsed = super().validate_line(line)
         if parsed:
             return parsed
@@ -72,11 +73,14 @@ class GpadParser(assocparser.AssocParser):
         if self.is_header(line):
             return assocparser.ParseResult(line, [], False)
 
-        vals = line.split("\t")
-        if len(vals) != 12:
-            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="There were {columns} columns found in this line, and there should be 12".format(columns=len(vals)))
-            return assocparser.ParseReslt(line, [], True)
+        vals = [el.strip() for el in line.split("\t")]
+        if len(vals) < 10 or len(vals) > 12:
+            self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+                msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(vals)))
+            return assocparser.ParseResult(line, [], True)
+
+        if len(vals) < 12:
+            vals += [""] * (12 - len(vals))
 
         [db,
          db_object_id,

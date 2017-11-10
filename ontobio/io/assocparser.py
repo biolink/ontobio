@@ -15,10 +15,11 @@ import subprocess
 import logging
 import io
 import gzip
+import datetime
+import dateutil.parser
 
 from ontobio import ontol
-
-# from ontobio.io.gaf import GafParser
+from ontobio import ecomap
 
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
@@ -52,7 +53,7 @@ class AssocParserConfig():
                  valid_taxa=None,
                  class_idspaces=None,
                  entity_idspaces=None,
-                 ecomap=None,
+                 ecomap=ecomap.EcoMap(),
                  exclude_relations=[],
                  include_relations=[],
                  filter_out_evidence=[],
@@ -249,7 +250,8 @@ class AssocParser(object):
             Associations generated from the file
         """
         associations = self.association_generator(file, outfile=outfile)
-        return list(associations)
+        a = list(associations)
+        return a
 
     def association_generator(self, file, outfile=None):
         """
@@ -260,7 +262,6 @@ class AssocParser(object):
         association
         """
         file = self._ensure_file(file)
-
         for line in file:
             parsed_result = self.parse_line(line)
             self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
@@ -438,11 +439,18 @@ class AssocParser(object):
         if date is None or date == "":
             self.report.warning(line, Report.INVALID_DATE, date, "empty")
             return date
-        if len(date) != 8:
-            self.report.warning(line, Report.INVALID_DATE, date, "must be 6 digits, got: {}".format(len(date)))
-            return date
-        # tuple on a string will turn each character into a slot
-        return '{}-{}-{}'.format(date[0:4],date[4:6],date[6:8])
+
+        try:
+            d = datetime.datetime.strptime(date, "%Y%m%d")
+        except:
+            self.report.warning(line, Report.INVALID_DATE, date, "Date field must be YYYYMMDD, got: {}".format(date))
+            try:
+                d = dateutil.parser.parse(date)
+            except:
+                self.report.error(line, Report.INVALID_DATE, date, "Could not parse date '{}' at all".format(date))
+                return date
+
+        return d.strftime("%Y-%m-%d")
 
     def _validate_symbol(self, symbol, line):
         if symbol is None or symbol == "":

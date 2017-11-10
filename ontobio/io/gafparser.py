@@ -77,13 +77,13 @@ class GafParser(assocparser.AssocParser):
         if self.is_header(line):
             return assocparser.ParseResult(line, [], False)
 
-        vals = line.split("\t")
+        vals = [el.strip() for el in line.split("\t")]
 
         # GAF v1 is defined as 15 cols, GAF v2 as 17.
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
-        if len(vals) == 15:
-            vals += ["",""]
+        if 17 > len(vals) >= 15:
+            vals += [""] * (17 - len(vals))
 
         if len(vals) != 17:
             self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
@@ -126,7 +126,8 @@ class GafParser(assocparser.AssocParser):
         if ecomap != None:
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
                 self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
-                                  msg="Expecting a known ECO GAF code, e.g ISS")
+                                msg="Expecting a known ECO GAF code, e.g ISS")
+                return assocparser.ParseResult(line, [], True)
 
         # validation
         self._validate_symbol(db_object_symbol, line)
