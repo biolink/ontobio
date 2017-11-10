@@ -441,9 +441,9 @@ class AssocParser(object):
             return date
 
         try:
-            d = datetime.datetime.strptime(date, "%Y-%m-%d")
+            d = datetime.datetime.strptime(date, "%Y%m%d")
         except:
-            self.report.warning(line, Report.INVALID_DATE, date, "Date field must be YYYY-MM-DD, got: {}".format(date))
+            self.report.warning(line, Report.INVALID_DATE, date, "Date field must be YYYYMMDD, got: {}".format(date))
             try:
                 d = dateutil.parser.parse(date)
             except:
