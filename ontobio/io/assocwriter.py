@@ -113,6 +113,8 @@ class GafWriter(AssocWriter):
     """
     def __init__(self, file=None):
         self.file = file
+        if file != None: # This should never be none. Let's make file requiered here.
+            file.write("!gaf-version: 2.1\n")
 
     def write_assoc(self, assoc):
         """

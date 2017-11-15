@@ -147,9 +147,8 @@ class Report():
             self.skipped.append(result.parsed_line)
         else:
             self.add_associations(result.associations)
-            write_to_file(output_file, result.parsed_line)
             if result.evidence_used not in evidence_to_filter:
-                write_to_file(evidence_filtered_file, result.parsed_line)
+                write_to_file(evidence_filtered_file, result.parsed_line + "\n")
 
     def short_summary(self):
         return "Parsed {} assocs from {} lines. Skipped: {}".format(self.n_assocs, self.n_lines, len(self.skipped))
