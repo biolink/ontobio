@@ -118,7 +118,7 @@ def top_species(**kwargs):
     else:
         d = fcs['subject_taxon']
     return sorted(d.items(), key=lambda t: -t[1])
-    
+
 
 
 def bulk_fetch(subject_category, object_category, taxon, rows=MAX_ROWS, **kwargs):
@@ -178,7 +178,7 @@ def pivot_query_as_matrix(facet=None, facet_pivot_fields=[], **kwargs):
     xlabels=set()
     ylabels=set()
 
-    
+
     for r in results:
         logging.info("R={}".format(r))
         xtype=r['field']
@@ -204,7 +204,7 @@ def pivot_query_as_matrix(facet=None, facet_pivot_fields=[], **kwargs):
          'yaxis':ylabels,
          'z':z}
     return m
-         
+
 
 
 # TODO: unify this with the monarch-specific instance
@@ -294,5 +294,3 @@ def get_homologs(gene, relation=HomologyTypes.Ortholog.value):
                         object_category='gene',
                         relation=relation,
                         subject=gene)
-                        
-    
