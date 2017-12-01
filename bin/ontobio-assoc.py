@@ -58,7 +58,7 @@ def main():
                         help='Name of ontology')
     parser.add_argument('-f', '--assocfile', type=str, required=False,
                         help='Name of input file for associations')
-    parser.add_argument('--assocformat', type=str, default='gaf', required=False,
+    parser.add_argument('-A', '--assocformat', type=str, default='gaf', required=False,
                         help='Format of association file, if passed (default: gaf)')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                         help='Path to output file')
