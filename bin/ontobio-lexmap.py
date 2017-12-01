@@ -57,6 +57,8 @@ def main():
                         help='lexmap configuration file (yaml). See schema for details')
     parser.add_argument('-X', '--xref_weights', type=str, required=False,
                         help='csv of curated per-xref weights')
+    parser.add_argument('-e', '--eval_xrefs', default=False, action='store_true', dest='eval_xrefs',
+                        help='only compare xrefs')
     parser.add_argument('-u', '--unmapped', type=str, required=False,
                         help='File to export unmapped nodes to')
     parser.add_argument('-A', '--all-by-all', dest='all_by_all', action='store_true',
@@ -88,6 +90,7 @@ def main():
         config = yaml.load(f)
         f.close()
 
+    # add pre-defined weights to config
     if args.xref_weights is not None:
         if 'xref_weights' not in config:
             config['xref_weights'] = []
@@ -110,6 +113,17 @@ def main():
     logging.info("ALL: {}".format(args.all_by_all))
     
     lexmap = LexicalMapEngine(config=config)
+
+    if args.eval_xrefs:
+        cpairs = []
+        for n in onts[0].nodes():
+            for x in onts[0].xrefs(n):
+                cpairs.append((n,x))
+        lexmap.class_pairs = cpairs
+        logging.info("Comparing {} class pairs. Sample: {}".format(len(cpairs), cpairs[0:50]))
+    
+    
+    
     if len(onts) == 0:
         raise ValueException("must pass one or more ontologies")
     else:
@@ -133,8 +147,9 @@ def main():
         lexmap.ontology_pairs = pairs
     mo = Ontology()
     mo.merge(onts)
-    
+
     g = lexmap.get_xref_graph()
+    
     
     if args.to == 'obo':
         write_obo(g,mo,args)

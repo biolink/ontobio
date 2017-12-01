@@ -1139,6 +1139,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 assoc['provided_by'] = [d[M.IS_DEFINED_BY]]
         if M.EVIDENCE_OBJECT in d:
             assoc['evidence'] = d[M.EVIDENCE_OBJECT]
+            assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
+            
         # solr does not allow nested objects, so evidence graph is json-encoded
         if M.EVIDENCE_GRAPH in d:
             assoc[M.EVIDENCE_GRAPH] = json.loads(d[M.EVIDENCE_GRAPH])
