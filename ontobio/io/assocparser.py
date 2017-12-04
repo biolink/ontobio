@@ -469,7 +469,7 @@ class AssocParser(object):
             self.report.error(line, Report.INVALID_ID, id, "must be CURIE/prefixed ID")
             return False
 
-        if re.search("[^_\-0-9a-zA-Z]", id.split(":")[1]):
+        if re.search("[^\.:_\-0-9a-zA-Z]", id.split(":")[1]):
             self.report.error(line, Report.INVALID_ID, id, "contains non letter, non number character")
             return False
 

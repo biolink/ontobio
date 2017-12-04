@@ -80,7 +80,7 @@ class RdfTransform(object):
         self.uribase = writer.base
         self.ro = None
         self.ecomap.mappings()
-        self.bad_chars_regex = re.compile("[^:_\-0-9a-zA-Z]")
+        self.bad_chars_regex = re.compile("[^\.:_\-0-9a-zA-Z]")
 
     def blanknode(self):
         return BNode()
