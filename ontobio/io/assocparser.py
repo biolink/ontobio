@@ -469,6 +469,10 @@ class AssocParser(object):
             self.report.error(line, Report.INVALID_ID, id, "must be CURIE/prefixed ID")
             return False
 
+        if re.search("[^\.:_\-0-9a-zA-Z]", id.split(":")[1]):
+            self.report.error(line, Report.INVALID_ID, id, "contains non letter, non number character")
+            return False
+
         idspace = self._get_id_prefix(id)
         # ensure that the ID space of the annotation class (e.g. GO)
         # conforms to what is expected

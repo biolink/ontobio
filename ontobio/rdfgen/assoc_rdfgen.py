@@ -14,6 +14,7 @@ from rdflib.namespace import OWL
 import rdflib
 import logging
 import uuid
+import re
 
 ro = OboRO()
 evt = Evidence()
@@ -79,6 +80,7 @@ class RdfTransform(object):
         self.uribase = writer.base
         self.ro = None
         self.ecomap.mappings()
+        self.bad_chars_regex = re.compile("[^\.:_\-0-9a-zA-Z]")
 
     def blanknode(self):
         return BNode()
@@ -89,6 +91,7 @@ class RdfTransform(object):
             return self.uri(id['id'])
         logging.info("Expand: {}".format(id))
 
+        id = self.bad_chars_regex.sub("_", id)
         uri = curie_util.expand_uri(id, cmaps=[prefix_context])
         if uri != id:
             # If URI is different, then that means we found an curie expansion, and we should add the prefix
