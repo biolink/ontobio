@@ -439,9 +439,9 @@ class AssocParser(object):
             self.report.warning(line, Report.INVALID_DATE, date, "empty")
             return date
 
-        try:
-            d = datetime.datetime.strptime(date, "%Y%m%d")
-        except:
+        if len(date) == 8:
+            d = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0)
+        else:
             self.report.warning(line, Report.INVALID_DATE, date, "Date field must be YYYYMMDD, got: {}".format(date))
             try:
                 d = dateutil.parser.parse(date)
@@ -455,11 +455,9 @@ class AssocParser(object):
         if symbol is None or symbol == "":
             self.report.warning(line, Report.INVALID_SYMBOL, symbol, "empty")
 
+    non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z\s]")
 
     def _validate_id(self, id, line, context=None):
-        if " " in id:
-            self.report.error(line, Report.INVALID_ID, id, "contains spaces")
-            return False
 
         # we assume that cardinality>1 fields have been split prior to this
         if id.find("|") > -1:
@@ -469,7 +467,7 @@ class AssocParser(object):
             self.report.error(line, Report.INVALID_ID, id, "must be CURIE/prefixed ID")
             return False
 
-        if re.search("[^\.:_\-0-9a-zA-Z]", id.split(":")[1]):
+        if AssocParser.non_id_regex.search(id.split(":")[1]):
             self.report.error(line, Report.INVALID_ID, id, "contains non letter, non number character")
             return False
 
@@ -486,8 +484,7 @@ class AssocParser(object):
     def _split_pipe(self, v):
         if v == "":
             return []
-        ids = v.split("|")
-        ids = [id for id in ids if self._validate_id(id, '')]
+        ids = [id for id in v.split("|") if self._validate_id(id, '')]
         return ids
 
     def _normalize_id(self, id):
