@@ -539,12 +539,12 @@ class AssocParser(object):
         else:
             return file
 
-
+    relation_tuple = re.compile('(.*)\((.*)\)')
     def _parse_relationship_expression(self, x, line=""):
         ## Parses an atomic relational expression
         ## E.g. exists_during(GO:0000753)
         ## Atomic class expressions only
-        tuples = re.findall('(.*)\((.*)\)',x)
+        tuples = AssocParser.relation_tuple.findall('(.*)\((.*)\)')
         if len(tuples) != 1:
             self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
             return None
