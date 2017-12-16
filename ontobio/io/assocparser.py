@@ -455,7 +455,7 @@ class AssocParser(object):
         if symbol is None or symbol == "":
             self.report.warning(line, Report.INVALID_SYMBOL, symbol, "empty")
 
-    non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z\s]")
+    non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z\S]")
 
     def _validate_id(self, id, line, context=None):
 
@@ -468,7 +468,7 @@ class AssocParser(object):
             return False
 
         if AssocParser.non_id_regex.search(id.split(":")[1]):
-            self.report.error(line, Report.INVALID_ID, id, "contains non letter, non number character")
+            self.report.error(line, Report.INVALID_ID, id, "contains non letter, non number character, or spaces")
             return False
 
         idspace = self._get_id_prefix(id)
@@ -507,7 +507,7 @@ class AssocParser(object):
          return id
 
     def _ensure_file(self, file):
-        logging.info("Ensure file: {}".format(file)        )
+        logging.info("Ensure file: {}".format(file))
         if isinstance(file,str):
             # TODO Let's fix this if/elseif chain.
             if file.startswith("ftp"):
@@ -544,7 +544,7 @@ class AssocParser(object):
         ## Parses an atomic relational expression
         ## E.g. exists_during(GO:0000753)
         ## Atomic class expressions only
-        tuples = AssocParser.relation_tuple.findall('(.*)\((.*)\)')
+        tuples = AssocParser.relation_tuple.findall(x)
         if len(tuples) != 1:
             self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
             return None
