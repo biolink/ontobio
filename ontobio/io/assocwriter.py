@@ -3,6 +3,10 @@ Classes for exporting associations.
 
 """
 import logging
+import re
+
+external_taxon = re.compile("taxon:([0-9]+)")
+internal_taxon = re.compile("NCBITaxon:([0-9]+)")
 
 def _str(v):
     if v is None:
@@ -146,7 +150,7 @@ class GafWriter(AssocWriter):
         aspect = assoc['aspect']
         taxon = None
         if 'taxon' in subj:
-            taxon = subj['taxon']['id']
+            taxon = self.normalize_taxon(subj['taxon']['id'])
 
         vals = [db,
                 db_object_id,
@@ -167,3 +171,18 @@ class GafWriter(AssocWriter):
                 gene_product_isoform]
 
         self._write_row(vals)
+
+    def normalize_taxon(self, taxon):
+        global internal_taxon
+        global external_taxon
+
+        if external_taxon.match(taxon):
+            # If we match here, then the internal view already exists and we're good
+            return internal_taxon
+
+        match = internal_taxon.match(taxon)
+        if match:
+            taxon_id = match.group(1)
+            return "taxon:{num}".format(num=taxon_id)
+
+        return taxon
