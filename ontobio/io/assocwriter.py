@@ -124,10 +124,10 @@ class GafWriter(AssocWriter):
 
         db, db_object_id = self._split_prefix(subj)
 
-        rel = assoc['relation']
-        qualifier = rel['id']
+        qualifier = "|".join(assoc["qualifiers"])
+        # qualifier is | seperated string, filter on None removes empty strings in case qualifiers is empty
         if assoc['negated']:
-            qualifier = 'NOT|' + qualifier
+            qualifier = "|".join(list(filter(None, ["NOT", qualifier])))
 
         goid = assoc['object']['id']
 
