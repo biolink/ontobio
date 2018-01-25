@@ -449,7 +449,7 @@ class AssocParser(object):
                 self.report.error(line, Report.INVALID_DATE, date, "Could not parse date '{}' at all".format(date))
                 return date
 
-        return d.strftime("%Y-%m-%d")
+        return d.strftime("%Y%m%d")
 
     def _validate_symbol(self, symbol, line):
         if symbol is None or symbol == "":
@@ -544,11 +544,11 @@ class AssocParser(object):
             return None
 
         object_or_exprs = []
-        xp_ors = xp.split("|")
+        xp_ors = sorted(xp.split("|"))
         for xp_or in xp_ors:
 
             # gather conjunctive expressions in extensions field
-            xp_ands = xp_or.split(",")
+            xp_ands = sorted(xp_or.split(","))
             and_exprs = []
             for xp_and in xp_ands:
                 if xp_and != "":
@@ -558,8 +558,8 @@ class AssocParser(object):
             if len(and_exprs) > 0:
                 object_or_exprs.append({'intersection_of':and_exprs})
         return object_or_exprs
-        
-        
+
+
     relation_tuple = re.compile('(.*)\((.*)\)')
     def _parse_relationship_expression(self, x, line=""):
         ## Parses an atomic relational expression

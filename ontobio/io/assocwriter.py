@@ -169,7 +169,7 @@ class GafWriter(AssocWriter):
                 evidence,
                 withfrom,
                 aspect,
-                "|".join(subj.get('full_name',[])),
+                subj["fullname"],
                 "|".join(subj.get('synonyms',[])),
                 subj.get('type'),
                 taxon,
