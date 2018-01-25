@@ -12,7 +12,9 @@ class OntologyConfigSchema(Schema):
 
     @post_load
     def make_object(self, data):
-        return OntologyConfig(**data)
+        oc = OntologyConfig(**data)
+        
+        return oc
 
 class EndpointSchema(Schema):
     """

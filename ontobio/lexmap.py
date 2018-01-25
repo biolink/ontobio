@@ -614,13 +614,13 @@ class LexicalMapEngine():
                 n += 1
         # average best match
         if n > 0:
-            logging.info('Adding BESTMAX={}'.format(WBESTMAX))
+            logging.debug('Adding BESTMAX={}'.format(WBESTMAX))
             WS += WBESTMAX
                     
         # TODO: xref, many to many
         WS += self._graph_weights(x, y, xg)
         # TODO: include additional defined weights, eg ORDO
-        logging.info('Adding WS, gw={}'.format(WS))
+        logging.debug('Adding WS, gw={}'.format(WS))
 
         # jaccard similarity
         (ss1,ss2) = xg[x][y][self.SIMSCORES]
