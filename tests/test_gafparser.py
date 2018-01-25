@@ -81,7 +81,7 @@ def parse_with(f, p):
 
     if is_gaf:
         assert r1['subject']['label'] == 'ypf1'
-        assert r1['date'] == '2015-03-05'
+        assert r1['date'] == '20150305'
 
     for r in results:
         #print(str(r))
@@ -204,7 +204,7 @@ def test_errors_gaf():
             # our test file has no ORs, so in DNF this is always the first
             xs = a['object_extensions']['union_of'][0]['intersection_of']
             for x in xs:
-                
+
                 print('X: {}'.format(x))
                 # ensure that invalid expressions have been eliminated
                 assert x['property'] == 'foo'
