@@ -191,7 +191,19 @@ class CamRdfTransform(RdfTransform):
         self.emit_type(PART_OF, OWL.ObjectProperty)
         self.emit_type(OCCURS_IN, OWL.ObjectProperty)
 
-    def translate(self, association):
+    def translate(self, association, and_xps=None):
+
+        # See https://github.com/biolink/ontobio/pull/136
+        # if the association has an annotation extension, and this
+        # is a union, then we treat each element in the union
+        # as a distinct assertion/annotation, where each assertion
+        # has its own conjunction of relational expressions
+        if and_xps is None and 'object_extensions' in association:
+            x = association['object_extensions']
+            for ix in x['union_of']:
+                and_xps = ix['intersection_of']
+                self.translate(association, and_xps)
+            
         sub = association['subject']
         obj = association['object']
         rel = association['relation']
@@ -228,15 +240,16 @@ class CamRdfTransform(RdfTransform):
         if self.include_subject_info:
             pass
             # TODO
-        # TODO: extensions
-        for ext in association.get('object_extensions',[]):
-            filler_inst = genid(base=self.writer.base)
-            self.emit_type(filler_inst, self.uri(ext['filler']))
-            p = self.lookup_relation(ext['property'])
-            if p is None:
-                logging.warning("No such property {}".format(ext))
-            else:
-                self.emit(tgt_id, p, filler_inst)
+
+        if and_xps is not None:
+            for ext in and_xps:
+                filler_inst = genid(base=self.writer.base)
+                self.emit_type(filler_inst, self.uri(ext['filler']))
+                p = self.lookup_relation(ext['property'])
+                if p is None:
+                    logging.warning("No such property {}".format(ext))
+                else:
+                    self.emit(tgt_id, p, filler_inst)
         self.translate_evidence(association, stmt)
 
     def provenance(self):
