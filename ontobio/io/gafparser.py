@@ -165,90 +165,75 @@ class GafParser(assocparser.AssocParser):
         ## --
         ## process associations
         ## --
-        ## note that any disjunctions in the annotation extension
-        ## will result in the generation of multiple associations
-        assocs = []
-        xp_ors = annotation_xp.split("|")
-        for xp_or in xp_ors:
+        object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=line)
+            
+        ## --
+        ## qualifier
+        ## --
+        negated, relation, other_qualifiers = self._parse_qualifier(qualifier, aspect)
 
-            # gather conjunctive expressions in extensions field
-            xp_ands = xp_or.split(",")
-            extns = []
-            for xp_and in xp_ands:
-                if xp_and != "":
-                    expr = self._parse_relationship_expression(xp_and, line=line)
-                    if expr is not None:
-                        extns.append(expr)
+        ## --
+        ## goid
+        ## --
+        # TODO We shouldn't overload buildin keywords/functions
+        object = {'id':goid,
+                  'taxon': taxon}
 
-            ## --
-            ## qualifier
-            ## --
-            negated, relation, other_qualifiers = self._parse_qualifier(qualifier, aspect)
-
-            ## --
-            ## goid
-            ## --
-            # TODO We shouldn't overload buildin keywords/functions
-            object = {'id':goid,
-                      'taxon': taxon}
-
-            # construct subject dict
-            subject = {
-                'id':id,
-                'label':db_object_symbol,
-                'type': db_object_type,
-                'fullname': db_object_name,
-                'synonyms': synonyms,
-                'taxon': {
-                    'id': taxon
-                }
+        # construct subject dict
+        subject = {
+            'id':id,
+            'label':db_object_symbol,
+            'type': db_object_type,
+            'fullname': db_object_name,
+            'synonyms': synonyms,
+            'taxon': {
+                'id': taxon
             }
+        }
 
-            ## --
-            ## gene_product_isoform
-            ## --
-            ## This is mapped to a more generic concept of subject_extensions
-            subject_extns = []
-            if gene_product_isoform is not None and gene_product_isoform != '':
-                subject_extns.append({'property':'isoform', 'filler':gene_product_isoform})
+        ## --
+        ## gene_product_isoform
+        ## --
+        ## This is mapped to a more generic concept of subject_extensions
+        subject_extns = []
+        if gene_product_isoform is not None and gene_product_isoform != '':
+            subject_extns.append({'property':'isoform', 'filler':gene_product_isoform})
 
-            ## --
-            ## evidence
-            ## reference
-            ## withfrom
-            ## --
-            evidence_obj = {
-                'type': evidence,
-                'has_supporting_reference': self._split_pipe(reference)
-            }
-            evidence_obj['with_support_from'] = self._split_pipe(withfrom)
+        ## --
+        ## evidence
+        ## reference
+        ## withfrom
+        ## --
+        evidence_obj = {
+            'type': evidence,
+            'has_supporting_reference': self._split_pipe(reference)
+        }
+        evidence_obj['with_support_from'] = self._split_pipe(withfrom)
 
-            ## Construct main return dict
-            assoc = {
-                'source_line': line,
-                'subject': subject,
-                'object': object,
-                'negated': negated,
-                'qualifiers': other_qualifiers,
-                'aspect': aspect,
-                'relation': {
-                    'id': relation
-                },
-                'evidence': evidence_obj,
-                'provided_by': assigned_by,
-                'date': date,
+        ## Construct main return dict
+        assoc = {
+            'source_line': line,
+            'subject': subject,
+            'object': object,
+            'negated': negated,
+            'qualifiers': other_qualifiers,
+            'aspect': aspect,
+            'relation': {
+                'id': relation
+            },
+            'evidence': evidence_obj,
+            'provided_by': assigned_by,
+            'date': date,
 
-            }
-            if len(subject_extns) > 0:
-                assoc['subject_extensions'] = subject_extns
-            if len(extns) > 0:
-                assoc['object_extensions'] = extns
+        }
+        if len(subject_extns) > 0:
+            assoc['subject_extensions'] = subject_extns
+        if object_or_exprs is not None and len(object_or_exprs) > 0:
+            assoc['object_extensions'] = {'union_of': object_or_exprs}
 
-            self._validate_assoc(assoc, line)
+        self._validate_assoc(assoc, line)
 
-            assocs.append(assoc)
-
-        return assocparser.ParseResult(line, assocs, False, evidence.upper())
+        return assocparser.ParseResult(line, [assoc], False, evidence.upper())
 
     def is_header(self, line):
         return line.startswith("!")

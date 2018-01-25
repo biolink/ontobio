@@ -539,6 +539,27 @@ class AssocParser(object):
         else:
             return file
 
+    def _parse_full_extension_expression(self, xp, line=""):
+        if xp == "":
+            return None
+
+        object_or_exprs = []
+        xp_ors = xp.split("|")
+        for xp_or in xp_ors:
+
+            # gather conjunctive expressions in extensions field
+            xp_ands = xp_or.split(",")
+            and_exprs = []
+            for xp_and in xp_ands:
+                if xp_and != "":
+                    expr = self._parse_relationship_expression(xp_and, line=line)
+                    if expr is not None:
+                        and_exprs.append(expr)
+            if len(and_exprs) > 0:
+                object_or_exprs.append({'intersection_of':and_exprs})
+        return object_or_exprs
+        
+        
     relation_tuple = re.compile('(.*)\((.*)\)')
     def _parse_relationship_expression(self, x, line=""):
         ## Parses an atomic relational expression
