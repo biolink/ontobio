@@ -116,46 +116,42 @@ class GpadParser(assocparser.AssocParser):
         ## qualifier
         ## --
         negated, relation, other_qualifiers = self._parse_qualifier(qualifier, None)
+        
+        ## --
+        ## parse annotation extension
+        ## See appending in http://doi.org/10.1186/1471-2105-15-155
+        ## --
+        object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=line)
+        
+        assoc = {
+            'source_line': line,
+            'subject': {
+                'id':id
+            },
+            'object': {
+                'id':goid
+            },
+            'negated': negated,
+            'relation': {
+                'id': relation
+            },
+            'evidence': {
+                'type': evidence,
+                'with_support_from': self._split_pipe(withfrom),
+                'has_supporting_reference': self._split_pipe(reference)
+            },
+            'provided_by': assigned_by,
+            'date': date,
 
-        assocs = []
-        xp_ors = annotation_xp.split("|")
-        for xp_or in xp_ors:
-            xp_ands = xp_or.split(",")
-            extns = []
-            for xp_and in xp_ands:
-                if xp_and != "":
-                    expr = self._parse_relationship_expression(xp_and, line=line)
-                    if expr is not None:
-                        extns.append(expr)
-            assoc = {
-                'source_line': line,
-                'subject': {
-                    'id':id
-                },
-                'object': {
-                    'id':goid,
-                    'extensions': extns
-                },
-                'negated': negated,
-                'relation': {
-                    'id': relation
-                },
-                'evidence': {
-                    'type': evidence,
-                    'with_support_from': self._split_pipe(withfrom),
-                    'has_supporting_reference': self._split_pipe(reference)
-                },
-                'provided_by': assigned_by,
-                'date': date,
+        }
+        if len(other_qualifiers) > 0:
+            assoc['qualifiers'] = other_qualifiers
+        if object_or_exprs is not None and len(object_or_exprs) > 0:
+            assoc['object']['extensions'] = {'union_of': object_or_exprs}
 
-            }
-            if len(other_qualifiers) > 0:
-                assoc['qualifiers'] = other_qualifiers
+        self._validate_assoc(assoc, line)
 
-            self._validate_assoc(assoc, line)
-
-            assocs.append(assoc)
-        return assocparser.ParseResult(line, assocs, False)
+        return assocparser.ParseResult(line, [assoc], False)
 
     def is_header(self, line):
         return line.startswith("!")

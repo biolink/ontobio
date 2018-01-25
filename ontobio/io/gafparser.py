@@ -163,7 +163,8 @@ class GafParser(assocparser.AssocParser):
             synonyms = []
 
         ## --
-        ## process associations
+        ## parse annotation extension
+        ## See appending in http://doi.org/10.1186/1471-2105-15-155
         ## --
         object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=line)
             
