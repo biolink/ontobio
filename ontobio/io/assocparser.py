@@ -484,7 +484,7 @@ class AssocParser(object):
     def _split_pipe(self, v):
         if v == "":
             return []
-        ids = [id for id in v.split("|") if self._validate_id(id, '')]
+        ids = sorted([id for id in v.split("|") if self._validate_id(id, '')])
         return ids
 
     def _normalize_id(self, id):
