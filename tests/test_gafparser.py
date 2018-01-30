@@ -81,7 +81,7 @@ def parse_with(f, p):
 
     if is_gaf:
         assert r1['subject']['label'] == 'ypf1'
-        assert r1['date'] == '2015-03-05'
+        assert r1['date'] == '20150305'
 
     for r in results:
         #print(str(r))
@@ -199,13 +199,17 @@ def test_errors_gaf():
     from ontobio.io import GafWriter
     w = GafWriter()
     w.write(assocs)
-    xs = [x for a in assocs for x in a.get('object_extensions',[]) ]
-    for x in xs:
-        print('X: {}'.format(x))
-        # ensure that invalid expressions have been eliminated
-        assert x['property'] == 'foo'
-        assert x['filler'] == 'X:1'
-    assert len(xs) == 3
+    for a in assocs:
+        if 'object_extensions' in a:
+            # our test file has no ORs, so in DNF this is always the first
+            xs = a['object_extensions']['union_of'][0]['intersection_of']
+            for x in xs:
+
+                print('X: {}'.format(x))
+                # ensure that invalid expressions have been eliminated
+                assert x['property'] == 'foo'
+                assert x['filler'] == 'X:1'
+            assert len(xs) == 1
 
 def test_factory():
     afa = AssociationSetFactory()

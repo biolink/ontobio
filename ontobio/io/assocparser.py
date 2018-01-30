@@ -449,7 +449,7 @@ class AssocParser(object):
                 self.report.error(line, Report.INVALID_DATE, date, "Could not parse date '{}' at all".format(date))
                 return date
 
-        return d.strftime("%Y-%m-%d")
+        return d.strftime("%Y%m%d")
 
     def _validate_symbol(self, symbol, line):
         if symbol is None or symbol == "":
@@ -484,7 +484,7 @@ class AssocParser(object):
     def _split_pipe(self, v):
         if v == "":
             return []
-        ids = [id for id in v.split("|") if self._validate_id(id, '')]
+        ids = sorted([id for id in v.split("|") if self._validate_id(id, '')])
         return ids
 
     def _normalize_id(self, id):
@@ -538,6 +538,27 @@ class AssocParser(object):
                     return open(file, "r")
         else:
             return file
+
+    def _parse_full_extension_expression(self, xp, line=""):
+        if xp == "":
+            return None
+
+        object_or_exprs = []
+        xp_ors = sorted(xp.split("|"))
+        for xp_or in xp_ors:
+
+            # gather conjunctive expressions in extensions field
+            xp_ands = sorted(xp_or.split(","))
+            and_exprs = []
+            for xp_and in xp_ands:
+                if xp_and != "":
+                    expr = self._parse_relationship_expression(xp_and, line=line)
+                    if expr is not None:
+                        and_exprs.append(expr)
+            if len(and_exprs) > 0:
+                object_or_exprs.append({'intersection_of':and_exprs})
+        return object_or_exprs
+
 
     relation_tuple = re.compile('(.*)\((.*)\)')
     def _parse_relationship_expression(self, x, line=""):
