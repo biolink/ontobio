@@ -37,10 +37,18 @@ class AssocWriter():
             print(line)
 
     def _extension_expression(self, assoc):
-        xs = []
-        for e in assoc.get('object_extensions',[]):
-            xs.append('{}({})'.format(e['property'], e['filler']))
-        return ",".join(xs)
+        if 'object_extensions' in assoc:
+            x = assoc['object_extensions']
+            if isinstance(x,list):
+                return ""
+            # assume disjunctive normal form
+            ixs = []
+            for ix in x['union_of']:
+                rxs = []
+                for rx in ix['intersection_of']:
+                    rxs.append('{}({})'.format(rx['property'], rx['filler']))
+                ixs.append(",".join(rxs))
+            return "|".join(ixs)
 
     def write_assoc(self, assoc):
         """
@@ -161,7 +169,7 @@ class GafWriter(AssocWriter):
                 evidence,
                 withfrom,
                 aspect,
-                "|".join(subj.get('full_name',[])),
+                subj["fullname"],
                 "|".join(subj.get('synonyms',[])),
                 subj.get('type'),
                 taxon,

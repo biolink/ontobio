@@ -13,7 +13,7 @@ def test_parse():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     assocs = p.parse(open(POMBASE,"r"))
-    gen(assocs,SimpleAssocRdfTransform(),'simple')
+    #gen(assocs,SimpleAssocRdfTransform(),'simple')
     gen(assocs,CamRdfTransform(),'cam')
 
 def gen(assocs, tr, n):
@@ -21,4 +21,6 @@ def gen(assocs, tr, n):
     tr.emit_header()
     for a in assocs:
         tr.translate(a)
-    tr.writer.serialize(fn, 'ntriples')
+    tr.writer.serialize(destination=open(fn,'w'))
+    #tr.writer.serialize(fn, 'ntriples')
+
