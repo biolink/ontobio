@@ -101,6 +101,9 @@ class GolrFields:
     _VERSION_='_version_'
     SUBJECT_GENE_CLOSURE_LABEL_SEARCHABLE='subject_gene_closure_label_searchable'
     ANNOTATION_EXTENSION_JSON="annotation_extension_json"
+    EVIDENCE_WITH="evidence_with"
+    REFERENCE="reference"
+    EVIDENCE_TYPE="evidence_type"
 
     RELATION='relation'
     RELATION_LABEL='relation_label'
@@ -530,7 +533,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
         self.non_null_fields=non_null_fields
-
+        
         if self.facet_fields is None:
             self.facet_fields = [
                 M.SUBJECT_TAXON_LABEL,
@@ -1148,6 +1151,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         if M.ANNOTATION_EXTENSION_JSON in d:
             assoc['annotation_extensions'] = [json.loads(ext) for ext in d[M.ANNOTATION_EXTENSION_JSON]]
+        if M.EVIDENCE_TYPE in d:
+            assoc[M.EVIDENCE_TYPE] = d[M.EVIDENCE_TYPE]
+        if M.EVIDENCE_WITH in d:
+            assoc[M.EVIDENCE_WITH] = d[M.EVIDENCE_WITH]
+        if M.REFERENCE in d:
+            assoc[M.REFERENCE] = d[M.REFERENCE]
         return assoc
 
     def translate_docs(self, ds, **kwargs):
