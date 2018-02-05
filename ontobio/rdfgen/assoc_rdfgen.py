@@ -203,7 +203,7 @@ class CamRdfTransform(RdfTransform):
             for ix in x['union_of']:
                 and_xps = ix['intersection_of']
                 self.translate(association, and_xps)
-            
+
         sub = association['subject']
         obj = association['object']
         rel = association['relation']
@@ -221,21 +221,25 @@ class CamRdfTransform(RdfTransform):
         self.emit_type(tgt_id, OWL.NamedIndividual)
 
         aspect = association['aspect']
-        stmt = None
+        aspect_triple = None
 
         # todo: use relation
         if aspect == 'F':
-            stmt = self.emit(tgt_id, ENABLED_BY, enabler_id)
+            aspect_triple = self.emit(tgt_id, ENABLED_BY, enabler_id)
         elif aspect == 'P':
             mf_id = genid(base=self.writer.base)
             self.emit_type(mf_id, MOLECULAR_FUNCTION)
-            stmt = self.emit(mf_id, ENABLED_BY, enabler_id)
-            stmt = self.emit(mf_id, PART_OF, tgt_id)
+            aspect_triple = self.emit(mf_id, ENABLED_BY, enabler_id)
+            aspect_triple = self.emit(mf_id, PART_OF, tgt_id)
         elif aspect == 'C':
             mf_id = genid(base=self.writer.base)
             self.emit_type(mf_id, MOLECULAR_FUNCTION)
-            stmt = self.emit(mf_id, ENABLED_BY, enabler_id)
-            stmt = self.emit(mf_id, OCCURS_IN, tgt_id)
+            aspect_triple = self.emit(mf_id, ENABLED_BY, enabler_id)
+            aspect_triple = self.emit(mf_id, OCCURS_IN, tgt_id)
+        else:
+            # Skip this association if the aspect makes no sense.
+            logging.log(logging.WARNING, "Aspect field is not F, P, or C, so this association is skipped.")
+            return
 
         if self.include_subject_info:
             pass
@@ -250,7 +254,7 @@ class CamRdfTransform(RdfTransform):
                     logging.warning("No such property {}".format(ext))
                 else:
                     self.emit(tgt_id, p, filler_inst)
-        self.translate_evidence(association, stmt)
+        self.translate_evidence(association, aspect_triple)
 
     def provenance(self):
         self.writer.graph.bind("metago", "http://model.geneontology.org/")

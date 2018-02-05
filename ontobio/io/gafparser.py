@@ -140,6 +140,10 @@ class GafParser(assocparser.AssocParser):
             db_object_id = toks[1:]
             vals[1] = db_object_id
 
+        if aspect.upper() not in ["C", "F", "P"]:
+            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect)
+            return assocparser.ParseResult(line, []], True)
+
         ## --
         ## end of line re-processing
         ## --
@@ -167,7 +171,7 @@ class GafParser(assocparser.AssocParser):
         ## See appendix in http://doi.org/10.1186/1471-2105-15-155
         ## --
         object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=line)
-            
+
         ## --
         ## qualifier
         ## --

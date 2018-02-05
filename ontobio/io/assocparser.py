@@ -88,6 +88,7 @@ class Report():
     INVALID_TAXON = "Invalid taxon"
     INVALID_SYMBOL = "Invalid symbol"
     INVALID_DATE = "Invalid date"
+    INVALID_ASPECT = "Invalid aspect code. Should be C, P, or F"
     UNMAPPED_ID = "Unmapped identifier"
     UNKNOWN_EVIDENCE_CLASS = "Unknown evidence class"
     OBSOLETE_CLASS = "Obsolete class"
