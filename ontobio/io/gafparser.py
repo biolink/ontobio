@@ -142,7 +142,7 @@ class GafParser(assocparser.AssocParser):
 
         if aspect.upper() not in ["C", "F", "P"]:
             self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect)
-            return assocparser.ParseResult(line, []], True)
+            return assocparser.ParseResult(line, [], True)
 
         ## --
         ## end of line re-processing
