@@ -125,13 +125,17 @@ class GafWriter(AssocWriter):
     """
     def __init__(self, file=None):
         self.file = file
-        if file != None: # This should never be none. Let's make file requiered here.
-            file.write("!gaf-version: 2.1\n")
+        # This should never be none. Let's make file required here.
 
     def write_assoc(self, assoc):
         """
         Write a single association to a line in the output file
         """
+        # Handle comment 'associations'
+        if assoc.get("header", False):
+            self.file.write(assoc["line"] + "\n")
+            return
+
         subj = assoc['subject']
 
         db, db_object_id = self._split_prefix(subj)

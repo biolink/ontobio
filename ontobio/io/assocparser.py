@@ -160,18 +160,22 @@ class Report():
         """
 
         N = 10
-        report = dict(
-            summary = dict(association_count = self.n_assocs,
-                           line_count = self.n_lines,
-                           skipped_line_count = len(self.skipped)),
-            aggregate_statistics = dict(subject_count=len(self.subjects),
-                                        object_count=len(self.objects),
-                                        taxon_count=len(self.taxa),
-                                        reference_count=len(self.references),
-                                        taxon_sample=list(self.taxa)[0:N],
-                                        subject_sample=list(self.subjects)[0:N],
-                                        object_sample=list(self.objects)[0:N])
-        )
+        report = {
+            "summary": {
+                "association_count": self.n_assocs,
+                "line_count": self.n_lines,
+                "skipped_line_count": len(self.skipped)
+            },
+            "aggregate_statistics": {
+                "subject_count": len(self.subjects),
+                "object_count": len(self.objects),
+                "taxon_count": len(self.taxa),
+                "reference_count": len(self.references),
+                "taxon_sample": list(self.taxa)[0:N],
+                "subject_sample": list(self.subjects)[0:N],
+                "object_sample": list(self.objects)[0:N]
+            }
+        }
 
         # grouped messages
         gm = {}
@@ -184,9 +188,11 @@ class Report():
         mgroups = []
         for level in self.LEVELS:
             msgs = gm[level]
-            mgroup = dict(level=level,
-                          count=len(msgs),
-                          messages=msgs)
+            mgroup = {
+                "level": level,
+                "count": len(msgs),
+                "messages": msgs
+            }
             mgroups.append(mgroup)
         report['groups'] = mgroups
         return report
@@ -230,7 +236,7 @@ class AssocParser(object):
     Abstract superclass of all association parser classes
     """
 
-    def parse(self, file, outfile=None):
+    def parse(self, file, skipheader=False, outfile=None):
         """Parse a line-oriented association file into a list of association dict objects
 
         Note the returned list is of dict objects. TODO: These will
@@ -249,11 +255,11 @@ class AssocParser(object):
         list
             Associations generated from the file
         """
-        associations = self.association_generator(file, outfile=outfile)
+        associations = self.association_generator(file, skipheader=skipheader, outfile=outfile)
         a = list(associations)
         return a
 
-    def association_generator(self, file, outfile=None):
+    def association_generator(self, file, skipheader=False, outfile=None):
         """
         Returns a generator that yields successive associations from file
 
@@ -266,7 +272,9 @@ class AssocParser(object):
             parsed_result = self.parse_line(line)
             self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
             for association in parsed_result.associations:
-                yield association
+                # yield association if we don't care if it's a header or if it's definitely a real gaf line
+                if not skipheader or "header" not in association:
+                    yield association
 
         logging.info(self.report.short_summary())
         file.close()
