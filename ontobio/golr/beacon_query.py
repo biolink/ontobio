@@ -29,13 +29,20 @@ class BeaconAssociationQuery(GolrAssociationQuery):
         keywords=None,
         categories=None,
         relations=None,
-        rows=10,
-        start=None
+        select_fields=None,
+        non_null_fields=[],
+        **kwargs
     ):
+        if select_fields == None:
+            select_fields = _get_select_fields()
+
+        if non_null_fields == []:
+            non_null_fields = ['relation', 'subject', 'object', 'id']
+
         super().__init__(
-            select_fields=_get_select_fields(),
-            rows=rows,
-            start=start
+            select_fields=select_fields,
+            non_null_fields=non_null_fields,
+            **kwargs
         )
 
         self.sources = sources
