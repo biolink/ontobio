@@ -1,5 +1,6 @@
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.gafparser import GafParser
+from ontobio.io import GafWriter
 from ontobio.io.assocwriter import GpadWriter
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
@@ -72,7 +73,7 @@ def parse_with(f, p):
         # this is because ontology is made from GAF
         p.config.ontology = ont
 
-    results = p.parse(open(f,"r"))
+    results = p.parse(open(f,"r"), skipheader=True)
     r1 = results[0]
     # TODO: test datafile does not have ECOs yet!!
     assert r1['evidence']['type'] == 'ISO' or r1['evidence']['type'] == 'ECO:0000201'
@@ -121,7 +122,7 @@ def test_convert_gaf_to_gpad():
     convert(POMBASE, p, w, p2)
 
 def convert(file, p, w, p2):
-    assocs = p.parse(file)
+    assocs = p.parse(file, skipheader=True)
     outfile = tempfile.NamedTemporaryFile(mode='w', delete=False)
     w.file = outfile
     for a in assocs:
@@ -135,10 +136,9 @@ def convert(file, p, w, p2):
 
 def test_invalid_goid_in_gpad():
     # Note: this ontology is a subset of GO extracted using the GAF, not GPAD
-    ont = OntologyFactory().create(ONT)
     p = GpadParser()
-    p.config.ontology = ont
-    results = p.parse(open(POMBASE_GPAD,"r"))
+    p.config.ontology = OntologyFactory().create(ONT)
+    results = p.parse(open(POMBASE_GPAD, "r"), skipheader=True)
 
     # we expect errors since ONT is not tuned for the GPAD file
     # for m in p.report.messages:
@@ -150,7 +150,7 @@ def test_validate_go_idspaces():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     p.config.class_idspaces = ['FOOZ']
-    assocs = p.parse(open(POMBASE,"r"))
+    assocs = p.parse(open(POMBASE, "r"), skipheader=True)
     for m in p.report.messages:
         print("MESSAGE: {}".format(m))
     assert len(assocs) == 0
@@ -176,7 +176,7 @@ def parse_with2(f, p):
     ont = OntologyFactory().create(ONT)
 
     p.config.ontology = ont
-    assocs = p.parse(open(f,"r"))
+    assocs = p.parse(open(f,"r"), skipheader=True)
     neg_assocs = [a for a in assocs if a['negated'] == True]
     assert len(neg_assocs) == 3
     for a in assocs:
@@ -187,16 +187,16 @@ def parse_with2(f, p):
 def test_errors_gaf():
     p = GafParser()
     p.config.ecomap = EcoMap()
-    assocs = p.parse(open("tests/resources/errors.gaf","r"))
+    assocs = p.parse(open("tests/resources/errors.gaf","r"), skipheader=True)
     msgs = p.report.messages
     print("MESSAGES: {}".format(len(msgs)))
     for m in msgs:
         print("MESSAGE: {}".format(m))
     assert len(msgs) == 15
 
-    # we expect 4
+    # we expect 7
     assert len(assocs) == 7
-    from ontobio.io import GafWriter
+
     w = GafWriter()
     w.write(assocs)
     for a in assocs:

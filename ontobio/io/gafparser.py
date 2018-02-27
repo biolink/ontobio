@@ -75,7 +75,7 @@ class GafParser(assocparser.AssocParser):
             return parsed
 
         if self.is_header(line):
-            return assocparser.ParseResult(line, [], False)
+            return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], True)
 
         vals = [el.strip() for el in line.split("\t")]
 
@@ -113,11 +113,11 @@ class GafParser(assocparser.AssocParser):
         ## --
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, line, ENTITY):
-            print("skipping cause {} not validated!".format(id))
+            print("skipping because {} not validated!".format(id))
             return assocparser.ParseResult(line, [], True)
 
         if not self._validate_id(goid, line, ANNOTATION):
-            print("skipping cause {} not validated!".format(goid))
+            print("skipping because {} not validated!".format(goid))
             return assocparser.ParseResult(line, [], True)
 
         date = self._normalize_gaf_date(date, line)

@@ -150,9 +150,8 @@ class AssociationSetFactory():
             results = p.skim(file)
             return self.create_from_tuples(results, **args)
         else:
-            assocs = p.parse(file)
+            assocs = p.parse(file, skipheader=True)
             return self.create_from_assocs(assocs, **args)
-
 
 
     def create_from_gaf(self, file, **args):

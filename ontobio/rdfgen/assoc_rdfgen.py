@@ -198,6 +198,10 @@ class CamRdfTransform(RdfTransform):
         # is a union, then we treat each element in the union
         # as a distinct assertion/annotation, where each assertion
         # has its own conjunction of relational expressions
+
+        if "header" in association and association["header"]:
+            return
+
         if and_xps is None and 'object_extensions' in association:
             x = association['object_extensions']
             for ix in x['union_of']:
