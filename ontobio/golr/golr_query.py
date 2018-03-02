@@ -45,7 +45,7 @@ from ontobio.vocabulary.relations import HomologyTypes
 
 class GolrFields:
     """
-    Enumeration of fields in Golr.
+    Enumeration of fields in Monarch Golr.
     Note the Monarch golr schema is taken as canonical here
     """
 
@@ -427,6 +427,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
         compact_associations contains a more compact representation
         consisting of objects with (subject, relation and objects)
 
+    provided_by: String
+
+        indicates the original source that provided the assertions
+        will only return assertions from this source
+
     config : Config
 
         See :ref:`Config` for details. The config object can be used
@@ -471,6 +476,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  facet_mincount=1,
                  facet_pivot_fields=[],
                  facet_on = 'on',
+                 provided_by=None,
                  pivot_subject_object=False,
                  unselect_evidence=False,
                  rows=10,
@@ -519,6 +525,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.facet_mincount=facet_mincount
         self.facet_pivot_fields=facet_pivot_fields
         self.facet_on=facet_on
+        self.provided_by=provided_by
         self.pivot_subject_object=pivot_subject_object
         self.unselect_evidence=unselect_evidence
         self.max_rows=100000
@@ -707,6 +714,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['-evidence_object_closure'] = e.replace("-","")
             else:
                 fq['evidence_object_closure'] = e
+
+        provided_by=self.provided_by
+        if provided_by is not None:
+            # want to be able to select by whoever provided this assertion see:
+            # Dataset URIs in metadata and in main tll dumps are not connected #545
+            fq[M.IS_DEFINED_BY] = 'https://data.monarchinitiative.org/ttl/'+provided_by+'.ttl'
 
         if self.exclude_automatic_assertions:
             fq['-evidence_object_closure'] = 'ECO:0000501'

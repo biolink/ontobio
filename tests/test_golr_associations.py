@@ -3,7 +3,6 @@ Tests for ontobio.golr.golr_associations
 """
 from ontobio.golr.golr_associations import search_associations, search_associations_compact, select_distinct_subjects, get_objects_for_subject, get_subjects_for_object
 
-
 HUMAN_SHH = 'NCBIGene:6469'
 HOLOPROSENCEPHALY = 'HP:0001360'
 TWIST_ZFIN = 'ZFIN:ZDB-GENE-050417-357'
@@ -47,7 +46,7 @@ def test_go_assocs_negated():
     # we also place NOT as a qualifier
     neg_assocs2 = [a for a in assocs if 'not' in a['qualifiers']]
     assert len(neg_assocs2) > 0
-    
+
 def test_go_assocs_compact():
     assocs = search_associations_compact(subject=TWIST_ZFIN,
                                           object_category='function'
@@ -70,8 +69,8 @@ def test_go_assocs_compact():
             print("  QUERY FOR {} -> {}".format(obj,a))
         m = [a for a in rassocs if a['subject'] == TWIST_ZFIN]
         assert len(m) == 1
-    
-    
+
+
 def test_pheno_assocs():
     payload = search_associations(subject=TWIST_ZFIN,
                                   object_category='phenotype'
@@ -92,7 +91,7 @@ def test_pheno_assocs_compact():
     a = assocs[0]
     assert a['subject'] == TWIST_ZFIN
     assert 'ZP:0007631' in a['objects']
-    
+
 def test_pheno_objects():
     results = search_associations(subject=TWIST_ZFIN,
                                   fetch_objects=True,
@@ -103,7 +102,7 @@ def test_pheno_objects():
     print(str(objs))
     assert len(objs) > 1
     assert 'ZP:0007631' in objs
-    
+
 def test_func_objects():
     results = search_associations(subject=TWIST_ZFIN,
                                   fetch_objects=True,
@@ -114,7 +113,7 @@ def test_func_objects():
     print(objs)
     assert DVPF in objs
     assert len(objs) > 1
-    
+
 def test_pheno_objects_shh_2():
     """
     Equivalent to above, using convenience method
@@ -136,7 +135,7 @@ def test_pheno2gene():
     print(len(subjs))
     assert HUMAN_SHH in subjs
     assert len(subjs) > 50
-    
+
 def test_disease_assocs():
     payload = search_associations(subject=HUMAN_SHH,
                                   object_category='disease'
@@ -153,7 +152,7 @@ def test_disease2gene():
     for a in assocs:
         print(str(a))
     assert len(assocs) > 0
- 
+
 def test_species_facet():
     payload = search_associations(subject_category='gene',
                                   object_category='phenotype',
@@ -162,5 +161,17 @@ def test_species_facet():
     fcs = payload['facet_counts']
     print(str(fcs))
     assert 'Homo sapiens' in fcs['subject_taxon_label'].keys()
-   
-    
+
+def test_provided_by(capsys):
+    with capsys.disabled():
+        payload = search_associations(subject_category='gene',
+                                      object_category='gene',
+                                      subject='HGNC:10848',
+                                      relation_closure='RO:HOM0000017',
+                                      homology_type='O',
+                                      provided_by='zfin',
+                                      facet_fields=['is_defined_by'],
+                                      rows=100)
+        fcs = payload['facet_counts']
+        print('FCS: {}'.format(fcs))
+        assert 'https://data.monarchinitiative.org/ttl/zfin.ttl' in fcs['is_defined_by'].keys()
