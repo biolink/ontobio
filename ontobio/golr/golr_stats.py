@@ -14,7 +14,7 @@ import scipy as sp # TODO - move
 
 M=GolrFields()  
 
-def get_counts(entities=[],
+def get_counts(entities=None,
                object_category=None,
                min_count=1,
                **kwargs):
@@ -24,6 +24,8 @@ def get_counts(entities=[],
     The result is a tuple (cmap, results), where cmap is a dict of TERM:COUNT
 
     """
+    if entities is None:
+        entities = []
     results = search_associations(subjects=entities,
                                   subject_direct=True,
                                   rows=0,
@@ -61,7 +63,7 @@ def get_background(objects, taxon, object_category, **kwargs):
     return results['facet_counts'][M.SUBJECT].keys()
 
 # TODO: refactor this - fetch compact associations
-def find_enriched(sample_entities=[],
+def find_enriched(sample_entities=None,
                   background_entities=None,
                   object_category=None,
                   **kwargs):
@@ -70,6 +72,8 @@ def find_enriched(sample_entities=[],
     Given a sample set of sample_entities (e.g. overexpressed genes) and a background set (e.g. all genes assayed), and a category of descriptor (e.g. phenotype, function),
     return enriched descriptors/classes
     """
+    if sample_entities is None:
+        sample_entites = []
 
     (sample_counts, sample_results) = get_counts(entities=sample_entities,
                                                  object_category=object_category,

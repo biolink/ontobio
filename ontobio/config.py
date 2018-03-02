@@ -102,8 +102,8 @@ class Config():
                  sparql = None,
                  scigraph_ontology = None,
                  scigraph_data = None,
-                 ontologies = [],
-                 categories = [],
+                 ontologies = None,
+                 categories = None,
                  default_solr_schema = None,
                  use_amigo_for = "function"):
         self.solr_assocs = solr_assocs
@@ -117,6 +117,12 @@ class Config():
         self.categories = categories
         self.default_solr_schema = default_solr_schema
         self.use_amigo_for = use_amigo_for
+
+        if self.ontologies is None:
+            self.ontologies = []
+
+        if self.categories is None:
+            self.categories = []
 
     def endpoint_url(self, endpoint):
         if endpoint is None:
@@ -146,7 +152,7 @@ class Config():
             url = self.endpoint_url(self.amigo_solr_search)
         return url
 
-    def get_solr_assocs_url(use_amigo=False):
+    def get_solr_assocs_url(self, use_amigo=False):
         """
         Return solr URL to be used for assocation (enhanced triple) queries
 

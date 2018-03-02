@@ -72,7 +72,7 @@ class GpiParser(EntityParser):
 
         config : a AssocParserConfig object
         """
-        if config == None:
+        if config is None:
             config = AssocParserConfig()
         self.config = config
         self.report = Report()
@@ -171,7 +171,7 @@ class BgiParser(EntityParser):
 
         config : a AssocParserConfig object
         """
-        if config == None:
+        if config is None:
             config = AssocParserConfig()
         self.config = config
         self.report = Report()

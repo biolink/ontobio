@@ -70,11 +70,11 @@ class RemoteScigraphOntology(Ontology):
         url = self.url
         if not url.endswith("/"):
             url += "/"
-        url += path;
+        url += path
         if q is not None:
-            url += "/" +q;
+            url += "/" +q
         if format is not None:
-            url = url  + "." + format;
+            url = url  + "." + format
         r = requests.get(url, params=params)
         return r
 
@@ -95,7 +95,9 @@ class RemoteScigraphOntology(Ontology):
         return response.json()
 
     # Override
-    def subgraph(self, nodes=[], relations=None):
+    def subgraph(self, nodes=None, relations=None):
+        if nodes is None:
+            nodes = []
         r_nodes = []
         r_edges = []
         
@@ -117,7 +119,9 @@ class RemoteScigraphOntology(Ontology):
 
 
     # Override
-    def subontology(self, nodes=[], **args):
+    def subontology(self, nodes, **args):
+        if nodes is None:
+            nodes = []
         g = self.subgraph(nodes, **args)
         ont = Ontology(graph=g) 
         return ont

@@ -252,7 +252,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                  url=None,
                  solr=None,
                  config=None,
-                 fq={},
+                 fq=None,
                  hl=True,
                  facet_fields=None,
                  search_fields=None,
@@ -262,7 +262,6 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.category = category
         self.is_go = is_go
         self.url = url
-        self.fq = fq
         self.solr = solr
         self.config = config
         self.hl = hl
@@ -272,6 +271,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.start = start
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
+        self.fq = fq if fq is not None else {}
 
         if self.facet_fields is None:
             self.facet_fields = ['category','taxon_label']
@@ -461,7 +461,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  fetch_objects=False,
                  fetch_subjects=False,
                  fq=None,
-                 slim=[],
+                 slim=None,
                  json_facet=None,
                  iterate=False,
                  map_identifiers=None,
@@ -469,14 +469,14 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  facet_field_limits=None,
                  facet_limit=25,
                  facet_mincount=1,
-                 facet_pivot_fields=[],
+                 facet_pivot_fields=None,
                  facet_on = 'on',
                  pivot_subject_object=False,
                  unselect_evidence=False,
                  rows=10,
                  start=None,
                  homology_type=None,
-                 non_null_fields=[],
+                 non_null_fields=None,
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -508,8 +508,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.select_fields=select_fields
         self.fetch_objects=fetch_objects
         self.fetch_subjects=fetch_subjects
-        self.fq=fq
-        self.slim=slim
+        self.fq=fq if fq is not None else {}
+        self.slim = slim if slim is not None else []
         self.json_facet=json_facet
         self.iterate=iterate
         self.map_identifiers=map_identifiers
@@ -529,6 +529,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
         self.non_null_fields=non_null_fields
+
+        if self.facet_pivot_fields is None:
+            self.facet_pivot_fields = []
+
+        if self.non_null_fields is None:
+            self.non_null_fields = []
 
         if self.facet_fields is None:
             self.facet_fields = [
@@ -611,7 +617,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             # the category to a root class
             if object_category is not None:
                 cc = self.get_config().get_category_class(object_category)
-                if cc is not None and object == None:
+                if cc is not None and object is None:
                     object = cc
 
         ## subject params

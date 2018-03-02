@@ -1,7 +1,12 @@
 
 class CompactGraph():
 
-    def __init__(self, nodes=[], edges=[]):
+    def __init__(self, nodes=None, edges=None):
+        if nodes is None:
+            nodes = []
+        if edges is None:
+            edges = []
+
         id2index = {}
         label_arr = []
         id_arr = []
@@ -56,7 +61,7 @@ class CompactGraph():
             ix = self.id2index[id]
             lbl = self.label_arr[ix]
             print("{}\t{}".format(id,lbl))
-        print("#EDGES");
+        print("#EDGES")
         for (pi,o_by_s) in self.o_by_ps.items():
             print("#P:{}".format(pi))
             for (s,olist) in o_by_s.items():
