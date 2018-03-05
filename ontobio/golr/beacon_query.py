@@ -29,37 +29,38 @@ class BeaconAssociationQuery(GolrAssociationQuery):
         keywords=None,
         categories=None,
         relations=None,
-        rows=10,
-        start=None
+        select_fields=None,
+        non_null_fields=[],
+        **kwargs
     ):
-        super().__init__(
-            select_fields=_get_select_fields(),
-            rows=rows,
-            start=start
-        )
+        if select_fields == None:
+            select_fields = _get_select_fields()
 
-        self.sources = sources
-        self.targets = targets
-        self.keywords = keywords
-        self.categories = categories
-        self.relations = relations
+        if non_null_fields == []:
+            non_null_fields = ['relation', 'subject', 'object', 'id']
+
+        super().__init__(
+            select_fields=select_fields,
+            non_null_fields=non_null_fields,
+            **kwargs
+        )
 
         filters = {}
 
-        if self.targets != None and self.targets != []:
-            filters['closure'] = _make_disjunction(self.targets, '"')
+        if targets != None and targets != []:
+            filters['closure'] = _make_disjunction(targets, '"')
 
-        if self.keywords != None and self.keywords != []:
-            filters['label'] = _make_disjunction(self.keywords, '*')
+        if keywords != None and keywords != []:
+            filters['label'] = _make_disjunction(keywords, '*')
 
-        if self.categories != None and self.categories != []:
-            filters['category'] = _make_disjunction(self.categories, '*')
+        if categories != None and categories != []:
+            filters['category'] = _make_disjunction(categories, '*')
 
-        source_disjunction=_make_disjunction(self.sources, '"')
+        source_disjunction=_make_disjunction(sources, '"')
         self.q=_build_query(source_disjunction, filters)
 
-        if self.relations != None and relations != []:
-            relation_disjunction = _make_disjunction(self.relations, '"')
+        if relations != None and relations != []:
+            relation_disjunction = _make_disjunction(relations, '"')
             self.q += ' AND (relation_label: ' + relation_disjunction + ')'
 
 def _build_query(sources, filters):
