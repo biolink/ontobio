@@ -104,6 +104,20 @@ class GolrFields:
     RELATION='relation'
     RELATION_LABEL='relation_label'
 
+    # This is a temporary fix until
+    # https://github.com/biolink/ontobio/issues/126 is resolved.
+
+    # AmiGO specific evidence fields
+    AMIGO_EVIDENCE_FIELDS = [
+        'evidence',
+        'evidence_label',
+        'evidence_type',
+        'evidence_closure',
+        'evidence_closure_label',
+        'evidence_subset_closure',
+        'evidence_subset_closure_label'
+    ]
+
     # golr convention: for any entity FOO, the id is denoted 'foo'
     # and the label FOO_label
     def label_field(self, f):
@@ -824,6 +838,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
 
+        if self._use_amigo_schema:
+            if len([x for x in select_fields if x in M.AMIGO_EVIDENCE_FIELDS]) == 0:
+                select_fields += M.AMIGO_EVIDENCE_FIELDS
+
         ## true if iterate in windows of max_size until all results found
         iterate=self.iterate
 
@@ -1140,7 +1158,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if M.EVIDENCE_OBJECT in d:
             assoc['evidence'] = d[M.EVIDENCE_OBJECT]
             assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
-            
+
+        if self._use_amigo_schema:
+            for f in M.AMIGO_EVIDENCE_FIELDS:
+                if f in d:
+                    assoc[f] = d[f]
+
         # solr does not allow nested objects, so evidence graph is json-encoded
         if M.EVIDENCE_GRAPH in d:
             assoc[M.EVIDENCE_GRAPH] = json.loads(d[M.EVIDENCE_GRAPH])
