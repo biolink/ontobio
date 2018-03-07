@@ -399,7 +399,6 @@ class GolrSearchQuery(GolrAbstractQuery):
         len_dict = OrderedDict()
         for hl in highlights:
             # dummy tags to make it valid xml
-            print(hl)
             dummy_xml = "<p>" + hl + "</p>"
             element_tree = ET.fromstring(dummy_xml)
             hl_length = 0
@@ -470,12 +469,13 @@ class GolrLayPersonSearch(GolrSearchQuery):
         payload = {
             'results': []
         }
-        for id, hl in results.highlighting.items():
+        for doc in results.docs:
+            hl = results.highlighting[doc['id']]
             highlights = []
             for hl_list in hl.values():
                 highlights.extend(hl_list)
             hightlight = {
-                'id': id,
+                'id': doc['id'],
                 'highlight': self._get_longest_hl(highlights)
             }
             payload['results'].append(hightlight)
