@@ -39,7 +39,8 @@ TODO
 import json
 import logging
 import pysolr
-
+import xml.etree.ElementTree as ET
+from collections import OrderedDict
 from ontobio.vocabulary.relations import HomologyTypes
 
 
@@ -287,7 +288,6 @@ class GolrSearchQuery(GolrAbstractQuery):
         if self.category is not None:
             fq['category'] = self.category
 
-        qf = []
         suffixes = ['std','kw','eng']
         if self.is_go:
             self.search_fields=dict(entity_label=3,general_blob=3)
@@ -312,10 +312,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         #    self.url = 'https://solr-dev.monarchinitiative.org/solr/search'
         #self.solr = pysolr.Solr(self.url, timeout=2)
 
-        for (f,relevancy) in self.search_fields.items():
-            fmt="{}_{}^{}"
-            for suffix in suffixes:
-                qf.append(fmt.format(f,suffix,relevancy))
+        qf = self._format_query_filter(self.search_fields, suffixes)
 
         select_fields = ["*","score"]
         params = {
@@ -372,6 +369,131 @@ class GolrSearchQuery(GolrAbstractQuery):
         logging.debug('Docs: {}'.format(len(results.docs)))
 
         return payload
+
+    @staticmethod
+    def _format_query_filter(search_fields, suffixes):
+        qf = []
+        for (f,relevancy) in search_fields.items():
+            fmt="{}_{}^{}"
+            for suffix in suffixes:
+                qf.append(fmt.format(f,suffix,relevancy))
+        return qf
+
+    def _get_longest_hl(self, highlights):
+        """
+        Given a list of highlighted text, returns the
+        longest highlight
+        For example:
+        [
+            "<em>Muscle</em> <em>atrophy</em>, generalized",
+            "Generalized <em>muscle</em> degeneration",
+            "Diffuse skeletal <em>">muscle</em> wasting"
+        ]
+        and returns:
+            <em>Muscle</em> <em>atrophy</em>, generalized
+
+        If there are mutliple matches of the same length, returns
+        the top (arbitrary) highlight
+        :return:
+        """
+        len_dict = OrderedDict()
+        for hl in highlights:
+            # dummy tags to make it valid xml
+            print(hl)
+            dummy_xml = "<p>" + hl + "</p>"
+            element_tree = ET.fromstring(dummy_xml)
+            hl_length = 0
+            for emph in element_tree.findall('em'):
+                hl_length += len(emph.text)
+            len_dict[hl] = hl_length
+
+        return max(len_dict, key=len_dict.get)
+
+class GolrLayPersonSearch(GolrSearchQuery):
+
+
+    def __init__(self,
+                 term=None,
+                 url=None,
+                 fq=None,
+                 search_fields=None,
+                 hl_cls=None,
+                 rows=10,
+                 start=0):
+        self.term = term
+        self.url = url
+        self.search_fields = search_fields
+        self.rows = rows
+        self.start = start
+        self.hl_cls = hl_cls
+        self.fq = fq if fq is not None else {}
+
+    def solr_params(self):
+
+        suffixes = ['std', 'kw', 'eng']
+        if self.url is None:
+            self._set_solr(self.get_config().lay_person_search)
+
+        if self.search_fields is not None:
+            qf = self._format_query_filter(self.search_fields, suffixes)
+        else:
+            qf = self._get_default_weights(suffixes)
+
+        self.solr = pysolr.Solr(self.url, timeout=2)
+
+        select_fields = ['id', 'score']
+        params = {
+            'q': '{0}+"{0}"'.format(self.term),
+            'qt': 'standard',
+            'fl': ",".join(select_fields),
+            'defType': 'edismax',
+            'qf': qf,
+            'rows': self.rows,
+            'start': self.start,
+            'hl': 'true',
+            'hl.snippets': '1000',
+            'fq': self.fq
+        }
+        if self.hl_cls is not None:
+            params['hl.simple.pre'] = '<em class=\"{}\">'.format(self.hl_cls)
+
+        return params
+
+    def exec(self):
+        """
+        Execute solr query
+        """
+        params = self.solr_params()
+        logging.info("PARAMS="+str(params))
+        results = self.solr.search(**params)
+        logging.info("Docs found: {}".format(results.hits))
+        payload = {
+            'results': []
+        }
+        for id, hl in results.highlighting.items():
+            highlights = []
+            for hl_list in hl.values():
+                highlights.extend(hl_list)
+            hightlight = {
+                'id': id,
+                'highlight': self._get_longest_hl(highlights)
+            }
+            payload['results'].append(hightlight)
+
+        logging.debug('Docs: {}'.format(len(results.docs)))
+
+        return payload
+
+    @staticmethod
+    def _get_default_weights(suffixes):
+        weights = {
+            "exact_synonym":   "5",
+            "related_synonym": "2",
+            "broad_synonym":   "1",
+            "narrow_synonym":  "3"
+        }
+        qf = GolrLayPersonSearch._format_query_filter(weights, suffixes)
+        return qf
 
 
 class GolrAssociationQuery(GolrAbstractQuery):
