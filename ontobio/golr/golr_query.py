@@ -112,10 +112,14 @@ class GolrFields:
         'evidence',
         'evidence_label',
         'evidence_type',
+        'evidence_type_label',
+        'evidence_with',
         'evidence_closure',
         'evidence_closure_label',
         'evidence_subset_closure',
-        'evidence_subset_closure_label'
+        'evidence_subset_closure_label',
+        'evidence_type_closure',
+        'evidence_type_closure_label'
     ]
 
     # golr convention: for any entity FOO, the id is denoted 'foo'
