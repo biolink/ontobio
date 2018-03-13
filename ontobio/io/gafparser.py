@@ -4,6 +4,7 @@ import json
 
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
+from ontobio.io import qc
 
 class GafParser(assocparser.AssocParser):
     """
@@ -143,6 +144,17 @@ class GafParser(assocparser.AssocParser):
         if aspect.upper() not in ["C", "F", "P"]:
             self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect)
             return assocparser.ParseResult(line, [], True)
+
+
+        go_rule_results = qc.test_go_rules(vals, self.config.ontology)
+        for rule_id, result in go_rule_results.items():
+            if result.result_type == qc.ResultType.WARNING:
+                self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
+                                    msg="{id}: {message}".format(id=rule_id, message=result.message))
+
+            if result.result_type == qc.ResultType.ERROR:
+                self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
+                                    msg="{id}: {message}".format(id=rule_id, message=result.message))
 
         ## --
         ## end of line re-processing
