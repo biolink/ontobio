@@ -151,10 +151,12 @@ class GafParser(assocparser.AssocParser):
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
                                     msg="{id}: {message}".format(id=rule_id, message=result.message))
+                return assocparser.ParseResult(line, [], True)
 
             if result.result_type == qc.ResultType.ERROR:
                 self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
                                     msg="{id}: {message}".format(id=rule_id, message=result.message))
+                return assocparser.ParseResult(line, [], True)
 
         ## --
         ## end of line re-processing
@@ -249,6 +251,7 @@ class GafParser(assocparser.AssocParser):
             assoc['object_extensions'] = {'union_of': object_or_exprs}
 
         self._validate_assoc(assoc, line)
+        # logging.info("Association success: {subject} {rel} {obj}".format(subject=assoc["subject"], rel=assoc["relation"]["id"], obj=assoc["object"]))
 
         return assocparser.ParseResult(line, [assoc], False, evidence.upper())
 

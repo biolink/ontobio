@@ -33,19 +33,23 @@ class GoRule08(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000008", "No annotations should be made to uninformatively high level terms", FailMode.HARD)
+        self.do_not_annotate = None
+        self.do_not_manually_annotate = None
 
     def test(self, annotation: List, ontology: ontol.Ontology) -> TestResult:
-        if ontology is None:
-            ontology = ontol.Ontology()
+        # Cache the subsets
+        if self.do_not_annotate is None and ontology is not None:
+            self.do_not_annotate = ontology.extract_subset("gocheck_do_not_annotate")
+            self.do_not_manually_annotate = ontology.extract_subset("gocheck_do_not_manually_annotate")
+        elif self.do_not_annotate is None and ontology is None:
+            self.do_not_annotate = []
+            self.do_not_manually_annotate = []
 
         goid = annotation[4]
         evidence = annotation[6]
 
-        do_not_annotate = ontology.extract_subset("gocheck_do_not_annotate")
-        do_not_manually_annotate = ontology.extract_subset("gocheck_do_not_manually_annotate")
-
-        auto_annotated = evidence == "IEA" and goid in do_not_annotate
-        manually_annotated = evidence != "IEA" and goid in do_not_manually_annotate
+        auto_annotated = goid in self.do_not_annotate
+        manually_annotated = evidence != "IEA" and goid in self.do_not_manually_annotate
         not_high_level = not (auto_annotated or manually_annotated)
 
         t = result(not_high_level, self.fail_mode)
