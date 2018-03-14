@@ -129,6 +129,12 @@ class GafParser(assocparser.AssocParser):
                                 msg="Expecting a known ECO GAF code, e.g ISS")
                 return assocparser.ParseResult(line, [], True)
 
+        # Throw out the line if it uses GO_REF:0000033, see https://github.com/geneontology/go-site/issues/563#event-1519351033
+        if "GO_REF:0000033" in reference.split("|"):
+            self.report.error(line, assocparser.Report.INVALID_ID, reference,
+                                msg="Disallowing GO_REF:0000033 in reference field as of 03/13/2018")
+            return assocparser.ParseResult(line, [], True)
+
         # validation
         self._validate_symbol(db_object_symbol, line)
 
