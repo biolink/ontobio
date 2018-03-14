@@ -95,6 +95,7 @@ class Report():
     OBSOLETE_CLASS_NO_REPLACEMENT = "Obsolete class with no replacement"
     WRONG_NUMBER_OF_COLUMNS = "Wrong number of columns in this line"
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
+    VIOLATES_GO_RULE = "Violates GO Rule"
 
     """
     3 warning levels

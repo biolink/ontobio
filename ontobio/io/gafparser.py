@@ -4,6 +4,7 @@ import json
 
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
+from ontobio.io import qc
 
 class GafParser(assocparser.AssocParser):
     """
@@ -144,6 +145,19 @@ class GafParser(assocparser.AssocParser):
             self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect)
             return assocparser.ParseResult(line, [], True)
 
+
+        go_rule_results = qc.test_go_rules(vals, self.config.ontology)
+        for rule_id, result in go_rule_results.items():
+            if result.result_type == qc.ResultType.WARNING:
+                self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
+                                    msg="{id}: {message}".format(id=rule_id, message=result.message))
+                return assocparser.ParseResult(line, [], True)
+
+            if result.result_type == qc.ResultType.ERROR:
+                self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
+                                    msg="{id}: {message}".format(id=rule_id, message=result.message))
+                return assocparser.ParseResult(line, [], True)
+
         ## --
         ## end of line re-processing
         ## --
@@ -237,6 +251,7 @@ class GafParser(assocparser.AssocParser):
             assoc['object_extensions'] = {'union_of': object_or_exprs}
 
         self._validate_assoc(assoc, line)
+        # logging.info("Association success: {subject} {rel} {obj}".format(subject=assoc["subject"], rel=assoc["relation"]["id"], obj=assoc["object"]))
 
         return assocparser.ParseResult(line, [assoc], False, evidence.upper())
 
