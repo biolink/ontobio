@@ -55,4 +55,10 @@ def test_longest_hl_ambiguous():
     expected = "<em>Muscle</em> <em>atrophy</em>, generalized"
     results = manager._get_longest_hl(test_data)
     assert expected ==  results
-    
+
+def test_hl_to_string():
+    manager = GolrSearchQuery()
+    test_data = "Foo <em>Muscle</em> bar <em>atrophy</em>, generalized"
+    expected = "Foo Muscle bar atrophy, generalized"
+    results = manager._hl_as_string(test_data)
+    assert expected ==  results

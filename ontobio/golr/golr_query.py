@@ -408,6 +408,21 @@ class GolrSearchQuery(GolrAbstractQuery):
 
         return max(len_dict, key=len_dict.get)
 
+    def _hl_as_string(self, highlight):
+        """
+        Given a solr string of highlighted text, returns the
+        str representations
+        For example:
+        "Foo <em>Muscle</em> bar <em>atrophy</em>, generalized"
+        Returns:
+        "Foo Muscle bar atrophy, generalized"
+        :return: str
+        """
+        # dummy tags to make it valid xml
+        dummy_xml = "<p>" + highlight + "</p>"
+        element_tree = ET.fromstring(dummy_xml)
+        return "".join(list(element_tree.itertext()))
+
 class GolrLayPersonSearch(GolrSearchQuery):
 
 
@@ -440,7 +455,7 @@ class GolrLayPersonSearch(GolrSearchQuery):
 
         self.solr = pysolr.Solr(self.url, timeout=2)
 
-        select_fields = ['id', 'score']
+        select_fields = ['id', 'label', 'score']
         params = {
             'q': '{0}+"{0}"'.format(self.term),
             'qt': 'standard',
@@ -474,9 +489,13 @@ class GolrLayPersonSearch(GolrSearchQuery):
             highlights = []
             for hl_list in hl.values():
                 highlights.extend(hl_list)
+            best_hl = self._get_longest_hl(highlights)
             hightlight = {
                 'id': doc['id'],
-                'highlight': self._get_longest_hl(highlights)
+                'highlight': best_hl,
+                'label': doc['label'],
+                'matched_synonym': self._hl_as_string(best_hl)
+
             }
             payload['results'].append(hightlight)
 
