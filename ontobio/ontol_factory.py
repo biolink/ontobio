@@ -64,11 +64,11 @@ class OntologyFactory():
             specifies how to retrieve the ontology info
 
         """
-        if handle == None:
+        if handle is None:
             self.test = self.test+1
             logging.info("T: "+str(self.test))                
             global default_ontology
-            if default_ontology == None:
+            if default_ontology is None:
                 logging.info("Creating new instance of default ontology")
                 default_ontology = create_ontology(default_ontology_handle)
             logging.info("Using default_ontology")                

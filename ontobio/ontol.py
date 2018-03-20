@@ -149,13 +149,15 @@ class Ontology():
                 for (o,s,m) in ont.xref_graph.edges(data=True):
                     self.xref_graph.add_edge(o,s,attr_dict=m)
 
-    def subgraph(self, nodes=[]):
+    def subgraph(self, nodes=None):
         """
         Return an induced subgraph
 
         By default this wraps networkx subgraph,
         but this may be overridden in specific implementations
         """
+        if nodes is None:
+            nodes = []
         return self.get_graph().subgraph(nodes)
 
     def subontology(self, nodes=None, minimal=False, relations=None):
