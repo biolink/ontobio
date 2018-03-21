@@ -27,8 +27,8 @@ setuptools.setup(
     description='Library for working with OBO Library Ontologies and associations',
     long_description=open("README.rst").read(),
     license='BSD',
-    #packages=['ontobio'],
     packages=setuptools.find_packages(),
+    package_data={"ontobio": ["ontobio/config.yaml"]},
 
     keywords='ontology graph obo owl sparql networkx network',
     classifiers=[
@@ -39,6 +39,8 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Topic :: Scientific/Engineering :: Visualization'
     ],
+
+    include_package_data=True,
 
     # Dependencies
     install_requires=[
