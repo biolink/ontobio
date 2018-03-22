@@ -166,7 +166,7 @@ class Session():
     Configuration for current session
     """
     def __init__(self):
-        self.default_config_path = self.default_config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "config.yaml"))
+        self.default_config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "config.yaml"))
         self.config = None
 
 """
