@@ -18,7 +18,7 @@ class OboJsonMapper(object):
                  context={}):
         self.digraph = digraph
         self.context = context
-        
+
     def add_obograph_digraph(self, og, node_type=None, predicates=None, xref_graph=None, logical_definitions=None,
                              parse_meta=True,
                              **args):
@@ -27,11 +27,11 @@ class OboJsonMapper(object):
         """
         digraph = self.digraph
         logging.info("NODES: {}".format(len(og['nodes'])))
-    
+
         # if client passes an xref_graph we must parse metadata
         if xref_graph is not None:
             parse_meta = True
-            
+
         for n in og['nodes']:
             is_obsolete =  'is_obsolete' in n and n['is_obsolete'] == 'true'
             if is_obsolete:
@@ -77,7 +77,7 @@ class OboJsonMapper(object):
                                        [(self.contract_uri(x['propertyId']),
                                          self.contract_uri(x['fillerId'])) for x in a['restrictions'] if x is not None])
                 logical_definitions.append(ld)
-                                    
+
     def transform_meta(self, m):
         if 'basicPropertyValues' in m:
             for x in m['basicPropertyValues']:
@@ -89,15 +89,15 @@ class OboJsonMapper(object):
         if len(self.context.keys()) > 0:
             curies = contract_uri(uri, cmaps=[self.context])
             if len(curies) > 0:
-                return curies[0]
-            
-        curies = contract_uri(uri)
+                return sorted(curies, key=len)[0] # sort by length
+
+        curies = sorted(contract_uri(uri), key=len) # Sort by length
         if len(curies) > 0:
             return curies[0]
         else:
             return uri
 
-    
+
 def convert_json_file(obographfile, **args):
     """
     Return a networkx MultiDiGraph of the ontologies
@@ -136,5 +136,3 @@ def convert_json_object(obographdoc, **args):
         'graphdoc': obographdoc,
         'logical_definitions': logical_definitions
         }
-
-
