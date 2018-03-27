@@ -1,0 +1,28 @@
+solr_assocs:
+  url: "https://solr.monarchinitiative.org/solr/golr"
+  timeout: 5
+amigo_solr_assocs:
+  url: "http://golr.berkeleybop.org"
+  timeout: 4
+solr_search:
+  url: "https://solr.monarchinitiative.org/solr/search"
+  timeout: 2
+amigo_solr_search:
+  url: "http://golr.berkeleybop.org"
+  timeout: 2
+sparql:
+  url: "http://sparql.hegroup.org/sparql"
+  timeout: 2
+scigraph_ontology:
+  url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
+  timeout: 2
+scigraph_data:
+  url: "https://scigraph-data.monarchinitiative.org/scigraph/"
+  timeout: 2
+use_amigo_for:
+  - function
+ontologies:
+  - id: magic1234
+    handle: pato
+    pre_load: true
+

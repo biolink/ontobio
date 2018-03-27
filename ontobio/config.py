@@ -1,5 +1,6 @@
 import logging
 import yaml
+import os
 from marshmallow import Schema, fields, pprint, post_load
 
 class OntologyConfigSchema(Schema):
@@ -165,7 +166,7 @@ class Session():
     Configuration for current session
     """
     def __init__(self):
-        self.default_config_path = 'conf/config.yaml'
+        self.default_config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "config.yaml"))
         self.config = None
 
 """
@@ -182,7 +183,6 @@ def get_config():
     """
     if session.config is None:
         path = session.default_config_path
-        import os
         if os.path.isfile(path):
             logging.info("LOADING FROM: {}".format(path))
             session.config = load_config(path)
