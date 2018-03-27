@@ -847,8 +847,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
 
         if self._use_amigo_schema:
-            if len([x for x in select_fields if x in M.AMIGO_SPECIFIC_FIELDS]) == 0:
-                select_fields += M.AMIGO_SPECIFIC_FIELDS
+            select_fields += [x for x in M.AMIGO_SPECIFIC_FIELDS if x not in select_fields]
 
         ## true if iterate in windows of max_size until all results found
         iterate=self.iterate
