@@ -107,8 +107,12 @@ class GolrFields:
     # This is a temporary fix until
     # https://github.com/biolink/ontobio/issues/126 is resolved.
 
-    # AmiGO specific evidence fields
-    AMIGO_EVIDENCE_FIELDS = [
+    # AmiGO specific fields
+    AMIGO_SPECIFIC_FIELDS = [
+        'reference',
+        'qualifier',
+        'is_redundant_for',
+        'type',
         'evidence',
         'evidence_label',
         'evidence_type',
@@ -843,8 +847,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
 
         if self._use_amigo_schema:
-            if len([x for x in select_fields if x in M.AMIGO_EVIDENCE_FIELDS]) == 0:
-                select_fields += M.AMIGO_EVIDENCE_FIELDS
+            if len([x for x in select_fields if x in M.AMIGO_SPECIFIC_FIELDS]) == 0:
+                select_fields += M.AMIGO_SPECIFIC_FIELDS
 
         ## true if iterate in windows of max_size until all results found
         iterate=self.iterate
@@ -1164,7 +1168,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
 
         if self._use_amigo_schema:
-            for f in M.AMIGO_EVIDENCE_FIELDS:
+            for f in M.AMIGO_SPECIFIC_FIELDS:
                 if f in d:
                     assoc[f] = d[f]
 
