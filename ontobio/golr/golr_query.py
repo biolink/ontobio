@@ -388,6 +388,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         payload = {
             'facet_counts': translate_facet_field(fcs),
             'pagination': {},
+            'numFound': results.hits,
             'highlighting': results.highlighting,
             'docs': results.docs
         }
@@ -929,7 +930,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         payload = {
             'facet_counts': translate_facet_field(fcs),
-            'pagination': {}
+            'pagination': {},
+            'numFound': results.hits
         }
 
         include_raw=self.include_raw
