@@ -414,8 +414,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                 }
             except ET.ParseError:
                 highlight = {
-                    'highlight': doc['label'],
-                    'match': doc['label']
+                    'highlight': doc['label'][0],
+                    'match': doc['label'][0]
                 }
             highlighting[doc['id']] = highlight
 
@@ -456,8 +456,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                 best_hl = self._get_longest_hl(highlights)
                 hl_str = self._hl_as_string(best_hl)
             except ET.ParseError:
-                best_hl = doc['label']
-                hl_str = doc['label']
+                best_hl = doc['label'][0]
+                hl_str = doc['label'][0]
             doc['taxon'] = doc['taxon'] if 'taxon' in doc else []
             doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else []
             doc = {
