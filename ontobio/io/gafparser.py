@@ -4,6 +4,7 @@ import json
 
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
+from ontobio.io import qc
 
 class GafParser(assocparser.AssocParser):
     """
@@ -129,6 +130,12 @@ class GafParser(assocparser.AssocParser):
                                 msg="Expecting a known ECO GAF code, e.g ISS")
                 return assocparser.ParseResult(line, [], True)
 
+        # Throw out the line if it uses GO_REF:0000033, see https://github.com/geneontology/go-site/issues/563#event-1519351033
+        if "GO_REF:0000033" in reference.split("|"):
+            self.report.error(line, assocparser.Report.INVALID_ID, reference,
+                                msg="Disallowing GO_REF:0000033 in reference field as of 03/13/2018")
+            return assocparser.ParseResult(line, [], True)
+
         # validation
         self._validate_symbol(db_object_symbol, line)
 
@@ -140,9 +147,22 @@ class GafParser(assocparser.AssocParser):
             db_object_id = toks[1:]
             vals[1] = db_object_id
 
-        if aspect.upper() not in ["C", "F", "P"]:
+        if goid.startswith("GO:") and aspect.upper() not in ["C", "F", "P"]:
             self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect)
             return assocparser.ParseResult(line, [], True)
+
+
+        go_rule_results = qc.test_go_rules(vals, self.config.ontology)
+        for rule_id, result in go_rule_results.items():
+            if result.result_type == qc.ResultType.WARNING:
+                self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
+                                    msg="{id}: {message}".format(id=rule_id, message=result.message))
+                return assocparser.ParseResult(line, [], True)
+
+            if result.result_type == qc.ResultType.ERROR:
+                self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
+                                    msg="{id}: {message}".format(id=rule_id, message=result.message))
+                return assocparser.ParseResult(line, [], True)
 
         ## --
         ## end of line re-processing
@@ -237,6 +257,7 @@ class GafParser(assocparser.AssocParser):
             assoc['object_extensions'] = {'union_of': object_or_exprs}
 
         self._validate_assoc(assoc, line)
+        # logging.info("Association success: {subject} {rel} {obj}".format(subject=assoc["subject"], rel=assoc["relation"]["id"], obj=assoc["object"]))
 
         return assocparser.ParseResult(line, [assoc], False, evidence.upper())
 

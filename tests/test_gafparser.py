@@ -192,7 +192,7 @@ def test_errors_gaf():
     print("MESSAGES: {}".format(len(msgs)))
     for m in msgs:
         print("MESSAGE: {}".format(m))
-    assert len(msgs) == 15
+    assert len(msgs) == 16
 
     # we expect 7
     assert len(assocs) == 7
