@@ -405,11 +405,18 @@ class GolrSearchQuery(GolrAbstractQuery):
             highlights = []
             for hl_list in hl.values():
                 highlights.extend(hl_list)
-            best_hl = self._get_longest_hl(highlights)
-            highlight = {
-                'highlight': best_hl,
-                'match': self._hl_as_string(best_hl)
-            }
+
+            try:
+                best_hl = self._get_longest_hl(highlights)
+                highlight = {
+                    'highlight': best_hl,
+                    'match': self._hl_as_string(best_hl)
+                }
+            except ET.ParseError:
+                highlight = {
+                    'highlight': doc['label'],
+                    'match': doc['label']
+                }
             highlighting[doc['id']] = highlight
 
         payload = {
@@ -445,7 +452,12 @@ class GolrSearchQuery(GolrAbstractQuery):
             highlights = []
             for hl_list in hl.values():
                 highlights.extend(hl_list)
-            best_hl = self._get_longest_hl(highlights)
+            try:
+                best_hl = self._get_longest_hl(highlights)
+                hl_str = self._hl_as_string(best_hl)
+            except ET.ParseError:
+                best_hl = doc['label']
+                hl_str = doc['label']
             doc['taxon'] = doc['taxon'] if 'taxon' in doc else []
             doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else []
             doc = {
@@ -455,7 +467,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                 'taxon': doc['taxon'],
                 'taxon_label': doc['taxon_label'],
                 'highlight': best_hl,
-                'match': self._hl_as_string(best_hl)
+                'match': hl_str
             }
             docs.append(doc)
 
@@ -496,11 +508,14 @@ class GolrSearchQuery(GolrAbstractQuery):
         for hl in highlights:
             # dummy tags to make it valid xml
             dummy_xml = "<p>" + hl + "</p>"
-            element_tree = ET.fromstring(dummy_xml)
-            hl_length = 0
-            for emph in element_tree.findall('em'):
-                hl_length += len(emph.text)
-            len_dict[hl] = hl_length
+            try:
+                element_tree = ET.fromstring(dummy_xml)
+                hl_length = 0
+                for emph in element_tree.findall('em'):
+                    hl_length += len(emph.text)
+                len_dict[hl] = hl_length
+            except ET.ParseError:
+                raise ET.ParseError
 
         return max(len_dict, key=len_dict.get)
 
@@ -516,7 +531,10 @@ class GolrSearchQuery(GolrAbstractQuery):
         """
         # dummy tags to make it valid xml
         dummy_xml = "<p>" + highlight + "</p>"
-        element_tree = ET.fromstring(dummy_xml)
+        try:
+            element_tree = ET.fromstring(dummy_xml)
+        except ET.ParseError:
+            raise ET.ParseError
         return "".join(list(element_tree.itertext()))
 
 
