@@ -283,6 +283,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                  start=None,
                  prefix=None,
                  boost_fx=None,
+                 boost_q=None,
                  highlight_class=None):
         self.term = term
         self.category = category
@@ -300,6 +301,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.fq = fq if fq is not None else {}
         self.prefix = prefix
         self.boost_fx = boost_fx
+        self.boost_q = boost_q
         self.highlight_class = highlight_class
 
         if self.facet_fields is None:
@@ -399,6 +401,11 @@ class GolrSearchQuery(GolrAbstractQuery):
             params['bf'] = []
             for boost in self.boost_fx:
                 params['bf'].append(boost)
+
+        if self.boost_q is not None:
+            params['bq'] = []
+            for boost in self.boost_q:
+                params['bq'].append(boost)
 
         if self.highlight_class is not None:
             params['hl.simple.pre'] = \
