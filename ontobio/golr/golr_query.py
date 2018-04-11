@@ -282,7 +282,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                  rows=100,
                  start=None,
                  prefix=None,
-                 boost_fx=None):
+                 boost_fx=None,
+                 highlight_class=None):
         self.term = term
         self.category = category
         self.is_go = is_go
@@ -299,6 +300,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.fq = fq if fq is not None else {}
         self.prefix = prefix
         self.boost_fx = boost_fx
+        self.highlight_class = highlight_class
 
         if self.facet_fields is None:
             self.facet_fields = ['category', 'taxon_label']
@@ -379,6 +381,10 @@ class GolrSearchQuery(GolrAbstractQuery):
             for boost in self.boost_fx:
                 params['bf'].append(boost)
 
+        if self.highlight_class is not None:
+            params['hl.simple.pre'] = \
+                '<em class=\"{}\">'.format(self.highlight_class)
+
         return params
 
     def exec(self, **kwargs):
@@ -455,9 +461,11 @@ class GolrSearchQuery(GolrAbstractQuery):
             try:
                 best_hl = self._get_longest_hl(highlights)
                 hl_str = self._hl_as_string(best_hl)
+                has_highlight = True
             except ET.ParseError:
                 best_hl = doc['label'][0]
                 hl_str = doc['label'][0]
+                has_highlight = False
             doc['taxon'] = doc['taxon'] if 'taxon' in doc else []
             doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else []
             doc = {
@@ -467,6 +475,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                 'taxon': doc['taxon'],
                 'taxon_label': doc['taxon_label'],
                 'highlight': best_hl,
+                'has_highlight':  has_highlight,
                 'match': hl_str
             }
             docs.append(doc)
