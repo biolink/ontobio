@@ -306,8 +306,14 @@ class GolrSearchQuery(GolrAbstractQuery):
             self.facet_fields = ['category', 'taxon_label']
 
         if self.search_fields is None:
-            self.search_fields = dict(iri=3, id=3, label=2,
-                                      definition=2, synonym=2)
+            self.search_fields = dict(id=3,
+                                      iri=3,
+                                      label=2,
+                                      synonym=1,
+                                      definition=1,
+                                      taxon_label=1,
+                                      equivalent_iri=1,
+                                      equivalent_curie=1)
 
     def solr_params(self):
         #facet_fields = [ map_field(fn, self.field_mapping) for fn in self.facet_fields ]
@@ -341,14 +347,27 @@ class GolrSearchQuery(GolrAbstractQuery):
         #self.solr = pysolr.Solr(self.url, timeout=2)
 
         qf = self._format_query_filter(self.search_fields, suffixes)
+        if not self.is_go:
+            monarch_boosts = [
+                "label_searchable^1",
+                "definition_searchable^1",
+                "synonym_searchable^1",
+                "iri_searchable^2",
+                "id_searchable^2",
+                "equivalent_iri_searchable^1",
+                "equivalent_curie_searchable^1",
+                "taxon_label_searchable^1",
+                "taxon_label_synonym_searchable^1"
+            ]
+            qf.extend(monarch_boosts)
 
         select_fields = ["*", "score"]
         params = {
-            'q': self.term,
+            'q': '{0} "{0}"'.format(self.term),
             "qt": "standard",
             'facet': 'on',
             'facet.field': self.facet_fields,
-            'facet.limit': 40,
+            'facet.limit': 25,
             'facet.mincount': 1,
             'fl': ",".join(select_fields),
             "defType": "edismax",
@@ -476,7 +495,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                 'taxon_label': doc['taxon_label'],
                 'highlight': best_hl,
                 'has_highlight':  has_highlight,
-                'match': hl_str
+                'match': hl_str,
             }
             docs.append(doc)
 
@@ -580,7 +599,7 @@ class GolrLayPersonSearch(GolrSearchQuery):
 
         select_fields = ['id', 'label', 'score']
         params = {
-            'q': '{0}+"{0}"'.format(self.term),
+            'q': '{0} "{0}"'.format(self.term),
             'qt': 'standard',
             'fl': ",".join(select_fields),
             'defType': 'edismax',
