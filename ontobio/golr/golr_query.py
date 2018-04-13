@@ -139,6 +139,26 @@ class GolrFields:
 # create an instance
 M=GolrFields()
 
+# fields in the result docs that are to be inverted when 'invert_subject_object' is True
+INVERT_FIELDS_MAP = {
+    M.SUBJECT: M.OBJECT,
+    M.SUBJECT_CLOSURE: M.OBJECT_CLOSURE,
+    M.SUBJECT_TAXON: M.OBJECT_TAXON,
+    M.SUBJECT_CLOSURE_LABEL: M.OBJECT_CLOSURE_LABEL,
+    M.SUBJECT_TAXON_CLOSURE_LABEL: M.OBJECT_TAXON_CLOSURE_LABEL,
+    M.SUBJECT_TAXON_LABEL_SEARCHABLE: M.OBJECT_TAXON_LABEL_SEARCHABLE,
+    M.SUBJECT_TAXON_CLOSURE: M.OBJECT_TAXON_CLOSURE,
+    M.SUBJECT_LABEL: M.OBJECT_LABEL,
+    M.SUBJECT_TAXON_CLOSURE_LABEL_SEARCHABLE: M.OBJECT_TAXON_CLOSURE_LABEL_SEARCHABLE,
+    M.SUBJECT_CLOSURE_LABEL_SEARCHABLE: M.OBJECT_CLOSURE_LABEL_SEARCHABLE,
+    M.SUBJECT_TAXON: M.OBJECT_TAXON,
+    M.SUBJECT_LABEL_SEARCHABLE: M.OBJECT_LABEL_SEARCHABLE,
+    M.SUBJECT_CATEGORY: M.OBJECT_CATEGORY,
+    M.SUBJECT_TAXON_CLOSURE_MAP: M.OBJECT_TAXON_CLOSURE_MAP,
+    M.SUBJECT_TAXON_LABEL: M.OBJECT_TAXON_LABEL,
+    M.SUBJECT_CLOSURE_MAP: M.OBJECT_CLOSURE_MAP,
+}
+
 # normalize to what Monarch uses
 PREFIX_NORMALIZATION_MAP = {
     'MGI:MGI' : 'MGI',
@@ -168,7 +188,7 @@ def solr_quotify(v):
 #monarch_solr = pysolr.Solr(monarch_golr_url, timeout=5)
 
 
-def translate_facet_field(fcs):
+def translate_facet_field(fcs, invert_subject_object = False):
     """
     Translates solr facet_fields results into something easier to manipulate
 
@@ -183,6 +203,16 @@ def translate_facet_field(fcs):
     ffs = fcs['facet_fields']
     rs={}
     for (facet, facetresults) in ffs.items():
+        if invert_subject_object:
+            for (k,v) in INVERT_FIELDS_MAP.items():
+                print("> {} {}".format(k,v))
+                if facet == k:
+                    facet = v
+                    break
+                elif facet == v:
+                    facet = k
+                    break
+
         pairs = {}
         rs[facet] = pairs
         for i in range(int(len(facetresults)/2)):
@@ -385,8 +415,9 @@ class GolrSearchQuery(GolrAbstractQuery):
             if 'entity' in d:
                 d['id'] = d['entity']
                 d['label'] = d['entity_label']
+
         payload = {
-            'facet_counts': translate_facet_field(fcs),
+            'facet_counts': translate_facet_field(fcs, self.invert_subject_object),
             'pagination': {},
             'highlighting': results.highlighting,
             'docs': results.docs
@@ -928,7 +959,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         fcs = results.facets
 
         payload = {
-            'facet_counts': translate_facet_field(fcs),
+            'facet_counts': translate_facet_field(fcs, self.invert_subject_object),
             'pagination': {}
         }
 
@@ -1100,10 +1131,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     if v in d:
                         #logging.debug("Setting field {} to {} // was in {}".format(k,d[v],v))
                         d[k] = d[v]
+
         if invert_subject_object:
-            flip(d,M.SUBJECT,M.OBJECT)
-            flip(d,M.SUBJECT_LABEL,M.OBJECT_LABEL)
-            flip(d,M.SUBJECT_CATEGORY,M.OBJECT_CATEGORY)
+            for field in INVERT_FIELDS_MAP:
+                flip(d,field,INVERT_FIELDS_MAP[field])
+
         return d
 
 
@@ -1151,6 +1183,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  'relation': self.translate_obj(d,M.RELATION),
                  'publications': self.translate_objs(d,M.SOURCE),  # note 'source' is used in the golr schema
         }
+
+        if self.invert_subject_object:
+            assoc['relation']['inverse'] = True
+
         if len(qualifiers) > 0:
             assoc['qualifiers'] = qualifiers
 
@@ -1180,6 +1216,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
         """
         Translate a set of solr results
         """
+        for d in ds:
+            self.map_doc(d, {}, invert_subject_object=True)
+
         return [self.translate_doc(d, **kwargs) for d in ds]
 
 
