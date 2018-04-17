@@ -323,7 +323,6 @@ class GolrSearchQuery(GolrAbstractQuery):
                                       equivalent_curie=1)
 
     def solr_params(self):
-        #facet_fields = [ map_field(fn, self.field_mapping) for fn in self.facet_fields ]
 
         if self.facet_fields is None and self.facet:
             self.facet_fields = ['category', 'taxon_label']
@@ -342,7 +341,6 @@ class GolrSearchQuery(GolrAbstractQuery):
             self.fq['document_category'] = "general"
             if self.url is None:
                 self._set_solr(self.get_config().amigo_solr_search)
-                #self.url = 'http://golr.berkeleybop.org/'
             else:
                 self.solr = pysolr.Solr(self.url, timeout=2)
         else:
@@ -437,6 +435,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         """
         Execute solr autocomplete
         """
+        self.facet = False
         params = self.solr_params()
         logging.info("PARAMS=" + str(params))
         results = self.solr.search(**params)
@@ -480,7 +479,6 @@ class GolrSearchQuery(GolrAbstractQuery):
         :param results: pysolr.Results
         :return: {'docs': List[AutocompleteResult]}
         """
-
         # map go-golr fields to standard
         for doc in results.docs:
             if 'entity' in doc:
@@ -627,6 +625,7 @@ class GolrLayPersonSearch(GolrSearchQuery):
         :param results:
         :return:
         """
+
         payload = {
             'results': []
         }

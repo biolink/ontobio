@@ -1,0 +1,22 @@
+{
+  "results": [
+    {
+      "id": "HP:0009058",
+      "matched_synonym": "Fat accumulation in muscle fibers",
+      "highlight": "Fat accumulation in <em class=\"foo\">muscle</em> fibers",
+      "label": "Increased muscle lipid content"
+    },
+    {
+      "id": "HP:0003738",
+      "matched_synonym": "Exercise-induced muscle pain",
+      "highlight": "Exercise-induced <em class=\"foo\">muscle</em> pain",
+      "label": "Exercise-induced myalgia"
+    },
+    {
+      "id": "HP:0003326",
+      "matched_synonym": "Muscle pain",
+      "highlight": "<em class=\"foo\">Muscle</em> pain",
+      "label": "Myalgia"
+    }
+  ]
+}
