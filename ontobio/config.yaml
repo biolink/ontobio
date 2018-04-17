@@ -5,7 +5,10 @@ amigo_solr_assocs:
   url: "http://golr.berkeleybop.org"
   timeout: 4
 solr_search:
-  url: "https://solr-dev.monarchinitiative.org/solr/search"
+  url: "https://solr.monarchinitiative.org/solr/search"
+  timeout: 2
+lay_person_search:
+  url: "https://solr.monarchinitiative.org/solr/hpo-pl"
   timeout: 2
 amigo_solr_search:
   url: "http://golr.berkeleybop.org"

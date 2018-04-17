@@ -268,6 +268,7 @@ class GolrAbstractQuery():
 
 class GolrSearchQuery(GolrAbstractQuery):
     """
+    Controller for monarch and go solr search cores
     Queries over a search document
     """
 
@@ -281,6 +282,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                  fq=None,
                  hl=True,
                  facet_fields=None,
+                 facet=True,
                  search_fields=None,
                  rows=100,
                  start=None,
@@ -296,6 +298,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.solr = solr
         self.config = config
         self.hl = hl
+        self.facet = facet
         self.facet_fields = facet_fields
         self.search_fields = search_fields
         self.rows = rows
@@ -308,9 +311,6 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.boost_q = boost_q
         self.highlight_class = highlight_class
         self.taxon = taxon
-
-        if self.facet_fields is None:
-            self.facet_fields = ['category', 'taxon_label']
 
         if self.search_fields is None:
             self.search_fields = dict(id=3,
@@ -325,9 +325,11 @@ class GolrSearchQuery(GolrAbstractQuery):
     def solr_params(self):
         #facet_fields = [ map_field(fn, self.field_mapping) for fn in self.facet_fields ]
 
-        fq = self.fq
+        if self.facet_fields is None and self.facet:
+            self.facet_fields = ['category', 'taxon_label']
+
         if self.category is not None:
-            fq['category'] = self.category
+            self.fq['category'] = self.category
 
         suffixes = ['std', 'kw', 'eng']
         if self.is_go:
@@ -337,7 +339,7 @@ class GolrSearchQuery(GolrAbstractQuery):
             if 'taxon_label' in self.facet_fields:
                 self.facet_fields.remove('taxon_label')
             suffixes = ['searchable']
-            fq['document_category'] = "general"
+            self.fq['document_category'] = "general"
             if self.url is None:
                 self._set_solr(self.get_config().amigo_solr_search)
                 #self.url = 'http://golr.berkeleybop.org/'
@@ -348,10 +350,6 @@ class GolrSearchQuery(GolrAbstractQuery):
                 self._set_solr(self.get_config().solr_search)
             else:
                 self.solr = pysolr.Solr(self.url, timeout=2)
-
-        #if self.url is None:
-        #    self.url = 'https://solr-dev.monarchinitiative.org/solr/search'
-        #self.solr = pysolr.Solr(self.url, timeout=2)
 
         qf = self._format_query_filter(self.search_fields, suffixes)
         if not self.is_go:
@@ -372,15 +370,17 @@ class GolrSearchQuery(GolrAbstractQuery):
         params = {
             'q': '{0} "{0}"'.format(self.term),
             "qt": "standard",
-            'facet': 'on',
-            'facet.field': self.facet_fields,
-            'facet.limit': 25,
-            'facet.mincount': 1,
             'fl': ",".join(select_fields),
             "defType": "edismax",
             "qf": qf,
             'rows': self.rows
         }
+
+        if self.facet:
+            params['facet'] = 'on'
+            params['facet.field'] = self.facet_fields
+            params['facet.limit'] = 25
+            params['facet.mincount'] = 1
 
         if self.start is not None:
             params['start'] = self.start
@@ -390,8 +390,9 @@ class GolrSearchQuery(GolrAbstractQuery):
             params['hl.snippets'] = "1000"
             params['hl'] = 'on'
 
-        if fq is not None:
-            filter_queries = ['{}:{}'.format(k,solr_quotify(v)) for (k,v) in fq.items()]
+        if self.fq is not None:
+            filter_queries = ['{}:{}'.format(k,solr_quotify(v))
+                              for (k,v) in self.fq.items()]
             params['fq'] = filter_queries
         else:
             params['fq'] = []
@@ -444,6 +445,12 @@ class GolrSearchQuery(GolrAbstractQuery):
 
     def _process_search_results(self,
                                 results: pysolr.Results) -> SearchResults:
+        """
+        Convert solr docs to biolink object
+
+        :param results: pysolr.Results
+        :return: model.GolrResults.SearchResults
+        """
 
         # map go-golr fields to standard
         for doc in results.docs:
@@ -451,12 +458,10 @@ class GolrSearchQuery(GolrAbstractQuery):
                 doc['id'] = doc['entity']
                 doc['label'] = doc['entity_label']
 
-        highlighting = {}
-        if results.highlighting:
-            for doc in results.docs:
-                hl = self._process_highlight(results, doc)
-                highlighting[doc['id']] = hl._asdict()
-
+        highlighting = {
+            doc['id']: self._process_highlight(results, doc)._asdict()
+            for doc in results.docs if results.highlighting
+        }
         payload = SearchResults(
             facet_counts=translate_facet_field(results.facets),
             highlighting=highlighting,
@@ -470,6 +475,11 @@ class GolrSearchQuery(GolrAbstractQuery):
     def _process_autocomplete_results(
             self,
             results: pysolr.Results) -> Dict[str, List[AutocompleteResult]]:
+        """
+        Convert results to biolink autocomplete object
+        :param results: pysolr.Results
+        :return: {'docs': List[AutocompleteResult]}
+        """
 
         # map go-golr fields to standard
         for doc in results.docs:
@@ -585,79 +595,49 @@ class GolrSearchQuery(GolrAbstractQuery):
 
 
 class GolrLayPersonSearch(GolrSearchQuery):
+    """
+    Controller for the HPO lay person index,
+    see https://github.com/monarch-initiative/hpo-plain-index
+    """
 
-    def __init__(self,
-                 term=None,
-                 url=None,
-                 fq=None,
-                 search_fields=None,
-                 hl_cls=None,
-                 rows=10,
-                 start=0):
-        self.term = term
-        self.url = url
-        self.search_fields = search_fields
-        self.rows = rows
-        self.start = start
-        self.hl_cls = hl_cls
-        self.fq = fq if fq is not None else {}
+    def __init__(self, term=None, **kwargs):
+        super().__init__(term, **kwargs)
+        self.facet = False
 
-    def solr_params(self):
-
+    def set_lay_params(self):
+        params = self.solr_params()
         suffixes = ['std', 'kw', 'eng']
-        if self.url is None:
-            self._set_solr(self.get_config().lay_person_search)
-
-        if self.search_fields is not None:
-            qf = self._format_query_filter(self.search_fields, suffixes)
-        else:
-            qf = self._get_default_weights(suffixes)
-
-        self.solr = pysolr.Solr(self.url, timeout=2)
-
-        select_fields = ['id', 'label', 'score']
-        params = {
-            'q': '{0} "{0}"'.format(self.term),
-            'qt': 'standard',
-            'fl': ",".join(select_fields),
-            'defType': 'edismax',
-            'qf': qf,
-            'rows': self.rows,
-            'start': self.start,
-            'hl': 'true',
-            'hl.snippets': '1000',
-            'fq': self.fq
-        }
-        if self.hl_cls is not None:
-            params['hl.simple.pre'] = '<em class=\"{}\">'.format(self.hl_cls)
-
+        params['qf'] = self._get_default_weights(suffixes)
+        self._set_solr(self.get_config().lay_person_search)
         return params
 
     def autocomplete(self):
         """
         Execute solr query for autocomplete
         """
-        params = self.solr_params()
+        params = self.set_lay_params()
         logging.info("PARAMS="+str(params))
         results = self.solr.search(**params)
         logging.info("Docs found: {}".format(results.hits))
         return self._process_layperson_results(results)
 
     def _process_layperson_results(self, results):
+        """
+        Convert pysolr.Results to biolink object
+        :param results:
+        :return:
+        """
         payload = {
             'results': []
         }
+
         for doc in results.docs:
-            hl = results.highlighting[doc['id']]
-            highlights = []
-            for hl_list in hl.values():
-                highlights.extend(hl_list)
-            best_hl = self._get_longest_hl(highlights)
+            hl = self._process_highlight(results, doc)
             highlight = {
                 'id': doc['id'],
-                'highlight': best_hl,
+                'highlight': hl.highlight,
                 'label': doc['label'],
-                'matched_synonym': self._hl_as_string(best_hl)
+                'matched_synonym': hl.match
             }
             payload['results'].append(highlight)
 
@@ -667,6 +647,11 @@ class GolrLayPersonSearch(GolrSearchQuery):
 
     @staticmethod
     def _get_default_weights(suffixes):
+        """
+        Defaults for the plain language index
+        :param suffixes: list of suffixes (eng (ngram), std,)
+        :return:
+        """
         weights = {
             "exact_synonym":   "5",
             "related_synonym": "2",

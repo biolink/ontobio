@@ -47,6 +47,7 @@ class ConfigSchema(Schema):
     amigo_solr_assocs = fields.Nested(EndpointSchema)
     amigo_solr_search = fields.Nested(EndpointSchema)
     scigraph_ontology = fields.Nested(EndpointSchema)
+    lay_person_search = fields.Nested(EndpointSchema)
     scigraph_data = fields.Nested(EndpointSchema)
     default_solr_schema = fields.Str()
     ontologies = fields.List(fields.Nested(OntologyConfigSchema))
@@ -100,6 +101,7 @@ class Config():
                  amigo_solr_assocs = None,
                  solr_search = None,
                  amigo_solr_search = None,
+                 lay_person_search = None,
                  sparql = None,
                  scigraph_ontology = None,
                  scigraph_data = None,
@@ -111,6 +113,7 @@ class Config():
         self.amigo_solr_assocs = amigo_solr_assocs
         self.solr_search = solr_search
         self.amigo_solr_search = amigo_solr_search
+        self.lay_person_search = lay_person_search
         self.sparql = sparql
         self.scigraph_ontology = scigraph_ontology
         self.scigraph_data = scigraph_data
