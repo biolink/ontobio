@@ -455,7 +455,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         if results.highlighting:
             for doc in results.docs:
                 hl = self._process_highlight(results, doc)
-                highlighting[doc['id']] = hl
+                highlighting[doc['id']] = hl._asdict()
 
         payload = SearchResults(
             facet_counts=translate_facet_field(results.facets),
