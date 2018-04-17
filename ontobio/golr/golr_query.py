@@ -39,9 +39,11 @@ TODO
 import json
 import logging
 import pysolr
+from typing import Dict, List
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from ontobio.vocabulary.relations import HomologyTypes
+from ontobio.model.GolrResults import SearchResults, AutocompleteResult, Highlight
 
 
 class GolrFields:
@@ -268,6 +270,7 @@ class GolrSearchQuery(GolrAbstractQuery):
     """
     Queries over a search document
     """
+
     def __init__(self,
                  term=None,
                  category=None,
@@ -284,7 +287,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                  prefix=None,
                  boost_fx=None,
                  boost_q=None,
-                 highlight_class=None):
+                 highlight_class=None,
+                 taxon=None):
         self.term = term
         self.category = category
         self.is_go = is_go
@@ -303,6 +307,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.boost_fx = boost_fx
         self.boost_q = boost_q
         self.highlight_class = highlight_class
+        self.taxon = taxon
 
         if self.facet_fields is None:
             self.facet_fields = ['category', 'taxon_label']
@@ -393,7 +398,7 @@ class GolrSearchQuery(GolrAbstractQuery):
 
         if self.prefix is not None:
             if self.prefix.startswith('-'):
-                params['fq'].append('-prefix:"{}"'.format(self.prefix))
+                params['fq'].append('-prefix:"{}"'.format(self.prefix[1:]))
             else:
                 params['fq'].append('prefix:"{}"'.format(self.prefix))
 
@@ -407,103 +412,90 @@ class GolrSearchQuery(GolrAbstractQuery):
             for boost in self.boost_q:
                 params['bq'].append(boost)
 
+        if self.taxon is not None:
+            for tax in self.taxon:
+                params['fq'].append('taxon:"{}"'.format(tax))
+
         if self.highlight_class is not None:
             params['hl.simple.pre'] = \
                 '<em class=\"{}\">'.format(self.highlight_class)
 
         return params
 
-    def exec(self, **kwargs):
+    def search(self):
         """
-        Execute solr query
+        Execute solr search query
         """
-
         params = self.solr_params()
-        logging.info("PARAMS="+str(params))
+        logging.info("PARAMS=" + str(params))
         results = self.solr.search(**params)
         logging.info("Docs found: {}".format(results.hits))
+        return self._process_search_results(results)
 
-        fcs = results.facets
+    def autocomplete(self):
+        """
+        Execute solr autocomplete
+        """
+        params = self.solr_params()
+        logging.info("PARAMS=" + str(params))
+        results = self.solr.search(**params)
+        logging.info("Docs found: {}".format(results.hits))
+        return self._process_autocomplete_results(results)
+
+    def _process_search_results(self,
+                                results: pysolr.Results) -> SearchResults:
 
         # map go-golr fields to standard
-        for d in results.docs:
-            if 'entity' in d:
-                d['id'] = d['entity']
-                d['label'] = d['entity_label']
+        for doc in results.docs:
+            if 'entity' in doc:
+                doc['id'] = doc['entity']
+                doc['label'] = doc['entity_label']
 
         highlighting = {}
-        for doc in results.docs:
-            hl = results.highlighting[doc['id']]
-            highlights = []
-            for hl_list in hl.values():
-                highlights.extend(hl_list)
+        if results.highlighting:
+            for doc in results.docs:
+                hl = self._process_highlight(results, doc)
+                highlighting[doc['id']] = hl
 
-            try:
-                best_hl = self._get_longest_hl(highlights)
-                highlight = {
-                    'highlight': best_hl,
-                    'match': self._hl_as_string(best_hl)
-                }
-            except ET.ParseError:
-                highlight = {
-                    'highlight': doc['label'][0],
-                    'match': doc['label'][0]
-                }
-            highlighting[doc['id']] = highlight
-
-        payload = {
-            'facet_counts': translate_facet_field(fcs),
-            'pagination': {},
-            'highlighting': highlighting,
-            'docs': results.docs,
-            'numFound': results.hits
-        }
+        payload = SearchResults(
+            facet_counts=translate_facet_field(results.facets),
+            highlighting=highlighting,
+            docs=results.docs,
+            numFound=results.hits
+        )
         logging.debug('Docs: {}'.format(len(results.docs)))
 
         return payload
 
-    def exec_autocomplete(self, **kwargs):
-        """
-        Execute solr query for autocomplete
-        """
-
-        params = self.solr_params()
-        logging.info("PARAMS="+str(params))
-        results = self.solr.search(**params)
-        logging.info("Docs found: {}".format(results.hits))
+    def _process_autocomplete_results(
+            self,
+            results: pysolr.Results) -> Dict[str, List[AutocompleteResult]]:
 
         # map go-golr fields to standard
-        for d in results.docs:
-            if 'entity' in d:
-                d['id'] = d['entity']
-                d['label'] = d['entity_label']
+        for doc in results.docs:
+            if 'entity' in doc:
+                doc['id'] = doc['entity']
+                doc['label'] = doc['entity_label']
 
         docs = []
         for doc in results.docs:
-            hl = results.highlighting[doc['id']]
-            highlights = []
-            for hl_list in hl.values():
-                highlights.extend(hl_list)
-            try:
-                best_hl = self._get_longest_hl(highlights)
-                hl_str = self._hl_as_string(best_hl)
-                has_highlight = True
-            except ET.ParseError:
-                best_hl = doc['label'][0]
-                hl_str = doc['label'][0]
-                has_highlight = False
+            if results.highlighting:
+                hl = self._process_highlight(results, doc)
+            else:
+                hl = Highlight(None, None, None)
+
             doc['taxon'] = doc['taxon'] if 'taxon' in doc else []
             doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else []
-            doc = {
-                'id': doc['id'],
-                'label': doc['label'],
-                'category': doc['category'],
-                'taxon': doc['taxon'],
-                'taxon_label': doc['taxon_label'],
-                'highlight': best_hl,
-                'has_highlight':  has_highlight,
-                'match': hl_str,
-            }
+            doc = AutocompleteResult(
+                id=doc['id'],
+                label=doc['label'],
+                match=hl.match,
+                category=doc['category'],
+                taxon=doc['taxon'],
+                taxon_label=doc['taxon_label'],
+                highlight=hl.highlight,
+                has_highlight=hl.has_highlight
+            )
             docs.append(doc)
 
         payload = {
@@ -512,6 +504,25 @@ class GolrSearchQuery(GolrAbstractQuery):
         logging.debug('Docs: {}'.format(len(results.docs)))
 
         return payload
+
+    def _process_highlight(self, results: pysolr.Results, doc) -> Highlight:
+        hl = results.highlighting[doc['id']]
+        highlights = []
+        for hl_list in hl.values():
+            highlights.extend(hl_list)
+        try:
+            highlight = Highlight(
+                highlight=self._get_longest_hl(highlights),
+                match=self._hl_as_string(self._get_longest_hl(highlights)),
+                has_highlight=True
+            )
+        except ET.ParseError:
+            highlight = Highlight(
+                highlight=doc['label'][0],
+                match=doc['label'][0],
+                has_highlight=False
+            )
+        return highlight
 
     @staticmethod
     def _format_query_filter(search_fields, suffixes):
@@ -622,14 +633,17 @@ class GolrLayPersonSearch(GolrSearchQuery):
 
         return params
 
-    def exec(self):
+    def autocomplete(self):
         """
-        Execute solr query
+        Execute solr query for autocomplete
         """
         params = self.solr_params()
         logging.info("PARAMS="+str(params))
         results = self.solr.search(**params)
         logging.info("Docs found: {}".format(results.hits))
+        return self._process_layperson_results(results)
+
+    def _process_layperson_results(self, results):
         payload = {
             'results': []
         }
@@ -644,7 +658,6 @@ class GolrLayPersonSearch(GolrSearchQuery):
                 'highlight': best_hl,
                 'label': doc['label'],
                 'matched_synonym': self._hl_as_string(best_hl)
-
             }
             payload['results'].append(highlight)
 
