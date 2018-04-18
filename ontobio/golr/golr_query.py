@@ -492,8 +492,8 @@ class GolrSearchQuery(GolrAbstractQuery):
             else:
                 hl = Highlight(None, None, None)
 
-            doc['taxon'] = doc['taxon'] if 'taxon' in doc else []
-            doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else []
+            doc['taxon'] = doc['taxon'] if 'taxon' in doc else ""
+            doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else ""
             doc = AutocompleteResult(
                 id=doc['id'],
                 label=doc['label'],
