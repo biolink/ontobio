@@ -205,7 +205,6 @@ def translate_facet_field(fcs, invert_subject_object = False):
     for (facet, facetresults) in ffs.items():
         if invert_subject_object:
             for (k,v) in INVERT_FIELDS_MAP.items():
-                print("> {} {}".format(k,v))
                 if facet == k:
                     facet = v
                     break
@@ -1217,7 +1216,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         Translate a set of solr results
         """
         for d in ds:
-            self.map_doc(d, {}, invert_subject_object=True)
+            self.map_doc(d, {}, self.invert_subject_object)
 
         return [self.translate_doc(d, **kwargs) for d in ds]
 
