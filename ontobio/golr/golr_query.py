@@ -199,7 +199,7 @@ def goassoc_fieldmap():
         M.OBJECT_TAXON_LABEL: 'object_taxon_label',
         M.OBJECT_TAXON_CLOSURE: 'object_taxon_closure',
         M.OBJECT_CATEGORY: None,
-        M.EVIDENCE_OBJECT_CLOSURE: 'evidence_subset_closure',
+        M.EVIDENCE_OBJECT_CLOSURE: 'evidence_closure',
         M.IS_DEFINED_BY: 'assigned_by'
     }
 
