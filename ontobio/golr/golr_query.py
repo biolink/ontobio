@@ -1183,7 +1183,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  'publications': self.translate_objs(d,M.SOURCE),  # note 'source' is used in the golr schema
         }
 
-        if self.invert_subject_object:
+        if self.invert_subject_object and assoc['relation'] is not None:
             assoc['relation']['inverse'] = True
 
         if len(qualifiers) > 0:
