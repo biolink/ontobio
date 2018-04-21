@@ -1,4 +1,6 @@
 from ontobio.golr.golr_query import GolrSearchQuery
+import pytest
+import pysolr
 
 """
 A group of integration tests that test integration
@@ -18,6 +20,12 @@ def test_search():
     for r in docs:
         print(str(r))
     assert len(docs) > 0
+
+
+def test_solr_404():
+    q = GolrSearchQuery("abnormal")
+    q.url = "https://httpbin.org/status/404"
+    pytest.raises(pysolr.SolrError, q.search)
 
 
 def test_cursor():

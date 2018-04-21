@@ -294,8 +294,8 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.term = term
         self.category = category
         self.is_go = is_go
-        self.url = url
-        self.solr = solr
+        self._url = url
+        self._solr = solr
         self.config = config
         self.hl = hl
         self.facet = facet
@@ -322,15 +322,33 @@ class GolrSearchQuery(GolrAbstractQuery):
                                       equivalent_iri=1,
                                       equivalent_curie=1)
         if self.is_go:
-            if self.url is None:
+            if self._url is None:
                 self._set_solr(self.get_config().amigo_solr_search)
             else:
-                self.solr = pysolr.Solr(self.url, timeout=2)
+                self._solr = pysolr.Solr(self._url, timeout=2)
         else:
             if self.url is None:
                 self._set_solr(self.get_config().solr_search)
             else:
-                self.solr = pysolr.Solr(self.url, timeout=2)
+                self._solr = pysolr.Solr(self._url, timeout=2)
+
+    @property
+    def url(self):
+        return self._url
+
+    @url.setter
+    def url(self, url):
+        self._url = url
+        self.solr = pysolr.Solr(self._url, timeout=2)
+
+    @property
+    def solr(self):
+        return self._solr
+
+    @solr.setter
+    def solr(self, pysolr):
+        self._url = pysolr.url
+        self._solr = pysolr
 
     def solr_params(self):
 
