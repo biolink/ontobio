@@ -19,6 +19,7 @@ def test_pheno_assocs():
     print("RES={}".format(results))
     assert len(results) > 0
 
+
 def test_go_assocs():
     q = GolrAssociationQuery(subject=TWIST_ZFIN,
                   object_category='function')
@@ -30,35 +31,3 @@ def test_go_assocs():
     results = q.exec()
     print("RES={}".format(results))
     assert len(results) > 0
-
-
-def test_longest_hl():
-    manager = GolrSearchQuery()
-    test_data = [
-        "<em>Muscle</em> <em>atrophy</em>, generalized",
-        "Generalized <em>muscle</em> degeneration",
-        "Diffuse skeletal <em>muscle</em> wasting"
-    ]
-    expected = "<em>Muscle</em> <em>atrophy</em>, generalized"
-    results = manager._get_longest_hl(test_data)
-    assert expected ==  results
-
-
-def test_longest_hl_ambiguous():
-    manager = GolrSearchQuery()
-    test_data = [
-        "<em>Muscle</em> <em>atrophy</em>, generalized",
-        "Generalized <em>muscle</em> degeneration",
-        "Diffuse skeletal <em>muscle</em> wasting",
-        "<em>Muscle</em> <em>atrophy</em>, not generalized",
-    ]
-    expected = "<em>Muscle</em> <em>atrophy</em>, generalized"
-    results = manager._get_longest_hl(test_data)
-    assert expected ==  results
-
-def test_hl_to_string():
-    manager = GolrSearchQuery()
-    test_data = "Foo <em>Muscle</em> bar <em>atrophy</em>, generalized"
-    expected = "Foo Muscle bar atrophy, generalized"
-    results = manager._hl_as_string(test_data)
-    assert expected ==  results

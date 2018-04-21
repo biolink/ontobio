@@ -321,6 +321,16 @@ class GolrSearchQuery(GolrAbstractQuery):
                                       taxon_label=1,
                                       equivalent_iri=1,
                                       equivalent_curie=1)
+        if self.is_go:
+            if self.url is None:
+                self._set_solr(self.get_config().amigo_solr_search)
+            else:
+                self.solr = pysolr.Solr(self.url, timeout=2)
+        else:
+            if self.url is None:
+                self._set_solr(self.get_config().solr_search)
+            else:
+                self.solr = pysolr.Solr(self.url, timeout=2)
 
     def solr_params(self):
 
@@ -339,15 +349,6 @@ class GolrSearchQuery(GolrAbstractQuery):
                 self.facet_fields.remove('taxon_label')
             suffixes = ['searchable']
             self.fq['document_category'] = "general"
-            if self.url is None:
-                self._set_solr(self.get_config().amigo_solr_search)
-            else:
-                self.solr = pysolr.Solr(self.url, timeout=2)
-        else:
-            if self.url is None:
-                self._set_solr(self.get_config().solr_search)
-            else:
-                self.solr = pysolr.Solr(self.url, timeout=2)
 
         qf = self._format_query_filter(self.search_fields, suffixes)
         if not self.is_go:
@@ -601,12 +602,12 @@ class GolrLayPersonSearch(GolrSearchQuery):
     def __init__(self, term=None, **kwargs):
         super().__init__(term, **kwargs)
         self.facet = False
+        self._set_solr(self.get_config().lay_person_search)
 
     def set_lay_params(self):
         params = self.solr_params()
         suffixes = ['std', 'kw', 'eng']
         params['qf'] = self._get_default_weights(suffixes)
-        self._set_solr(self.get_config().lay_person_search)
         return params
 
     def autocomplete(self):
