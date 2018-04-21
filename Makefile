@@ -8,7 +8,7 @@ PACKAGES = ontobio prefixcommons
 subpackage_tests: $(patsubst %,test-%,$(PACKAGES))
 
 test:
-	python -m pytest tests/*.py tests/unit/
+	pytest tests/*.py tests/unit/
 
 debug_test:
 	pytest -s -vvvv tests/*.py
@@ -21,7 +21,7 @@ foo:
 
 # only run local tests
 travis_test:
-	python -m pytest tests/test_*local*.py tests/test_*parser*.py tests/test_qc.py tests/unit/
+	pytest tests/test_*local*.py tests/test_*parser*.py tests/test_qc.py tests/unit/
 
 cleandist:
 	rm dist/* || true
