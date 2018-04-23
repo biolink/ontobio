@@ -73,7 +73,7 @@ class AssocParserConfig():
         if self.exclude_relations is None:
             self.exclude_relations = []
         if self.include_relations is None:
-            self.excinclude_relationslude_relations = []
+            self.include_relations = []
         if self.filter_out_evidence is None:
             self.filter_out_evidence = []
 
