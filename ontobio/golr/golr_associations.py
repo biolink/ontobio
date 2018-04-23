@@ -149,10 +149,12 @@ def bulk_fetch(subject_category, object_category, taxon, rows=MAX_ROWS, **kwargs
         logging.error("No associations returned for query: {} {} {}".format(subject_category, object_category, taxon))
     return assocs
 
-def pivot_query(facet=None, facet_pivot_fields=[], **kwargs):
+def pivot_query(facet=None, facet_pivot_fields=None, **kwargs):
     """
     Pivot query
     """
+    if facet_pivot_fields is None:
+        facet_pivot_fields = []
     results = search_associations(rows=0,
                                   facet_fields=[facet],
                                   #facet_pivot_fields=facet_pivot_fields + [facet],
@@ -160,10 +162,12 @@ def pivot_query(facet=None, facet_pivot_fields=[], **kwargs):
                                   **kwargs)
     return results
 
-def pivot_query_as_matrix(facet=None, facet_pivot_fields=[], **kwargs):
+def pivot_query_as_matrix(facet=None, facet_pivot_fields=None, **kwargs):
     """
     Pivot query
     """
+    if facet_pivot_fields is None:
+        facet_pivot_fields = []
     logging.info("Additional args: {}".format(kwargs))
     fp = search_associations(rows=0,
                              facet_fields=[facet],

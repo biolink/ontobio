@@ -19,8 +19,8 @@ class Skos(object):
     See https://www.w3.org/TR/skos-primer/ for more details
     """
 
-    def __init__(self, prefixmap={}, lang='en'):
-        self.prefixmap = prefixmap
+    def __init__(self, prefixmap=None, lang='en'):
+        self.prefixmap = prefixmap if prefixmap is not None else {}
         self.lang = lang
         self.context = None
 

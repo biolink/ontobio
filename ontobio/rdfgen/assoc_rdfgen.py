@@ -289,6 +289,7 @@ class SimpleAssocRdfTransform(RdfTransform):
         obj_uri = self.uri(obj)
 
         rel_url = None
+        rel_uri = None
         if rel == 'part_of':
             rel_uri = PART_OF
         elif rel == 'enables':

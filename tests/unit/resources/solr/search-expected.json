@@ -1,0 +1,304 @@
+{
+  "highlighting": {
+    "SGD:S000004154": {
+      "highlight": "<em class=\"hilite\">SHH4</em>",
+      "match": "SHH4",
+      "has_highlight": true
+    },
+    "SGD:S000004724": {
+      "highlight": "<em class=\"hilite\">SHH3</em>",
+      "match": "SHH3",
+      "has_highlight": true
+    },
+    "NCBIGene:743371": {
+      "highlight": "<em class=\"hilite\">SHH</em>",
+      "match": "SHH",
+      "has_highlight": true
+    }
+  },
+  "facet_counts": {
+    "category": {
+      "disease": 1,
+      "gene": 37,
+      "Phenotype": 3
+    },
+    "taxon_label": {
+      "Macaca mulatta": 1,
+      "Ornithorhynchus anatinus": 1,
+      "Danio rerio": 5,
+      "Saccharomyces cerevisiae": 2,
+      "Anolis carolinensis": 1,
+      "Gallus gallus": 3,
+      "Sus scrofa": 1,
+      "Felis catus": 3,
+      "Canis lupus familiaris": 1,
+      "Bos taurus": 1,
+      "Saccharomyces cerevisiae S288C": 2,
+      "Takifugu rubripes": 1,
+      "Mus musculus": 4,
+      "Xenopus (Silurana) tropicalis": 2,
+      "Homo sapiens": 2,
+      "Monodelphis domestica": 1,
+      "Equus caballus": 1,
+      "Arabidopsis thaliana": 2,
+      "Pan troglodytes": 1,
+      "Rattus norvegicus": 2
+    }
+  },
+  "docs": [
+    {
+      "prefix": "SGD",
+      "id_kw": "SGD:S000004724",
+      "edges": 82,
+      "iri_eng": "http://identifiers.org/SGD:S000004724",
+      "_version_": 1595200694978084865,
+      "equivalent_iri_eng": [
+        "http://www.ncbi.nlm.nih.gov/gene/855145"
+      ],
+      "category": [
+        "gene"
+      ],
+      "equivalent_iri": [
+        "http://www.ncbi.nlm.nih.gov/gene/855145"
+      ],
+      "category_eng": [
+        "gene"
+      ],
+      "label_kw": [
+        "SHH3"
+      ],
+      "label_eng": [
+        "SHH3"
+      ],
+      "id": "SGD:S000004724",
+      "taxon": "NCBITaxon:559292",
+      "id_std": "SGD:S000004724",
+      "taxon_label": "Saccharomyces cerevisiae S288C",
+      "taxon_kw": "NCBITaxon:559292",
+      "label": [
+        "SHH3"
+      ],
+      "equivalent_curie": [
+        "NCBIGene:855145"
+      ],
+      "iri_kw": "http://identifiers.org/SGD:S000004724",
+      "equivalent_iri_kw": [
+        "http://www.ncbi.nlm.nih.gov/gene/855145"
+      ],
+      "equivalent_curie_kw": [
+        "NCBIGene:855145"
+      ],
+      "leaf": true,
+      "taxon_label_std": "Saccharomyces cerevisiae S288C",
+      "label_std": [
+        "SHH3"
+      ],
+      "equivalent_curie_eng": [
+        "NCBIGene:855145"
+      ],
+      "category_kw": [
+        "gene"
+      ],
+      "taxon_eng": "NCBITaxon:559292",
+      "equivalent_iri_std": [
+        "http://www.ncbi.nlm.nih.gov/gene/855145"
+      ],
+      "taxon_label_kw": "Saccharomyces cerevisiae S288C",
+      "id_eng": "SGD:S000004724",
+      "iri_std": "http://identifiers.org/SGD:S000004724",
+      "equivalent_curie_std": [
+        "NCBIGene:855145"
+      ],
+      "score": 66.13394,
+      "taxon_std": "NCBITaxon:559292",
+      "category_std": [
+        "gene"
+      ],
+      "iri": "http://identifiers.org/SGD:S000004724",
+      "taxon_label_eng": "Saccharomyces cerevisiae S288C"
+    },
+    {
+      "prefix": "SGD",
+      "id_kw": "SGD:S000004154",
+      "edges": 77,
+      "iri_eng": "http://identifiers.org/SGD:S000004154",
+      "_version_": 1595200695276929025,
+      "equivalent_iri_eng": [
+        "http://www.ncbi.nlm.nih.gov/gene/850861"
+      ],
+      "category": [
+        "gene"
+      ],
+      "equivalent_iri": [
+        "http://www.ncbi.nlm.nih.gov/gene/850861"
+      ],
+      "category_eng": [
+        "gene"
+      ],
+      "label_kw": [
+        "SHH4"
+      ],
+      "label_eng": [
+        "SHH4"
+      ],
+      "id": "SGD:S000004154",
+      "taxon": "NCBITaxon:559292",
+      "id_std": "SGD:S000004154",
+      "taxon_label": "Saccharomyces cerevisiae S288C",
+      "taxon_kw": "NCBITaxon:559292",
+      "label": [
+        "SHH4"
+      ],
+      "equivalent_curie": [
+        "NCBIGene:850861"
+      ],
+      "iri_kw": "http://identifiers.org/SGD:S000004154",
+      "equivalent_iri_kw": [
+        "http://www.ncbi.nlm.nih.gov/gene/850861"
+      ],
+      "equivalent_curie_kw": [
+        "NCBIGene:850861"
+      ],
+      "leaf": true,
+      "taxon_label_std": "Saccharomyces cerevisiae S288C",
+      "label_std": [
+        "SHH4"
+      ],
+      "equivalent_curie_eng": [
+        "NCBIGene:850861"
+      ],
+      "category_kw": [
+        "gene"
+      ],
+      "taxon_eng": "NCBITaxon:559292",
+      "equivalent_iri_std": [
+        "http://www.ncbi.nlm.nih.gov/gene/850861"
+      ],
+      "taxon_label_kw": "Saccharomyces cerevisiae S288C",
+      "id_eng": "SGD:S000004154",
+      "iri_std": "http://identifiers.org/SGD:S000004154",
+      "equivalent_curie_std": [
+        "NCBIGene:850861"
+      ],
+      "score": 66.13394,
+      "taxon_std": "NCBITaxon:559292",
+      "category_std": [
+        "gene"
+      ],
+      "iri": "http://identifiers.org/SGD:S000004154",
+      "taxon_label_eng": "Saccharomyces cerevisiae S288C"
+    },
+    {
+      "id_kw": "NCBIGene:743371",
+      "edges": 25,
+      "iri_eng": "http://www.ncbi.nlm.nih.gov/gene/743371",
+      "equivalent_iri": [
+        "http://identifiers.org/ensembl/ENSPTRG00000019912"
+      ],
+      "label_kw": [
+        "SHH"
+      ],
+      "synonym_std": [
+        "SHH",
+        "sonic hedgehog",
+        "sonic hedgehog homolog",
+        "sonic hedgehog protein"
+      ],
+      "synonym_eng": [
+        "SHH",
+        "sonic hedgehog",
+        "sonic hedgehog homolog",
+        "sonic hedgehog protein"
+      ],
+      "category_eng": [
+        "gene"
+      ],
+      "label": [
+        "SHH"
+      ],
+      "taxon_label_std": "Pan troglodytes",
+      "_version_": 1595200739579265025,
+      "category_kw": [
+        "gene"
+      ],
+      "taxon_eng": "NCBITaxon:9598",
+      "synonym_kw": [
+        "SHH",
+        "sonic hedgehog",
+        "sonic hedgehog homolog",
+        "sonic hedgehog protein"
+      ],
+      "id_eng": "NCBIGene:743371",
+      "iri_std": "http://www.ncbi.nlm.nih.gov/gene/743371",
+      "leaf": true,
+      "category_std": [
+        "gene"
+      ],
+      "iri": "http://www.ncbi.nlm.nih.gov/gene/743371",
+      "taxon_label_eng": "Pan troglodytes",
+      "prefix": "NCBIGene",
+      "taxon_label_synonym": [
+        "Chimpansee troglodytes",
+        "chimpanzee"
+      ],
+      "category": [
+        "gene"
+      ],
+      "synonym": [
+        "SHH",
+        "sonic hedgehog",
+        "sonic hedgehog homolog",
+        "sonic hedgehog protein"
+      ],
+      "label_eng": [
+        "SHH"
+      ],
+      "taxon": "NCBITaxon:9598",
+      "id_std": "NCBIGene:743371",
+      "taxon_label": "Pan troglodytes",
+      "taxon_kw": "NCBITaxon:9598",
+      "taxon_label_synonym_eng": [
+        "Chimpansee troglodytes",
+        "chimpanzee"
+      ],
+      "equivalent_curie": [
+        "ENSEMBL:ENSPTRG00000019912"
+      ],
+      "iri_kw": "http://www.ncbi.nlm.nih.gov/gene/743371",
+      "equivalent_curie_kw": [
+        "ENSEMBL:ENSPTRG00000019912"
+      ],
+      "label_std": [
+        "SHH"
+      ],
+      "equivalent_iri_eng": [
+        "http://identifiers.org/ensembl/ENSPTRG00000019912"
+      ],
+      "id": "NCBIGene:743371",
+      "equivalent_curie_eng": [
+        "ENSEMBL:ENSPTRG00000019912"
+      ],
+      "equivalent_iri_std": [
+        "http://identifiers.org/ensembl/ENSPTRG00000019912"
+      ],
+      "taxon_label_kw": "Pan troglodytes",
+      "equivalent_curie_std": [
+        "ENSEMBL:ENSPTRG00000019912"
+      ],
+      "score": 66.13394,
+      "taxon_std": "NCBITaxon:9598",
+      "equivalent_iri_kw": [
+        "http://identifiers.org/ensembl/ENSPTRG00000019912"
+      ],
+      "taxon_label_synonym_kw": [
+        "Chimpansee troglodytes",
+        "chimpanzee"
+      ],
+      "taxon_label_synonym_std": [
+        "Chimpansee troglodytes",
+        "chimpanzee"
+      ]
+    }
+  ],
+  "numFound": 41
+}

@@ -32,7 +32,7 @@ class EcoMap():
         self._mappings = None
     
     def mappings(self):
-        if self._mappings == None:
+        if self._mappings is None:
             s = get_ecomap_str(self.PURL)
             self._mappings = self.parse_ecomap_str(s)
         return self._mappings
