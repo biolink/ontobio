@@ -23,7 +23,7 @@ class Evidence():
     _prefixmap = {
         'SEPIO': 'http://purl.obolibrary.org/obo/SEPIO_',
         'IAO': 'http://purl.obolibrary.org/obo/IAO_',
-        'RO': 'RO://purl.obolibrary.org/obo/RO_',
+        'RO': 'http://purl.obolibrary.org/obo/RO_',
     }
     
 class OboRO():
