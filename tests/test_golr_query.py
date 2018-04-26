@@ -1,4 +1,4 @@
-from ontobio.golr.golr_query import GolrAssociationQuery
+from ontobio.golr.golr_query import GolrAssociationQuery, GolrSearchQuery
 
 
 HUMAN_SHH = 'NCBIGene:6469'
@@ -19,6 +19,7 @@ def test_pheno_assocs():
     print("RES={}".format(results))
     assert len(results) > 0
 
+
 def test_go_assocs():
     q = GolrAssociationQuery(subject=TWIST_ZFIN,
                   object_category='function')
@@ -30,4 +31,3 @@ def test_go_assocs():
     results = q.exec()
     print("RES={}".format(results))
     assert len(results) > 0
-    

@@ -20,7 +20,10 @@ ro = OboRO()
 evt = Evidence()
 upt = UpperLevel()
 
-prefix_context = {key: value for context in curie_util.default_curie_maps + [curie_util.read_biocontext("minerva_context")] for key, value in context.items()}
+# Pull the go_context file from prefixcommons.
+# NOTE: this is a temporary measure. We will build the go json ld context as part of the pipeline in future
+# See https://github.com/geneontology/go-site/issues/617
+prefix_context = {key: value for context in curie_util.default_curie_maps + [curie_util.read_biocontext("go_context")] for key, value in context.items()}
 
 HAS_SUPPORTING_REFERENCE = URIRef(expand_uri(evt.has_supporting_reference, cmaps=[evt._prefixmap]))
 
@@ -292,6 +295,7 @@ class SimpleAssocRdfTransform(RdfTransform):
         obj_uri = self.uri(obj)
 
         rel_url = None
+        rel_uri = None
         if rel == 'part_of':
             rel_uri = PART_OF
         elif rel == 'enables':

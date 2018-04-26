@@ -17,7 +17,7 @@ import scipy.stats # TODO - move
 import scipy as sp # TODO - move
 import pandas as pd
 
-class UnknownSubjectException():
+class UnknownSubjectException(Exception):
     pass
 
 class AssociationSet():
@@ -29,7 +29,7 @@ class AssociationSet():
 
     """
 
-    def __init__(self, ontology=None, association_map={}, subject_label_map=None, meta=None):
+    def __init__(self, ontology=None, association_map=None, subject_label_map=None, meta=None):
         """
         NOTE: in general you do not need to call this yourself. See assoc_factory
 
@@ -48,6 +48,10 @@ class AssociationSet():
         self.associations_by_subj_obj = None
         self.strict = False
         self.index()
+
+        if self.association_map is None:
+            self.association_map = {}
+
         logging.info("Created {}".format(self))
 
     def __str__(self):
@@ -118,7 +122,7 @@ class AssociationSet():
             ancs = ancs.union(self.ontology.ancestors(term))
         return ancs.union(set(terms))
 
-    def query_associations(self, subjects=[], infer_subjects=True, include_xrefs=True):
+    def query_associations(self, subjects=None, infer_subjects=True, include_xrefs=True):
         """
         Query for a set of associations.
 
@@ -144,6 +148,8 @@ class AssociationSet():
         both descendant DOID classes, and all xrefs (e.g. OMIM)
 
         """
+        if subjects is None:
+            subjects = []
         mset = set()
         if infer_subjects:
             for subj in subjects:
@@ -187,7 +193,7 @@ class AssociationSet():
         else:
             return []
         
-    def query(self, terms=[], negated_terms=[]):
+    def query(self, terms=None, negated_terms=None):
         """
         Basic boolean query, using inference.
 
@@ -203,10 +209,10 @@ class AssociationSet():
         """
 
         if terms is None:
-            terms=[]
+            terms = []
         matches_all = 'owl:Thing' in terms
         if negated_terms is None:
-            negated_terms=[]
+            negated_terms = []
         termset = set(terms)
         negated_termset = set(negated_terms)
         matches = []
@@ -217,7 +223,7 @@ class AssociationSet():
                     matches.append(subj)
         return matches
 
-    def query_intersections(self, x_terms=[], y_terms=[], symmetric=False):
+    def query_intersections(self, x_terms=None, y_terms=None, symmetric=False):
         """
         Query for intersections of terms in two lists
 
@@ -227,6 +233,10 @@ class AssociationSet():
          - c : count of intersection
          - j : jaccard score
         """
+        if x_terms is None:
+            x_terms = []
+        if y_terms is None:
+            y_terms = []
         xset = set(x_terms)
         yset = set(y_terms)
         zset = xset.union(yset)
@@ -255,7 +265,8 @@ class AssociationSet():
                     ilist.append({'x':x,'y':y,'shared':shared, 'c':len(shared), 'j':j})
         return ilist
 
-    def intersectionlist_to_matrix(self, ilist, xterms, yterms):
+    @staticmethod
+    def intersectionlist_to_matrix(ilist, xterms, yterms):
         """
         WILL BE DEPRECATED
 
@@ -343,7 +354,7 @@ class AssociationSet():
                 return []
 
     # TODO: consider moving to other module
-    def enrichment_test(self, subjects=[], background=None, hypotheses=None, threshold=0.05, labels=False, direction='greater'):
+    def enrichment_test(self, subjects=None, background=None, hypotheses=None, threshold=0.05, labels=False, direction='greater'):
         """
         Performs term enrichment analysis. 
 
@@ -371,6 +382,9 @@ class AssociationSet():
             default is greater - i.e. enrichment test. Use 'less' for depletion test.
 
         """
+        if subjects is None:
+            subjects = []
+
         subjects=set(subjects)
         bg_count = {}
         sample_count = {}
@@ -459,7 +473,7 @@ class AssociationSet():
             return 0.0
         return len(a1.intersection(a2)) / num_union
 
-    def similarity_matrix(self, x_subjects=[], y_subjects=[], symmetric=False):
+    def similarity_matrix(self, x_subjects=None, y_subjects=None, symmetric=False):
         """
         Query for similarity matrix between groups of subjects
 
@@ -469,6 +483,11 @@ class AssociationSet():
          - c : count of intersection
          - j : jaccard score
         """
+        if x_subjects is None:
+            x_subjects = []
+        if y_subjects is None:
+            y_subjects = []
+
         xset = set(x_subjects)
         yset = set(y_subjects)
         zset = xset.union(yset)

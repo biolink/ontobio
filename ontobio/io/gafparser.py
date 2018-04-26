@@ -22,7 +22,7 @@ class GafParser(assocparser.AssocParser):
 
         config : a AssocParserConfig object
         """
-        if config == None:
+        if config is None:
             config = assocparser.AssocParserConfig()
         self.config = config
         self.report = assocparser.Report()
@@ -150,7 +150,7 @@ class GafParser(assocparser.AssocParser):
         date = self._normalize_gaf_date(date, line)
 
         ecomap = self.config.ecomap
-        if ecomap != None:
+        if ecomap is not None:
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
                 self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
                                 msg="Expecting a known ECO GAF code, e.g ISS")
@@ -257,9 +257,9 @@ class GafParser(assocparser.AssocParser):
         ## --
         evidence_obj = {
             'type': evidence,
-            'has_supporting_reference': self._split_pipe(reference)
+            'has_supporting_reference': self._split_pipe(reference),
+            'with_support_from': self._split_pipe(withfrom)
         }
-        evidence_obj['with_support_from'] = self._split_pipe(withfrom)
 
         ## Construct main return dict
         assoc = {

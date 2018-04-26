@@ -52,7 +52,7 @@ setuptools.setup(
         'sparqlwrapper',
         'cachier',
         'prefixcommons',
-        'marshmallow',
+        'marshmallow==3.0.0b3',
         'scipy',
         'pandas',
         'click'

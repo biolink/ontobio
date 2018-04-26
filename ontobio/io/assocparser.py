@@ -54,9 +54,9 @@ class AssocParserConfig():
                  class_idspaces=None,
                  entity_idspaces=None,
                  ecomap=ecomap.EcoMap(),
-                 exclude_relations=[],
-                 include_relations=[],
-                 filter_out_evidence=[],
+                 exclude_relations=None,
+                 include_relations=None,
+                 filter_out_evidence=None,
                  filtered_evidence_file=None,
                  gpi_authority_path=None):
 
@@ -72,6 +72,13 @@ class AssocParserConfig():
         self.filter_out_evidence = filter_out_evidence
         self.filtered_evidence_file = filtered_evidence_file
         self.gpi_authority_path = gpi_authority_path
+        if self.exclude_relations is None:
+            self.exclude_relations = []
+        if self.include_relations is None:
+            self.include_relations = []
+        if self.filter_out_evidence is None:
+            self.filter_out_evidence = []
+
 
 class Report():
     """

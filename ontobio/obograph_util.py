@@ -15,9 +15,9 @@ from ontobio.vocabulary.relations import map_legacy_pred
 class OboJsonMapper(object):
     def __init__(self,
                  digraph=None,
-                 context={}):
+                 context=None):
         self.digraph = digraph
-        self.context = context
+        self.context = context if context is not None else {}
 
     def add_obograph_digraph(self, og, node_type=None, predicates=None, xref_graph=None, logical_definitions=None,
                              parse_meta=True,

@@ -1,0 +1,216 @@
+{
+  "highlighting":{
+    "HP:0003738":{
+      "exact_synonym_eng":[
+        "Exercise-induced <em class=\"foo\">muscle</em> pain",
+        "<em class=\"foo\">Muscle</em> pain with exercise",
+        "<em class=\"foo\">Muscle</em> pain on exercise",
+        "<em class=\"foo\">Muscle</em> pain, exercise-induced"
+      ],
+      "exact_synonym_std":[
+        "Exercise-induced <em class=\"foo\">muscle</em> pain",
+        "<em class=\"foo\">Muscle</em> pain with exercise",
+        "<em class=\"foo\">Muscle</em> pain on exercise",
+        "<em class=\"foo\">Muscle</em> pain, exercise-induced"
+      ]
+    },
+    "HP:0003326":{
+      "exact_synonym_eng":[
+        "<em class=\"foo\">Muscle</em> pain",
+        "<em class=\"foo\">Muscle</em> ache"
+      ],
+      "exact_synonym_std":[
+        "<em class=\"foo\">Muscle</em> pain",
+        "<em class=\"foo\">Muscle</em> ache"
+      ]
+    },
+    "HP:0009058":{
+      "exact_synonym_eng":[
+        "Fat accumulation in <em class=\"foo\">muscle</em> fibers",
+        "Fat deposits in <em class=\"foo\">muscle</em> fibers",
+        "Skeletal <em class=\"foo\">muscle</em> lipid accumulation",
+        "Lipid accumulation in skeletal <em class=\"foo\">muscle</em>",
+        "Increased <em class=\"foo\">muscle</em> lipid content"
+      ],
+      "exact_synonym_std":[
+        "Fat accumulation in <em class=\"foo\">muscle</em> fibers",
+        "Fat deposits in <em class=\"foo\">muscle</em> fibers",
+        "Skeletal <em class=\"foo\">muscle</em> lipid accumulation",
+        "Lipid accumulation in skeletal <em class=\"foo\">muscle</em>",
+        "Increased <em class=\"foo\">muscle</em> lipid content"
+      ]
+    }
+  },
+  "response":{
+    "maxScore":69.90643,
+    "start":0,
+    "docs":[
+      {
+        "exact_synonym_eng":[
+          "Fat accumulation in muscle fibers",
+          "Fat deposits in muscle fibers",
+          "Skeletal muscle lipid accumulation",
+          "Lipid accumulation in skeletal muscle",
+          "Increased muscle lipid content"
+        ],
+        "phenotype_closure_label":[
+          "Increased muscle lipid content",
+          "Abnormality of muscle fibers",
+          "Abnormality of muscle morphology",
+          "Abnormality of the musculature",
+          "Phenotypic abnormality"
+        ],
+        "phenotype_closure":[
+          "HP:0009058",
+          "HP:0004303",
+          "HP:0011805",
+          "HP:0003011",
+          "HP:0000118"
+        ],
+        "exact_synonym":[
+          "Fat accumulation in muscle fibers",
+          "Fat deposits in muscle fibers",
+          "Skeletal muscle lipid accumulation",
+          "Lipid accumulation in skeletal muscle",
+          "Increased muscle lipid content"
+        ],
+        "label":"Increased muscle lipid content",
+        "id":"HP:0009058",
+        "score":69.90643,
+        "anatomy_closure_label":[
+          "anatomical entity",
+          "muscle organ"
+        ],
+        "anatomy_closure":[
+          "UBERON:0001630",
+          "UBERON:0001062",
+          "CHEBI:18059"
+        ],
+        "exact_synonym_std":[
+          "Fat accumulation in muscle fibers",
+          "Fat deposits in muscle fibers",
+          "Skeletal muscle lipid accumulation",
+          "Lipid accumulation in skeletal muscle",
+          "Increased muscle lipid content"
+        ],
+        "exact_synonym_kw":[
+          "Fat accumulation in muscle fibers",
+          "Fat deposits in muscle fibers",
+          "Skeletal muscle lipid accumulation",
+          "Lipid accumulation in skeletal muscle",
+          "Increased muscle lipid content"
+        ],
+        "_version_":1598019458974089216
+      },
+      {
+        "exact_synonym_eng":[
+          "Exercise-induced muscle pain",
+          "Muscle pain with exercise",
+          "Muscle pain on exercise",
+          "Muscle pain, exercise-induced"
+        ],
+        "phenotype_closure_label":[
+          "Exercise-induced myalgia",
+          "Myalgia",
+          "Pain",
+          "Constitutional symptom",
+          "Phenotypic abnormality"
+        ],
+        "score":69.42362,
+        "phenotype_closure":[
+          "HP:0003738",
+          "HP:0003326",
+          "HP:0012531",
+          "HP:0025142",
+          "HP:0000118"
+        ],
+        "exact_synonym":[
+          "Exercise-induced muscle pain",
+          "Muscle pain with exercise",
+          "Muscle pain on exercise",
+          "Muscle pain, exercise-induced"
+        ],
+        "label":"Exercise-induced myalgia",
+        "exact_synonym_std":[
+          "Exercise-induced muscle pain",
+          "Muscle pain with exercise",
+          "Muscle pain on exercise",
+          "Muscle pain, exercise-induced"
+        ],
+        "id":"HP:0003738",
+        "exact_synonym_kw":[
+          "Exercise-induced muscle pain",
+          "Muscle pain with exercise",
+          "Muscle pain on exercise",
+          "Muscle pain, exercise-induced"
+        ],
+        "_version_":1598019466326704129
+      },
+      {
+        "exact_synonym_eng":[
+          "Muscle pain",
+          "Muscle ache"
+        ],
+        "phenotype_closure_label":[
+          "Myalgia",
+          "Pain",
+          "Constitutional symptom",
+          "Phenotypic abnormality"
+        ],
+        "score":69.31671,
+        "phenotype_closure":[
+          "HP:0003326",
+          "HP:0012531",
+          "HP:0025142",
+          "HP:0000118"
+        ],
+        "exact_synonym":[
+          "Muscle pain",
+          "Muscle ache"
+        ],
+        "label":"Myalgia",
+        "exact_synonym_std":[
+          "Muscle pain",
+          "Muscle ache"
+        ],
+        "id":"HP:0003326",
+        "exact_synonym_kw":[
+          "Muscle pain",
+          "Muscle ache"
+        ],
+        "_version_":1598019469277396993
+      }
+    ],
+    "numFound":96
+  },
+  "responseHeader":{
+    "status":0,
+    "QTime":17,
+    "params":{
+      "hl.snippets":"1000",
+      "q":"muscle \"muscle\"",
+      "qt":"standard",
+      "wt":"json",
+      "fl":"*,score",
+      "hl":"on",
+      "defType":"edismax",
+      "rows":"3",
+      "qf":[
+        "related_synonym_std^2",
+        "related_synonym_kw^2",
+        "related_synonym_eng^2",
+        "broad_synonym_std^1",
+        "broad_synonym_kw^1",
+        "broad_synonym_eng^1",
+        "exact_synonym_std^5",
+        "exact_synonym_kw^5",
+        "exact_synonym_eng^5",
+        "narrow_synonym_std^3",
+        "narrow_synonym_kw^3",
+        "narrow_synonym_eng^3"
+      ],
+      "hl.simple.pre":"<em class=\"foo\">",
+      "start":"0"
+    }
+  }
+}

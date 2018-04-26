@@ -15,15 +15,17 @@ class GraphRendererConfig():
     configuration parameters
     """
     def __init__(self,
-                 relsymbolmap={
+                 relsymbolmap=None,
+                 show_text_definition=False):
+        self.relsymbolmap = relsymbolmap
+        self.show_text_definition = show_text_definition
+        if self.relsymbolmap is None:
+            self.relsymbolmap = {
                      'subClassOf': '%',
                      'subPropertyOf': '%',
                      'BFO:0000050': '<',
                      'RO:0002202': '~',
-                 },
-                 show_text_definition=False):
-        self.relsymbolmap = relsymbolmap
-        self.show_text_definition = show_text_definition
+            }
         
 
 class GraphRenderer():
@@ -83,10 +85,12 @@ class GraphRenderer():
             return m[r]
         return r
     
-    def render_noderef(self, ontol, n, query_ids=[], **args):
+    def render_noderef(self, ontol, n, query_ids=None, **args):
         """
         Render a node object
         """
+        if query_ids is None:
+            query_ids = []
         marker = ""
         if n in query_ids:
             marker = " * "
@@ -169,7 +173,11 @@ class DotGraphRenderer(GraphRenderer):
         self.ojgr = OboJsonGraphRenderer(**args)
 
     # TODO: currently render and write are equivalent
-    def render(self, ontol, query_ids=[], container_predicates=[], **args):
+    def render(self, ontol, query_ids=None, container_predicates=None, **args):
+        if query_ids is None:
+            query_ids = []
+        if container_predicates is None:
+            container_predicates = []
         g = ontol.get_graph()
         # create json object to pass to og2dot
         _, fn = tempfile.mkstemp(suffix='.json')
@@ -178,13 +186,12 @@ class DotGraphRenderer(GraphRenderer):
 
         # call og2dot
         cmdtoks = ['og2dot.js']
-        if query_ids is not None:
-            for q in query_ids:
-                cmdtoks.append('-H')
-                cmdtoks.append(q)
+        for q in query_ids:
+            cmdtoks.append('-H')
+            cmdtoks.append(q)
         cmdtoks.append('-t')
         cmdtoks.append(self.image_format)
-        if container_predicates is not None and len(container_predicates)>0:
+        if len(container_predicates) > 0:
             for p in container_predicates:
                 cmdtoks.append('-c')
                 cmdtoks.append(p)
@@ -237,7 +244,9 @@ class AsciiTreeGraphRenderer(GraphRenderer):
             s += self._show_tree_node(None, n, ontol, 0, path=[], **args) + "\n"
         return s
 
-    def _show_tree_node(self, rel, n, ontol, depth=0, path=[], **args):
+    def _show_tree_node(self, rel, n, ontol, depth=0, path=None, **args):
+        if path is None:
+            path = []
         g = ontol.get_graph() # TODO - use ontol methods directly
         s = " " * depth + self.render_relation(rel) + " " +self.render_noderef(ontol, n, **args)
         if n in path:
@@ -273,7 +282,7 @@ class OboFormatGraphRenderer(GraphRenderer):
         if ontol.node_type == 'PROPERTY':
             st = 'Typedef'
             
-        s = "[{}]\n".format(st);
+        s = "[{}]\n".format(st)
         s += self.tag('id', nid)
         label = ontol.label(nid)
         if label is not None:
@@ -336,7 +345,7 @@ class OboFormatGraphRenderer(GraphRenderer):
     def render_xrefs(self, nid, ontol, **args):
         g = ontol.xref_graph # TODO - use ontol methods directly
         n = g.node[nid]
-        s = "[Term]\n";
+        s = "[Term]\n"
         s += self.tag('id ! TODO', nid)
         s += self.tag('name', n['label'])
         for p in g.predecessors(nid):

@@ -9,6 +9,7 @@ from ontobio.ontol import Ontology, Synonym
 from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
 from SPARQLWrapper import SPARQLWrapper, JSON, RDF
 from ontobio.sparql.rdflib_bridge import rdfgraph_to_ontol
+from ontobio.sparql.sparql_ontol_utils import OIO_SYNS, get_named_graph, run_sparql
 
 class WikidataOntology(Ontology):
     """
@@ -26,9 +27,9 @@ class WikidataOntology(Ontology):
             results = set()
             for name in names:
                 results.update( self._search(name, 'rdfs:label', **args) )
-            if synonyms:
-                for pred in OIO_SYNS.values():
-                    results.update( self._search(name, pred, **args) )
+                if synonyms:
+                    for pred in OIO_SYNS.values():
+                        results.update( self._search(name, pred, **args) )
             logging.info("REMOTE RESULTS="+str(results))
             return list(results)
 
@@ -53,7 +54,7 @@ class WikidataOntology(Ontology):
         return [r['c']['value'] for r in bindings]
 
     # TODO
-    def sparql(self, select='*', body=None, inject_prefixes=[], single_column=False):
+    def sparql(self, select='*', body=None, inject_prefixes=None, single_column=False):
         """
         Execute a SPARQL query.
 
@@ -70,6 +71,8 @@ class WikidataOntology(Ontology):
         using the prefixcommons library
         
         """
+        if inject_prefixes is None:
+            inject_prefixes = []
         namedGraph = get_named_graph(self.handle)
         cols = []
         select_val = None
@@ -99,7 +102,7 @@ class WikidataOntology(Ontology):
         bindings = run_sparql(query)
         if len(bindings) == 0:
             return []
-        if cols == None:
+        if cols is None:
             return bindings
         else:
             if single_column:

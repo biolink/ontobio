@@ -47,6 +47,7 @@ class ConfigSchema(Schema):
     amigo_solr_assocs = fields.Nested(EndpointSchema)
     amigo_solr_search = fields.Nested(EndpointSchema)
     scigraph_ontology = fields.Nested(EndpointSchema)
+    lay_person_search = fields.Nested(EndpointSchema)
     scigraph_data = fields.Nested(EndpointSchema)
     default_solr_schema = fields.Str()
     ontologies = fields.List(fields.Nested(OntologyConfigSchema))
@@ -100,17 +101,19 @@ class Config():
                  amigo_solr_assocs = None,
                  solr_search = None,
                  amigo_solr_search = None,
+                 lay_person_search = None,
                  sparql = None,
                  scigraph_ontology = None,
                  scigraph_data = None,
-                 ontologies = [],
-                 categories = [],
+                 ontologies = None,
+                 categories = None,
                  default_solr_schema = None,
                  use_amigo_for = "function"):
         self.solr_assocs = solr_assocs
         self.amigo_solr_assocs = amigo_solr_assocs
         self.solr_search = solr_search
         self.amigo_solr_search = amigo_solr_search
+        self.lay_person_search = lay_person_search
         self.sparql = sparql
         self.scigraph_ontology = scigraph_ontology
         self.scigraph_data = scigraph_data
@@ -118,6 +121,12 @@ class Config():
         self.categories = categories
         self.default_solr_schema = default_solr_schema
         self.use_amigo_for = use_amigo_for
+
+        if self.ontologies is None:
+            self.ontologies = []
+
+        if self.categories is None:
+            self.categories = []
 
     def endpoint_url(self, endpoint):
         if endpoint is None:
@@ -147,7 +156,7 @@ class Config():
             url = self.endpoint_url(self.amigo_solr_search)
         return url
 
-    def get_solr_assocs_url(use_amigo=False):
+    def get_solr_assocs_url(self, use_amigo=False):
         """
         Return solr URL to be used for assocation (enhanced triple) queries
 
