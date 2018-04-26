@@ -5,6 +5,8 @@ import json
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
 from ontobio.io import qc
+from ontobio.io import entityparser
+from ontobio.io import entitywriter
 
 class GafParser(assocparser.AssocParser):
     """
@@ -24,6 +26,21 @@ class GafParser(assocparser.AssocParser):
             config = assocparser.AssocParserConfig()
         self.config = config
         self.report = assocparser.Report()
+        self.gpi = None
+        if self.config.gpi_authority_path is not None:
+            self.gpi = dict()
+            parser = entityparser.GpiParser()
+            with open(self.config.gpi_authority_path) as gpi_f:
+                entities = parser.parse(file=gpi_f)
+                for entity in entities:
+                    self.gpi[entity["id"]] = {
+                        "symbol": entity["label"],
+                        "name": entity["full_name"],
+                        "synonyms": entitywriter.stringify(entity["synonyms"]),
+                        "type": entity["type"]
+                    }
+
+                print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
 
     def skim(self, file):
         file = self._ensure_file(file)
@@ -116,6 +133,15 @@ class GafParser(assocparser.AssocParser):
         if not self._validate_id(id, line, ENTITY):
             print("skipping because {} not validated!".format(id))
             return assocparser.ParseResult(line, [], True)
+
+        # Using a given gpi file to validate the gene object
+        if self.gpi is not None:
+            entity = self.gpi.get(id, None)
+            if entity is not None:
+                db_object_symbol = entity["symbol"]
+                db_object_name = entity["name"]
+                db_object_synonym = entity["synonyms"]
+                db_object_type = entity["type"]
 
         if not self._validate_id(goid, line, ANNOTATION):
             print("skipping because {} not validated!".format(goid))

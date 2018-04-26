@@ -35,7 +35,7 @@ class EntityWriter():
         Write a single entity
         """
         pass  ## Implemented in subclasses
-    
+
     def write(self, entities, meta=None):
         """
         Write a complete set of entities to a file
@@ -50,30 +50,45 @@ class EntityWriter():
         """
         for e in entities:
             self.write_entity(e)
-        
+
 class GpiWriter(EntityWriter):
     """
     Writes entities in GPI format
+
+    Takes an entity dictionary:
+    {
+        'id': id, (String)
+        'label': db_object_symbol, (String)
+        'full_name': db_object_name, (String)
+        'synonyms': synonyms, (List[str])
+        'type': db_object_type, (String)
+        'parents': parents, (List[Str])
+        'xrefs': xref_ids, (List[Str])
+        'taxon': {
+            'id': self._taxon_id(taxon) (String)
+        }
+    }
     """
     def __init__(self, file=None):
         self.file = file
 
     def write_entity(self, entity):
         """
-        Write a single association to a line in the output file
+        Write a single entity to a line in the output file
         """
-        db, db_object_id = self._split_prefix(id)
+        db, db_object_id = self._split_prefix(entity)
 
-        vals = [db,
-                db_object_id,
-                entity.get('label'),
-                entity.get('full_name'),
-                entity.get('synonyms'),
-                entity.get('type'),
-                entity.get('taxon')['id'],
-                entity.get('parents'),
-                entity.get('xrefs'),
-                entity.get('properties')]
+        vals = [
+            db,
+            db_object_id,
+            entity.get('label'),
+            entity.get('full_name'),
+            entity.get('synonyms'),
+            entity.get('type'),
+            entity.get('taxon')['id'],
+            entity.get('parents'),
+            entity.get('xrefs'),
+            entity.get('properties')
+        ]
 
         self._write_row(vals)
-    

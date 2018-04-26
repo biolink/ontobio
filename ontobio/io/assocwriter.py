@@ -83,11 +83,15 @@ class GpadWriter(AssocWriter):
     """
     def __init__(self, file=None):
         self.file = file
+        self._write("!gpa-version: 1.1\n")
 
     def write_assoc(self, assoc):
         """
         Write a single association to a line in the output file
         """
+        if assoc.get("header", False):
+            return
+
         subj = assoc['subject']
 
         db, db_object_id = self._split_prefix(subj)

@@ -36,7 +36,7 @@ class OntologyFactory():
 
     # class variable - reuse the same object throughout
     test = 0
-    
+
     def __init__(self, handle=None):
         """
         initializes based on an ontology name
@@ -66,15 +66,15 @@ class OntologyFactory():
         """
         if handle == None:
             self.test = self.test+1
-            logging.info("T: "+str(self.test))                
+            logging.info("T: "+str(self.test))
             global default_ontology
             if default_ontology == None:
                 logging.info("Creating new instance of default ontology")
                 default_ontology = create_ontology(default_ontology_handle)
-            logging.info("Using default_ontology")                
+            logging.info("Using default_ontology")
             return default_ontology
         return create_ontology(handle, **args)
-    
+
 #@cachier(stale_after=SHELF_LIFE)
 def create_ontology(handle=None, **args):
     ont = None
@@ -173,4 +173,3 @@ def translate_file_to_ontology(handle, **args):
             logging.info("using cached file: "+fn)
         g = obograph_util.convert_json_file(fn, **args)
         return Ontology(handle=handle, payload=g)
-    
