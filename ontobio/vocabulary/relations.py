@@ -6,7 +6,7 @@ class HomologyTypes(Enum):
     Core homology relations from RO
     """
     Ortholog = 'RO:HOM0000017'
-    LeastDivergedOrtholog = 'RO:HOM0000020'
+    LeastDivergedOrtholog = 'RO:HOM0000020'  ## https://github.com/BgeeDB/homology-ontology/issues/1
     Homolog = 'RO:HOM0000007'
     Paralog = 'RO:HOM0000011'
     InParalog = 'RO:HOM0000023'
