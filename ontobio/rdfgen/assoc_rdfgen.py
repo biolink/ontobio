@@ -313,3 +313,19 @@ class SimpleAssocRdfTransform(RdfTransform):
             # TODO syns etc
 
         self.translate_evidence(association, stmt)
+
+    # TODO: move to its own class
+    def translate_entity(self, e):
+        id = e['id']
+        uri = self.uri(id)
+        if 'label' in e:
+            self.emit_label(uri, label)
+        if 'full_name' in e:
+            self.emit_synonym(uri, e['full_name'])
+        if 'synonyms' in e:
+            self.emit_synonym(uri, s) for s in e['synonyms']
+        if 'taxon' in e:
+            taxon = e['taxon']
+            self.emit(uri, ro.in_taxon, self.uri(taxon))
+        
+        
