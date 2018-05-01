@@ -153,40 +153,6 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None):
 
     return [validated_gaf_path, filtered_associations.name]
 
-# @gzips
-# def produce_gpi(dataset, target_dir, ontology_graph):
-#
-#     def conversion_gen(gaf_file, gafparser):
-#         cache = []
-#         for association in gafparser.association_generator(file=gaf_file):
-#             entity = bridge.convert_association(association)
-#             if entity not in cache:
-#                 cache.append(entity)
-#                 yield entity
-#             else:
-#                 continue
-#
-#     click.echo("No GPI in metadata, building from GAF")
-#     gaf_path = os.path.join(target_dir, "groups", dataset, "{}.gaf".format(dataset))
-#     gafparser = GafParser()
-#     gafparser.config = assocparser.AssocParserConfig(
-#         ontology=ontology_graph
-#     )
-#     bridge = gafgpibridge.GafGpiBridge()
-#     gpi_path = os.path.join(target_dir, "groups", dataset, "{}.gpi".format(dataset))
-#
-#     with open(gaf_path) as sg:
-#         lines = sum(1 for line in sg)
-#
-#     with open(gaf_path) as gf:
-#         with open(gpi_path, "w") as gpifile:
-#             gpiwriter = entitywriter.GpiWriter(file=gpifile)
-#             with click.progressbar(iterable=conversion_gen(gf, gafparser)) as entities:
-#                 for entity in entities:
-#                     if entity is not None:
-#                         gpiwriter.write_entity(entity)
-#
-#     return gpi_path
 
 @gzips
 def make_products(dataset, target_dir, gaf_path, products, ontology_graph):

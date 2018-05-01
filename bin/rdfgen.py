@@ -13,7 +13,7 @@ def cli():
 @click.option("--association", "-a", default="gaf", type=click.Choice(["gaf"]))
 @click.option("--ontology", "-r", type=click.Path(exists=True, readable=True, dir_okay=False))
 @click.option("--output", "-o", type=click.File('wb'))
-@click.argument("association_file", type=click.File('r'))
+@click.argument("association_file", type=click.Path(exists=True))
 def convert(association, ontology, output, association_file):
     click.echo("converting {}".format(association))
 
@@ -22,12 +22,18 @@ def convert(association, ontology, output, association_file):
     parser_config = assocparser.AssocParserConfig(ontology=make_ontology(ontology))
     parser = _association_parser(association, parser_config)
 
-    associations = parser.association_generator(file=association_file)
-    for assoc in associations:
-        rdfTransformer.provenance()
-        rdfTransformer.translate(assoc)
+    with open(association_file) as af:
+        lines = sum(1 for line in af)
 
-    rdfWriter.serialize(destination=output)
+    with open(association_file) as af:
+        associations = parser.association_generator(file=af)
+        with click.progressbar(iterable=associations, length=lines) as assocs:
+            for assoc in assocs:
+                rdfTransformer.provenance()
+                rdfTransformer.translate(assoc)
+
+        click.echo("Writing ttl to disk")
+        rdfWriter.serialize(destination=output)
 
 
 def _association_parser(association_type, config):
@@ -35,6 +41,7 @@ def _association_parser(association_type, config):
         return gafparser.GafParser(config=config)
 
 def make_ontology(input_ontology):
+    click.echo("Loading ontology...")
     ontology_factory = ontol_factory.OntologyFactory()
     return ontology_factory.create(input_ontology)
 
