@@ -415,10 +415,18 @@ class GolrSearchQuery(GolrAbstractQuery):
             params['fq'] = []
 
         if self.prefix is not None:
-            if self.prefix.startswith('-'):
-                params['fq'].append('-prefix:"{}"'.format(self.prefix[1:]))
-            else:
-                params['fq'].append('prefix:"{}"'.format(self.prefix))
+            negative_filter = [p_filt for p_filt in self.prefix
+                               if p_filt.startswith('-')]
+            positive_filter = [p_filt for p_filt in self.prefix
+                               if not p_filt.startswith('-')]
+            for pfix_filter in negative_filter:
+                params['fq'].append('-prefix:"{}"'.format(pfix_filter[1:]))
+
+            if len(positive_filter) > 0:
+                or_filter = 'prefix:"{}"'.format(positive_filter[0])
+                for pfix_filter in positive_filter[1:]:
+                    or_filter += 'OR prefix:"{}"'.format(pfix_filter)
+                params['fq'].append(or_filter)
 
         if self.boost_fx is not None:
             params['bf'] = []
@@ -526,11 +534,7 @@ class GolrSearchQuery(GolrAbstractQuery):
             docs.append(doc)
 
         payload = {
-            'facet_counts': translate_facet_field(fcs),
-            'pagination': {},
-            'numFound': results.hits,
-            'highlighting': results.highlighting,
-            'docs': results.docs
+            'docs': docs
         }
         logging.debug('Docs: {}'.format(len(results.docs)))
 
