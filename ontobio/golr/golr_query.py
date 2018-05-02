@@ -39,8 +39,11 @@ TODO
 import json
 import logging
 import pysolr
-
+from typing import Dict, List
+import xml.etree.ElementTree as ET
+from collections import OrderedDict
 from ontobio.vocabulary.relations import HomologyTypes
+from ontobio.model.GolrResults import SearchResults, AutocompleteResult, Highlight
 
 
 class GolrFields:
@@ -265,8 +268,10 @@ class GolrAbstractQuery():
 
 class GolrSearchQuery(GolrAbstractQuery):
     """
+    Controller for monarch and go solr search cores
     Queries over a search document
     """
+
     def __init__(self,
                  term=None,
                  category=None,
@@ -274,43 +279,86 @@ class GolrSearchQuery(GolrAbstractQuery):
                  url=None,
                  solr=None,
                  config=None,
-                 fq={},
+                 fq=None,
                  hl=True,
                  facet_fields=None,
+                 facet=True,
                  search_fields=None,
                  rows=100,
-                 start=None):
+                 start=None,
+                 prefix=None,
+                 boost_fx=None,
+                 boost_q=None,
+                 highlight_class=None,
+                 taxon=None):
         self.term = term
         self.category = category
         self.is_go = is_go
-        self.url = url
-        self.fq = fq
-        self.solr = solr
+        self._url = url
+        self._solr = solr
         self.config = config
         self.hl = hl
+        self.facet = facet
         self.facet_fields = facet_fields
         self.search_fields = search_fields
         self.rows = rows
         self.start = start
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
-
-        if self.facet_fields is None:
-            self.facet_fields = ['category','taxon_label']
+        self.fq = fq if fq is not None else {}
+        self.prefix = prefix
+        self.boost_fx = boost_fx
+        self.boost_q = boost_q
+        self.highlight_class = highlight_class
+        self.taxon = taxon
 
         if self.search_fields is None:
-            self.search_fields = dict(iri=3, id=3, label=2,
-                                      definition=2, synonym=2)
+            self.search_fields = dict(id=3,
+                                      iri=3,
+                                      label=2,
+                                      synonym=1,
+                                      definition=1,
+                                      taxon_label=1,
+                                      equivalent_iri=1,
+                                      equivalent_curie=1)
+        if self.is_go:
+            if self._url is None:
+                self._set_solr(self.get_config().amigo_solr_search)
+            else:
+                self._solr = pysolr.Solr(self._url, timeout=2)
+        else:
+            if self.url is None:
+                self._set_solr(self.get_config().solr_search)
+            else:
+                self._solr = pysolr.Solr(self._url, timeout=2)
+
+    @property
+    def url(self):
+        return self._url
+
+    @url.setter
+    def url(self, url):
+        self._url = url
+        self.solr = pysolr.Solr(self._url, timeout=2)
+
+    @property
+    def solr(self):
+        return self._solr
+
+    @solr.setter
+    def solr(self, pysolr):
+        self._url = pysolr.url
+        self._solr = pysolr
 
     def solr_params(self):
-        #facet_fields = [ map_field(fn, self.field_mapping) for fn in self.facet_fields ]
 
-        fq = self.fq
+        if self.facet_fields is None and self.facet:
+            self.facet_fields = ['category', 'taxon_label']
+
         if self.category is not None:
-            fq['category'] = self.category
+            self.fq['category'] = self.category
 
-        qf = []
-        suffixes = ['std','kw','eng']
+        suffixes = ['std', 'kw', 'eng']
         if self.is_go:
             self.search_fields=dict(entity_label=3,general_blob=3)
             self.hl = False
@@ -318,40 +366,38 @@ class GolrSearchQuery(GolrAbstractQuery):
             if 'taxon_label' in self.facet_fields:
                 self.facet_fields.remove('taxon_label')
             suffixes = ['searchable']
-            fq['document_category'] = "general"
-            if self.url is None:
-                self._set_solr(self.get_config().amigo_solr_search)
-                #self.url = 'http://golr.berkeleybop.org/'
-            else:
-                self.solr = pysolr.Solr(self.url, timeout=2)
-        else:
-            if self.url is None:
-                self._set_solr(self.get_config().solr_search)
-            else:
-                self.solr = pysolr.Solr(self.url, timeout=2)
+            self.fq['document_category'] = "general"
 
-        #if self.url is None:
-        #    self.url = 'https://solr-dev.monarchinitiative.org/solr/search'
-        #self.solr = pysolr.Solr(self.url, timeout=2)
+        qf = self._format_query_filter(self.search_fields, suffixes)
+        if not self.is_go:
+            monarch_boosts = [
+                "label_searchable^1",
+                "definition_searchable^1",
+                "synonym_searchable^1",
+                "iri_searchable^2",
+                "id_searchable^2",
+                "equivalent_iri_searchable^1",
+                "equivalent_curie_searchable^1",
+                "taxon_label_searchable^1",
+                "taxon_label_synonym_searchable^1"
+            ]
+            qf.extend(monarch_boosts)
 
-        for (f,relevancy) in self.search_fields.items():
-            fmt="{}_{}^{}"
-            for suffix in suffixes:
-                qf.append(fmt.format(f,suffix,relevancy))
-
-        select_fields = ["*","score"]
+        select_fields = ["*", "score"]
         params = {
-            'q': self.term,
+            'q': '{0} "{0}"'.format(self.term),
             "qt": "standard",
-            'facet': 'on',
-            'facet.field': self.facet_fields,
-            'facet.limit': 25,
-            'facet.mincount': 1,
             'fl': ",".join(select_fields),
             "defType": "edismax",
             "qf": qf,
             'rows': self.rows
         }
+
+        if self.facet:
+            params['facet'] = 'on'
+            params['facet.field'] = self.facet_fields
+            params['facet.limit'] = 25
+            params['facet.mincount'] = 1
 
         if self.start is not None:
             params['start'] = self.start
@@ -361,30 +407,124 @@ class GolrSearchQuery(GolrAbstractQuery):
             params['hl.snippets'] = "1000"
             params['hl'] = 'on'
 
-        if fq is not None:
-            filter_queries = [ '{}:{}'.format(k,solr_quotify(v)) for (k,v) in fq.items()]
+        if self.fq is not None:
+            filter_queries = ['{}:{}'.format(k,solr_quotify(v))
+                              for (k,v) in self.fq.items()]
             params['fq'] = filter_queries
+        else:
+            params['fq'] = []
+
+        if self.prefix is not None:
+            if self.prefix.startswith('-'):
+                params['fq'].append('-prefix:"{}"'.format(self.prefix[1:]))
+            else:
+                params['fq'].append('prefix:"{}"'.format(self.prefix))
+
+        if self.boost_fx is not None:
+            params['bf'] = []
+            for boost in self.boost_fx:
+                params['bf'].append(boost)
+
+        if self.boost_q is not None:
+            params['bq'] = []
+            for boost in self.boost_q:
+                params['bq'].append(boost)
+
+        if self.taxon is not None:
+            for tax in self.taxon:
+                params['fq'].append('taxon:"{}"'.format(tax))
+
+        if self.highlight_class is not None:
+            params['hl.simple.pre'] = \
+                '<em class=\"{}\">'.format(self.highlight_class)
 
         return params
 
-    def exec(self, **kwargs):
+    def search(self):
         """
-        Execute solr query
+        Execute solr search query
         """
-
         params = self.solr_params()
-        logging.info("PARAMS="+str(params))
+        logging.info("PARAMS=" + str(params))
         results = self.solr.search(**params)
-        n_docs = len(results.docs)
         logging.info("Docs found: {}".format(results.hits))
+        return self._process_search_results(results)
 
-        fcs = results.facets
+    def autocomplete(self):
+        """
+        Execute solr autocomplete
+        """
+        self.facet = False
+        params = self.solr_params()
+        logging.info("PARAMS=" + str(params))
+        results = self.solr.search(**params)
+        logging.info("Docs found: {}".format(results.hits))
+        return self._process_autocomplete_results(results)
+
+    def _process_search_results(self,
+                                results: pysolr.Results) -> SearchResults:
+        """
+        Convert solr docs to biolink object
+
+        :param results: pysolr.Results
+        :return: model.GolrResults.SearchResults
+        """
 
         # map go-golr fields to standard
-        for d in results.docs:
-            if 'entity' in d:
-                d['id'] = d['entity']
-                d['label'] = d['entity_label']
+        for doc in results.docs:
+            if 'entity' in doc:
+                doc['id'] = doc['entity']
+                doc['label'] = doc['entity_label']
+
+        highlighting = {
+            doc['id']: self._process_highlight(results, doc)._asdict()
+            for doc in results.docs if results.highlighting
+        }
+        payload = SearchResults(
+            facet_counts=translate_facet_field(results.facets),
+            highlighting=highlighting,
+            docs=results.docs,
+            numFound=results.hits
+        )
+        logging.debug('Docs: {}'.format(len(results.docs)))
+
+        return payload
+
+    def _process_autocomplete_results(
+            self,
+            results: pysolr.Results) -> Dict[str, List[AutocompleteResult]]:
+        """
+        Convert results to biolink autocomplete object
+        :param results: pysolr.Results
+        :return: {'docs': List[AutocompleteResult]}
+        """
+        # map go-golr fields to standard
+        for doc in results.docs:
+            if 'entity' in doc:
+                doc['id'] = doc['entity']
+                doc['label'] = doc['entity_label']
+
+        docs = []
+        for doc in results.docs:
+            if results.highlighting:
+                hl = self._process_highlight(results, doc)
+            else:
+                hl = Highlight(None, None, None)
+
+            doc['taxon'] = doc['taxon'] if 'taxon' in doc else ""
+            doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else ""
+            doc = AutocompleteResult(
+                id=doc['id'],
+                label=doc['label'],
+                match=hl.match,
+                category=doc['category'],
+                taxon=doc['taxon'],
+                taxon_label=doc['taxon_label'],
+                highlight=hl.highlight,
+                has_highlight=hl.has_highlight
+            )
+            docs.append(doc)
+
         payload = {
             'facet_counts': translate_facet_field(fcs),
             'pagination': {},
@@ -395,6 +535,154 @@ class GolrSearchQuery(GolrAbstractQuery):
         logging.debug('Docs: {}'.format(len(results.docs)))
 
         return payload
+
+    def _process_highlight(self, results: pysolr.Results, doc) -> Highlight:
+        hl = results.highlighting[doc['id']]
+        highlights = []
+        for hl_list in hl.values():
+            highlights.extend(hl_list)
+        try:
+            highlight = Highlight(
+                highlight=self._get_longest_hl(highlights),
+                match=self._hl_as_string(self._get_longest_hl(highlights)),
+                has_highlight=True
+            )
+        except ET.ParseError:
+            highlight = Highlight(
+                highlight=doc['label'][0],
+                match=doc['label'][0],
+                has_highlight=False
+            )
+        return highlight
+
+    @staticmethod
+    def _format_query_filter(search_fields, suffixes):
+        qf = []
+        for (f, relevancy) in search_fields.items():
+            fmt = "{}_{}^{}"
+            for suffix in suffixes:
+                qf.append(fmt.format(f,suffix,relevancy))
+        return qf
+
+    def _get_longest_hl(self, highlights):
+        """
+        Given a list of highlighted text, returns the
+        longest highlight
+        For example:
+        [
+            "<em>Muscle</em> <em>atrophy</em>, generalized",
+            "Generalized <em>muscle</em> degeneration",
+            "Diffuse skeletal <em>">muscle</em> wasting"
+        ]
+        and returns:
+            <em>Muscle</em> <em>atrophy</em>, generalized
+
+        If there are mutliple matches of the same length, returns
+        the top (arbitrary) highlight
+        :return:
+        """
+        len_dict = OrderedDict()
+        for hl in highlights:
+            # dummy tags to make it valid xml
+            dummy_xml = "<p>" + hl + "</p>"
+            try:
+                element_tree = ET.fromstring(dummy_xml)
+                hl_length = 0
+                for emph in element_tree.findall('em'):
+                    hl_length += len(emph.text)
+                len_dict[hl] = hl_length
+            except ET.ParseError:
+                raise ET.ParseError
+
+        return max(len_dict, key=len_dict.get)
+
+    def _hl_as_string(self, highlight):
+        """
+        Given a solr string of highlighted text, returns the
+        str representations
+        For example:
+        "Foo <em>Muscle</em> bar <em>atrophy</em>, generalized"
+        Returns:
+        "Foo Muscle bar atrophy, generalized"
+        :return: str
+        """
+        # dummy tags to make it valid xml
+        dummy_xml = "<p>" + highlight + "</p>"
+        try:
+            element_tree = ET.fromstring(dummy_xml)
+        except ET.ParseError:
+            raise ET.ParseError
+        return "".join(list(element_tree.itertext()))
+
+
+class GolrLayPersonSearch(GolrSearchQuery):
+    """
+    Controller for the HPO lay person index,
+    see https://github.com/monarch-initiative/hpo-plain-index
+    """
+
+    def __init__(self, term=None, **kwargs):
+        super().__init__(term, **kwargs)
+        self.facet = False
+        self._set_solr(self.get_config().lay_person_search)
+
+    def set_lay_params(self):
+        params = self.solr_params()
+        suffixes = ['std', 'kw', 'eng']
+        params['qf'] = self._get_default_weights(suffixes)
+        return params
+
+    def autocomplete(self):
+        """
+        Execute solr query for autocomplete
+        """
+        params = self.set_lay_params()
+        logging.info("PARAMS="+str(params))
+        results = self.solr.search(**params)
+        logging.info("Docs found: {}".format(results.hits))
+        return self._process_layperson_results(results)
+
+    def _process_layperson_results(self, results):
+        """
+        Convert pysolr.Results to biolink object
+        :param results:
+        :return:
+        """
+
+        payload = {
+            'results': []
+
+        }
+
+        for doc in results.docs:
+            hl = self._process_highlight(results, doc)
+            highlight = {
+                'id': doc['id'],
+                'highlight': hl.highlight,
+                'label': doc['label'],
+                'matched_synonym': hl.match
+            }
+            payload['results'].append(highlight)
+
+        logging.debug('Docs: {}'.format(len(results.docs)))
+
+        return payload
+
+    @staticmethod
+    def _get_default_weights(suffixes):
+        """
+        Defaults for the plain language index
+        :param suffixes: list of suffixes (eng (ngram), std,)
+        :return:
+        """
+        weights = {
+            "exact_synonym":   "5",
+            "related_synonym": "2",
+            "broad_synonym":   "1",
+            "narrow_synonym":  "3"
+        }
+        qf = GolrLayPersonSearch._format_query_filter(weights, suffixes)
+        return qf
 
 
 class GolrAssociationQuery(GolrAbstractQuery):
@@ -484,7 +772,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  fetch_objects=False,
                  fetch_subjects=False,
                  fq=None,
-                 slim=[],
+                 slim=None,
                  json_facet=None,
                  iterate=False,
                  map_identifiers=None,
@@ -492,14 +780,14 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  facet_field_limits=None,
                  facet_limit=25,
                  facet_mincount=1,
-                 facet_pivot_fields=[],
+                 facet_pivot_fields=None,
                  facet_on = 'on',
                  pivot_subject_object=False,
                  unselect_evidence=False,
                  rows=10,
                  start=None,
                  homology_type=None,
-                 non_null_fields=[],
+                 non_null_fields=None,
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -531,8 +819,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.select_fields=select_fields
         self.fetch_objects=fetch_objects
         self.fetch_subjects=fetch_subjects
-        self.fq=fq
-        self.slim=slim
+        self.fq=fq if fq is not None else {}
+        self.slim = slim if slim is not None else []
         self.json_facet=json_facet
         self.iterate=iterate
         self.map_identifiers=map_identifiers
@@ -552,6 +840,12 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
         self.non_null_fields=non_null_fields
+
+        if self.facet_pivot_fields is None:
+            self.facet_pivot_fields = []
+
+        if self.non_null_fields is None:
+            self.non_null_fields = []
 
         if self.facet_fields is None:
             self.facet_fields = [
@@ -634,7 +928,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             # the category to a root class
             if object_category is not None:
                 cc = self.get_config().get_category_class(object_category)
-                if cc is not None and object == None:
+                if cc is not None and object is None:
                     object = cc
 
         ## subject params
@@ -652,10 +946,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         if self.invert_subject_object is None:
             # TODO: consider placing in a separate lookup
-            p = (subject_category,object_category)
-            if p == ('disease','gene'):
+            p = (subject_category, object_category)
+            if p == ('disease', 'gene'):
                 self.invert_subject_object = True
-            elif p == ('disease','model'):
+            elif p == ('disease', 'model'):
                 self.invert_subject_object = True
             else:
                 self.invert_subject_object = False
