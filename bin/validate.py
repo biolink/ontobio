@@ -238,6 +238,7 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
         annotations = []
 
         for line in gaf_file.readlines():
+            line = line.rstrip("\n")
             if line.startswith("!"):
                 headers.append(line)
             else:
