@@ -166,18 +166,18 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
 
     product_files = {
         "gpad": open(os.path.join(os.path.split(gaf_path)[0], "{}.gpad".format(dataset)), "w"),
-        "gpi": open(os.path.join(os.path.split(gaf_path)[0], "{}.gpi".format(dataset)), "w")
+        "ttl": open(os.path.join(os.path.split(gaf_path)[0], "{}_cam.ttl".format(dataset)), "wb")
     }
 
     # def write_gpi_entity(association, bridge, gpiwriter):
     with open(gaf_path) as gf:
         # gpi info:
         click.echo("Using {} as the gaf to build data products with".format(gaf_path))
-        if products["gpi"]:
-            click.echo("Setting up {}".format(product_files["gpi"].name))
-            bridge = gafgpibridge.GafGpiBridge()
-            gpiwriter = entitywriter.GpiWriter(file=product_files["gpi"])
-            gpi_cache = []
+        if products["ttl"]:
+            click.echo("Setting up {}".format(product_files["ttl"].name))
+            rdf_writer = assoc_rdfgen.TurtleRdfWriter()
+            transformer = assoc_rdfgen.CamRdfTransform(writer=rdf_writer)
+            parser_config = assocparser.AssocParserConfig(ontology=ontology_graph)
 
         if products["gpad"]:
             click.echo("Setting up {}".format(product_files["gpad"].name))
@@ -186,20 +186,50 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
         click.echo("Making products...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
-                if products["gpi"]:
-                    entity = bridge.convert_association(association)
-                    if entity not in gpi_cache and entity is not None:
-                        gpi_cache.append(entity)
-                        gpiwriter.write_entity(entity)
+                if products["ttl"]:
+                    if "header" not in association or not association["header"]:
+                        transformer.provenance()
+                        transformer.translate(association)
 
                 if products["gpad"]:
                     gpadwriter.write_assoc(association)
+
+        # post ttl steps
+        if products["ttl"]:
+            click.echo("Writing ttl to disk")
+            rdf_writer.serialize(destination=product_files["ttl"])
 
         # After we run through associations
         for f in product_files.values():
             f.close()
 
-    return [product_files["gpad"].name, product_files["gpi"].name]
+    return [product_files[prod].name for prod in sorted(product_files.keys()) if products[prod]]
+
+@gzips
+def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
+    gafparser = GafParser()
+    gafparser.config = assocparser.AssocParserConfig(
+        ontology=ontology_graph
+    )
+    with open(gaf_path) as sg:
+        lines = sum(1 for line in sg)
+
+    gpi_path = os.path.join(os.path.split(gaf_path)[0], "{}.gpi".format(dataset))
+    with open(gaf_path) as gf, open(gpi_path, "w") as gpi:
+        click.echo("Using {} as the gaf to build gpi with".format(gaf_path))
+        bridge = gafgpibridge.GafGpiBridge()
+        gpiwriter = entitywriter.GpiWriter(file=gpi)
+        gpi_cache = []
+
+        with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
+            for association in associations:
+                entity = bridge.convert_association(association)
+                if entity not in gpi_cache and entity is not None:
+                    gpi_cache.append(entity)
+                    gpiwriter.write_entity(entity)
+
+    return gpi_path
+
 
 @gzips
 def produce_ttl(dataset, target_dir, gaf_path, ontology_graph):
@@ -271,19 +301,16 @@ def cli():
 @cli.command()
 @click.argument("group")
 @click.option("--metadata", "-m", type=click.Path(), required=True)
-@click.option("--gaf", default=True, is_flag=True)
-@click.option("--gpi", default=False, is_flag=True)
 @click.option("--gpad", default=False, is_flag=True)
 @click.option("--ttl", default=False, is_flag=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 @click.option("--exclude", "-x", multiple=True)
-def produce(group, metadata, gaf, gpi, gpad, ttl, target, ontology, exclude):
+def produce(group, metadata, gpad, ttl, target, ontology, exclude):
     click.echo("Building {}".format(group))
-
     products = {
-        "gaf": gaf,
-        "gpi": gpi,
+        "gaf": True,
+        "gpi": True,
         "gpad": gpad,
         "ttl": ttl
     }
@@ -298,32 +325,30 @@ def produce(group, metadata, gaf, gpi, gpad, ttl, target, ontology, exclude):
     ontology_graph = OntologyFactory().create(ontology)
 
     source_gaf_zips = download_source_gafs(group_metadata, absolute_target, exclusions=exclude)
-    source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}.gaf".format(dataset)) for dataset, zip_path in source_gaf_zips.items()}
+    source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset)) for dataset, zip_path in source_gaf_zips.items()}
     for source_zip, source_gaf in source_gafs.items():
         unzip(source_zip, source_gaf)
 
     paint_metadata = metadata_file(absolute_metadata, "paint")
 
-    if products["gaf"]:
-        for dataset in source_gaf_zips.keys():
-            gafzip = source_gaf_zips[dataset]
-            source_gaf = source_gafs[gafzip]
-            valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph)[0]
+    for dataset in source_gaf_zips.keys():
+        gafzip = source_gaf_zips[dataset]
+        source_gaf = source_gafs[gafzip]
+        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph)[0]
 
-            [gpad, gpi] = make_products(dataset, absolute_target, valid_gaf, products, ontology_graph)
+        gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
-            paint_src_gaf = check_and_download_paint_source(paint_metadata, group_metadata["id"], dataset, absolute_target)
+        paint_src_gaf = check_and_download_paint_source(paint_metadata, group_metadata["id"], dataset, absolute_target)
 
-            end_gaf = valid_gaf
-            if paint_src_gaf is not None:
-                paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi)[0]
-                end_gaf = merge_mod_and_paint(valid_gaf, paint_gaf)
-            else:
-                gafgz = "{}.gz".format(valid_gaf)
-                os.rename(gafgz, os.path.join(os.path.split(gafgz)[0], "{}.gaf.gz".format(dataset)))
+        end_gaf = valid_gaf
+        if paint_src_gaf is not None:
+            paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi)[0]
+            end_gaf = merge_mod_and_paint(valid_gaf, paint_gaf)
+        else:
+            gafgz = "{}.gz".format(valid_gaf)
+            os.rename(gafgz, os.path.join(os.path.split(gafgz)[0], "{}.gaf.gz".format(dataset)))
 
-            if products["ttl"]:
-                produce_ttl(dataset, absolute_target, end_gaf, ontology_graph)
+        make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
 
 
 @cli.command()
