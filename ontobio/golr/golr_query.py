@@ -526,7 +526,11 @@ class GolrSearchQuery(GolrAbstractQuery):
             docs.append(doc)
 
         payload = {
-            'docs': docs
+            'facet_counts': translate_facet_field(fcs),
+            'pagination': {},
+            'numFound': results.hits,
+            'highlighting': results.highlighting,
+            'docs': results.docs
         }
         logging.debug('Docs: {}'.format(len(results.docs)))
 
@@ -647,6 +651,7 @@ class GolrLayPersonSearch(GolrSearchQuery):
 
         payload = {
             'results': []
+
         }
 
         for doc in results.docs:
@@ -1219,7 +1224,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         payload = {
             'facet_counts': translate_facet_field(fcs),
-            'pagination': {}
+            'pagination': {},
+            'numFound': results.hits
         }
 
         include_raw=self.include_raw
