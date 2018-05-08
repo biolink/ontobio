@@ -207,7 +207,6 @@ def translate_facet_field(fcs, invert_subject_object = False):
     for (facet, facetresults) in ffs.items():
         if invert_subject_object:
             for (k,v) in INVERT_FIELDS_MAP.items():
-                print("> {} {}".format(k,v))
                 if facet == k:
                     facet = v
                     break
