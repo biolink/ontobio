@@ -56,6 +56,21 @@ class AssocWriter():
                 ixs.append(",".join(rxs))
             return "|".join(ixs)
 
+    def normalize_taxon(self, taxon):
+        global internal_taxon
+        global external_taxon
+
+        if external_taxon.match(taxon):
+            # If we match here, then the internal view already exists and we're good
+            return internal_taxon
+
+        match = internal_taxon.match(taxon)
+        if match:
+            taxon_id = match.group(1)
+            return "taxon:{num}".format(num=taxon_id)
+
+        return taxon
+
     def write_assoc(self, assoc):
         """
         Write a single association to a line in the output file
@@ -202,18 +217,3 @@ class GafWriter(AssocWriter):
                 gene_product_isoform]
 
         self._write_row(vals)
-
-    def normalize_taxon(self, taxon):
-        global internal_taxon
-        global external_taxon
-
-        if external_taxon.match(taxon):
-            # If we match here, then the internal view already exists and we're good
-            return internal_taxon
-
-        match = internal_taxon.match(taxon)
-        if match:
-            taxon_id = match.group(1)
-            return "taxon:{num}".format(num=taxon_id)
-
-        return taxon
