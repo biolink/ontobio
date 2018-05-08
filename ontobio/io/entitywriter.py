@@ -12,6 +12,15 @@ def stringify(s):
     else:
         return s
 
+def destructure(l):
+    if len(l) == 0:
+        return ()
+    if len(l) == 1:
+        return (l[0], [])
+    if len(l) > 1:
+        return (l[0], l[1:len(l)])
+
+
 class EntityWriter():
     """
     Abstract superclass of all association writer objects (Gpad, GAF)
@@ -20,7 +29,7 @@ class EntityWriter():
     # TODO: add to superclass
     def _split_prefix(self, ref):
         id = ref['id']
-        [prefix, local_id] = id.split(':')
+        [prefix, local_id] = id.split(':', maxsplit=1)
         return prefix, local_id
 
     # TODO: add to superclass
