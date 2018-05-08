@@ -12,14 +12,6 @@ def stringify(s):
     else:
         return s
 
-def destructure(l):
-    if len(l) == 0:
-        return ()
-    if len(l) == 1:
-        return (l[0], [])
-    if len(l) > 1:
-        return (l[0], l[1:len(l)])
-
 
 class EntityWriter():
     """
