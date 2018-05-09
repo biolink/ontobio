@@ -3,7 +3,7 @@ import logging
 import json
 
 from ontobio.io import assocparser
-from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
+from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
 from ontobio.io import entityparser
 from ontobio.io import entitywriter
@@ -126,6 +126,17 @@ class GafParser(assocparser.AssocParser):
          annotation_xp,
          gene_product_isoform] = vals
 
+        ## check for missing columns
+        if db == "":
+            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty")
+            return assocparser.ParseResult(line, [], True)
+        if db_object_id == "":
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "col2 is empty")
+            return assocparser.ParseResult(line, [], True)
+        if taxon == "":
+            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty")
+            return assocparser.ParseResult(line, [], True)
+        
         ## --
         ## db + db_object_id. CARD=1
         ## --
