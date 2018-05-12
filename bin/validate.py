@@ -69,6 +69,7 @@ def metadata_file(metadata, group) -> Dict:
 def download_source_gafs(group_metadata, target_dir, exclusions=[]):
     gaf_urls = { data["dataset"]: data["source"] for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions }
 
+    click.echo("Found {}".format(", ".join(gaf_urls.keys())))
     downloaded_paths = {}
     for dataset, gaf_url in gaf_urls.items():
         path = os.path.join(target_dir, "groups", group_metadata["id"], "{}-src.gaf.gz".format(dataset))
@@ -280,7 +281,7 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
         return ["! merged_from " + os.path.basename(filename) + ": " + line.split("!")[1].strip() for line in header if not re.match("![\s]*gaf.?version", line) ]
 
     dirs, name = os.path.split(mod_gaf_path)
-    merged_path = os.path.join(dirs, "{}.gaf".format(name.split("_")[0]))
+    merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
     click.echo("Merging paint into base annotations at {}".format(merged_path))
     with open(mod_gaf_path) as mod, open(paint_gaf_path) as paint:
         mod_header, mod_annotations = header_and_annotations(mod)
@@ -307,7 +308,7 @@ def cli():
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 @click.option("--exclude", "-x", multiple=True)
 def produce(group, metadata, gpad, ttl, target, ontology, exclude):
-    click.echo("Building {}".format(group))
+
     products = {
         "gaf": True,
         "gpi": True,
@@ -370,7 +371,6 @@ def paint(group, dataset, metadata, target, ontology):
     gpi_path = os.path.join(absolute_target, "groups", dataset, "{}.gpi".format(dataset))
     click.echo("Using GPI at {}".format(gpi_path))
     paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi_path)
-
 
 
 if __name__ == "__main__":
