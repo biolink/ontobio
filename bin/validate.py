@@ -18,7 +18,6 @@ from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
 from ontobio.rdfgen import assoc_rdfgen
 
-
 from typing import Dict
 
 def thispath():
@@ -220,13 +219,14 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
         click.echo("Using {} as the gaf to build gpi with".format(gaf_path))
         bridge = gafgpibridge.GafGpiBridge()
         gpiwriter = entitywriter.GpiWriter(file=gpi)
-        gpi_cache = []
+        gpi_cache = set()
 
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 entity = bridge.convert_association(association)
                 if entity not in gpi_cache and entity is not None:
-                    gpi_cache.append(entity)
+                    # If the entity is not in the cache, add it and write it out
+                    gpi_cache.add(entity)
                     gpiwriter.write_entity(entity)
 
     return gpi_path
