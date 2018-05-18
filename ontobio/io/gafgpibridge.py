@@ -2,7 +2,6 @@ import json
 from typing import Dict, NewType, List
 
 Association = NewType("Association", dict)
-# Entity = NewType("Entity", dict)
 
 class Entity(dict):
 
@@ -10,20 +9,8 @@ class Entity(dict):
         super(Entity, self).__init__(d)
 
     def __hash__(self):
-        id = self.get("id", 1).__hash__()
-        label = self.get("label", 1).__hash__()
-        name = self.get("full_name", 1).__hash__()
-        synonyms = self.get("synonyms", None)
-        synhash = 1
-        if synonyms is not None:
-            for i, syn in enumerate(synonyms):
-                synhash = 2 ** i * syn.__hash__() + synhash
-
-        t = self.get("type", 1)
-        taxon = self.get("taxon", 1).get("id", 1).__hash__()
-
-        return id * label * name * synhash * t * taxon
-
+        d = json.dumps(self, sort_keys=True)
+        return hash(d)
 
 
 class GafGpiBridge(object):
@@ -51,7 +38,7 @@ class GafGpiBridge(object):
                     'id': association["subject"]["taxon"]["id"]
                 }
             }
-            return gpi_obj
+            return Entity(gpi_obj)
 
         return None
 
