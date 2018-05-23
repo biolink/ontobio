@@ -31,10 +31,6 @@ release: cleandist
 	python setup.py sdist bdist_wheel bdist_egg
 	twine upload dist/*
 
-dev-release: cleandist
-	python setup.py sdist bdist_wheel bdist_egg
-	twine upload dist/*
-
 nb:
 	PYTHONPATH=.. jupyter notebook
 
