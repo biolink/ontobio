@@ -15,6 +15,7 @@ import subprocess
 import hashlib
 from cachier import cachier
 import datetime
+import obonet
 
 SHELF_LIFE = datetime.timedelta(days=3)
 
@@ -159,6 +160,9 @@ def translate_file_to_ontology(handle, **args):
         logging.info("RdfMapper: {}".format(args))
         m = RdfMapper(**args)
         return m.convert(handle,'ttl')
+    elif handle.endswith(".obo"):
+        g = obonet.read_obo(handle)
+        return Ontology(handle=handle, graph=g)
     else:
         if not (handle.endswith(".obo") or handle.endswith(".owl")):
             logging.info("Attempting to parse non obo or owl file with owltools: "+handle)

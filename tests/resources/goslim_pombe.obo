@@ -1,0 +1,1340 @@
+format-version: 1.2
+subsetdef: goantislim_grouping "Grouping classes that can be excluded"
+subsetdef: gocheck_do_not_annotate "Term not to be used for direct annotation"
+subsetdef: gocheck_do_not_manually_annotate "Term not to be used for direct manual annotation"
+subsetdef: goslim_agr "AGR slim"
+subsetdef: goslim_aspergillus "Aspergillus GO slim"
+subsetdef: goslim_candida "Candida GO slim"
+subsetdef: goslim_chembl "ChEMBL protein targets summary"
+subsetdef: goslim_generic "Generic GO slim"
+subsetdef: goslim_goa "GOA and proteome slim"
+subsetdef: goslim_metagenomics "Metagenomics GO slim"
+subsetdef: goslim_mouse "Mouse GO slim"
+subsetdef: goslim_pir "PIR GO slim"
+subsetdef: goslim_plant "Plant GO slim"
+subsetdef: goslim_pombe "Fission yeast GO slim"
+subsetdef: goslim_synapse "synapse GO slim"
+subsetdef: goslim_virus "Viral GO slim"
+subsetdef: goslim_yeast "Yeast GO slim"
+subsetdef: gosubset_prok "Prokaryotic GO subset"
+subsetdef: mf_needs_review "Catalytic activity terms in need of attention"
+subsetdef: termgenie_unvetted "Terms created by TermGenie that do not follow a template and require additional vetting by editors"
+subsetdef: virus_checked "Viral overhaul terms"
+synonymtypedef: syngo_official_label "label approved by the SynGO project"
+synonymtypedef: systematic_synonym "Systematic synonym" EXACT
+ontology: go/subsets/goslim_pombe
+
+[Term]
+id: GO:0000070
+name: mitotic sister chromatid segregation
+namespace: biological_process
+alt_id: GO:0016359
+def: "The cell cycle process in which replicated homologous chromosomes are organized and then physically separated and apportioned to two sets during the mitotic cell cycle. Each replicated chromosome, composed of two sister chromatids, aligns at the cell equator, paired with its homologous partner. One homolog of each morphologic type goes into each of the resulting chromosome sets." [GOC:ai, GOC:jl]
+subset: goslim_pombe
+synonym: "mitotic chromosome segregation" EXACT []
+synonym: "mitotic sister-chromatid adhesion release" NARROW []
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0000226
+name: microtubule cytoskeleton organization
+namespace: biological_process
+def: "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of cytoskeletal structures comprising microtubules and their associated proteins." [GOC:mah]
+subset: goslim_pombe
+synonym: "microtubule cytoskeleton organisation" EXACT [GOC:mah]
+synonym: "microtubule cytoskeleton organization and biogenesis" RELATED [GOC:mah]
+synonym: "microtubule dynamics" EXACT [GOC:dph, GOC:tb]
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0000281
+name: mitotic cytokinesis
+namespace: biological_process
+def: "A cell cycle process that results in the division of the cytoplasm of a cell after mitosis, resulting in the separation of the original cell into two daughter cells." [GOC:mtg_cell_cycle]
+subset: goslim_pombe
+synonym: "cytokinesis after mitosis" EXACT []
+is_a: GO:0008150 ! biological_process
+relationship: has_part GO:0061024 ! membrane organization
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0000747
+name: conjugation with cellular fusion
+namespace: biological_process
+alt_id: GO:0007322
+alt_id: GO:0007333
+alt_id: GO:0030461
+alt_id: GO:0030477
+def: "A conjugation process that results in the union of cellular and genetic information from compatible mating types. An example of this process is found in Saccharomyces cerevisiae." [GOC:elh]
+subset: goslim_pombe
+synonym: "cell fusion" RELATED []
+synonym: "mating" RELATED []
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0002181
+name: cytoplasmic translation
+namespace: biological_process
+def: "The chemical reactions and pathways resulting in the formation of a protein in the cytoplasm. This is a ribosome-mediated process in which the information in messenger RNA (mRNA) is used to specify the sequence of amino acids in the protein." [GOC:hjd]
+comment: Note that this term applies to translation performed by cytoplasmic ribosomes, which is distinct from translation performed by organellar ribosomes. For mitochondrial translation, consider GO:0032543 'mitochondrial translation' or its child terms.
+subset: goslim_pombe
+subset: goslim_yeast
+is_a: GO:0008150 ! biological_process
+created_by: hjd
+creation_date: 2011-06-09T03:11:53Z
+
+[Term]
+id: GO:0005975
+name: carbohydrate metabolic process
+namespace: biological_process
+alt_id: GO:0044261
+alt_id: GO:0044723
+def: "The chemical reactions and pathways involving carbohydrates, any of a group of organic compounds based of the general formula Cx(H2O)y. Includes the formation of carbohydrate derivatives by the addition of a carbohydrate residue to another molecule." [GOC:mah, ISBN:0198506732]
+subset: goslim_agr
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_metagenomics
+subset: goslim_pir
+subset: goslim_plant
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "carbohydrate metabolism" EXACT []
+synonym: "multicellular organismal carbohydrate metabolic process" NARROW []
+synonym: "single-organism carbohydrate metabolic process" RELATED []
+xref: Reactome:REACT_102834 "Metabolism of carbohydrates, Mus musculus"
+xref: Reactome:REACT_103806 "Metabolism of carbohydrates, Mycobacterium tuberculosis"
+xref: Reactome:REACT_104502 "Metabolism of carbohydrates, Gallus gallus"
+xref: Reactome:REACT_105321 "Metabolism of carbohydrates, Escherichia coli"
+xref: Reactome:REACT_106046 "Metabolism of carbohydrates, Drosophila melanogaster"
+xref: Reactome:REACT_107409 "Metabolism of carbohydrates, Caenorhabditis elegans"
+xref: Reactome:REACT_115733 "Carbohydrate metabolism, Gallus gallus"
+xref: Reactome:REACT_28218 "Metabolism of carbohydrates, Xenopus tropicalis"
+xref: Reactome:REACT_32291 "Metabolism of carbohydrates, Staphylococcus aureus N315"
+xref: Reactome:REACT_33141 "Metabolism of carbohydrates, Taeniopygia guttata"
+xref: Reactome:REACT_33953 "Metabolism of carbohydrates, Rattus norvegicus"
+xref: Reactome:REACT_34800 "Metabolism of carbohydrates, Danio rerio"
+xref: Reactome:REACT_474 "Metabolism of carbohydrates, Homo sapiens"
+xref: Reactome:REACT_77669 "Metabolism of carbohydrates, Plasmodium falciparum"
+xref: Reactome:REACT_81945 "Metabolism of carbohydrates, Schizosaccharomyces pombe"
+xref: Reactome:REACT_83038 "Metabolism of carbohydrates, Arabidopsis thaliana"
+xref: Reactome:REACT_83329 "Metabolism of carbohydrates, Saccharomyces cerevisiae"
+xref: Reactome:REACT_88330 "Metabolism of carbohydrates, Bos taurus"
+xref: Reactome:REACT_88558 "Metabolism of carbohydrates, Canis familiaris"
+xref: Reactome:REACT_90099 "Metabolism of carbohydrates, Sus scrofa"
+xref: Reactome:REACT_96375 "Metabolism of carbohydrates, Dictyostelium discoideum"
+xref: Reactome:REACT_98394 "Metabolism of carbohydrates, Oryza sativa"
+xref: Wikipedia:Carbohydrate_metabolism
+is_a: GO:0008150 ! biological_process
+created_by: janelomax
+creation_date: 2012-10-23T15:40:34Z
+
+[Term]
+id: GO:0006091
+name: generation of precursor metabolites and energy
+namespace: biological_process
+def: "The chemical reactions and pathways resulting in the formation of precursor metabolites, substances from which energy is derived, and any process involved in the liberation of energy from these substances." [GOC:jl]
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_metagenomics
+subset: goslim_pir
+subset: goslim_plant
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "energy pathways" BROAD []
+synonym: "intermediary metabolism" RELATED [GOC:mah]
+synonym: "metabolic energy generation" RELATED []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006260
+name: DNA replication
+namespace: biological_process
+alt_id: GO:0055133
+def: "The cellular metabolic process in which a cell duplicates one or more molecules of DNA. DNA replication begins when specific sequences, known as origins of replication, are recognized and bound by initiation proteins, and ends when the original DNA molecule has been completely duplicated and the copies topologically separated. The unit of replication usually corresponds to the genome of the cell, an organelle, or a virus. The template for replication can either be an existing DNA molecule or RNA." [GOC:mah]
+comment: DNA biosynthesis is only part of this process. See also the biological process terms 'DNA-dependent DNA replication ; GO:0006261' and 'RNA-dependent DNA replication ; GO:0006278'.
+subset: goslim_pir
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+xref: Reactome:REACT_100559 "Activation of ATR in response to replication stress, Mus musculus"
+xref: Reactome:REACT_101280 "Activation of claspin, Xenopus tropicalis"
+xref: Reactome:REACT_101497 "Activation of claspin, Bos taurus"
+xref: Reactome:REACT_102679 "Activation of ATR in response to replication stress, Gallus gallus"
+xref: Reactome:REACT_103614 "Stalling of DNA replication fork and RPA binding, Taeniopygia guttata"
+xref: Reactome:REACT_104547 "Recruitment and activation of Chk1, Gallus gallus"
+xref: Reactome:REACT_105292 "Activation of ATR in response to replication stress, Xenopus tropicalis"
+xref: Reactome:REACT_105467 "Loading of claspin onto DNA during replication origin firing, Danio rerio"
+xref: Reactome:REACT_105835 "Stalling of DNA replication fork and RPA binding, Gallus gallus"
+xref: Reactome:REACT_106018 "Recruitment of Rad17-RFC complex to DNA, Gallus gallus"
+xref: Reactome:REACT_106104 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Bos taurus"
+xref: Reactome:REACT_106382 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Drosophila melanogaster"
+xref: Reactome:REACT_106434 "Activation of claspin, Canis familiaris"
+xref: Reactome:REACT_106732 "Recruitment and activation of Chk1, Canis familiaris"
+xref: Reactome:REACT_107075 "Activation of ATR in response to replication stress, Danio rerio"
+xref: Reactome:REACT_107423 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Caenorhabditis elegans"
+xref: Reactome:REACT_108461 "Recruitment and activation of Chk1, Bos taurus"
+xref: Reactome:REACT_108634 "Loading of claspin onto DNA during replication origin firing, Mus musculus"
+xref: Reactome:REACT_108739 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Xenopus tropicalis"
+xref: Reactome:REACT_108768 "Activation of ATR in response to replication stress, Bos taurus"
+xref: Reactome:REACT_108929 "Activation of ATR in response to replication stress, Drosophila melanogaster"
+xref: Reactome:REACT_109137 "Stalling of DNA replication fork and RPA binding, Rattus norvegicus"
+xref: Reactome:REACT_112472 "Activation of ATR in response to replication stress, Saccharomyces cerevisiae"
+xref: Reactome:REACT_113703 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Gallus gallus"
+xref: Reactome:REACT_29423 "Activation of ATR in response to replication stress, Schizosaccharomyces pombe"
+xref: Reactome:REACT_29444 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Taeniopygia guttata"
+xref: Reactome:REACT_29691 "Activation of ATR in response to replication stress, Rattus norvegicus"
+xref: Reactome:REACT_29764 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Taeniopygia guttata"
+xref: Reactome:REACT_30149 "Activation of claspin, Rattus norvegicus"
+xref: Reactome:REACT_31024 "Recruitment of Rad17-RFC complex to DNA, Xenopus tropicalis"
+xref: Reactome:REACT_31919 "Loading of claspin onto DNA during replication origin firing, Rattus norvegicus"
+xref: Reactome:REACT_32546 "Recruitment of Rad17-RFC complex to DNA, Mus musculus"
+xref: Reactome:REACT_32932 "Recruitment and activation of Chk1, Taeniopygia guttata"
+xref: Reactome:REACT_33572 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Dictyostelium discoideum"
+xref: Reactome:REACT_33874 "Recruitment and activation of Chk1, Xenopus tropicalis"
+xref: Reactome:REACT_50018 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Rattus norvegicus"
+xref: Reactome:REACT_53588 "Loading of claspin onto DNA during replication origin firing, Canis familiaris"
+xref: Reactome:REACT_6729 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Homo sapiens"
+xref: Reactome:REACT_6738 "Loading of claspin onto DNA during replication origin firing, Homo sapiens"
+xref: Reactome:REACT_6750 "Activation of claspin, Homo sapiens"
+xref: Reactome:REACT_6769 "Activation of ATR in response to replication stress, Homo sapiens"
+xref: Reactome:REACT_6798 "Recruitment of Rad17-RFC complex to DNA, Homo sapiens"
+xref: Reactome:REACT_6869 "Recruitment and activation of Chk1, Homo sapiens"
+xref: Reactome:REACT_6936 "Stalling of DNA replication fork and RPA binding, Homo sapiens"
+xref: Reactome:REACT_6939 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Homo sapiens"
+xref: Reactome:REACT_77532 "Stalling of DNA replication fork and RPA binding, Canis familiaris"
+xref: Reactome:REACT_79188 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Canis familiaris"
+xref: Reactome:REACT_79450 "Activation of ATR in response to replication stress, Dictyostelium discoideum"
+xref: Reactome:REACT_80432 "Loading of claspin onto DNA during replication origin firing, Taeniopygia guttata"
+xref: Reactome:REACT_80571 "Activation of claspin, Mus musculus"
+xref: Reactome:REACT_80896 "Recruitment and activation of Chk1, Sus scrofa"
+xref: Reactome:REACT_80988 "Loading of claspin onto DNA during replication origin firing, Bos taurus"
+xref: Reactome:REACT_81803 "Recruitment of Rad17-RFC complex to DNA, Canis familiaris"
+xref: Reactome:REACT_83095 "Recruitment of Rad17-RFC complex to DNA, Danio rerio"
+xref: Reactome:REACT_84829 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Danio rerio"
+xref: Reactome:REACT_85561 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Rattus norvegicus"
+xref: Reactome:REACT_86410 "Stalling of DNA replication fork and RPA binding, Mus musculus"
+xref: Reactome:REACT_86739 "Recruitment and activation of Chk1, Rattus norvegicus"
+xref: Reactome:REACT_87233 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Canis familiaris"
+xref: Reactome:REACT_87449 "Recruitment of Rad17-RFC complex to DNA, Rattus norvegicus"
+xref: Reactome:REACT_87590 "Recruitment of Rad17-RFC complex to DNA, Bos taurus"
+xref: Reactome:REACT_88085 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Gallus gallus"
+xref: Reactome:REACT_88384 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Schizosaccharomyces pombe"
+xref: Reactome:REACT_88529 "Activation of claspin, Gallus gallus"
+xref: Reactome:REACT_89355 "Activation of claspin, Danio rerio"
+xref: Reactome:REACT_89439 "Activation of ATR in response to replication stress, Sus scrofa"
+xref: Reactome:REACT_89725 "Loading of claspin onto DNA during replication origin firing, Drosophila melanogaster"
+xref: Reactome:REACT_90512 "Stalling of DNA replication fork and RPA binding, Bos taurus"
+xref: Reactome:REACT_90809 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Danio rerio"
+xref: Reactome:REACT_90838 "Recruitment of Rad17-RFC complex to DNA, Taeniopygia guttata"
+xref: Reactome:REACT_91184 "Recruitment and activation of Chk1, Danio rerio"
+xref: Reactome:REACT_91302 "Activation of ATR in response to replication stress, Canis familiaris"
+xref: Reactome:REACT_92527 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Mus musculus"
+xref: Reactome:REACT_92644 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Xenopus tropicalis"
+xref: Reactome:REACT_92706 "Stalling of DNA replication fork and RPA binding, Danio rerio"
+xref: Reactome:REACT_94983 "Stalling of DNA replication fork and RPA binding, Xenopus tropicalis"
+xref: Reactome:REACT_95253 "Activation of ATR in response to replication stress, Taeniopygia guttata"
+xref: Reactome:REACT_95329 "Activation of claspin, Taeniopygia guttata"
+xref: Reactome:REACT_96115 "Binding of ATR-ATRIP to the RPA-ssDNA complex, Mus musculus"
+xref: Reactome:REACT_96804 "Recruitment and activation of Chk1, Mus musculus"
+xref: Reactome:REACT_96998 "Recruitment of the Rad9-Hus1-Rad1 complex to DNA, Bos taurus"
+xref: Reactome:REACT_97204 "Loading of claspin onto DNA during replication origin firing, Gallus gallus"
+xref: Reactome:REACT_97726 "Activation of ATR in response to replication stress, Caenorhabditis elegans"
+xref: Reactome:REACT_99948 "Loading of claspin onto DNA during replication origin firing, Xenopus tropicalis"
+xref: Wikipedia:DNA_replication
+is_a: GO:0008150 ! biological_process
+relationship: has_part GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006281
+name: DNA repair
+namespace: biological_process
+def: "The process of restoring DNA after damage. Genomes are subject to damage by chemical and physical agents in the environment (e.g. UV and ionizing radiations, chemical mutagens, fungal and bacterial toxins, etc.) and by free radicals or alkylating agents endogenously generated in metabolism. DNA is also damaged because of errors during its replication. A variety of different DNA repair pathways have been reported that include direct reversal, base excision repair, nucleotide excision repair, photoreactivation, bypass, double-strand break repair pathway, and mismatch repair pathway." [PMID:11563486]
+subset: goslim_pir
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+xref: Reactome:REACT_102034 "DNA Repair, Staphylococcus aureus N315"
+xref: Reactome:REACT_106650 "DNA Damage Reversal, Taeniopygia guttata"
+xref: Reactome:REACT_107446 "DNA Repair, Arabidopsis thaliana"
+xref: Reactome:REACT_107692 "DNA Damage Reversal, Gallus gallus"
+xref: Reactome:REACT_107752 "DNA Repair, Plasmodium falciparum"
+xref: Reactome:REACT_108864 "DNA Damage Reversal, Rattus norvegicus"
+xref: Reactome:REACT_108881 "DNA Damage Reversal, Bos taurus"
+xref: Reactome:REACT_108903 "DNA Repair, Xenopus tropicalis"
+xref: Reactome:REACT_109956 "DNA Repair, Gallus gallus"
+xref: Reactome:REACT_115642 "DNA repair, Gallus gallus"
+xref: Reactome:REACT_115836 "Fanconi Anemia Pathway in DNA repair, Gallus gallus"
+xref: Reactome:REACT_127 "DNA Damage Reversal, Homo sapiens"
+xref: Reactome:REACT_216 "DNA Repair, Homo sapiens"
+xref: Reactome:REACT_29531 "DNA Damage Reversal, Saccharomyces cerevisiae"
+xref: Reactome:REACT_29636 "DNA Damage Reversal, Staphylococcus aureus N315"
+xref: Reactome:REACT_78051 "DNA Damage Reversal, Canis familiaris"
+xref: Reactome:REACT_82907 "DNA Repair, Oryza sativa"
+xref: Reactome:REACT_83608 "DNA Damage Reversal, Caenorhabditis elegans"
+xref: Reactome:REACT_83660 "DNA Repair, Escherichia coli"
+xref: Reactome:REACT_84835 "DNA Damage Reversal, Dictyostelium discoideum"
+xref: Reactome:REACT_85522 "DNA Repair, Mus musculus"
+xref: Reactome:REACT_86513 "DNA Repair, Mycobacterium tuberculosis"
+xref: Reactome:REACT_86902 "DNA Repair, Danio rerio"
+xref: Reactome:REACT_88201 "DNA Repair, Drosophila melanogaster"
+xref: Reactome:REACT_88946 "DNA Damage Reversal, Mycobacterium tuberculosis"
+xref: Reactome:REACT_89524 "DNA Damage Reversal, Drosophila melanogaster"
+xref: Reactome:REACT_90385 "DNA Repair, Canis familiaris"
+xref: Reactome:REACT_90952 "DNA Damage Reversal, Arabidopsis thaliana"
+xref: Reactome:REACT_91094 "DNA Repair, Rattus norvegicus"
+xref: Reactome:REACT_91330 "DNA Repair, Bos taurus"
+xref: Reactome:REACT_91442 "DNA Repair, Caenorhabditis elegans"
+xref: Reactome:REACT_91576 "DNA Damage Reversal, Oryza sativa"
+xref: Reactome:REACT_92707 "DNA Repair, Taeniopygia guttata"
+xref: Reactome:REACT_93704 "DNA Repair, Saccharomyces cerevisiae"
+xref: Reactome:REACT_94204 "DNA Repair, Sus scrofa"
+xref: Reactome:REACT_94769 "DNA Repair, Schizosaccharomyces pombe"
+xref: Reactome:REACT_95050 "DNA Damage Reversal, Sus scrofa"
+xref: Reactome:REACT_95158 "DNA Damage Reversal, Xenopus tropicalis"
+xref: Reactome:REACT_96052 "DNA Repair, Dictyostelium discoideum"
+xref: Reactome:REACT_96452 "DNA Damage Reversal, Danio rerio"
+xref: Reactome:REACT_99277 "DNA Damage Reversal, Mus musculus"
+xref: Wikipedia:DNA_repair
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006310
+name: DNA recombination
+namespace: biological_process
+def: "Any process in which a new genotype is formed by reassortment of genes resulting in gene combinations different from those that were present in the parents. In eukaryotes genetic recombination can occur by chromosome assortment, intrachromosomal recombination, or nonreciprocal interchromosomal recombination. Interchromosomal recombination occurs by crossing over. In bacteria it may occur by genetic transformation, conjugation, transduction, or F-duction." [ISBN:0198506732]
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006325
+name: chromatin organization
+namespace: biological_process
+alt_id: GO:0016568
+def: "Any process that results in the specification, formation or maintenance of the physical structure of eukaryotic chromatin." [GOC:mah, GOC:vw, PMID:20404130]
+subset: goslim_pombe
+subset: goslim_yeast
+synonym: "chromatin modification" RELATED []
+synonym: "chromatin organisation" EXACT [GOC:mah]
+synonym: "establishment or maintenance of chromatin architecture" EXACT [GOC:mah]
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006351
+name: transcription, DNA-templated
+namespace: biological_process
+alt_id: GO:0006350
+alt_id: GO:0061018
+alt_id: GO:0061022
+def: "The cellular synthesis of RNA on a template of DNA." [GOC:jl, GOC:txnOH]
+subset: goslim_aspergillus
+subset: goslim_metagenomics
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "cellular transcription" BROAD []
+synonym: "cellular transcription, DNA-dependent" EXACT []
+synonym: "DNA-dependent transcription" EXACT []
+synonym: "transcription" BROAD []
+synonym: "transcription regulator activity" RELATED []
+synonym: "transcription, DNA-dependent" EXACT [GOC:txnOH]
+xref: Wikipedia:Transcription_(genetics)
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006355
+name: regulation of transcription, DNA-templated
+namespace: biological_process
+alt_id: GO:0032583
+alt_id: GO:0045449
+alt_id: GO:0061019
+def: "Any process that modulates the frequency, rate or extent of cellular DNA-templated transcription." [GOC:go_curators, GOC:txnOH]
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "regulation of cellular transcription, DNA-dependent" EXACT []
+synonym: "regulation of gene-specific transcription" RELATED []
+synonym: "regulation of transcription, DNA-dependent" EXACT [GOC:txnOH]
+synonym: "transcriptional control" BROAD []
+is_a: GO:0008150 ! biological_process
+intersection_of: GO:0008150 ! biological_process
+intersection_of: regulates GO:0006351 ! transcription, DNA-templated
+relationship: regulates GO:0006351 ! transcription, DNA-templated
+
+[Term]
+id: GO:0006399
+name: tRNA metabolic process
+namespace: biological_process
+def: "The chemical reactions and pathways involving tRNA, transfer RNA, a class of relatively small RNA molecules responsible for mediating the insertion of amino acids into the sequence of nascent polypeptide chains during protein synthesis. Transfer RNA is characterized by the presence of many unusual minor bases, the function of which has not been completely established." [ISBN:0198506732]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "tRNA metabolism" EXACT []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006457
+name: protein folding
+namespace: biological_process
+alt_id: GO:0007022
+alt_id: GO:0007024
+alt_id: GO:0007025
+def: "The process of assisting in the covalent and noncovalent assembly of single chain polypeptides or multisubunit complexes into the correct tertiary structure." [GOC:go_curators, GOC:rb]
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_metagenomics
+subset: goslim_pir
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "alpha-tubulin folding" NARROW [GOC:mah]
+synonym: "beta-tubulin folding" NARROW [GOC:mah]
+synonym: "chaperone activity" RELATED []
+synonym: "chaperonin ATPase activity" RELATED []
+synonym: "chaperonin-mediated tubulin folding" NARROW [GOC:mah]
+synonym: "co-chaperone activity" RELATED []
+synonym: "co-chaperonin activity" RELATED []
+synonym: "glycoprotein-specific chaperone activity" RELATED []
+synonym: "non-chaperonin molecular chaperone ATPase activity" RELATED []
+synonym: "protein complex assembly, multichaperone pathway" RELATED []
+xref: Reactome:REACT_100411 "Chaperonin-mediated protein folding, Arabidopsis thaliana"
+xref: Reactome:REACT_104912 "Chaperonin-mediated protein folding, Caenorhabditis elegans"
+xref: Reactome:REACT_105663 "Chaperonin-mediated protein folding, Rattus norvegicus"
+xref: Reactome:REACT_106009 "Chaperonin-mediated protein folding, Canis familiaris"
+xref: Reactome:REACT_106427 "Chaperonin-mediated protein folding, Mus musculus"
+xref: Reactome:REACT_106894 "Formation of tubulin folding intermediates by CCT/TriC, Canis familiaris"
+xref: Reactome:REACT_106927 "Chaperonin-mediated protein folding, Drosophila melanogaster"
+xref: Reactome:REACT_107029 "Formation of tubulin folding intermediates by CCT/TriC, Drosophila melanogaster"
+xref: Reactome:REACT_108248 "Chaperonin-mediated protein folding, Gallus gallus"
+xref: Reactome:REACT_109411 "Formation of tubulin folding intermediates by CCT/TriC, Bos taurus"
+xref: Reactome:REACT_110417 "Formation of tubulin folding intermediates by CCT/TriC, Rattus norvegicus"
+xref: Reactome:REACT_16956 "Formation of tubulin folding intermediates by CCT/TriC, Homo sapiens"
+xref: Reactome:REACT_17001 "Formation of tubulin folding intermediates by CCT/TriC, Mus musculus"
+xref: Reactome:REACT_17004 "Chaperonin-mediated protein folding, Homo sapiens"
+xref: Reactome:REACT_17056 "Cooperation of Prefoldin and TriC/CCT in actin and tubulin folding, Bos taurus"
+xref: Reactome:REACT_23878 "N-glycan trimming in the ER and Calnexin/Calreticulin cycle, Homo sapiens"
+xref: Reactome:REACT_30906 "Chaperonin-mediated protein folding, Oryza sativa"
+xref: Reactome:REACT_32155 "Chaperonin-mediated protein folding, Saccharomyces cerevisiae"
+xref: Reactome:REACT_32255 "Chaperonin-mediated protein folding, Schizosaccharomyces pombe"
+xref: Reactome:REACT_33395 "Formation of tubulin folding intermediates by CCT/TriC, Mus musculus"
+xref: Reactome:REACT_77627 "Chaperonin-mediated protein folding, Plasmodium falciparum"
+xref: Reactome:REACT_77963 "Formation of tubulin folding intermediates by CCT/TriC, Saccharomyces cerevisiae"
+xref: Reactome:REACT_78530 "Formation of tubulin folding intermediates by CCT/TriC, Gallus gallus"
+xref: Reactome:REACT_81155 "Formation of tubulin folding intermediates by CCT/TriC, Caenorhabditis elegans"
+xref: Reactome:REACT_83906 "Chaperonin-mediated protein folding, Dictyostelium discoideum"
+xref: Reactome:REACT_85492 "Formation of tubulin folding intermediates by CCT/TriC, Sus scrofa"
+xref: Reactome:REACT_85496 "Formation of tubulin folding intermediates by CCT/TriC, Plasmodium falciparum"
+xref: Reactome:REACT_86318 "Formation of tubulin folding intermediates by CCT/TriC, Arabidopsis thaliana"
+xref: Reactome:REACT_91676 "Formation of tubulin folding intermediates by CCT/TriC, Schizosaccharomyces pombe"
+xref: Reactome:REACT_92785 "Formation of tubulin folding intermediates by CCT/TriC, Dictyostelium discoideum"
+xref: Reactome:REACT_92961 "Chaperonin-mediated protein folding, Xenopus tropicalis"
+xref: Reactome:REACT_92981 "Chaperonin-mediated protein folding, Taeniopygia guttata"
+xref: Reactome:REACT_94123 "Formation of tubulin folding intermediates by CCT/TriC, Taeniopygia guttata"
+xref: Reactome:REACT_94443 "Formation of tubulin folding intermediates by CCT/TriC, Danio rerio"
+xref: Reactome:REACT_94772 "Chaperonin-mediated protein folding, Sus scrofa"
+xref: Reactome:REACT_96773 "Chaperonin-mediated protein folding, Danio rerio"
+xref: Reactome:REACT_97016 "Chaperonin-mediated protein folding, Bos taurus"
+xref: Reactome:REACT_97220 "Formation of tubulin folding intermediates by CCT/TriC, Xenopus tropicalis"
+xref: Reactome:REACT_98132 "Formation of tubulin folding intermediates by CCT/TriC, Oryza sativa"
+xref: Wikipedia:Protein_folding
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006486
+name: protein glycosylation
+namespace: biological_process
+def: "A protein modification process that results in the addition of a carbohydrate or carbohydrate derivative unit to a protein amino acid, e.g. the addition of glycan chains to proteins." [GOC:curators, GOC:pr]
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "protein amino acid glycosylation" EXACT [GOC:bf]
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006520
+name: cellular amino acid metabolic process
+namespace: biological_process
+alt_id: GO:0006519
+def: "The chemical reactions and pathways involving amino acids, carboxylic acids containing one or more amino groups, as carried out by individual cells." [CHEBI:33709, GOC:curators, ISBN:0198506732]
+subset: goslim_aspergillus
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "amino acid and derivative metabolism" EXACT [GOC:curators]
+synonym: "amino acid metabolic process" EXACT [GOC:curators]
+synonym: "cellular amino acid and derivative metabolic process" EXACT []
+synonym: "cellular amino acid metabolism" EXACT []
+xref: Reactome:REACT_116093 "Amino acid metabolism, Gallus gallus"
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006605
+name: protein targeting
+namespace: biological_process
+def: "The process of targeting specific proteins to particular regions of the cell, typically membrane-bounded subcellular organelles. Usually requires an organelle specific protein sequence motif." [GOC:ma]
+comment: Note that protein targeting encompasses the transport of the protein to the specified location, and may also include additional steps such as protein processing.
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "nascent polypeptide association" RELATED []
+synonym: "protein sorting along secretory pathway" NARROW []
+xref: Wikipedia:Protein_targeting
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006629
+name: lipid metabolic process
+namespace: biological_process
+def: "The chemical reactions and pathways involving lipids, compounds soluble in an organic solvent but not, or sparingly, in an aqueous solvent. Includes fatty acids; neutral fats, other fatty-acid esters, and soaps; long-chain (fatty) alcohols and waxes; sphingoids and other long-chain bases; glycolipids, phospholipids and sphingolipids; and carotenes, polyprenols, sterols, terpenes and other isoprenoids." [GOC:ma]
+subset: goslim_agr
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_metagenomics
+subset: goslim_mouse
+subset: goslim_pir
+subset: goslim_plant
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "lipid metabolism" EXACT []
+xref: Reactome:REACT_104930 "Lipid digestion, mobilization, and transport, Drosophila melanogaster"
+xref: Reactome:REACT_107479 "Lipid digestion, mobilization, and transport, Xenopus tropicalis"
+xref: Reactome:REACT_108775 "Lipid digestion, mobilization, and transport, Canis familiaris"
+xref: Reactome:REACT_114669 "Lipid digestion, mobilization, and transport, Staphylococcus aureus N315"
+xref: Reactome:REACT_115652 "Lipid metabolism, Gallus gallus"
+xref: Reactome:REACT_28745 "Lipid digestion, mobilization, and transport, Saccharomyces cerevisiae"
+xref: Reactome:REACT_31395 "Lipid digestion, mobilization, and transport, Sus scrofa"
+xref: Reactome:REACT_32539 "Lipid digestion, mobilization, and transport, Bos taurus"
+xref: Reactome:REACT_33836 "Lipid digestion, mobilization, and transport, Rattus norvegicus"
+xref: Reactome:REACT_602 "Lipid digestion, mobilization, and transport, Homo sapiens"
+xref: Reactome:REACT_77176 "Lipid digestion, mobilization, and transport, Danio rerio"
+xref: Reactome:REACT_77191 "Lipid digestion, mobilization, and transport, Arabidopsis thaliana"
+xref: Reactome:REACT_79244 "Lipid digestion, mobilization, and transport, Plasmodium falciparum"
+xref: Reactome:REACT_81778 "Lipid digestion, mobilization, and transport, Oryza sativa"
+xref: Reactome:REACT_82512 "Lipid digestion, mobilization, and transport, Taeniopygia guttata"
+xref: Reactome:REACT_82723 "Lipid digestion, mobilization, and transport, Escherichia coli"
+xref: Reactome:REACT_87884 "Lipid digestion, mobilization, and transport, Caenorhabditis elegans"
+xref: Reactome:REACT_90757 "Lipid digestion, mobilization, and transport, Mus musculus"
+xref: Reactome:REACT_94607 "Lipid digestion, mobilization, and transport, Mycobacterium tuberculosis"
+xref: Reactome:REACT_97906 "Lipid digestion, mobilization, and transport, Gallus gallus"
+xref: Reactome:REACT_98129 "Lipid digestion, mobilization, and transport, Schizosaccharomyces pombe"
+xref: Reactome:REACT_99706 "Lipid digestion, mobilization, and transport, Dictyostelium discoideum"
+xref: Wikipedia:Lipid_metabolism
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006766
+name: vitamin metabolic process
+namespace: biological_process
+def: "The chemical reactions and pathways involving vitamins. Vitamin is a general term for a number of unrelated organic substances that occur in many foods in small amounts and that are necessary in trace amounts for the normal metabolic functioning of the body. Vitamins may be water-soluble or fat-soluble and usually serve as components of coenzyme systems." [GOC:ai]
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_pir
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "vitamin metabolism" EXACT []
+xref: Reactome:REACT_101808 "Metabolism of vitamins and cofactors, Bos taurus"
+xref: Reactome:REACT_101968 "Metabolism of vitamins and cofactors, Saccharomyces cerevisiae"
+xref: Reactome:REACT_102472 "Vitamins, Xenopus tropicalis"
+xref: Reactome:REACT_103646 "Metabolism of vitamins and cofactors, Staphylococcus aureus N315"
+xref: Reactome:REACT_104403 "Vitamins, Bos taurus"
+xref: Reactome:REACT_105907 "Metabolism of vitamins and cofactors, Danio rerio"
+xref: Reactome:REACT_106152 "Metabolism of vitamins and cofactors, Xenopus tropicalis"
+xref: Reactome:REACT_108558 "Metabolism of vitamins and cofactors, Rattus norvegicus"
+xref: Reactome:REACT_110948 "Metabolism of vitamins and cofactors, Sus scrofa"
+xref: Reactome:REACT_11193 "Metabolism of vitamins and cofactors, Homo sapiens"
+xref: Reactome:REACT_13450 "Vitamins, Homo sapiens"
+xref: Reactome:REACT_30091 "Metabolism of vitamins and cofactors, Oryza sativa"
+xref: Reactome:REACT_31562 "Vitamins, Sus scrofa"
+xref: Reactome:REACT_33241 "Vitamins, Oryza sativa"
+xref: Reactome:REACT_33738 "Metabolism of vitamins and cofactors, Mycobacterium tuberculosis"
+xref: Reactome:REACT_34161 "Metabolism of vitamins and cofactors, Mus musculus"
+xref: Reactome:REACT_34372 "Vitamins, Taeniopygia guttata"
+xref: Reactome:REACT_36524 "Vitamins, Gallus gallus"
+xref: Reactome:REACT_78899 "Metabolism of vitamins and cofactors, Caenorhabditis elegans"
+xref: Reactome:REACT_79004 "Vitamins, Danio rerio"
+xref: Reactome:REACT_80415 "Vitamins, Rattus norvegicus"
+xref: Reactome:REACT_81509 "Metabolism of vitamins and cofactors, Gallus gallus"
+xref: Reactome:REACT_82129 "Metabolism of vitamins and cofactors, Taeniopygia guttata"
+xref: Reactome:REACT_82903 "Vitamins, Canis familiaris"
+xref: Reactome:REACT_83508 "Metabolism of vitamins and cofactors, Arabidopsis thaliana"
+xref: Reactome:REACT_84128 "Vitamins, Drosophila melanogaster"
+xref: Reactome:REACT_87513 "Metabolism of vitamins and cofactors, Schizosaccharomyces pombe"
+xref: Reactome:REACT_88847 "Vitamins, Mus musculus"
+xref: Reactome:REACT_88850 "Metabolism of vitamins and cofactors, Dictyostelium discoideum"
+xref: Reactome:REACT_90099 "Vitamins, Arabidopsis thaliana"
+xref: Reactome:REACT_96278 "Metabolism of vitamins and cofactors, Plasmodium falciparum"
+xref: Reactome:REACT_96904 "Metabolism of vitamins and cofactors, Drosophila melanogaster"
+xref: Reactome:REACT_97734 "Metabolism of vitamins and cofactors, Escherichia coli"
+xref: Reactome:REACT_97893 "Metabolism of vitamins and cofactors, Canis familiaris"
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006790
+name: sulfur compound metabolic process
+namespace: biological_process
+def: "The chemical reactions and pathways involving the nonmetallic element sulfur or compounds that contain sulfur, such as the amino acids methionine and cysteine or the tripeptide glutathione." [GOC:ai]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "sulfur metabolism" EXACT []
+synonym: "sulphur metabolic process" EXACT []
+synonym: "sulphur metabolism" EXACT []
+xref: Reactome:REACT_27247 "Sulfur compound metabolism, Mycobacterium tuberculosis"
+xref: Wikipedia:Sulfur_metabolism
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006913
+name: nucleocytoplasmic transport
+namespace: biological_process
+alt_id: GO:0000063
+def: "The directed movement of molecules between the nucleus and the cytoplasm." [GOC:go_curators]
+comment: Note that transport through the nuclear pore complex is not transmembrane because the nuclear membrane is a double membrane, and is not traversed.
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+synonym: "nucleocytoplasmic shuttling" NARROW []
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0006914
+name: autophagy
+namespace: biological_process
+alt_id: GO:0016238
+def: "The cellular catabolic process in which cells digest parts of their own cytoplasm; allows for both recycling of macromolecular constituents under conditions of cellular stress and remodeling the intracellular structure for cell differentiation." [GOC:autophagy, ISBN:0198547684, PMID:11099404, PMID:9412464]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pir
+subset: goslim_pombe
+xref: Wikipedia:Autophagy_(cellular)
+is_a: GO:0008150 ! biological_process
+relationship: has_part GO:0055085 ! transmembrane transport
+
+[Term]
+id: GO:0006915
+name: apoptotic process
+namespace: biological_process
+alt_id: GO:0006917
+alt_id: GO:0008632
+def: "A programmed cell death process which begins when a cell receives an internal (e.g. DNA damage) or external signal (e.g. an extracellular death ligand), and proceeds through a series of biochemical events (signaling pathway phase) which trigger an execution phase. The execution phase is the last step of an apoptotic process, and is typically characterized by rounding-up of the cell, retraction of pseudopodes, reduction of cellular volume (pyknosis), chromatin condensation, nuclear fragmentation (karyorrhexis), plasma membrane blebbing and fragmentation of the cell into apoptotic bodies. When the execution phase is completed, the cell has died." [GOC:cjm, GOC:dhl, GOC:ecd, GOC:go_curators, GOC:mtg_apoptosis, GOC:tb, ISBN:0198506732, PMID:18846107, PMID:21494263]
+subset: goslim_pombe
+synonym: "activation of apoptosis" NARROW []
+synonym: "apoptosis" NARROW []
+synonym: "apoptosis activator activity" RELATED []
+synonym: "apoptosis signaling" NARROW []
+synonym: "apoptotic cell death" EXACT [GOC:sl]
+synonym: "apoptotic program" NARROW [GOC:add]
+synonym: "apoptotic programmed cell death" EXACT []
+synonym: "caspase-dependent programmed cell death" RELATED []
+synonym: "cell suicide" BROAD []
+synonym: "cellular suicide" BROAD []
+synonym: "commitment to apoptosis" RELATED []
+synonym: "induction of apoptosis" RELATED []
+synonym: "induction of apoptosis by p53" RELATED []
+synonym: "programmed cell death by apoptosis" EXACT []
+synonym: "signaling (initiator) caspase activity" RELATED []
+synonym: "type I programmed cell death" NARROW []
+xref: Reactome:REACT_100045 "Apoptosis, Drosophila melanogaster"
+xref: Reactome:REACT_100962 "Apoptosis, Mus musculus"
+xref: Reactome:REACT_101249 "NRIF signals cell death from the nucleus, Danio rerio"
+xref: Reactome:REACT_104187 "NRAGE signals death through JNK, Taeniopygia guttata"
+xref: Reactome:REACT_105149 "NADE modulates death signalling, Rattus norvegicus"
+xref: Reactome:REACT_106405 "NRAGE signals death through JNK, Xenopus tropicalis"
+xref: Reactome:REACT_106672 "NADE modulates death signalling, Sus scrofa"
+xref: Reactome:REACT_107264 "NRIF signals cell death from the nucleus, Xenopus tropicalis"
+xref: Reactome:REACT_108651 "NRAGE signals death through JNK, Mus musculus"
+xref: Reactome:REACT_109165 "NRAGE signals death through JNK, Arabidopsis thaliana"
+xref: Reactome:REACT_110081 "NRAGE signals death through JNK, Schizosaccharomyces pombe"
+xref: Reactome:REACT_111964 "NRAGE signals death through JNK, Dictyostelium discoideum"
+xref: Reactome:REACT_13526 "NADE modulates death signalling, Homo sapiens"
+xref: Reactome:REACT_13638 "NRAGE signals death through JNK, Homo sapiens"
+xref: Reactome:REACT_13643 "NRIF signals cell death from the nucleus, Homo sapiens"
+xref: Reactome:REACT_28087 "Apoptosis, Saccharomyces cerevisiae"
+xref: Reactome:REACT_28795 "Apoptosis, Oryza sativa"
+xref: Reactome:REACT_28816 "Apoptosis, Danio rerio"
+xref: Reactome:REACT_30266 "Apoptosis, Arabidopsis thaliana"
+xref: Reactome:REACT_30361 "Apoptosis, Canis familiaris"
+xref: Reactome:REACT_30371 "NRAGE signals death through JNK, Saccharomyces cerevisiae"
+xref: Reactome:REACT_30548 "NRAGE signals death through JNK, Caenorhabditis elegans"
+xref: Reactome:REACT_30763 "NRAGE signals death through JNK, Oryza sativa"
+xref: Reactome:REACT_31349 "NRAGE signals death through JNK, Canis familiaris"
+xref: Reactome:REACT_34139 "NRAGE signals death through JNK, Gallus gallus"
+xref: Reactome:REACT_578 "Apoptosis, Homo sapiens"
+xref: Reactome:REACT_77132 "NRAGE signals death through JNK, Drosophila melanogaster"
+xref: Reactome:REACT_77313 "NADE modulates death signalling, Bos taurus"
+xref: Reactome:REACT_77415 "NRIF signals cell death from the nucleus, Canis familiaris"
+xref: Reactome:REACT_78287 "Apoptosis, Gallus gallus"
+xref: Reactome:REACT_78802 "NADE modulates death signalling, Canis familiaris"
+xref: Reactome:REACT_79809 "Apoptosis, Schizosaccharomyces pombe"
+xref: Reactome:REACT_82724 "Apoptosis, Taeniopygia guttata"
+xref: Reactome:REACT_83328 "Apoptosis, Sus scrofa"
+xref: Reactome:REACT_85877 "NRAGE signals death through JNK, Rattus norvegicus"
+xref: Reactome:REACT_86749 "Apoptosis, Rattus norvegicus"
+xref: Reactome:REACT_86873 "NRIF signals cell death from the nucleus, Gallus gallus"
+xref: Reactome:REACT_87570 "NRIF signals cell death from the nucleus, Rattus norvegicus"
+xref: Reactome:REACT_88740 "NRIF signals cell death from the nucleus, Sus scrofa"
+xref: Reactome:REACT_88784 "NRIF signals cell death from the nucleus, Mus musculus"
+xref: Reactome:REACT_89196 "Apoptosis, Dictyostelium discoideum"
+xref: Reactome:REACT_90267 "NRIF signals cell death from the nucleus, Taeniopygia guttata"
+xref: Reactome:REACT_91011 "Apoptosis, Caenorhabditis elegans"
+xref: Reactome:REACT_91243 "NADE modulates death signalling, Mus musculus"
+xref: Reactome:REACT_93937 "Apoptosis, Bos taurus"
+xref: Reactome:REACT_94099 "NRAGE signals death through JNK, Danio rerio"
+xref: Reactome:REACT_95069 "Apoptosis, Xenopus tropicalis"
+xref: Reactome:REACT_95675 "Apoptosis, Plasmodium falciparum"
+xref: Reactome:REACT_97627 "NRIF signals cell death from the nucleus, Bos taurus"
+xref: Reactome:REACT_99784 "NRAGE signals death through JNK, Bos taurus"
+xref: Reactome:REACT_99799 "NRAGE signals death through JNK, Sus scrofa"
+xref: Wikipedia:Apoptosis
+is_a: GO:0008150 ! biological_process
+relationship: has_part GO:0008150 ! biological_process
+
+[Term]
+id: GO:0007005
+name: mitochondrion organization
+namespace: biological_process
+def: "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of a mitochondrion; includes mitochondrial morphogenesis and distribution, and replication of the mitochondrial genome as well as synthesis of new mitochondrial components." [GOC:dph, GOC:jl, GOC:mah, GOC:sgd_curators, PMID:9786946]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pir
+subset: goslim_pombe
+subset: goslim_yeast
+synonym: "mitochondria organization" EXACT [GOC:mah]
+synonym: "mitochondrion organisation" EXACT [GOC:mah]
+synonym: "mitochondrion organization and biogenesis" RELATED [GOC:curators]
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0007031
+name: peroxisome organization
+namespace: biological_process
+def: "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of a peroxisome. A peroxisome is a small, membrane-bounded organelle that uses dioxygen (O2) to oxidize organic molecules." [GOC:mah]
+subset: goslim_pir
+subset: goslim_pombe
+subset: goslim_yeast
+synonym: "peroxisome organisation" EXACT [GOC:curators]
+synonym: "peroxisome organization and biogenesis" RELATED [GOC:mah]
+synonym: "peroxisome-assembly ATPase activity" RELATED []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0007155
+name: cell adhesion
+namespace: biological_process
+alt_id: GO:0098602
+def: "The attachment of a cell, either to another cell or to an underlying substrate such as the extracellular matrix, via cell adhesion molecules." [GOC:hb, GOC:pf]
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_metagenomics
+subset: goslim_pir
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "cell adhesion molecule activity" RELATED []
+synonym: "single organism cell adhesion" RELATED []
+xref: Wikipedia:Cell_adhesion
+is_a: GO:0008150 ! biological_process
+created_by: davidos
+creation_date: 2014-04-15T15:59:10Z
+
+[Term]
+id: GO:0007163
+name: establishment or maintenance of cell polarity
+namespace: biological_process
+alt_id: GO:0030012
+alt_id: GO:0030467
+def: "Any cellular process that results in the specification, formation or maintenance of anisotropic intracellular organization or cell growth patterns." [GOC:mah]
+subset: goslim_pombe
+synonym: "cell polarity" RELATED [GOC:mah, GOC:vw]
+synonym: "establishment and/or maintenance of cell polarity" RELATED []
+synonym: "establishment and/or maintenance of cell polarization" RELATED []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0008150
+name: biological_process
+namespace: biological_process
+alt_id: GO:0000004
+alt_id: GO:0007582
+alt_id: GO:0044699
+def: "A biological process represents a specific objective that the organism is genetically programmed to achieve. Biological processes are often described by their outcome or ending state, e.g., the biological process of cell division results in the creation of two daughter cells (a divided cell) from a single parent cell. A biological process is accomplished by a particular set of molecular functions carried out by specific gene products (or macromolecular complexes), often in a highly regulated manner and in a particular temporal sequence." [GOC:pdt]
+comment: Note that, in addition to forming the root of the biological process ontology, this term is recommended for use for the annotation of gene products whose biological process is unknown. When this term is used for annotation, it indicates that no information was available about the biological process of the gene product annotated as of the date the annotation was made; the evidence code "no data" (ND), is used to indicate this.
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_metagenomics
+subset: goslim_pir
+subset: goslim_plant
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "biological process" EXACT []
+synonym: "physiological process" EXACT []
+synonym: "single organism process" RELATED []
+synonym: "single-organism process" RELATED []
+xref: Wikipedia:Biological_process
+created_by: janelomax
+creation_date: 2012-09-19T15:05:24Z
+
+[Term]
+id: GO:0016071
+name: mRNA metabolic process
+namespace: biological_process
+def: "The chemical reactions and pathways involving mRNA, messenger RNA, which is responsible for carrying the coded genetic 'message', transcribed from DNA, to sites of protein assembly at the ribosomes." [ISBN:0198506732]
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "mRNA metabolism" EXACT []
+xref: Reactome:REACT_100536 "Metabolism of mRNA, Dictyostelium discoideum"
+xref: Reactome:REACT_107604 "Metabolism of mRNA, Danio rerio"
+xref: Reactome:REACT_108700 "Metabolism of mRNA, Rattus norvegicus"
+xref: Reactome:REACT_109292 "Metabolism of mRNA, Drosophila melanogaster"
+xref: Reactome:REACT_109673 "Metabolism of mRNA, Canis familiaris"
+xref: Reactome:REACT_109919 "Metabolism of mRNA, Gallus gallus"
+xref: Reactome:REACT_20605 "Metabolism of mRNA, Homo sapiens"
+xref: Reactome:REACT_28293 "Metabolism of mRNA, Sus scrofa"
+xref: Reactome:REACT_29287 "Metabolism of mRNA, Xenopus tropicalis"
+xref: Reactome:REACT_31547 "Metabolism of mRNA, Plasmodium falciparum"
+xref: Reactome:REACT_32511 "Metabolism of mRNA, Arabidopsis thaliana"
+xref: Reactome:REACT_33798 "Metabolism of mRNA, Bos taurus"
+xref: Reactome:REACT_33846 "Metabolism of mRNA, Mus musculus"
+xref: Reactome:REACT_34551 "Metabolism of mRNA, Oryza sativa"
+xref: Reactome:REACT_78090 "Metabolism of mRNA, Caenorhabditis elegans"
+xref: Reactome:REACT_84825 "Metabolism of mRNA, Taeniopygia guttata"
+xref: Reactome:REACT_87161 "Metabolism of mRNA, Schizosaccharomyces pombe"
+xref: Reactome:REACT_98319 "Metabolism of mRNA, Saccharomyces cerevisiae"
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0016073
+name: snRNA metabolic process
+namespace: biological_process
+def: "The chemical reactions and pathways involving snRNA, small nuclear RNA, any of various low-molecular-mass RNA molecules found in the eukaryotic nucleus as components of the small nuclear ribonucleoprotein." [ISBN:0198506732]
+subset: goslim_pombe
+synonym: "snRNA metabolism" EXACT []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0016074
+name: snoRNA metabolic process
+namespace: biological_process
+def: "The chemical reactions and pathways involving snoRNA, small nucleolar RNA, any of a class of small RNAs that are associated with the eukaryotic nucleus as components of small nucleolar ribonucleoproteins. They participate in the processing or modifications of many RNAs, mostly ribosomal RNAs (rRNAs) though snoRNAs are also known to target other classes of RNA, including spliceosomal RNAs, tRNAs, and mRNAs via a stretch of sequence that is complementary to a sequence in the targeted RNA." [GOC:krc]
+subset: goslim_pombe
+synonym: "snoRNA metabolism" EXACT []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0016192
+name: vesicle-mediated transport
+namespace: biological_process
+alt_id: GO:0006899
+def: "A cellular transport process in which transported substances are moved in membrane-bounded vesicles; transported substances are enclosed in the vesicle lumen or located in the vesicle membrane. The process begins with a step that directs a substance to the forming vesicle, and includes vesicle budding and coating. Vesicles are then targeted to, and fuse with, an acceptor membrane." [GOC:ai, GOC:mah, ISBN:08789310662000]
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pir
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "nonselective vesicle transport" NARROW []
+synonym: "protein sorting along secretory pathway" RELATED []
+synonym: "vesicle trafficking" RELATED []
+synonym: "vesicle transport" EXACT []
+synonym: "vesicular transport" EXACT [GOC:mah]
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0023052
+name: signaling
+namespace: biological_process
+alt_id: GO:0023046
+alt_id: GO:0044700
+def: "The entirety of a process in which information is transmitted within a biological system. This process begins with an active signal and ends when a cellular response has been triggered." [GOC:mtg_signal, GOC:mtg_signaling_feb11, GOC:signaling]
+comment: Note that a signal is any variable property or parameter that serves to convey information, and may be a physical entity such as a gene product or small molecule, a photon, or a change in state such as movement or voltage change.
+subset: goslim_agr
+subset: goslim_mouse
+subset: goslim_pombe
+subset: goslim_yeast
+synonym: "biological signaling" EXACT []
+synonym: "signaling process" EXACT []
+synonym: "signalling" EXACT []
+synonym: "signalling process" RELATED [GOC:mah]
+synonym: "single organism signaling" RELATED []
+is_a: GO:0008150 ! biological_process
+created_by: janelomax
+creation_date: 2010-02-16T09:30:50Z
+
+[Term]
+id: GO:0030036
+name: actin cytoskeleton organization
+namespace: biological_process
+def: "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of cytoskeletal structures comprising actin filaments and their associated proteins." [GOC:dph, GOC:jl, GOC:mah]
+subset: goslim_pombe
+synonym: "actin cytoskeleton organisation" EXACT [GOC:curators]
+synonym: "actin cytoskeleton organization and biogenesis" RELATED [GOC:mah]
+synonym: "actin modulating activity" RELATED []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0030163
+name: protein catabolic process
+namespace: biological_process
+alt_id: GO:0044254
+def: "The chemical reactions and pathways resulting in the breakdown of a protein by the destruction of the native, active configuration, with or without the hydrolysis of peptide bonds." [GOC:mah]
+comment: This term refers to the breakdown of mature proteins. For cleavage events involved in generating a mature protein from a precursor, consider instead the term 'protein maturation ; GO:0051604' and its children.
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "multicellular organismal protein catabolic process" NARROW []
+synonym: "pheromone catabolic process" RELATED []
+synonym: "pheromone catabolism" RELATED []
+synonym: "protein breakdown" EXACT []
+synonym: "protein catabolism" EXACT []
+synonym: "protein degradation" EXACT []
+xref: Wikipedia:Protein_catabolism
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0030437
+name: ascospore formation
+namespace: biological_process
+alt_id: GO:0007151
+def: "The process in which cells that are products of meiosis acquire the specialized features of ascospores. Ascospores are generally found in clusters of four or eight spores within a single mother cell, the ascus, and are characteristic of the ascomycete fungi (phylum Ascomycota)." [GOC:di, GOC:mah, GOC:mcc, PMID:16339736]
+comment: Note that ascospores and asci are separate biological structures. The ascus is the structure that contain the ascospores, but the development of the ascus is a different process than the formation of the ascospores themselves; for instance, some mutations affect sporulation without affecting ascus development. For this reason, GO:0030437 ascospore formation and GO:0075317 ascus development are different terms and are not linked.
+subset: goslim_pombe
+synonym: "ascospore biosynthesis" EXACT []
+synonym: "spore formation" BROAD []
+synonym: "sporulation" BROAD []
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0032200
+name: telomere organization
+namespace: biological_process
+def: "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of telomeres, terminal regions of a linear chromosome that include the telomeric DNA repeats and associated proteins." [GOC:dph, GOC:jl, GOC:mah]
+subset: goslim_pombe
+subset: goslim_yeast
+synonym: "chromosome organization, telomeric" EXACT []
+synonym: "organization of chromosome, telomeric region" EXACT []
+synonym: "telomere organisation" EXACT [GOC:mah]
+synonym: "telomere organization and biogenesis" RELATED [GOC:mah]
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0042254
+name: ribosome biogenesis
+namespace: biological_process
+alt_id: GO:0007046
+def: "A cellular process that results in the biosynthesis of constituent macromolecules, assembly, and arrangement of constituent parts of ribosome subunits; includes transport to the sites of protein synthesis." [GOC:ma, PMID:26404467, Wikipedia:Ribosome_biogenesis]
+subset: goslim_aspergillus
+subset: goslim_candida
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pir
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "ribosome biogenesis and assembly" EXACT []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0051186
+name: cofactor metabolic process
+namespace: biological_process
+def: "The chemical reactions and pathways involving a cofactor, a substance that is required for the activity of an enzyme or other protein. Cofactors may be inorganic, such as the metal atoms zinc, iron, and copper in certain forms, or organic, in which case they are referred to as coenzymes. Cofactors may either be bound tightly to active sites or bind loosely with the substrate." [GOC:ai]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pir
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "cofactor metabolism" EXACT []
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0051604
+name: protein maturation
+namespace: biological_process
+def: "Any process leading to the attainment of the full functional capacity of a protein." [GOC:ai]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pir
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0055065
+name: metal ion homeostasis
+namespace: biological_process
+def: "Any process involved in the maintenance of an internal steady state of metal ions within an organism or cell." [GOC:ai, GOC:jid, GOC:mah]
+subset: goslim_pombe
+subset: gosubset_prok
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0055085
+name: transmembrane transport
+namespace: biological_process
+def: "The process in which a solute is transported across a lipid bilayer, from one side of a membrane to the other." [GOC:dph, GOC:jid]
+comment: Transmembrane transport requires transport of a solute across a lipid bilayer. Note that transport through the nuclear pore complex is not transmembrane because the nuclear membrane is a double membrane and is not traversed. For transport through the nuclear pore, consider instead the term 'nucleocytoplasmic transport ; GO:0006913' and its children. Note also that this term is not intended for use in annotating lateral movement within membranes.
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+subset: goslim_yeast
+synonym: "membrane transport" EXACT []
+xref: Reactome:REACT_100480 "SLC-mediated transmembrane transport, Taeniopygia guttata"
+xref: Reactome:REACT_101577 "SLC-mediated transmembrane transport, Caenorhabditis elegans"
+xref: Reactome:REACT_101877 "SLC-mediated transmembrane transport, Escherichia coli"
+xref: Reactome:REACT_101975 "SLC-mediated transmembrane transport, Sus scrofa"
+xref: Reactome:REACT_102348 "Transmembrane transport of small molecules, Staphylococcus aureus N315"
+xref: Reactome:REACT_102897 "Transmembrane transport of small molecules, Caenorhabditis elegans"
+xref: Reactome:REACT_102974 "SLC-mediated transmembrane transport, Canis familiaris"
+xref: Reactome:REACT_104555 "SLC-mediated transmembrane transport, Xenopus tropicalis"
+xref: Reactome:REACT_108243 "SLC-mediated transmembrane transport, Staphylococcus aureus N315"
+xref: Reactome:REACT_109832 "Transmembrane transport of small molecules, Plasmodium falciparum"
+xref: Reactome:REACT_110770 "ABC-family proteins mediated transport, Mus musculus"
+xref: Reactome:REACT_114546 "ABC-family proteins mediated transport, Staphylococcus aureus N315"
+xref: Reactome:REACT_114763 "ABC-family proteins mediated transport, Escherichia coli"
+xref: Reactome:REACT_114890 "ABC-family proteins mediated transport, Plasmodium falciparum"
+xref: Reactome:REACT_115378 "ABC-family proteins mediated transport, Mycobacterium tuberculosis"
+xref: Reactome:REACT_15480 "ABC-family proteins mediated transport, Homo sapiens"
+xref: Reactome:REACT_15518 "Transmembrane transport of small molecules, Homo sapiens"
+xref: Reactome:REACT_19118 "SLC-mediated transmembrane transport, Homo sapiens"
+xref: Reactome:REACT_29093 "ABC-family proteins mediated transport, Taeniopygia guttata"
+xref: Reactome:REACT_29184 "SLC-mediated transmembrane transport, Gallus gallus"
+xref: Reactome:REACT_29635 "Transmembrane transport of small molecules, Canis familiaris"
+xref: Reactome:REACT_30969 "ABC-family proteins mediated transport, Canis familiaris"
+xref: Reactome:REACT_32055 "Transmembrane transport of small molecules, Saccharomyces cerevisiae"
+xref: Reactome:REACT_32223 "Transmembrane transport of small molecules, Rattus norvegicus"
+xref: Reactome:REACT_32423 "SLC-mediated transmembrane transport, Bos taurus"
+xref: Reactome:REACT_32713 "ABC-family proteins mediated transport, Sus scrofa"
+xref: Reactome:REACT_33571 "SLC-mediated transmembrane transport, Danio rerio"
+xref: Reactome:REACT_61245 "Transmembrane transport of small molecules, Bos taurus"
+xref: Reactome:REACT_79086 "SLC-mediated transmembrane transport, Plasmodium falciparum"
+xref: Reactome:REACT_79921 "SLC-mediated transmembrane transport, Saccharomyces cerevisiae"
+xref: Reactome:REACT_80022 "ABC-family proteins mediated transport, Bos taurus"
+xref: Reactome:REACT_80510 "ABC-family proteins mediated transport, Rattus norvegicus"
+xref: Reactome:REACT_80848 "ABC-family proteins mediated transport, Schizosaccharomyces pombe"
+xref: Reactome:REACT_80977 "ABC-family proteins mediated transport, Caenorhabditis elegans"
+xref: Reactome:REACT_81024 "Transmembrane transport of small molecules, Oryza sativa"
+xref: Reactome:REACT_81153 "SLC-mediated transmembrane transport, Mus musculus"
+xref: Reactome:REACT_82725 "SLC-mediated transmembrane transport, Rattus norvegicus"
+xref: Reactome:REACT_83770 "Transmembrane transport of small molecules, Escherichia coli"
+xref: Reactome:REACT_86135 "ABC-family proteins mediated transport, Oryza sativa"
+xref: Reactome:REACT_86409 "Transmembrane transport of small molecules, Drosophila melanogaster"
+xref: Reactome:REACT_86576 "Transmembrane transport of small molecules, Schizosaccharomyces pombe"
+xref: Reactome:REACT_87124 "SLC-mediated transmembrane transport, Oryza sativa"
+xref: Reactome:REACT_88059 "ABC-family proteins mediated transport, Xenopus tropicalis"
+xref: Reactome:REACT_88521 "Transmembrane transport of small molecules, Taeniopygia guttata"
+xref: Reactome:REACT_88894 "Transmembrane transport of small molecules, Gallus gallus"
+xref: Reactome:REACT_89376 "SLC-mediated transmembrane transport, Schizosaccharomyces pombe"
+xref: Reactome:REACT_91272 "ABC-family proteins mediated transport, Arabidopsis thaliana"
+xref: Reactome:REACT_91803 "SLC-mediated transmembrane transport, Mycobacterium tuberculosis"
+xref: Reactome:REACT_92006 "Transmembrane transport of small molecules, Mycobacterium tuberculosis"
+xref: Reactome:REACT_92624 "ABC-family proteins mediated transport, Gallus gallus"
+xref: Reactome:REACT_93747 "Transmembrane transport of small molecules, Dictyostelium discoideum"
+xref: Reactome:REACT_94160 "Transmembrane transport of small molecules, Mus musculus"
+xref: Reactome:REACT_94393 "ABC-family proteins mediated transport, Drosophila melanogaster"
+xref: Reactome:REACT_94944 "ABC-family proteins mediated transport, Danio rerio"
+xref: Reactome:REACT_94972 "SLC-mediated transmembrane transport, Dictyostelium discoideum"
+xref: Reactome:REACT_96633 "Transmembrane transport of small molecules, Sus scrofa"
+xref: Reactome:REACT_96636 "SLC-mediated transmembrane transport, Arabidopsis thaliana"
+xref: Reactome:REACT_97365 "Transmembrane transport of small molecules, Arabidopsis thaliana"
+xref: Reactome:REACT_97867 "ABC-family proteins mediated transport, Saccharomyces cerevisiae"
+xref: Reactome:REACT_98509 "Transmembrane transport of small molecules, Xenopus tropicalis"
+xref: Reactome:REACT_98716 "SLC-mediated transmembrane transport, Drosophila melanogaster"
+xref: Reactome:REACT_99579 "Transmembrane transport of small molecules, Danio rerio"
+xref: Reactome:REACT_99829 "ABC-family proteins mediated transport, Dictyostelium discoideum"
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0055086
+name: nucleobase-containing small molecule metabolic process
+namespace: biological_process
+def: "The cellular chemical reactions and pathways involving a nucleobase-containing small molecule: a nucleobase, a nucleoside, or a nucleotide." [GOC:vw]
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "nucleobase, nucleoside and nucleotide metabolic process" RELATED []
+synonym: "nucleobase, nucleoside and nucleotide metabolism" EXACT []
+xref: Reactome:REACT_100770 "Metabolism of nucleotides, Plasmodium falciparum"
+xref: Reactome:REACT_105851 "Metabolism of nucleotides, Schizosaccharomyces pombe"
+xref: Reactome:REACT_107755 "Metabolism of nucleotides, Mycobacterium tuberculosis"
+xref: Reactome:REACT_107894 "Metabolism of nucleotides, Rattus norvegicus"
+xref: Reactome:REACT_116039 "Nucleotide metabolism, Gallus gallus"
+xref: Reactome:REACT_1698 "Metabolism of nucleotides, Homo sapiens"
+xref: Reactome:REACT_28046 "Metabolism of nucleotides, Drosophila melanogaster"
+xref: Reactome:REACT_29205 "Metabolism of nucleotides, Dictyostelium discoideum"
+xref: Reactome:REACT_29767 "Metabolism of nucleotides, Saccharomyces cerevisiae"
+xref: Reactome:REACT_31512 "Metabolism of nucleotides, Sus scrofa"
+xref: Reactome:REACT_33967 "Metabolism of nucleotides, Mus musculus"
+xref: Reactome:REACT_77113 "Metabolism of nucleotides, Taeniopygia guttata"
+xref: Reactome:REACT_78257 "Metabolism of nucleotides, Staphylococcus aureus N315"
+xref: Reactome:REACT_82673 "Metabolism of nucleotides, Caenorhabditis elegans"
+xref: Reactome:REACT_82902 "Metabolism of nucleotides, Canis familiaris"
+xref: Reactome:REACT_82978 "Metabolism of nucleotides, Escherichia coli"
+xref: Reactome:REACT_83845 "Metabolism of nucleotides, Bos taurus"
+xref: Reactome:REACT_86759 "Metabolism of nucleotides, Oryza sativa"
+xref: Reactome:REACT_90903 "Metabolism of nucleotides, Gallus gallus"
+xref: Reactome:REACT_96600 "Metabolism of nucleotides, Danio rerio"
+xref: Reactome:REACT_97332 "Metabolism of nucleotides, Arabidopsis thaliana"
+xref: Reactome:REACT_99343 "Metabolism of nucleotides, Xenopus tropicalis"
+is_a: GO:0008150 ! biological_process
+
+[Term]
+id: GO:0061024
+name: membrane organization
+namespace: biological_process
+alt_id: GO:0016044
+alt_id: GO:0044802
+def: "A process which results in the assembly, arrangement of constituent parts, or disassembly of a membrane. A membrane is a double layer of lipid molecules that encloses all cells, and, in eukaryotes, many organelles; may be a single or double lipid bilayer; also includes associated proteins." [GOC:dph, GOC:tb]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+synonym: "cellular membrane organisation" EXACT [GOC:curators]
+synonym: "cellular membrane organization" EXACT []
+synonym: "membrane organisation" EXACT [GOC:mah]
+synonym: "membrane organization and biogenesis" RELATED [GOC:mah]
+synonym: "single-organism membrane organization" RELATED []
+xref: Reactome:REACT_101524 "Membrane Trafficking, Dictyostelium discoideum"
+xref: Reactome:REACT_103082 "Membrane Trafficking, Schizosaccharomyces pombe"
+xref: Reactome:REACT_11123 "Membrane Trafficking, Homo sapiens"
+xref: Reactome:REACT_29278 "Membrane Trafficking, Sus scrofa"
+xref: Reactome:REACT_32337 "Membrane Trafficking, Taeniopygia guttata"
+xref: Reactome:REACT_33741 "Membrane Trafficking, Bos taurus"
+xref: Reactome:REACT_34084 "Membrane Trafficking, Caenorhabditis elegans"
+xref: Reactome:REACT_78213 "Membrane Trafficking, Plasmodium falciparum"
+xref: Reactome:REACT_78288 "Membrane Trafficking, Xenopus tropicalis"
+xref: Reactome:REACT_83546 "Membrane Trafficking, Oryza sativa"
+xref: Reactome:REACT_86557 "Membrane Trafficking, Arabidopsis thaliana"
+xref: Reactome:REACT_87431 "Membrane Trafficking, Drosophila melanogaster"
+xref: Reactome:REACT_88307 "Membrane Trafficking, Mus musculus"
+xref: Reactome:REACT_91154 "Membrane Trafficking, Saccharomyces cerevisiae"
+xref: Reactome:REACT_93714 "Membrane Trafficking, Danio rerio"
+xref: Reactome:REACT_95586 "Membrane Trafficking, Gallus gallus"
+xref: Reactome:REACT_96516 "Membrane Trafficking, Canis familiaris"
+xref: Reactome:REACT_97881 "Membrane Trafficking, Rattus norvegicus"
+is_a: GO:0008150 ! biological_process
+created_by: janelomax
+creation_date: 2010-02-08T02:43:11Z
+
+[Term]
+id: GO:0065003
+name: protein-containing complex assembly
+namespace: biological_process
+alt_id: GO:0006461
+def: "The aggregation, arrangement and bonding together of a set of macromolecules to form a protein-containing complex." [GOC:jl]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_metagenomics
+subset: goslim_pir
+subset: goslim_pombe
+subset: gosubset_prok
+synonym: "chaperone activity" RELATED []
+synonym: "macromolecular complex assembly" RELATED []
+synonym: "macromolecule complex assembly" RELATED []
+synonym: "protein complex assembly" RELATED []
+synonym: "protein complex formation" RELATED []
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0070647
+name: protein modification by small protein conjugation or removal
+namespace: biological_process
+def: "A protein modification process in which one or more groups of a small protein, such as ubiquitin or a ubiquitin-like protein, are covalently attached to or removed from a target protein." [GOC:mah]
+subset: goslim_pombe
+subset: goslim_yeast
+is_a: GO:0008150 ! biological_process
+created_by: midori
+creation_date: 2009-05-11T02:54:03Z
+
+[Term]
+id: GO:0071554
+name: cell wall organization or biogenesis
+namespace: biological_process
+alt_id: GO:0070882
+def: "A process that results in the biosynthesis of constituent macromolecules, assembly, arrangement of constituent parts, or disassembly of a cell wall." [GOC:mah]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+subset: goslim_yeast
+subset: gosubset_prok
+synonym: "cell wall organisation or biogenesis" EXACT [GOC:mah]
+synonym: "cell wall organization or biogenesis at cellular level" EXACT [GOC:mah]
+synonym: "cellular cell wall organisation or biogenesis" EXACT [GOC:mah]
+synonym: "cellular cell wall organization or biogenesis" EXACT []
+is_a: GO:0008150 ! biological_process
+created_by: midori
+creation_date: 2010-01-13T03:19:38Z
+
+[Term]
+id: GO:0071941
+name: nitrogen cycle metabolic process
+namespace: biological_process
+def: "A nitrogen compound metabolic process that contributes to the nitrogen cycle. The nitrogen cycle is a series of metabolic pathways by which nitrogen is converted between various forms and redox states; it encompasses pathways in which nitrogen is acted upon directly, such as nitrification, denitrification, nitrogen fixation, and mineralization." [GOC:mah, PMID:16675690, Wikipedia:Nitrogen_cycle]
+subset: goslim_chembl
+subset: goslim_generic
+subset: goslim_pombe
+xref: Wikipedia:Nitrogen_cycle
+is_a: GO:0008150 ! biological_process
+created_by: midori
+creation_date: 2010-09-30T05:21:03Z
+
+[Term]
+id: GO:0098754
+name: detoxification
+namespace: biological_process
+def: "Any process that reduces or removes the toxicity of a toxic substance. These may include transport of the toxic substance away from sensitive areas and to compartments or complexes whose purpose is sequestration of the toxic substance." [GOC:dos]
+subset: goslim_pombe
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+
+[Term]
+id: GO:0140013
+name: meiotic nuclear division
+namespace: biological_process
+def: "One of the two nuclear divisions that occur as part of the meiotic cell cycle." [PMID:9334324]
+subset: goslim_pombe
+is_a: GO:0008150 ! biological_process
+relationship: part_of GO:0008150 ! biological_process
+created_by: pg
+creation_date: 2017-03-23T09:40:00Z
+
+[Term]
+id: GO:0140053
+name: mitochondrial gene expression
+namespace: biological_process
+def: "The process in which a mitochondrial gene's sequence is converted into a mature gene product or products (proteins or RNA). This includes the production of an RNA transcript as well as any processing to produce a mature RNA product or an mRNA or circRNA (for protein-coding genes) and the translation of that mRNA or circRNA into protein. Protein maturation is included when required to form an active form of a product from an inactive precursor form." [PMID:27058308]
+subset: goslim_pombe
+is_a: GO:0008150 ! biological_process
+created_by: pg
+creation_date: 2017-06-26T10:57:45Z
+
+[Term]
+id: GO:0140056
+name: organelle localization by membrane tethering
+namespace: biological_process
+def: "The process by which an organelle membrane interacts with another membrane via molecular tethers that physically bridge the two membranes and attach them to each other." [PMID:27875684]
+subset: goslim_pombe
+is_a: GO:0008150 ! biological_process
+created_by: pg
+creation_date: 2017-06-27T09:58:51Z
+
+[Term]
+id: GO:1901990
+name: regulation of mitotic cell cycle phase transition
+namespace: biological_process
+def: "Any process that modulates the frequency, rate or extent of mitotic cell cycle phase transition." [GOC:mtg_cell_cycle, GOC:TermGenie, PMID:22841721]
+subset: goslim_pombe
+synonym: "mitotic cell cycle control" EXACT [GOC:vw]
+is_a: GO:0008150 ! biological_process
+relationship: regulates GO:0008150 ! biological_process
+created_by: jl
+creation_date: 2013-03-19T16:14:38Z
+
+[Typedef]
+id: ends_during
+name: ends_during
+namespace: external
+xref: RO:0002093
+
+[Typedef]
+id: happens_during
+name: happens_during
+namespace: external
+xref: RO:0002092
+is_transitive: true
+is_a: ends_during ! ends_during
+
+[Typedef]
+id: has_part
+name: has_part
+namespace: external
+xref: BFO:0000051
+is_transitive: true
+
+[Typedef]
+id: negatively_regulates
+name: negatively regulates
+namespace: external
+xref: RO:0002212
+is_a: regulates ! regulates
+transitive_over: part_of ! part of
+
+[Typedef]
+id: never_in_taxon
+name: never_in_taxon
+namespace: external
+xref: RO:0002161
+expand_assertion_to: "Class: ?X DisjointWith: RO_0002162 some ?Y" []
+is_metadata_tag: true
+is_class_level: true
+
+[Typedef]
+id: occurs_in
+name: occurs in
+namespace: external
+xref: BFO:0000066
+holds_over_chain: part_of occurs_in
+transitive_over: part_of ! part of
+
+[Typedef]
+id: part_of
+name: part of
+namespace: external
+xref: BFO:0000050
+is_transitive: true
+inverse_of: has_part ! has_part
+
+[Typedef]
+id: positively_regulates
+name: positively regulates
+namespace: external
+xref: RO:0002213
+holds_over_chain: negatively_regulates negatively_regulates
+is_a: regulates ! regulates
+transitive_over: part_of ! part of
+
+[Typedef]
+id: regulates
+name: regulates
+namespace: external
+xref: RO:0002211
+is_transitive: true
+transitive_over: part_of ! part of
+
+[Typedef]
+id: starts_during
+name: starts_during
+namespace: external
+xref: RO:0002091
+

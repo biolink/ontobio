@@ -20,3 +20,4 @@ pytest_logging>=0.0
 pydotplus>=0.0
 cachier==1.1.8
 plotly==2.0.7
+obonet==0.2.3
