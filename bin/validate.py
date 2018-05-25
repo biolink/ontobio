@@ -118,8 +118,11 @@ def unzip(path, target):
         with click.progressbar(iterable=chunk_gen()) as chunks:
             for chunk in chunks:
                 tf.write(chunk)
+"""
+Produce validated gaf using the gaf parser/
+"""
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -343,7 +346,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
 
         end_gaf = valid_gaf
         if paint_src_gaf is not None:
-            paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi)[0]
+            paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi, paint=True)[0]
             end_gaf = merge_mod_and_paint(valid_gaf, paint_gaf)
         else:
             gafgz = "{}.gz".format(valid_gaf)
