@@ -136,7 +136,7 @@ class GafParser(assocparser.AssocParser):
         if taxon == "":
             self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty")
             return assocparser.ParseResult(line, [], True)
-        
+
         ## --
         ## db + db_object_id. CARD=1
         ## --
@@ -189,16 +189,18 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
 
-        go_rule_results = qc.test_go_rules(vals, self.config.ontology)
+        go_rule_results = qc.test_go_rules(vals, self.config)
         for rule_id, result in go_rule_results.items():
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
                                     msg="{id}: {message}".format(id=rule_id, message=result.message))
+                # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
 
             if result.result_type == qc.ResultType.ERROR:
                 self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
                                     msg="{id}: {message}".format(id=rule_id, message=result.message))
+                # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
 
         ## --
