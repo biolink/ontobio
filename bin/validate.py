@@ -336,7 +336,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
 
     for metadataset in group_metadata["datasets"]:
         dataset = metadataset["dataset"]
-        if not dataset in source_gaf_zips:
+        if metadataset["type"] != "gaf":
             click.echo("Skipping {}".format(dataset))
             continue
 
