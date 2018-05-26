@@ -129,7 +129,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False):
         ontology=ontology_graph,
         filter_out_evidence=["IEA"],
         filtered_evidence_file=filtered_associations,
-        gpi_authority_path=gpipath
+        gpi_authority_path=gpipath,
+        paint=paint
     )
     validated_gaf_path = os.path.join(os.path.split(source_gaf)[0], "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
