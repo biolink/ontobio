@@ -173,7 +173,6 @@ def test_qualifiers_gaf():
 #    parse_with2(POMBASE_GPAD, GpadParser())
 
 def parse_with2(f, p):
-    is_gaf = f == POMBASE
     ont = OntologyFactory().create(ONT)
 
     p.config.ontology = ont
@@ -216,8 +215,8 @@ def test_errors_gaf():
                 assert x['filler'] == 'X:1'
             assert len(xs) == 1
 
-            
-            
+
+
 def test_factory():
     afa = AssociationSetFactory()
     ont = OntologyFactory().create(ONT)
