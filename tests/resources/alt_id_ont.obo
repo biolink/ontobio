@@ -1,0 +1,11 @@
+[Term]
+id: GO:0034622
+name: cellular protein-containing complex assembly
+namespace: biological_process
+alt_id: GO:0043623
+def: "The aggregation, arrangement and bonding together of a set of components to form a protein complex, occurring at the level of an individual cell." [GOC:jl]
+subset: goslim_pir
+subset: gosubset_prok
+synonym: "cellular macromolecule complex assembly" RELATED []
+synonym: "cellular protein complex assembly" EXACT []
+is_a: GO:0065003 ! protein-containing complex assembly
