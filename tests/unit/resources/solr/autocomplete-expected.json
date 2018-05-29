@@ -1,0 +1,40 @@
+{
+  "docs": [
+    {
+      "category": [
+        "gene"
+      ],
+      "highlight": "<em class=\"hilite\">SHH3</em>",
+      "has_highlight": true,
+      "label": ["SHH3"],
+      "taxon": "NCBITaxon:559292",
+      "match": "SHH3",
+      "taxon_label": "Saccharomyces cerevisiae S288C",
+      "id": "SGD:S000004724"
+    },
+    {
+      "category": [
+        "gene"
+      ],
+      "highlight": "<em class=\"hilite\">SHH4</em>",
+      "has_highlight": true,
+      "label": ["SHH4"],
+      "taxon": "NCBITaxon:559292",
+      "match": "SHH4",
+      "taxon_label": "Saccharomyces cerevisiae S288C",
+      "id": "SGD:S000004154"
+    },
+    {
+      "category": [
+        "gene"
+      ],
+      "highlight": "<em class=\"hilite\">SHH</em>",
+      "has_highlight": true,
+      "label": ["SHH"],
+      "taxon": "NCBITaxon:9598",
+      "match": "SHH",
+      "taxon_label": "Pan troglodytes",
+      "id": "NCBIGene:743371"
+    }
+  ]
+}

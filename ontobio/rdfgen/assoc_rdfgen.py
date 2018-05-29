@@ -20,7 +20,10 @@ ro = OboRO()
 evt = Evidence()
 upt = UpperLevel()
 
-prefix_context = {key: value for context in curie_util.default_curie_maps + [curie_util.read_biocontext("minerva_context")] for key, value in context.items()}
+# Pull the go_context file from prefixcommons.
+# NOTE: this is a temporary measure. We will build the go json ld context as part of the pipeline in future
+# See https://github.com/geneontology/go-site/issues/617
+prefix_context = {key: value for context in curie_util.default_curie_maps + [curie_util.read_biocontext("go_context")] for key, value in context.items()}
 
 HAS_SUPPORTING_REFERENCE = URIRef(expand_uri(evt.has_supporting_reference, cmaps=[evt._prefixmap]))
 
@@ -183,6 +186,10 @@ class CamRdfTransform(RdfTransform):
     See https://github.com/geneontology/minerva/blob/master/specs/owl-model.md
     """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.bad_properties_found = set()
+
     def emit_header(self):
         if self._emit_header_done:
             return
@@ -255,7 +262,9 @@ class CamRdfTransform(RdfTransform):
                 self.emit_type(filler_inst, self.uri(ext['filler']))
                 p = self.lookup_relation(ext['property'])
                 if p is None:
-                    logging.warning("No such property {}".format(ext))
+                    if ext["property"] not in self.bad_properties_found:
+                        self.bad_properties_found.add(ext["property"])
+                        logging.warning("No such property {}".format(ext))
                 else:
                     self.emit(tgt_id, p, filler_inst)
         self.translate_evidence(association, aspect_triple)
@@ -286,6 +295,7 @@ class SimpleAssocRdfTransform(RdfTransform):
         obj_uri = self.uri(obj)
 
         rel_url = None
+        rel_uri = None
         if rel == 'part_of':
             rel_uri = PART_OF
         elif rel == 'enables':

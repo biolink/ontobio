@@ -190,9 +190,9 @@ class HpoaParser(AssocParser):
         ## --
         evidence = {
             'type': evidence,
-            'has_supporting_reference': reference.split("; ")
+            'has_supporting_reference': reference.split("; "),
+            'with_support_from': self._split_pipe(withfrom)
         }
-        evidence['with_support_from'] = self._split_pipe(withfrom)
 
         ## Construct main return dict
         assoc = {

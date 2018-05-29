@@ -83,7 +83,7 @@ class LexicalMapEngine():
     SIMSCORES='simscores'
     CONDITIONAL_PR='cpr'
     
-    def __init__(self, wsmap=default_wsmap(), config={}):
+    def __init__(self, wsmap=default_wsmap(), config=None):
         """
         Arguments
         ---------
@@ -102,7 +102,7 @@ class LexicalMapEngine():
         self.ontology_pairs = None
         self.id_to_ontology_map = defaultdict(list)
         self.merged_ontology = Ontology()
-        self.config = config
+        self.config = config if config is not None else {}
         self.stats = {}
 
     def index_ontologies(self, onts):

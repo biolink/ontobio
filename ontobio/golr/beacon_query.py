@@ -46,19 +46,19 @@ class BeaconAssociationQuery(GolrAssociationQuery):
 
         filters = {}
 
-        if self.targets != None and self.targets != []:
+        if self.targets is not None and self.targets != []:
             filters['closure'] = _make_disjunction(self.targets, '"')
 
-        if self.keywords != None and self.keywords != []:
+        if self.keywords is not None and self.keywords != []:
             filters['label'] = _make_disjunction(self.keywords, '*')
 
-        if self.categories != None and self.categories != []:
+        if self.categories is not None and self.categories != []:
             filters['category'] = _make_disjunction(self.categories, '*')
 
         source_disjunction=_make_disjunction(self.sources, '"')
         self.q=_build_query(source_disjunction, filters)
 
-        if self.relations != None and relations != []:
+        if self.relations is not None and relations != []:
             relation_disjunction = _make_disjunction(self.relations, '"')
             self.q += ' AND (relation_label: ' + relation_disjunction + ')'
 

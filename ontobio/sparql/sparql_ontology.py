@@ -54,14 +54,14 @@ class RemoteSparqlOntology(Ontology):
 
     def text_definition(self, nid):
         logging.info("lookup defs for {}".format(nid))
-        if self.all_text_definitions_cache == None:
+        if self.all_text_definitions_cache is None:
             self.all_text_definitions()
         return super().text_definition(nid) 
 
     # Override
     def all_text_definitions(self):
         logging.debug("Fetching all textdefs...")
-        if self.all_text_definitions_cache == None:
+        if self.all_text_definitions_cache is None:
             vals = fetchall_textdefs(self.graph_name)
             tds = [TextDefinition(c,v) for (c,v) in vals]
             for td in tds:
@@ -71,13 +71,13 @@ class RemoteSparqlOntology(Ontology):
 
     def is_obsolete(self, nid):
         logging.info("lookup obs for {}".format(nid))
-        if self.all_obsoletes_cache == None:
+        if self.all_obsoletes_cache is None:
             self.all_obsoletes()
         return super().is_obsolete(nid)
     
     def all_obsoletes(self):
         logging.debug("Fetching all obsoletes...")
-        if self.all_obsoletes_cache == None:
+        if self.all_obsoletes_cache is None:
             obsnodes = fetchall_obs(self.graph_name)
             for n in obsnodes:
                 self.set_obsolete(n)
@@ -86,7 +86,7 @@ class RemoteSparqlOntology(Ontology):
     
     def synonyms(self, nid, **args):
         logging.info("lookup syns for {}".format(nid))
-        if self.all_synonyms_cache == None:
+        if self.all_synonyms_cache is None:
             self.all_synonyms()
         return super().synonyms(nid, **args) 
     
@@ -94,7 +94,7 @@ class RemoteSparqlOntology(Ontology):
     def all_synonyms(self, include_label=False):
         logging.debug("Fetching all syns...")
         # TODO: include_label in cache
-        if self.all_synonyms_cache == None:
+        if self.all_synonyms_cache is None:
             syntups = fetchall_syns(self.graph_name)
             syns = [Synonym(t[0],pred=t[1], val=t[2]) for t in syntups]
             for syn in syns:
@@ -122,9 +122,9 @@ class RemoteSparqlOntology(Ontology):
             results = set()
             for name in names:
                 results.update( self._search(name, 'rdfs:label', **args) )
-            if synonyms:
-                for pred in OIO_SYNS.values():
-                    results.update( self._search(name, pred, **args) )
+                if synonyms:
+                    for pred in OIO_SYNS.values():
+                        results.update( self._search(name, pred, **args) )
             logging.info("REMOTE RESULTS="+str(results))
             return list(results)
 
@@ -147,7 +147,7 @@ class RemoteSparqlOntology(Ontology):
         bindings = run_sparql(query)
         return [r['c']['value'] for r in bindings]
 
-    def sparql(self, select='*', body=None, inject_prefixes=[], single_column=False):
+    def sparql(self, select='*', body=None, inject_prefixes=None, single_column=False):
         """
         Execute a SPARQL query.
 
@@ -164,6 +164,8 @@ class RemoteSparqlOntology(Ontology):
         using the prefixcommons library
         
         """
+        if inject_prefixes is None:
+            inject_prefixes = []
         namedGraph = get_named_graph(self.handle)
         cols = []
         select_val = None
@@ -193,7 +195,7 @@ class RemoteSparqlOntology(Ontology):
         bindings = run_sparql(query)
         if len(bindings) == 0:
             return []
-        if cols == None:
+        if cols is None:
             return bindings
         else:
             if single_column:

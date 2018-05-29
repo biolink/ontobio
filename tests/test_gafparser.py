@@ -1,3 +1,4 @@
+from ontobio.io import assocparser
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.gafparser import GafParser
 from ontobio.io import GafWriter
@@ -172,7 +173,6 @@ def test_qualifiers_gaf():
 #    parse_with2(POMBASE_GPAD, GpadParser())
 
 def parse_with2(f, p):
-    is_gaf = f == POMBASE
     ont = OntologyFactory().create(ONT)
 
     p.config.ontology = ont
@@ -190,9 +190,13 @@ def test_errors_gaf():
     assocs = p.parse(open("tests/resources/errors.gaf","r"), skipheader=True)
     msgs = p.report.messages
     print("MESSAGES: {}".format(len(msgs)))
+    n_invalid_idspace = 0
     for m in msgs:
         print("MESSAGE: {}".format(m))
-    assert len(msgs) == 16
+        if m['type'] == assocparser.Report.INVALID_IDSPACE:
+            n_invalid_idspace += 1
+    assert len(msgs) == 17
+    assert n_invalid_idspace == 1
 
     # we expect 7
     assert len(assocs) == 7
@@ -210,6 +214,8 @@ def test_errors_gaf():
                 assert x['property'] == 'foo'
                 assert x['filler'] == 'X:1'
             assert len(xs) == 1
+
+
 
 def test_factory():
     afa = AssociationSetFactory()
