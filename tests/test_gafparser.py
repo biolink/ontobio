@@ -216,14 +216,14 @@ def test_errors_gaf():
                 assert x['filler'] == 'X:1'
             assert len(xs) == 1
 
-ALT_ID_ONT = "tests/resouces/alt_id_ont.obo"
+ALT_ID_ONT = "tests/resources/alt_id_ont.json"
 
 def test_alt_id_repair():
     p = GafParser()
     ont = OntologyFactory().create(ALT_ID_ONT)
     p.config.ecomap = EcoMap()
     p.config.ontology = ont
-    gaf = io.StringIO("SGD     S000000819      AFG3            GO:0043622      PMID:8681382|SGD_REF:S000055187 IMP             P       Mitochondrial inner membrane m-AAA protease component   YER017C|AAA family ATPase AFG3|YTA10     gene    taxon:559292    20170428        SGD     ")
+    gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:0043623\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
 
     assocs = p.parse(gaf, skipheader=True)
     assert len(assocs) > 0

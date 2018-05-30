@@ -1,0 +1,90 @@
+{
+  "graphs" : [ {
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/GO_0043623",
+      "meta" : {
+        "basicPropertyValues" : [ {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0100001",
+          "val" : "http://purl.obolibrary.org/obo/GO_0034622"
+        }, {
+          "pred" : "http://www.w3.org/2002/07/owl#deprecated",
+          "val" : "true"
+        }, {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0000231",
+          "val" : "http://purl.obolibrary.org/obo/IAO_0000227"
+        } ]
+      },
+      "type" : "CLASS"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "type" : "PROPERTY",
+      "lbl" : "has_exact_synonym"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#inSubset",
+      "type" : "PROPERTY",
+      "lbl" : "in_subset"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/GO_0034622",
+      "meta" : {
+        "definition" : {
+          "val" : "The aggregation, arrangement and bonding together of a set of components to form a protein complex, occurring at the level of an individual cell.",
+          "xrefs" : [ "GOC:jl" ]
+        },
+        "subsets" : [ "http://purl.obolibrary.org/obo/TEMP#goslim_pir", "http://purl.obolibrary.org/obo/TEMP#gosubset_prok" ],
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "cellular macromolecule complex assembly",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "cellular protein complex assembly",
+          "xrefs" : [ ]
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "GO:0043623"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "biological_process"
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "cellular protein-containing complex assembly"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+      "type" : "PROPERTY",
+      "lbl" : "has_obo_namespace"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+      "type" : "PROPERTY",
+      "lbl" : "database_cross_reference"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
+      "type" : "PROPERTY",
+      "lbl" : "has_related_synonym"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/IAO_0000115",
+      "type" : "PROPERTY",
+      "lbl" : "definition"
+    }, {
+      "id" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+      "type" : "PROPERTY",
+      "lbl" : "has_alternative_id"
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/GO_0034622",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/GO_0065003"
+    } ],
+    "id" : "http://purl.obolibrary.org/obo/TEMP",
+    "meta" : {
+      "subsets" : [ ],
+      "xrefs" : [ ],
+      "basicPropertyValues" : [ ]
+    },
+    "equivalentNodesSets" : [ ],
+    "logicalDefinitionAxioms" : [ ],
+    "domainRangeAxioms" : [ ],
+    "propertyChainAxioms" : [ ]
+  } ]
+}
