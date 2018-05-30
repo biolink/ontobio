@@ -10,6 +10,7 @@ from ontobio.ecomap import EcoMap
 import tempfile
 import logging
 import pytest
+import io
 
 POMBASE = "tests/resources/truncated-pombase.gaf"
 POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
@@ -215,7 +216,18 @@ def test_errors_gaf():
                 assert x['filler'] == 'X:1'
             assert len(xs) == 1
 
+ALT_ID_ONT = "tests/resources/alt_id_ont.json"
 
+def test_alt_id_repair():
+    p = GafParser()
+    ont = OntologyFactory().create(ALT_ID_ONT)
+    p.config.ecomap = EcoMap()
+    p.config.ontology = ont
+    gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:0043623\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
+
+    assocs = p.parse(gaf, skipheader=True)
+    assert len(assocs) > 0
+    assert assocs[0]["object"]["id"] == "GO:0043623"
 
 def test_factory():
     afa = AssociationSetFactory()

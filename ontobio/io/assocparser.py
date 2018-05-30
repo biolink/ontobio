@@ -443,7 +443,9 @@ class AssocParser(object):
             self.report.warning(line, Report.UNKNOWN_ID, id)
             return id
         if ont.is_obsolete(id):
-            if self.config.repair_obsoletes:
+            # the default behavior should always be to repair, unless the caller explicitly states
+            # that this should not be done by setting repair_obsoletes to False
+            if self.config.repair_obsoletes is None or self.config.repair_obsoletes:
                 rb = ont.replaced_by(id, strict=False)
                 if len(rb) == 1:
                     self.report.warning(line, Report.OBSOLETE_CLASS, id)
