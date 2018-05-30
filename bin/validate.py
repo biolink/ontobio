@@ -92,14 +92,13 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[]):
     return downloaded_paths
 
 def check_and_download_paint_source(paint_metadata, group_id, dataset, target_dir):
-    paint_dataset = find(paint_metadata["datasets"], lambda d: d["dataset"] == "paint_{}".format(dataset))
-    if paint_dataset is None:
+    if paint_metadata is None:
         return None
 
-    path = os.path.join(target_dir, "groups", group_id, "{}-src.gaf.gz".format(paint_dataset["dataset"]))
+    path = os.path.join(target_dir, "groups", group_id, "{}-src.gaf.gz".format(paint_metadata["dataset"]))
     click.echo("Downloading paint to {}".format(path))
-    urllib.request.urlretrieve(paint_dataset["source"], path)
-    unzipped = os.path.join(os.path.split(path)[0], "{}-src.gaf".format(paint_dataset["dataset"]))
+    urllib.request.urlretrieve(paint_metadata["source"], path)
+    unzipped = os.path.join(os.path.split(path)[0], "{}-src.gaf".format(paint_metadata["dataset"]))
     unzip(path, unzipped)
     return unzipped
 
@@ -329,19 +328,26 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
 
+    # Dictionary from dataset name to path in the target directory to the source zip.
     source_gaf_zips = download_source_gafs(group_metadata, absolute_target, exclusions=exclude)
     source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset)) for dataset, zip_path in source_gaf_zips.items()}
     for source_zip, source_gaf in source_gafs.items():
         unzip(source_zip, source_gaf)
 
-    paint_metadata = metadata_file(absolute_metadata, "paint")
+    for metadataset in group_metadata["datasets"]:
+        dataset = metadataset["dataset"]
+        # Skip this dataset if it's not gaf, or if it's not something we've downloaded
+        if metadataset["type"] != "gaf" or dataset not in source_gaf_zips:
+            click.echo("Skipping {}".format(metadataset["id"]))
+            continue
 
-    for dataset in source_gaf_zips.keys():
         gafzip = source_gaf_zips[dataset]
         source_gaf = source_gafs[gafzip]
         valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph)[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
+
+        paint_metadata = metadataset.get("paint", None)
 
         paint_src_gaf = check_and_download_paint_source(paint_metadata, group_metadata["id"], dataset, absolute_target)
 
