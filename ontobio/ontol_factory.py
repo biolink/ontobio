@@ -162,6 +162,17 @@ def translate_file_to_ontology(handle, **args):
         return m.convert(handle,'ttl')
     elif handle.endswith(".obo"):
         g = obonet.read_obo(handle)
+        for n in g.nodes(data=True):
+            n_attr = n[1]
+            g.node[n[0]]["label"] = n_attr.pop("name")
+            g.node[n[0]]["type"] = "CLASS"
+        for t in g.graph["typedefs"]:
+            if "xref" in t:
+                t_attr = {
+                    "label": t["id"],
+                    "type": "PROPERTY"
+                }
+                g.add_node(t["xref"][0], t_attr)
         return Ontology(handle=handle, graph=g)
     else:
         if not (handle.endswith(".obo") or handle.endswith(".owl")):
