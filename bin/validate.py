@@ -339,7 +339,9 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
     for dataset in source_gaf_zips.keys():
         gafzip = source_gaf_zips[dataset]
         source_gaf = source_gafs[gafzip]
-        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph)[0]
+        # TODO (Fix as part of https://github.com/geneontology/go-site/issues/642) Set paint to True when the group is "paint".
+        # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group, like for paint_other.
+        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"))[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
