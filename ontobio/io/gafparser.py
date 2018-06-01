@@ -103,6 +103,13 @@ class GafParser(assocparser.AssocParser):
         if 17 > len(vals) >= 15:
             vals += [""] * (17 - len(vals))
 
+        if len(vals) > 17:
+            # If we see more than 17 columns, we will just cut off the columns after column 17
+            self.report.warning(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+                msg="There were more than 17 columns in this line. Proceeding by cutting off extra columns after column 17.")
+            vals = vals[:17]
+
+
         if len(vals) != 17:
             self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
                 msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
