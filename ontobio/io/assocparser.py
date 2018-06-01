@@ -57,7 +57,9 @@ class AssocParserConfig():
                  exclude_relations=None,
                  include_relations=None,
                  filter_out_evidence=None,
-                 filtered_evidence_file=None):
+                 filtered_evidence_file=None,
+                 gpi_authority_path=None,
+                 paint=False):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -70,6 +72,8 @@ class AssocParserConfig():
         self.exclude_relations=exclude_relations
         self.filter_out_evidence = filter_out_evidence
         self.filtered_evidence_file = filtered_evidence_file
+        self.gpi_authority_path = gpi_authority_path
+        self.paint = paint
         if self.exclude_relations is None:
             self.exclude_relations = []
         if self.include_relations is None:
@@ -439,7 +443,9 @@ class AssocParser(object):
             self.report.warning(line, Report.UNKNOWN_ID, id)
             return id
         if ont.is_obsolete(id):
-            if self.config.repair_obsoletes:
+            # the default behavior should always be to repair, unless the caller explicitly states
+            # that this should not be done by setting repair_obsoletes to False
+            if self.config.repair_obsoletes is None or self.config.repair_obsoletes:
                 rb = ont.replaced_by(id, strict=False)
                 if len(rb) == 1:
                     self.report.warning(line, Report.OBSOLETE_CLASS, id)

@@ -3,8 +3,10 @@ import logging
 import json
 
 from ontobio.io import assocparser
-from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
+from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
+from ontobio.io import entityparser
+from ontobio.io import entitywriter
 
 class GafParser(assocparser.AssocParser):
     """
@@ -24,6 +26,21 @@ class GafParser(assocparser.AssocParser):
             config = assocparser.AssocParserConfig()
         self.config = config
         self.report = assocparser.Report()
+        self.gpi = None
+        if self.config.gpi_authority_path is not None:
+            self.gpi = dict()
+            parser = entityparser.GpiParser()
+            with open(self.config.gpi_authority_path) as gpi_f:
+                entities = parser.parse(file=gpi_f)
+                for entity in entities:
+                    self.gpi[entity["id"]] = {
+                        "symbol": entity["label"],
+                        "name": entity["full_name"],
+                        "synonyms": entitywriter.stringify(entity["synonyms"]),
+                        "type": entity["type"]
+                    }
+
+                print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
 
     def skim(self, file):
         file = self._ensure_file(file)
@@ -86,6 +103,13 @@ class GafParser(assocparser.AssocParser):
         if 17 > len(vals) >= 15:
             vals += [""] * (17 - len(vals))
 
+        if len(vals) > 17:
+            # If we see more than 17 columns, we will just cut off the columns after column 17
+            self.report.warning(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+                msg="There were more than 17 columns in this line. Proceeding by cutting off extra columns after column 17.")
+            vals = vals[:17]
+
+
         if len(vals) != 17:
             self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
                 msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
@@ -109,6 +133,17 @@ class GafParser(assocparser.AssocParser):
          annotation_xp,
          gene_product_isoform] = vals
 
+        ## check for missing columns
+        if db == "":
+            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty")
+            return assocparser.ParseResult(line, [], True)
+        if db_object_id == "":
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "col2 is empty")
+            return assocparser.ParseResult(line, [], True)
+        if taxon == "":
+            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty")
+            return assocparser.ParseResult(line, [], True)
+
         ## --
         ## db + db_object_id. CARD=1
         ## --
@@ -116,6 +151,15 @@ class GafParser(assocparser.AssocParser):
         if not self._validate_id(id, line, ENTITY):
             print("skipping because {} not validated!".format(id))
             return assocparser.ParseResult(line, [], True)
+
+        # Using a given gpi file to validate the gene object
+        if self.gpi is not None:
+            entity = self.gpi.get(id, None)
+            if entity is not None:
+                db_object_symbol = entity["symbol"]
+                db_object_name = entity["name"]
+                db_object_synonym = entity["synonyms"]
+                db_object_type = entity["type"]
 
         if not self._validate_id(goid, line, ANNOTATION):
             print("skipping because {} not validated!".format(goid))
@@ -152,16 +196,18 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
 
-        go_rule_results = qc.test_go_rules(vals, self.config.ontology)
+        go_rule_results = qc.test_go_rules(vals, self.config)
         for rule_id, result in go_rule_results.items():
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
                                     msg="{id}: {message}".format(id=rule_id, message=result.message))
+                # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
 
             if result.result_type == qc.ResultType.ERROR:
                 self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
                                     msg="{id}: {message}".format(id=rule_id, message=result.message))
+                # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
 
         ## --
