@@ -1,0 +1,18 @@
+{
+   "docs":[
+      {
+         "category":[
+
+         ],
+         "has_highlight":true,
+         "highlight":"<em class=\"hilite\">foo</em>d",
+         "id":"CHEBI:33290",
+         "label":[
+            "food"
+         ],
+         "match":"food",
+         "taxon":"",
+         "taxon_label":""
+      }
+   ]
+}

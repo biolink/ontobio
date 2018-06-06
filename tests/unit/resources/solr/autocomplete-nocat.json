@@ -1,0 +1,45 @@
+
+{
+  "highlighting":{
+    "CHEBI:33290":{
+      "label_eng":[
+        "<em class=\"hilite\">foo</em>d"
+      ]
+    }
+  },
+  "response":{
+    "numFound":1,
+    "docs":[
+      {
+         "id_eng":"CHEBI:33290",
+         "score":59.425438,
+         "_version_":1599053609463447553,
+         "id":"CHEBI:33290",
+         "label_eng":[
+            "food"
+         ],
+         "leaf":true,
+         "label_std":[
+            "food"
+         ],
+         "label_kw":[
+            "food"
+         ],
+         "iri_std":"http://purl.obolibrary.org/obo/CHEBI_33290",
+         "label":[
+            "food"
+         ],
+         "iri":"http://purl.obolibrary.org/obo/CHEBI_33290",
+         "id_std":"CHEBI:33290",
+         "prefix":"CHEBI",
+         "edges":8,
+         "iri_eng":"http://purl.obolibrary.org/obo/CHEBI_33290",
+         "id_kw":"CHEBI:33290",
+         "iri_kw":"http://purl.obolibrary.org/obo/CHEBI_33290"
+      }
+   ],
+    "start":0,
+    "maxScore":66.13394
+  },
+  "responseHeader":{}
+}

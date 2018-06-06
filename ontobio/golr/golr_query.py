@@ -360,7 +360,7 @@ class GolrSearchQuery(GolrAbstractQuery):
 
         suffixes = ['std', 'kw', 'eng']
         if self.is_go:
-            self.search_fields=dict(entity_label=3,general_blob=3)
+            self.search_fields=dict(entity_label=3, general_blob=3)
             self.hl = False
             # TODO: formal mapping
             if 'taxon_label' in self.facet_fields:
@@ -425,7 +425,7 @@ class GolrSearchQuery(GolrAbstractQuery):
             if len(positive_filter) > 0:
                 or_filter = 'prefix:"{}"'.format(positive_filter[0])
                 for pfix_filter in positive_filter[1:]:
-                    or_filter += 'OR prefix:"{}"'.format(pfix_filter)
+                    or_filter += ' OR prefix:"{}"'.format(pfix_filter)
                 params['fq'].append(or_filter)
 
         if self.boost_fx is not None:
@@ -519,13 +519,16 @@ class GolrSearchQuery(GolrAbstractQuery):
             else:
                 hl = Highlight(None, None, None)
 
+            # In some cases a node does not have a category
+            category = doc['category'] if 'category' in doc else []
+
             doc['taxon'] = doc['taxon'] if 'taxon' in doc else ""
             doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else ""
             doc = AutocompleteResult(
                 id=doc['id'],
                 label=doc['label'],
                 match=hl.match,
-                category=doc['category'],
+                category=category,
                 taxon=doc['taxon'],
                 taxon_label=doc['taxon_label'],
                 highlight=hl.highlight,
