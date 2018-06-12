@@ -75,7 +75,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[]):
         os.makedirs(os.path.split(path)[0], exist_ok=True)
 
         click.echo("Downloading source gaf to {}".format(path))
-        if urllib.parse.urlparse(gaf_url)[0] == "ftp":
+        if urllib.parse.urlparse(gaf_url)[0] in ["ftp", "file"]:
             urllib.request.urlretrieve(gaf_url, path)
         else:
             response = requests.get(gaf_url, stream=True)

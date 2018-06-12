@@ -462,7 +462,8 @@ class AssocParser(object):
             self.report.warning(line, Report.INVALID_DATE, date, "empty")
             return date
 
-        if len(date) == 8:
+        # We check int(date)
+        if len(date) == 8 and date.isdigit():
             d = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0)
         else:
             self.report.warning(line, Report.INVALID_DATE, date, "Date field must be YYYYMMDD, got: {}".format(date))
