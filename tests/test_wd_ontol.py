@@ -45,3 +45,7 @@ def test_factory():
     w.write(ont, query_ids=qids)
 
             
+def test_parent_index():
+    ont = OntologyFactory().create("go")
+    sub = ont.subontology(ont.ancestors('GO:0010971'))
+    assert len(sub.parent_index()) > 0
