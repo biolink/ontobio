@@ -912,8 +912,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if self._use_amigo_schema(object_category):
             if self.url is None:
                 self._set_solr(self.get_config().amigo_solr_assocs)
-                #go_golr_url = "http://golr.berkeleybop.org/solr/"
-                #self.solr = pysolr.Solr(go_golr_url, timeout=5)
             self.field_mapping=goassoc_fieldmap()
 
             # awkward hack: we want to avoid typing on the amigo golr gene field,
