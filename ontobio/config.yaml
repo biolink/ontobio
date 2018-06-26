@@ -2,7 +2,7 @@ solr_assocs:
   url: "https://solr.monarchinitiative.org/solr/golr"
   timeout: 5
 amigo_solr_assocs:
-  url: "http://golr.berkeleybop.org"
+  url: "http://golr-aux.geneontology.io/solr"
   timeout: 4
 solr_search:
   url: "https://solr.monarchinitiative.org/solr/search"
@@ -11,7 +11,7 @@ lay_person_search:
   url: "https://solr.monarchinitiative.org/solr/hpo-pl"
   timeout: 2
 amigo_solr_search:
-  url: "http://golr.berkeleybop.org"
+  url: "http://golr-aux.geneontology.io/solr"
   timeout: 2
 sparql:
   url: "http://sparql.hegroup.org/sparql"
