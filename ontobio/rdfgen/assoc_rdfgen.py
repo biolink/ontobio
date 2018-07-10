@@ -116,15 +116,16 @@ class RdfTransform(object):
         if len(results) > 0:
             return results[0]
 
-    def emit(self,s,p,o):
+    def emit(self, s, p, o):
         logging.debug("TRIPLE: {} {} {}".format(s,p,o))
         self.writer.add(s,p,o)
         return (s,p,o)
 
-    def emit_type(self,s,t):
+    def emit_type(self, s, t):
         return self.emit(s, RDF.type, t)
-    def emit_label(self,s,t):
-        return self.emit(s, RDFS.label, o)
+
+    def emit_label(self, s, o):
+        return self.emit(s, RDFS.label, Literal(o))
 
     def eco_class(self, code, coderef=None):
         eco_cls_id = self.ecomap.coderef_to_ecoclass(code, coderef)
@@ -225,6 +226,11 @@ class CamRdfTransform(RdfTransform):
         enabler_id = genid(base=self.writer.base)
         self.emit_type(enabler_id, sub_uri)
         self.emit_type(enabler_id, OWL.NamedIndividual)
+
+        # subject GP class label and
+        self.emit_label(sub_uri, sub["label"])
+        if "taxon" in sub:
+            self.emit(sub_uri, URIRef(expand_uri(ro.in_taxon)), self.uri(sub["taxon"]["id"]))
 
         # E.g. instance of GO class
         tgt_id = genid(base=self.writer.base)
