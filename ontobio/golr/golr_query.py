@@ -281,8 +281,8 @@ class GolrAbstractQuery():
             self.config = get_config()
         return self.config
 
-    def _set_solr(self, endpoint):
-        self.solr = pysolr.Solr(endpoint.url, timeout=endpoint.timeout)
+    def _set_solr(self, url, timeout=2):
+        self.solr = pysolr.Solr(url=url, timeout=timeout)
         return self.solr
 
     def _use_amigo_schema(self, object_category):
@@ -322,8 +322,8 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.term = term
         self.category = category
         self.is_go = is_go
-        self._url = url
-        self._solr = solr
+        self.url = url
+        self.solr = solr
         self.config = config
         self.hl = hl
         self.facet = facet
@@ -349,34 +349,28 @@ class GolrSearchQuery(GolrAbstractQuery):
                                       taxon_label=1,
                                       equivalent_iri=1,
                                       equivalent_curie=1)
+
+        solr_config = {'url': self.url, 'timeout': 2}
         if self.is_go:
-            if self._url is None:
-                self._set_solr(self.get_config().amigo_solr_search)
+            if self.url is None:
+                endpoint = self.get_config().amigo_solr_search
+                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+
             else:
-                self._solr = pysolr.Solr(self._url, timeout=2)
+                solr_config = {'url': self.url, 'timeout': 2}
         else:
             if self.url is None:
-                self._set_solr(self.get_config().solr_search)
+                endpoint = self.get_config().solr_search
+                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
             else:
-                self._solr = pysolr.Solr(self._url, timeout=2)
+                solr_config = {'url': self.url, 'timeout': 2}
 
-    @property
-    def url(self):
-        return self._url
+        self._set_solr(**solr_config)
 
-    @url.setter
-    def url(self, url):
-        self._url = url
-        self.solr = pysolr.Solr(self._url, timeout=2)
-
-    @property
-    def solr(self):
-        return self._solr
-
-    @solr.setter
-    def solr(self, pysolr):
-        self._url = pysolr.url
-        self._solr = pysolr
+    def update_solr_url(self, url, timeout=2):
+        self.url = url
+        solr_config = {'url': url, 'timeout': timeout}
+        self._set_solr(**solr_config)
 
     def solr_params(self):
 
@@ -656,7 +650,8 @@ class GolrLayPersonSearch(GolrSearchQuery):
     def __init__(self, term=None, **kwargs):
         super().__init__(term, **kwargs)
         self.facet = False
-        self._set_solr(self.get_config().lay_person_search)
+        endpoint = self.get_config().lay_person_search
+        self._set_solr(endpoint.url, endpoint.timeout)
 
     def set_lay_params(self):
         params = self.solr_params()
@@ -884,6 +879,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 M.OBJECT_CLOSURE
             ]
 
+    def update_solr_url(self, url, timeout=2):
+        self.url = url
+        solr_config = {'url': url, 'timeout': timeout}
+        self._set_solr(**solr_config)
+
     def adjust(self):
         pass
 
@@ -928,17 +928,19 @@ class GolrAssociationQuery(GolrAbstractQuery):
             logging.info("Inferring Object category: {} from {}".
                          format(object_category, object))
 
+        solr_config = {'url': self.url, 'timeout': 5}
         if self.solr is None:
             if self.url is None:
-                self._set_solr(self.get_config().solr_assocs)
-                #self.solr = monarch_solr
+                endpoint = self.get_config().solr_assocs
+                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
             else:
-                self.solr = pysolr.Solr(self.url, timeout=5)
+                solr_config = {'url': self.url, 'timeout': 5}
 
         # URL to use for querying solr
         if self._use_amigo_schema(object_category):
             if self.url is None:
-                self._set_solr(self.get_config().amigo_solr_assocs)
+                endpoint = self.get_config().amigo_solr_assocs
+                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
             self.field_mapping=goassoc_fieldmap()
 
             # awkward hack: we want to avoid typing on the amigo golr gene field,
@@ -959,6 +961,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 cc = self.get_config().get_category_class(object_category)
                 if cc is not None and object is None:
                     object = cc
+
+        self.update_solr_url(**solr_config)
 
         ## subject params
         subject_taxon=self.subject_taxon
