@@ -10,6 +10,7 @@ import logging
 import ontobio.ontol
 import requests
 from ontobio.ontol import Ontology
+from ontobio.util.user_agent import get_user_agent
 
 class RemoteScigraphOntology(Ontology):
     """
@@ -75,7 +76,7 @@ class RemoteScigraphOntology(Ontology):
             url += "/" +q
         if format is not None:
             url = url  + "." + format
-        r = requests.get(url, params=params)
+        r = requests.get(url, params=params, headers={'User-Agent': get_user_agent(caller_name=__name__)})
         return r
 
     def _get_response_json(self, path="", q=None, format=None, **args):
