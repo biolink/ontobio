@@ -3,6 +3,7 @@ Test Generate RDF from Assocs
 """
 import rdflib
 from rdflib.namespace import RDFS
+from rdflib import compare
 
 from ontobio.io.gafparser import GafParser
 from ontobio.rdfgen.assoc_rdfgen import TurtleRdfWriter, CamRdfTransform
@@ -48,20 +49,15 @@ def test_rdfgen_includes_taxon_in_subject():
         'date': '20150305'
     }
 
-
-    gaf_transformer = CamRdfTransform()
+    rdfWriter = TurtleRdfWriter(label="pombase_single.ttl")
+    gaf_transformer = CamRdfTransform(writer=rdfWriter)
     gaf_transformer.translate(assoc)
+    gaf_transformer.provenance()
 
-    graph = gaf_transformer.writer.graph
-    assert (rdflib.URIRef("http://identifiers.org/pombase/SPAC25B8.17"),
-            rdflib.URIRef("http://purl.obolibrary.org/obo/RO_0002162"),
-            rdflib.URIRef("http://purl.obolibrary.org/obo/NCBITaxon_4896")) in graph
+    expected_graph = rdflib.Graph()
+    expected_graph.parse("tests/resources/pombase_single.ttl", format="turtle")
 
-    assert (rdflib.URIRef("http://identifiers.org/pombase/SPAC25B8.17"),
-            RDFS.label,
-            rdflib.Literal("ypf1")) in graph
-
-
+    assert compare.isomorphic(rdfWriter.graph, expected_graph)
 
 def gen(assocs, tr, n):
     fn = 'tests/resources/{}.rdf'.format(n)
