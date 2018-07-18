@@ -39,6 +39,7 @@ TODO
 import json
 import logging
 import pysolr
+import requests
 from typing import Dict, List
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
@@ -283,8 +284,10 @@ class GolrAbstractQuery():
 
     def _set_solr(self, url, timeout=2):
         self.solr = pysolr.Solr(url=url, timeout=timeout)
-        self.solr.get_session().headers['User-Agent'] = get_user_agent(caller_name=__name__)
         return self.solr
+
+    def _set_user_agent(self, user_agent):
+        self.solr.get_session().headers['User-Agent'] = user_agent
 
     def _use_amigo_schema(self, object_category):
         if object_category is not None and object_category == 'function':
@@ -319,7 +322,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                  boost_fx=None,
                  boost_q=None,
                  highlight_class=None,
-                 taxon=None):
+                 taxon=None,
+                 user_agent=None):
         self.term = term
         self.category = category
         self.is_go = is_go
@@ -340,6 +344,10 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.boost_q = boost_q
         self.highlight_class = highlight_class
         self.taxon = taxon
+
+        self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
+        if user_agent is not None:
+             self.user_agent += " {}".format(user_agent)
 
         if self.search_fields is None:
             self.search_fields = dict(id=3,
@@ -367,11 +375,13 @@ class GolrSearchQuery(GolrAbstractQuery):
                 solr_config = {'url': self.url, 'timeout': 2}
 
         self._set_solr(**solr_config)
+        self._set_user_agent(self.user_agent)
 
     def update_solr_url(self, url, timeout=2):
         self.url = url
         solr_config = {'url': url, 'timeout': timeout}
         self._set_solr(**solr_config)
+        self._set_user_agent(self.user_agent)
 
     def solr_params(self):
 
@@ -653,6 +663,7 @@ class GolrLayPersonSearch(GolrSearchQuery):
         self.facet = False
         endpoint = self.get_config().lay_person_search
         self._set_solr(endpoint.url, endpoint.timeout)
+        self._set_user_agent(self.user_agent)
 
     def set_lay_params(self):
         params = self.solr_params()
@@ -815,6 +826,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  start=None,
                  homology_type=None,
                  non_null_fields=None,
+                 user_agent=None,
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -868,6 +880,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.is_explicit_url = url is not None
         self.non_null_fields=non_null_fields
 
+        self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
+        if user_agent is not None:
+             self.user_agent += " {}".format(user_agent)
+
         if self.facet_pivot_fields is None:
             self.facet_pivot_fields = []
 
@@ -884,6 +900,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.url = url
         solr_config = {'url': url, 'timeout': timeout}
         self._set_solr(**solr_config)
+        self._set_user_agent(self.user_agent)
 
     def adjust(self):
         pass
