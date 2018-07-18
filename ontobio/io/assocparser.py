@@ -495,7 +495,7 @@ class AssocParser(object):
             self.report.error(line, Report.INVALID_ID, id, "contains non letter, non number character, or spaces")
             return False
 
-        (left, right) = id.split(":")
+        (left, right) = id.rsplit(":", maxsplit=1)
         if len(left) == 0 or len(right) == 0:
             self.report.error(line, Report.INVALID_ID, id, "Empty ID")
             return False
