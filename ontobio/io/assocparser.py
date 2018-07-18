@@ -479,20 +479,25 @@ class AssocParser(object):
         if symbol is None or symbol == "":
             self.report.warning(line, Report.INVALID_SYMBOL, symbol, "empty")
 
-    non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z\S]")
+    non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z]")
 
     def _validate_id(self, id, line, context=None):
 
         # we assume that cardinality>1 fields have been split prior to this
         if id.find("|") > -1:
             # non-fatal
-            self.report.error(line, Report.INVALID_ID, id, "contains pipe in identifier")
+            self.report.warning(line, Report.INVALID_ID, id, "contains pipe in identifier")
         if ':' not in id:
             self.report.error(line, Report.INVALID_ID, id, "must be CURIE/prefixed ID")
             return False
 
         if AssocParser.non_id_regex.search(id.split(":")[1]):
             self.report.error(line, Report.INVALID_ID, id, "contains non letter, non number character, or spaces")
+            return False
+
+        (left, right) = id.split(":")
+        if len(left) == 0 or len(right) == 0:
+            self.report.error(line, Report.INVALID_ID, id, "Empty ID")
             return False
 
         idspace = self._get_id_prefix(id)
@@ -525,10 +530,13 @@ class AssocParser(object):
                 localid = localid.replace(db+":","")
         return db + ":" + localid
 
-    def _taxon_id(self,id):
-         id = id.replace('taxon','NCBITaxon')
-         self._validate_id(id,'',TAXON)
-         return id
+    def _taxon_id(self, id):
+        id = id.replace('taxon', 'NCBITaxon')
+        valid = self._validate_id(id, '', TAXON)
+        if valid:
+            return id
+        else:
+            return None
 
     def _ensure_file(self, file):
         logging.info("Ensure file: {}".format(file))
