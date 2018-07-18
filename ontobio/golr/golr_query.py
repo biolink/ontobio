@@ -45,7 +45,6 @@ from collections import OrderedDict
 from ontobio.vocabulary.relations import HomologyTypes
 from ontobio.model.GolrResults import SearchResults, AutocompleteResult, Highlight
 from ontobio.util.user_agent import get_user_agent
-import requests
 
 class GolrFields:
     """
@@ -284,8 +283,7 @@ class GolrAbstractQuery():
 
     def _set_solr(self, url, timeout=2):
         self.solr = pysolr.Solr(url=url, timeout=timeout)
-        user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
-        self.solr.get_session().headers['User-Agent'] = user_agent
+        self.solr.get_session().headers['User-Agent'] = get_user_agent(caller_name=__name__)
         return self.solr
 
     def _use_amigo_schema(self, object_category):

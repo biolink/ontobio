@@ -543,7 +543,7 @@ class AssocParser(object):
                 return open(fn,"r")
             elif file.startswith("http"):
                 url = file
-                with closing(requests.get(url, stream=False, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})) as resp:
+                with closing(requests.get(url, stream=False, headers={'User-Agent': get_user_agent(caller_name=__name__)})) as resp:
                     logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
                     ok = resp.status_code == 200
                     if ok:

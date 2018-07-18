@@ -79,7 +79,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[]):
         if urllib.parse.urlparse(gaf_url)[0] in ["ftp", "file"]:
             urllib.request.urlretrieve(gaf_url, path)
         else:
-            response = requests.get(gaf_url, stream=True, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
+            response = requests.get(gaf_url, stream=True, headers={'User-Agent': get_user_agent(caller_name=__name__)})
             content_length = int(response.headers.get("Content-Length", None))
 
             with open(path, "wb") as downloaded:

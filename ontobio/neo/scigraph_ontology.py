@@ -76,7 +76,7 @@ class RemoteScigraphOntology(Ontology):
             url += "/" +q
         if format is not None:
             url = url  + "." + format
-        r = requests.get(url, params=params, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
+        r = requests.get(url, params=params, headers={'User-Agent': get_user_agent(caller_name=__name__)})
         return r
 
     def _get_response_json(self, path="", q=None, format=None, **args):
