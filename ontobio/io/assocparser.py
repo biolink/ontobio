@@ -20,6 +20,7 @@ import dateutil.parser
 
 from ontobio import ontol
 from ontobio import ecomap
+from ontobio.util.user_agent import get_user_agent
 
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
@@ -542,7 +543,7 @@ class AssocParser(object):
                 return open(fn,"r")
             elif file.startswith("http"):
                 url = file
-                with closing(requests.get(url, stream=False)) as resp:
+                with closing(requests.get(url, stream=False, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})) as resp:
                     logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
                     ok = resp.status_code == 200
                     if ok:

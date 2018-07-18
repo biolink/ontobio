@@ -11,6 +11,7 @@ import json
 import logging
 import time
 from ontobio.golr.golr_query import *
+from ontobio.util.user_agent import get_user_agent
 
 import math ### required for IC calculation
 
@@ -228,6 +229,7 @@ def search_associations_go(
     """
     go_golr_url = "http://golr.geneontology.org/solr/"
     go_solr = pysolr.Solr(go_golr_url, timeout=5)
+    go_solr.get_session().headers['User-Agent'] = get_user_agent(caller_name=__name__)
     return search_associations(subject_category,
                                object_category,
                                relation,

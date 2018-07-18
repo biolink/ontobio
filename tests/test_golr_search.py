@@ -24,7 +24,7 @@ def test_search():
 
 def test_solr_404():
     q = GolrSearchQuery("abnormal")
-    q.url = "https://httpbin.org/status/404"
+    q.update_solr_url("https://httpbin.org/status/404")
     pytest.raises(pysolr.SolrError, q.search)
 
 
