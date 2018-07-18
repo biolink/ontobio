@@ -179,7 +179,7 @@ class AssociationSetFactory():
         """
         import requests
         url = "http://snapshot.geneontology.org/annotations/{}.gaf.gz".format(group)
-        r = requests.get(url, stream=True, headers={'User-Agent': get_user_agent(caller_name=__name__)})
+        r = requests.get(url, stream=True, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
         p = GafParser()
         results = p.skim(r.raw)
         return self.create_from_tuples(results, **args)
