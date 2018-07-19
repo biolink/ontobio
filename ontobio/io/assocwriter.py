@@ -122,8 +122,6 @@ class GpadWriter(AssocWriter):
         goid = assoc['object']['id']
 
         ev = assoc['evidence']
-        if ev["type"] == "IBA":
-            print("Found IBA! in annotation, writing GPAD")
 
         evidence = self.ecomap.coderef_to_ecoclass(ev['type'])
         withfrom = "|".join(ev['with_support_from'])

@@ -163,7 +163,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False):
 def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
     gafparser = GafParser()
     gafparser.config = assocparser.AssocParserConfig(
-        ontology=ontology_graph
+        ontology=ontology_graph,
+        paint=True
     )
 
     with open(gaf_path) as sg:
