@@ -5,6 +5,8 @@ Classes for exporting associations.
 import logging
 import re
 
+from ontobio import ecomap
+
 external_taxon = re.compile("taxon:([0-9]+)")
 internal_taxon = re.compile("NCBITaxon:([0-9]+)")
 
@@ -99,6 +101,7 @@ class GpadWriter(AssocWriter):
     def __init__(self, file=None):
         self.file = file
         self._write("!gpa-version: 1.1\n")
+        self.ecomap = ecomap.EcoMap()
 
     def write_assoc(self, assoc):
         """
@@ -119,7 +122,8 @@ class GpadWriter(AssocWriter):
         goid = assoc['object']['id']
 
         ev = assoc['evidence']
-        evidence = ev['type']
+
+        evidence = self.ecomap.coderef_to_ecoclass(ev['type'])
         withfrom = "|".join(ev['with_support_from'])
         reference = "|".join(ev['has_supporting_reference'])
 
