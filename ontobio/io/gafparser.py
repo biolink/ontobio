@@ -220,10 +220,14 @@ class GafParser(assocparser.AssocParser):
         ## taxon CARD={1,2}
         ## --
         ## if a second value is specified, this is the interacting taxon
-        taxa = [self._taxon_id(x) for x in taxon.split("|")]
-        taxon = taxa[0]
-        in_taxa = taxa[1:]
-        self._validate_taxon(taxon, line)
+        ## We do not use the second value
+        normalized_taxon = self._taxon_id(taxon.split("|")[0])
+        if normalized_taxon == None:
+            self.report.error(line, assocparser.Report.INVALID_TAXON, taxon,
+                                msg="Taxon ID is invalid")
+            return assocparser.ParseResult(line, [], True)
+
+        self._validate_taxon(normalized_taxon, line)
 
         ## --
         ## db_object_synonym CARD=0..*
@@ -247,18 +251,18 @@ class GafParser(assocparser.AssocParser):
         ## goid
         ## --
         # TODO We shouldn't overload buildin keywords/functions
-        object = {'id':goid,
-                  'taxon': taxon}
+        object = {'id': goid,
+                  'taxon': normalized_taxon}
 
         # construct subject dict
         subject = {
-            'id':id,
-            'label':db_object_symbol,
+            'id': id,
+            'label': db_object_symbol,
             'type': db_object_type,
             'fullname': db_object_name,
             'synonyms': synonyms,
             'taxon': {
-                'id': taxon
+                'id': normalized_taxon
             }
         }
 
