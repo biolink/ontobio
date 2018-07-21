@@ -1,4 +1,5 @@
 import click
+import os
 
 from ontobio.rdfgen import assoc_rdfgen
 from ontobio.io import assocparser
@@ -17,7 +18,7 @@ def cli():
 def convert(association, ontology, output, association_file):
     click.echo("converting {}".format(association))
 
-    rdfWriter = assoc_rdfgen.TurtleRdfWriter()
+    rdfWriter = assoc_rdfgen.TurtleRdfWriter(label=os.path.basename(output.name))
     rdfTransformer = assoc_rdfgen.CamRdfTransform(writer=rdfWriter)
     parser_config = assocparser.AssocParserConfig(ontology=make_ontology(ontology))
     parser = _association_parser(association, parser_config)

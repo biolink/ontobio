@@ -51,21 +51,25 @@ class TurtleRdfWriter(RdfWriter):
 
     use rdflib to generate a turtle file
     """
-    def __init__(self):
+    def __init__(self, label=None):
         self.base = genid(base="http://model.geneontology.org") + '/'
         self.graph = rdflib.Graph(identifier=self.base)
         self.graph.bind("owl", OWL)
         self.graph.bind("obo", "http://purl.obolibrary.org/obo/")
 
         self.graph.add((self.base, RDF.type, OWL.Ontology))
+        if label != None:
+            self.graph.add((self.base, RDFS.label, Literal(label)))
 
-    def add(self, s,p,o):
-        self.graph.add((s,p,o))
+    def add(self, s, p, o):
+        self.graph.add((s, p, o))
 
     def serialize(self, destination=None, format='ttl', **args):
-        self.graph.add((self.base, RDFS.label, Literal(str(destination.name))))
-        self.graph.serialize(destination, format, **args)
 
+        if destination != None:
+            self.graph.serialize(destination, format, **args)
+        else:
+            return self.graph.serialize(destination, format, **args)
 
 
 class RdfTransform(object):
@@ -76,6 +80,7 @@ class RdfTransform(object):
     def __init__(self, writer=None):
         if writer is None:
             writer = TurtleRdfWriter()
+
         self.writer = writer
         self.include_subject_info = False
         self.ecomap = EcoMap()
@@ -116,15 +121,16 @@ class RdfTransform(object):
         if len(results) > 0:
             return results[0]
 
-    def emit(self,s,p,o):
+    def emit(self, s, p, o):
         logging.debug("TRIPLE: {} {} {}".format(s,p,o))
         self.writer.add(s,p,o)
         return (s,p,o)
 
-    def emit_type(self,s,t):
+    def emit_type(self, s, t):
         return self.emit(s, RDF.type, t)
-    def emit_label(self,s,t):
-        return self.emit(s, RDFS.label, o)
+
+    def emit_label(self, s, o):
+        return self.emit(s, RDFS.label, Literal(o))
 
     def eco_class(self, code, coderef=None):
         eco_cls_id = self.ecomap.coderef_to_ecoclass(code, coderef)
@@ -225,6 +231,15 @@ class CamRdfTransform(RdfTransform):
         enabler_id = genid(base=self.writer.base)
         self.emit_type(enabler_id, sub_uri)
         self.emit_type(enabler_id, OWL.NamedIndividual)
+
+        # subject GP class label and taxon restriction
+        self.emit_label(sub_uri, sub["label"])
+        if "taxon" in sub:
+            restriction = rdflib.BNode()
+            self.emit_type(restriction, OWL.Restriction)
+            self.emit(restriction, OWL.onProperty, self.uri(ro.in_taxon))
+            self.emit(restriction, OWL.someValuesFrom, self.uri(sub["taxon"]["id"]))
+            self.emit(sub_uri, RDFS.subClassOf, restriction)
 
         # E.g. instance of GO class
         tgt_id = genid(base=self.writer.base)

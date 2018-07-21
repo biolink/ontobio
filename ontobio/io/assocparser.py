@@ -526,9 +526,9 @@ class AssocParser(object):
                 localid = localid.replace(db+":","")
         return db + ":" + localid
 
-    def _taxon_id(self,id):
-         id = id.replace('taxon','NCBITaxon')
-         self._validate_id(id,'',TAXON)
+    def _taxon_id(self, id):
+         id = id.replace('taxon', 'NCBITaxon')
+         self._validate_id(id, '', TAXON)
          return id
 
     def _ensure_file(self, file):
