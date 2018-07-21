@@ -9,6 +9,7 @@ import re
 
 from functools import wraps
 
+from ontobio.util.user_agent import get_user_agent
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
 from ontobio.io.assocwriter import GafWriter
@@ -78,7 +79,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[]):
         if urllib.parse.urlparse(gaf_url)[0] in ["ftp", "file"]:
             urllib.request.urlretrieve(gaf_url, path)
         else:
-            response = requests.get(gaf_url, stream=True)
+            response = requests.get(gaf_url, stream=True, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
             content_length = int(response.headers.get("Content-Length", None))
 
             with open(path, "wb") as downloaded:
@@ -162,7 +163,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False):
 def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
     gafparser = GafParser()
     gafparser.config = assocparser.AssocParserConfig(
-        ontology=ontology_graph
+        ontology=ontology_graph,
+        paint=True
     )
 
     with open(gaf_path) as sg:

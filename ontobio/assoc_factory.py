@@ -16,6 +16,7 @@ from ontobio.assocmodel import AssociationSet, AssociationSetMetadata
 from ontobio.io.hpoaparser import HpoaParser
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.gafparser import GafParser
+from ontobio.util.user_agent import get_user_agent
 from collections import defaultdict
 
 SHELF_LIFE = datetime.timedelta(days=3)
@@ -178,7 +179,7 @@ class AssociationSetFactory():
         """
         import requests
         url = "http://snapshot.geneontology.org/annotations/{}.gaf.gz".format(group)
-        r = requests.get(url, stream=True)
+        r = requests.get(url, stream=True, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
         p = GafParser()
         results = p.skim(r.raw)
         return self.create_from_tuples(results, **args)
