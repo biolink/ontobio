@@ -35,15 +35,8 @@ OCCURS_IN = URIRef(expand_uri(ro.occurs_in))
 COLOCALIZES_WITH = URIRef(expand_uri(ro.colocalizes_with))
 MOLECULAR_FUNCTION = URIRef(expand_uri(upt.molecular_function))
 
-class Id(object):
-
-    def __init__(self):
-        self.__id = 999
-
-    def genid(self, base=None):
-        self.__id = self.__id + 1
-        return URIRef(str(self.__id), base=base)
-
+def genid(base=None):
+    return URIRef(str(uuid.uuid4()), base=base)
 
 class RdfWriter(object):
     """
@@ -59,8 +52,7 @@ class TurtleRdfWriter(RdfWriter):
     use rdflib to generate a turtle file
     """
     def __init__(self, label=None):
-        self.id = Id()
-        self.base = self.id.genid(base="http://model.geneontology.org") + '/'
+        self.base = genid(base="http://model.geneontology.org") + '/'
         self.graph = rdflib.Graph(identifier=self.base)
         self.graph.bind("owl", OWL)
         self.graph.bind("obo", "http://purl.obolibrary.org/obo/")
@@ -89,7 +81,6 @@ class RdfTransform(object):
         if writer is None:
             writer = TurtleRdfWriter()
 
-        self.id = writer.id
         self.writer = writer
         self.include_subject_info = False
         self.ecomap = EcoMap()
@@ -164,7 +155,7 @@ class RdfTransform(object):
         if 'id' in ev:
             ev_id = self.uri(ev['id'])
         else:
-            ev_id = self.id.genid(base=self.writer.base + '/')
+            ev_id = genid(base=self.writer.base + '/')
 
         stmt_id = self.blanknode() ## OWL reification: must be blank
         (s,p,o) = stmt
@@ -237,7 +228,7 @@ class CamRdfTransform(RdfTransform):
         obj_uri = self.uri(obj)
 
         # E.g. instance of gene product class
-        enabler_id = self.id.genid(base=self.writer.base)
+        enabler_id = genid(base=self.writer.base)
         self.emit_type(enabler_id, sub_uri)
         self.emit_type(enabler_id, OWL.NamedIndividual)
 
@@ -251,7 +242,7 @@ class CamRdfTransform(RdfTransform):
             self.emit(sub_uri, RDFS.subClassOf, restriction)
 
         # E.g. instance of GO class
-        tgt_id = self.id.genid(base=self.writer.base)
+        tgt_id = genid(base=self.writer.base)
         self.emit_type(tgt_id, obj_uri)
         self.emit_type(tgt_id, OWL.NamedIndividual)
 
@@ -262,12 +253,12 @@ class CamRdfTransform(RdfTransform):
         if aspect == 'F':
             aspect_triple = self.emit(tgt_id, ENABLED_BY, enabler_id)
         elif aspect == 'P':
-            mf_id = self.id.genid(base=self.writer.base)
+            mf_id = genid(base=self.writer.base)
             self.emit_type(mf_id, MOLECULAR_FUNCTION)
             aspect_triple = self.emit(mf_id, ENABLED_BY, enabler_id)
             aspect_triple = self.emit(mf_id, PART_OF, tgt_id)
         elif aspect == 'C':
-            mf_id = self.id.genid(base=self.writer.base)
+            mf_id = genid(base=self.writer.base)
             self.emit_type(mf_id, MOLECULAR_FUNCTION)
             aspect_triple = self.emit(mf_id, ENABLED_BY, enabler_id)
             aspect_triple = self.emit(mf_id, OCCURS_IN, tgt_id)
@@ -282,7 +273,7 @@ class CamRdfTransform(RdfTransform):
 
         if and_xps is not None:
             for ext in and_xps:
-                filler_inst = self.id.genid(base=self.writer.base)
+                filler_inst = genid(base=self.writer.base)
                 self.emit_type(filler_inst, self.uri(ext['filler']))
                 p = self.lookup_relation(ext['property'])
                 if p is None:

@@ -20,7 +20,7 @@ def test_parse():
     #gen(assocs,SimpleAssocRdfTransform(),'simple')
     gen(assocs, CamRdfTransform(), 'cam')
 
-def test_rdfgen_includes_taxon_in_subject():
+def test_rdfgen_includes_taxon_in_gp_class():
 
     assoc = {
         'source_line': 'PomBase\tSPAC25B8.17\typf1\t\tGO:1990578\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20150305\tPomBase\t\t',
@@ -54,10 +54,25 @@ def test_rdfgen_includes_taxon_in_subject():
     gaf_transformer.translate(assoc)
     gaf_transformer.provenance()
 
-    expected_graph = rdflib.Graph()
-    expected_graph.parse("tests/resources/pombase_single.ttl", format="turtle")
+    gp_res = rdfWriter.graph.query(gene_product_class_query())
+    for row in gp_res:
+        assert str(row["cls"]) == "http://identifiers.org/pombase/SPAC25B8.17"
+        assert str(row["taxon"]) == "http://purl.obolibrary.org/obo/NCBITaxon_4896"
 
-    assert compare.isomorphic(rdfWriter.graph, expected_graph)
+
+def gene_product_class_query():
+    return """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX NCBITaxon: <http://purl.obolibrary.org/obo/NCBITaxon_>
+        PREFIX RO: <http://purl.obolibrary.org/obo/RO_>
+        SELECT ?cls ?taxon
+        WHERE {
+            ?cls rdfs:subClassOf [ a owl:Restriction ;
+                owl:onProperty RO:0002162 ;
+                owl:someValuesFrom ?taxon ] .
+        }
+    """
 
 def gen(assocs, tr, n):
     fn = 'tests/resources/{}.rdf'.format(n)
