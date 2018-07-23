@@ -26,10 +26,24 @@ travis_test:
 cleandist:
 	rm dist/* || true
 
+TAG = $(shell python setup.py --version)
+versioning:
+	git checkout master
+	git add ontobio/__init__.py
+	git commit --message="Upgrade to $(TAG)" --dry-run
+	git push origin master --dry-run
+	git tag --annotate $(TAG) -f --message="Upgrade to $(TAG)"
+	git push --tags --dry-run
+
 # TODO: manually increment version in ontobio/__init__.sh, run . bump.sh, then this
-release: cleandist
+USER ?= $(LOGNAME)
+release: cleandist versioning
 	python setup.py sdist bdist_wheel bdist_egg
-	twine upload dist/*
+	twine upload --repository-url https://upload.pypi.org/legacy/ --username $(USER) dist/*
+
+test_release: cleandist versioning
+	python setup.py sdist bdist_wheel bdist_egg
+	twine upload --repository-url https://test.pypi.org/legacy/ --username $(USER) dist/*
 
 nb:
 	PYTHONPATH=.. jupyter notebook

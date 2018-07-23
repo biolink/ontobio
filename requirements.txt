@@ -13,6 +13,7 @@ matplotlib==2.0.0
 SPARQLWrapper==1.8.0
 pandas>=0.0
 scipy==0.19.1
+twine
 jsonpickle>=0.0
 jsonpath_rw>=0.0
 pytest>=0.0
