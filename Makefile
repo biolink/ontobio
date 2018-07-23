@@ -30,10 +30,10 @@ TAG = $(shell python setup.py --version)
 versioning:
 	git checkout master
 	git add ontobio/__init__.py
-	git commit --message="Upgrade to $(TAG)" --dry-run
-	git push origin master --dry-run
+	git commit --message="Upgrade to $(TAG)"
+	git push origin master
 	git tag --annotate $(TAG) -f --message="Upgrade to $(TAG)"
-	git push --tags --dry-run
+	git push --tags
 
 # TODO: manually increment version in ontobio/__init__.sh, run . bump.sh, then this
 USER ?= $(LOGNAME)
