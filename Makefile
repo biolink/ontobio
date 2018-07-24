@@ -41,7 +41,7 @@ release: cleandist versioning
 	python setup.py sdist bdist_wheel bdist_egg
 	twine upload --repository-url https://upload.pypi.org/legacy/ --username $(USER) dist/*
 
-test_release: cleandist versioning
+test_release: cleandist
 	python setup.py sdist bdist_wheel bdist_egg
 	twine upload --repository-url https://test.pypi.org/legacy/ --username $(USER) dist/*
 
