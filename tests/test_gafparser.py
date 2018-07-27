@@ -20,11 +20,11 @@ QGAF = "tests/resources/test-qualifiers.gaf"
 def test_skim_gaf():
     p = GafParser()
     p.config.ecomap = EcoMap()
-    results = p.skim(open(POMBASE,"r"))
+    results = p.skim(open(POMBASE, "r"))
     assert len(results) == 375
     for r in results:
         print(str(r))
-        (s,sn,o) = r
+        (s, sn, o) = r
         assert o.startswith('GO:')
         assert s.startswith('PomBase:')
 
@@ -32,19 +32,19 @@ def test_skim_gaf_qualifiers():
     p = GafParser()
     p.config.ecomap = EcoMap()
     p.config.remove_double_prefixes = True
-    results = p.skim(open(QGAF,"r"))
+    results = p.skim(open(QGAF, "r"))
     for r in results:
         print(str(r))
-        (s,sn,o) = r
+        (s, sn, o) = r
         assert o.startswith('GO:')
         assert s.startswith('MGI:') or s.startswith('PomBase')
     assert len(results) == 4  # ensure NOTs are skipped
 
     p.config.exclude_relations = ['contributes_to', 'colocalizes_with']
-    results = p.skim(open(QGAF,"r"))
+    results = p.skim(open(QGAF, "r"))
     for r in results:
         print(str(r))
-        (s,sn,o) = r
+        (s, sn, o) = r
         assert o.startswith('GO:')
         assert s.startswith('MGI:') or s.startswith('PomBase')
     assert len(results) == 2 # ensure NOTs and excludes relations skipped
@@ -52,16 +52,17 @@ def test_skim_gaf_qualifiers():
 def test_skim_gpad():
     p = GpadParser()
     p.config.ecomap = EcoMap()
-    results = p.skim(open(POMBASE_GPAD,"r"))
+    results = p.skim(open(POMBASE_GPAD, "r"))
     assert len(results) == 1984
     for r in results:
         print(str(r))
-        (s,sn,o) = r
+        (s, sn, o) = r
         assert o.startswith('GO:')
         assert s.startswith('PomBase:') or s.startswith('PR:')
 
 def test_parse_gaf():
     parse_with(POMBASE, GafParser())
+    
 def test_parse_gpad():
     parse_with(POMBASE_GPAD, GpadParser())
 
@@ -75,7 +76,7 @@ def parse_with(f, p):
         # this is because ontology is made from GAF
         p.config.ontology = ont
 
-    results = p.parse(open(f,"r"), skipheader=True)
+    results = p.parse(open(f, "r"), skipheader=True)
     r1 = results[0]
     # TODO: test datafile does not have ECOs yet!!
     assert r1['evidence']['type'] == 'ISO' or r1['evidence']['type'] == 'ECO:0000201'
@@ -177,7 +178,7 @@ def parse_with2(f, p):
     ont = OntologyFactory().create(ONT)
 
     p.config.ontology = ont
-    assocs = p.parse(open(f,"r"), skipheader=True)
+    assocs = p.parse(open(f, "r"), skipheader=True)
     neg_assocs = [a for a in assocs if a['negated'] == True]
     assert len(neg_assocs) == 3
     for a in assocs:
@@ -188,7 +189,7 @@ def parse_with2(f, p):
 def test_errors_gaf():
     p = GafParser()
     p.config.ecomap = EcoMap()
-    assocs = p.parse(open("tests/resources/errors.gaf","r"), skipheader=True)
+    assocs = p.parse(open("tests/resources/errors.gaf", "r"), skipheader=True)
     msgs = p.report.messages
     print("MESSAGES: {}".format(len(msgs)))
     n_invalid_idspace = 0
@@ -236,12 +237,12 @@ def test_factory():
 
     found = 0
     for s in aset.subjects:
-        print('{} {}'.format(s,aset.label(s)))
+        print('{} {}'.format(s, aset.label(s)))
         for c in aset.annotations(s):
-            print('  {} {}'.format(c,ont.label(c)))
-            for a in aset.associations(s,c):
+            print('  {} {}'.format(c, ont.label(c)))
+            for a in aset.associations(s, c):
                 e = a['evidence']
-                print('    {} {} {}'.format(e['type'],e['with_support_from'], e['has_supporting_reference']))
+                print('    {} {} {}'.format(e['type'], e['with_support_from'], e['has_supporting_reference']))
                 if s == 'PomBase:SPBC2D10.10c' and c == 'GO:0005730':
                     if e['type'] == 'ISO':
                         if e['with_support_from'] == ['SGD:S000002172'] and e['has_supporting_reference'] == ['GO_REF:0000024']:
@@ -253,7 +254,7 @@ def test_factory():
                             logging.info('** FOUND: {}'.format(a))
 
     assert len(aset.associations_by_subj) > 0
-    assert found  == 2
+    assert found == 2
 
 if __name__ == "__main__":
     pytest.main(args=["tests/test_gafparser.py::test_parse_gaf"])

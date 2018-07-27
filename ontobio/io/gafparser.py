@@ -143,6 +143,9 @@ class GafParser(assocparser.AssocParser):
         if taxon == "":
             self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty")
             return assocparser.ParseResult(line, [], True)
+        if reference == "":
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty")
+            return assocparser.ParseResult(line, [], True)
 
         ## --
         ## db + db_object_id. CARD=1
@@ -178,6 +181,17 @@ class GafParser(assocparser.AssocParser):
         if "GO_REF:0000033" in reference.split("|"):
             self.report.error(line, assocparser.Report.INVALID_ID, reference,
                                 msg="Disallowing GO_REF:0000033 in reference field as of 03/13/2018")
+            return assocparser.ParseResult(line, [], True)
+
+        references = self.validate_pipe_separated_ids(reference, line)
+        if references == None:
+            # Reporting occurs in above function call
+            return assocparser.ParseResult(line, [], True)
+
+        # With/From
+        withfroms = self.validate_pipe_separated_ids(withfrom, line, empty_allowed=True, extra_delims=",")
+        if withfroms == None:
+            # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
 
         # validation
@@ -281,8 +295,8 @@ class GafParser(assocparser.AssocParser):
         ## --
         evidence_obj = {
             'type': evidence,
-            'has_supporting_reference': self._split_pipe(reference),
-            'with_support_from': self._split_pipe(withfrom)
+            'has_supporting_reference': references,
+            'with_support_from': withfroms
         }
 
         ## Construct main return dict
