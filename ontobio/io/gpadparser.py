@@ -104,6 +104,10 @@ class GpadParser(assocparser.AssocParser):
 
         date = self._normalize_gaf_date(date, line)
 
+        if reference == "":
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty")
+            return assocparser.ParseResult(line, [], True)
+
         self._validate_id(evidence, line, None)
         #TODO: ecomap is currently one-way only
         #ecomap = self.config.ecomap
@@ -116,13 +120,27 @@ class GpadParser(assocparser.AssocParser):
         ## qualifier
         ## --
         negated, relation, other_qualifiers = self._parse_qualifier(qualifier, None)
-        
+
+
+        # Reference Column
+        references = self.validate_pipe_separated_ids(reference, line)
+        if references == None:
+            # Reporting occurs in above function call
+            return assocparser.ParseResult(line, [], True)
+
+        # With/From
+        withfroms = self.validate_pipe_separated_ids(withfrom, line, empty_allowed=True)
+        if withfroms == None:
+            # Reporting occurs in above function call
+            return assocparser.ParseResult(line, [], True)
+
+
         ## --
         ## parse annotation extension
         ## See appending in http://doi.org/10.1186/1471-2105-15-155
         ## --
         object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=line)
-        
+
         assoc = {
             'source_line': line,
             'subject': {
@@ -137,8 +155,8 @@ class GpadParser(assocparser.AssocParser):
             },
             'evidence': {
                 'type': evidence,
-                'with_support_from': self._split_pipe(withfrom),
-                'has_supporting_reference': self._split_pipe(reference)
+                'with_support_from': withfroms,
+                'has_supporting_reference': references
             },
             'provided_by': assigned_by,
             'date': date,

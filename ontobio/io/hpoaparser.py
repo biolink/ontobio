@@ -46,7 +46,7 @@ class HpoaParser(AssocParser):
             t = vals[4]
             tuples.append( (id,n,t) )
         return tuples
-    
+
     def parse_line(self, line):
         """
         Parses a single line of a HPOA file
@@ -166,6 +166,12 @@ class HpoaParser(AssocParser):
             else:
                 relation = None
 
+        # With/From
+        withfroms = self.validate_pipe_separated_ids(withfrom, line, empty_allowed=True)
+        if withfroms == None:
+            # Reporting occurs in above function call
+            return assocparser.ParseResult(line, [], True)
+
         ## --
         ## hpoid
         ## --
@@ -191,7 +197,7 @@ class HpoaParser(AssocParser):
         evidence = {
             'type': evidence,
             'has_supporting_reference': reference.split("; "),
-            'with_support_from': self._split_pipe(withfrom)
+            'with_support_from': withfroms
         }
 
         ## Construct main return dict

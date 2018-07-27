@@ -18,6 +18,8 @@ import gzip
 import datetime
 import dateutil.parser
 
+from typing import Optional, List
+
 from ontobio import ontol
 from ontobio import ecomap
 from ontobio.util.user_agent import get_user_agent
@@ -511,11 +513,19 @@ class AssocParser(object):
 
         return True
 
-    def _split_pipe(self, v):
-        if v == "":
+    def validate_pipe_separated_ids(self, column, line, empty_allowed=False) -> Optional[List[str]]:
+        if column == "" and empty_allowed:
             return []
-        ids = sorted([id for id in v.split("|") if self._validate_id(id, '')])
-        return ids
+
+        split_ids = column.split("|")
+        valids = []
+        for i in split_ids:
+            if self._validate_id(i, line):
+                valids.append(i)
+            else:
+                return None
+
+        return sorted(valids)
 
     def _normalize_id(self, id):
         toks = id.split(":")
