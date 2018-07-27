@@ -513,11 +513,11 @@ class AssocParser(object):
 
         return True
 
-    def validate_pipe_separated_ids(self, column, line, empty_allowed=False) -> Optional[List[str]]:
+    def validate_pipe_separated_ids(self, column, line, empty_allowed=False, extra_delims="") -> Optional[List[str]]:
         if column == "" and empty_allowed:
             return []
 
-        split_ids = column.split("|")
+        split_ids = re.split("[|{}]".format(extra_delims), column)
         valids = []
         for i in split_ids:
             if self._validate_id(i, line):

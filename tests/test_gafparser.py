@@ -62,6 +62,7 @@ def test_skim_gpad():
 
 def test_parse_gaf():
     parse_with(POMBASE, GafParser())
+    
 def test_parse_gpad():
     parse_with(POMBASE_GPAD, GpadParser())
 

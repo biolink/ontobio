@@ -129,7 +129,7 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         # With/From
-        withfroms = self.validate_pipe_separated_ids(withfrom, line, empty_allowed=True)
+        withfroms = self.validate_pipe_separated_ids(withfrom, line, empty_allowed=True, extra_delims=",")
         if withfroms == None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)

@@ -68,3 +68,12 @@ def test_validate_pipe_separated_empty_allowed():
     ids = parser.validate_pipe_separated_ids("", "", empty_allowed=True)
 
     assert ids == []
+
+def test_validate_pipe_with_additional_delims():
+    parser = gafparser.GafParser()
+    ids = parser.validate_pipe_separated_ids("F:123,B:234|B:111", "", extra_delims=",")
+
+    assert set(ids) == set(["F:123", "B:234", "B:111"])
+
+    result = parser.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:1990578\tGO_REF:0000024\tISO\tUniProtKB:Q9CXD9|ensembl:ENSMUSP00000038569,PMID:11111\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20150305\tPomBase\t\t")
+    assert set(result.associations[0]["evidence"]["with_support_from"]) == set(["UniProtKB:Q9CXD9", "ensembl:ENSMUSP00000038569", "PMID:11111"])
