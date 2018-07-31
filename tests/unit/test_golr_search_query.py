@@ -119,6 +119,31 @@ class TestGolrSearchQuery():
                           default=lambda obj: getattr(obj, '__dict__', str(obj)),
                           sort_keys=True)
 
+    def test_autocomplete_no_category(self):
+        """
+        Test for document without a category
+        """
+        # Provide a new mock file
+        input_fh = os.path.join(os.path.dirname(__file__),
+                                'resources/solr/autocomplete-nocat.json')
+        input_docs = json.load(open(input_fh))
+        self.test_results = pysolr.Results(input_docs)
+        self.manager.solr.search = MagicMock(return_value=self.test_results)
+
+        expected_fh = os.path.join(os.path.dirname(__file__),
+                                   'resources/solr/autocomplete-nocat-expect.json')
+        processed_docs = json.load(open(expected_fh))
+
+        output_docs = self.manager.autocomplete()
+        print(json.dumps(output_docs,
+                          default=lambda obj: getattr(obj, '__dict__', str(obj)),
+                          sort_keys=True))
+
+        assert json.dumps(processed_docs, sort_keys=True) == \
+               json.dumps(output_docs,
+                          default=lambda obj: getattr(obj, '__dict__', str(obj)),
+                          sort_keys=True)
+
 
 class TestGolrLayPersonSearch():
 
@@ -162,3 +187,35 @@ class TestGolrLayPersonSearch():
         output_docs = self.manager.autocomplete()
 
         assert json.dumps(processed_docs, sort_keys=True) == json.dumps(output_docs, sort_keys=True)
+
+
+class TestGolrSearchParams():
+
+    @classmethod
+    def setup_class(self):
+        self.manager = GolrLayPersonSearch()
+
+    @classmethod
+    def teardown_class(self):
+        self.manager = None
+
+    def test_prefix_filters(self):
+        """
+        Test that prefix filters are converted
+        properly to solr params
+        """
+        prefix_filter = [
+            '-OMIA',
+            '-Orphanet',
+            'DO',
+            'OMIM',
+            'MONDO'
+        ]
+        expected = [
+            '-prefix:"OMIA"',
+            '-prefix:"Orphanet"',
+            'prefix:"DO" OR prefix:"OMIM" OR prefix:"MONDO"'
+        ]
+        self.manager.prefix = prefix_filter
+        params = self.manager.solr_params()
+        assert params['fq'] == expected
