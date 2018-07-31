@@ -47,6 +47,13 @@ from ontobio.vocabulary.relations import HomologyTypes
 from ontobio.model.GolrResults import SearchResults, AutocompleteResult, Highlight
 from ontobio.util.user_agent import get_user_agent
 
+
+INVOLVED_IN="involved_in"
+ACTS_UPSTREAM_OF_OR_WITHIN="acts_upstream_of_or_within"
+
+ISA_PARTOF_CLOSURE="isa_partof_closure"
+REGULATES_CLOSURE="regulates_closure"
+
 class GolrFields:
     """
     Enumeration of fields in Golr.
@@ -227,7 +234,7 @@ def translate_facet_field(fcs, invert_subject_object = False):
 
 ### GO-SPECIFIC CODE
 
-def goassoc_fieldmap():
+def goassoc_fieldmap(relationship_type=ACTS_UPSTREAM_OF_OR_WITHIN):
     """
     Returns a mapping of canonical monarch fields to amigo-golr.
 
@@ -247,7 +254,7 @@ def goassoc_fieldmap():
         M.SUBJECT_TAXON_CLOSURE: 'taxon_closure',
         M.RELATION: 'qualifier',
         M.OBJECT: 'annotation_class',
-        M.OBJECT_CLOSURE: 'isa_partof_closure',
+        M.OBJECT_CLOSURE: get_closure_for_relationship_type(relationship_type),
         M.OBJECT_LABEL: 'annotation_class_label',
         M.OBJECT_TAXON: 'object_taxon',
         M.OBJECT_TAXON_LABEL: 'object_taxon_label',
@@ -269,6 +276,14 @@ def map_field(fn, m) :
     else:
         return fn
 
+def get_closure_for_relationship_type(relationship_type):
+    closure = None
+    if relationship_type == ACTS_UPSTREAM_OF_OR_WITHIN:
+        closure = REGULATES_CLOSURE
+    else:
+        closure = ISA_PARTOF_CLOSURE
+
+    return closure
 
 ### CLASSES
 
@@ -786,6 +801,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  subject_category=None,
                  object_category=None,
                  relation=None,
+                 relationship_type=None,
                  subject_or_object_ids=None,
                  subject_or_object_category=None,
                  subject=None,
@@ -836,6 +852,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.subject_category=subject_category
         self.object_category=object_category
         self.relation=relation
+        self.relationship_type=relationship_type
         self.subject_or_object_ids=subject_or_object_ids
         self.subject_or_object_category=subject_or_object_category
         self.subject=subject
@@ -959,7 +976,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             if self.url is None:
                 endpoint = self.get_config().amigo_solr_assocs
                 solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
-            self.field_mapping=goassoc_fieldmap()
+            self.field_mapping=goassoc_fieldmap(self.relationship_type)
 
             # awkward hack: we want to avoid typing on the amigo golr gene field,
             # UNLESS this is a planteome golr
@@ -1180,7 +1197,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             select_fields.append(M.SUBJECT_CLOSURE)
 
         if self.slim is not None and len(self.slim)>0:
-            select_fields.append(M.OBJECT_CLOSURE)
+            select_fields.append(get_closure_for_relationship_type(self.relationship_type))
 
         if self.field_mapping is not None:
             logging.info("Applying field mapping to SELECT: {}".format(self.field_mapping))
@@ -1305,7 +1322,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if fetch_objects:
             core_object_field = M.OBJECT
             if self.slim is not None and len(self.slim)>0:
-                core_object_field = M.OBJECT_CLOSURE
+                core_object_field = get_closure_for_relationship_type(self.relationship_type)
             object_field = map_field(core_object_field, self.field_mapping)
             if self.invert_subject_object:
                 object_field = map_field(M.SUBJECT, self.field_mapping)
@@ -1423,7 +1440,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         lf = M.label_field(fname)
 
-        gq = GolrAssociationQuery() ## TODO - make this a class method
+        gq = GolrAssociationQuery(relationship_type=self.relationship_type) ## TODO - make this a class method
         id = d[fname]
         id = self.make_canonical_identifier(id)
         #if id.startswith('MGI:MGI:'):
@@ -1505,8 +1522,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if len(qualifiers) > 0:
             assoc['qualifiers'] = qualifiers
 
-        if M.OBJECT_CLOSURE in d:
-            assoc['object_closure'] = d.get(M.OBJECT_CLOSURE)
+        if get_closure_for_relationship_type(self.relationship_type) in d:
+            assoc['object_closure'] = d.get(get_closure_for_relationship_type(self.relationship_type))
         if M.IS_DEFINED_BY in d:
             if isinstance(d[M.IS_DEFINED_BY],list):
                 assoc['provided_by'] = d[M.IS_DEFINED_BY]
@@ -1586,7 +1603,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                            'relation':rel,
                            'objects': []}
             if slim is not None and len(slim)>0:
-                mapped_objects = [x for x in d[M.OBJECT_CLOSURE] if x in slim]
+                mapped_objects = [x for x in d[get_closure_for_relationship_type(self.relationship_type)] if x in slim]
                 logging.debug("Mapped objects: {}".format(mapped_objects))
                 amap[k]['objects'] += mapped_objects
             else:
