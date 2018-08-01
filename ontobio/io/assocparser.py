@@ -474,7 +474,7 @@ class AssocParser(object):
                 d = dateutil.parser.parse(date)
             except:
                 self.report.error(line, Report.INVALID_DATE, date, "Could not parse date '{}' at all".format(date))
-                return date
+                return None
 
         return d.strftime("%Y%m%d")
 
