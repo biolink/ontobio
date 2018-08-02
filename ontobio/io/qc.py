@@ -59,9 +59,8 @@ class GoRule29(GoRule):
         annotation_date = annotation[13]
 
         now = datetime.datetime.today()
-        date = datetime.datetime.strptime(annotation_date, "%Y%m%d")
 
-        if evidence == "IEA" and now - date > datetime.timedelta(days=365):
+        if evidence == "IEA" and now - datetime.datetime.strptime(annotation_date, "%Y%m%d") > datetime.timedelta(days=365):
             return TestResult(result(False, self.fail_mode), self.title)
         else:
             return TestResult(result(True, self.fail_mode), self.title)
