@@ -106,13 +106,13 @@ class GafParser(assocparser.AssocParser):
         if len(vals) > 17:
             # If we see more than 17 columns, we will just cut off the columns after column 17
             self.report.warning(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="There were more than 17 columns in this line. Proceeding by cutting off extra columns after column 17.")
+                msg="GORULE:0000001: There were more than 17 columns in this line. Proceeding by cutting off extra columns after column 17.")
             vals = vals[:17]
 
 
         if len(vals) != 17:
             self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
+                msg="GORULE:0000001: There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
             return assocparser.ParseResult(line, [], True)
 
         [db,
@@ -135,16 +135,16 @@ class GafParser(assocparser.AssocParser):
 
         ## check for missing columns
         if db == "":
-            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty")
+            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "GORULE:0000001: col1 is empty")
             return assocparser.ParseResult(line, [], True)
         if db_object_id == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "col2 is empty")
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "GORULE:0000001: col2 is empty")
             return assocparser.ParseResult(line, [], True)
         if taxon == "":
-            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty")
+            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "GORULE:0000001: taxon column is empty")
             return assocparser.ParseResult(line, [], True)
         if reference == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty")
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "GORULE:0000001: reference column 6 is empty")
             return assocparser.ParseResult(line, [], True)
 
         ## --
@@ -174,13 +174,13 @@ class GafParser(assocparser.AssocParser):
         if ecomap is not None:
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
                 self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
-                                msg="Expecting a known ECO GAF code, e.g ISS")
+                                msg="GORULE:0000027: Expecting a known ECO GAF code, e.g ISS")
                 return assocparser.ParseResult(line, [], True)
 
         # Throw out the line if it uses GO_REF:0000033, see https://github.com/geneontology/go-site/issues/563#event-1519351033
         if "GO_REF:0000033" in reference.split("|"):
             self.report.error(line, assocparser.Report.INVALID_ID, reference,
-                                msg="Disallowing GO_REF:0000033 in reference field as of 03/13/2018")
+                                msg="GORULE:0000030: Disallowing GO_REF:0000033 in reference field as of 03/13/2018")
             return assocparser.ParseResult(line, [], True)
 
         references = self.validate_pipe_separated_ids(reference, line)
@@ -206,7 +206,7 @@ class GafParser(assocparser.AssocParser):
             vals[1] = db_object_id
 
         if goid.startswith("GO:") and aspect.upper() not in ["C", "F", "P"]:
-            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect)
+            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect, "GORULE:0000028")
             return assocparser.ParseResult(line, [], True)
 
 
@@ -238,7 +238,7 @@ class GafParser(assocparser.AssocParser):
         normalized_taxon = self._taxon_id(taxon.split("|")[0])
         if normalized_taxon == None:
             self.report.error(line, assocparser.Report.INVALID_TAXON, taxon,
-                                msg="Taxon ID is invalid")
+                                msg="GORULE:0000027: Taxon ID is invalid")
             return assocparser.ParseResult(line, [], True)
 
         self._validate_taxon(normalized_taxon, line)

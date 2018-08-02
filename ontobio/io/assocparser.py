@@ -302,7 +302,7 @@ class AssocParser(object):
     def validate_line(self, line):
         if line == "":
             self.report.warning(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
-                                msg="empty line")
+                                msg="GORULE:0000001: empty line")
             return ParseResult(line, [], True)
 
     def _validate_assoc(self, assoc, line):
@@ -443,7 +443,7 @@ class AssocParser(object):
         if ont is None:
             return id
         if not ont.has_node(id):
-            self.report.warning(line, Report.UNKNOWN_ID, id)
+            self.report.warning(line, Report.UNKNOWN_ID, id, "GORULE:0000027")
             return id
         if ont.is_obsolete(id):
             # the default behavior should always be to repair, unless the caller explicitly states
@@ -451,36 +451,36 @@ class AssocParser(object):
             if self.config.repair_obsoletes is None or self.config.repair_obsoletes:
                 rb = ont.replaced_by(id, strict=False)
                 if len(rb) == 1:
-                    self.report.warning(line, Report.OBSOLETE_CLASS, id)
+                    self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired")
                     id = rb[0]
                 else:
-                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id)
+                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020")
             else:
-                self.report.warning(line, Report.OBSOLETE_CLASS, id)
+                self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020")
         # TODO: subclassof
         return id
 
     def _normalize_gaf_date(self, date, line):
         if date is None or date == "":
-            self.report.warning(line, Report.INVALID_DATE, date, "empty")
+            self.report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: empty")
             return date
 
         # We check int(date)
         if len(date) == 8 and date.isdigit():
             d = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0)
         else:
-            self.report.warning(line, Report.INVALID_DATE, date, "Date field must be YYYYMMDD, got: {}".format(date))
+            self.report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYYMMDD, got: {}".format(date))
             try:
                 d = dateutil.parser.parse(date)
             except:
-                self.report.error(line, Report.INVALID_DATE, date, "Could not parse date '{}' at all".format(date))
+                self.report.error(line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date))
                 return date
 
         return d.strftime("%Y%m%d")
 
     def _validate_symbol(self, symbol, line):
         if symbol is None or symbol == "":
-            self.report.warning(line, Report.INVALID_SYMBOL, symbol, "empty")
+            self.report.warning(line, Report.INVALID_SYMBOL, symbol, "GORULE:0000027: symbol is empty")
 
     non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z]")
 
@@ -489,18 +489,18 @@ class AssocParser(object):
         # we assume that cardinality>1 fields have been split prior to this
         if id.find("|") > -1:
             # non-fatal
-            self.report.warning(line, Report.INVALID_ID, id, "contains pipe in identifier")
+            self.report.warning(line, Report.INVALID_ID, id, "GORULE:0000027: contains pipe in identifier")
         if ':' not in id:
-            self.report.error(line, Report.INVALID_ID, id, "must be CURIE/prefixed ID")
+            self.report.error(line, Report.INVALID_ID, id, "GORULE:0000027: must be CURIE/prefixed ID")
             return False
 
         if AssocParser.non_id_regex.search(id.split(":")[1]):
-            self.report.error(line, Report.INVALID_ID, id, "contains non letter, non number character, or spaces")
+            self.report.error(line, Report.INVALID_ID, id, "GORULE:0000027: contains non letter, non number character, or spaces")
             return False
 
         (left, right) = id.rsplit(":", maxsplit=1)
         if len(left) == 0 or len(right) == 0:
-            self.report.error(line, Report.INVALID_ID, id, "Empty ID")
+            self.report.error(line, Report.INVALID_ID, id, "GORULE:0000027: Empty ID")
             return False
 
         idspace = self._get_id_prefix(id)
@@ -620,7 +620,7 @@ class AssocParser(object):
                 'filler':v
             }
         else:
-            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="ID not valid")
+            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="GORULE:0000027: ID not valid")
             return None
 
 # TODO consider making an Association its own class too to give it a little more
