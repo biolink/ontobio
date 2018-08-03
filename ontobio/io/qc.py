@@ -1,6 +1,7 @@
 import json
 import enum
 import collections
+import datetime
 
 from typing import List, Dict
 from ontobio import ontol
@@ -32,7 +33,7 @@ class GoRule(object):
         self.id = id
         self.title = title
         self.fail_mode = fail_mode
-        
+
 
 class GoRule26(GoRule):
 
@@ -48,12 +49,30 @@ class GoRule26(GoRule):
         else:
             return TestResult(result(True, self.fail_mode), self.title)
 
+class GoRule29(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000029", "All IEAs over a year old are removed", FailMode.HARD)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        evidence = annotation[6]
+        annotation_date = annotation[13]
+
+        now = datetime.datetime.today()
+
+        if evidence == "IEA" and now - datetime.datetime.strptime(annotation_date, "%Y%m%d") > datetime.timedelta(days=365):
+            return TestResult(result(False, self.fail_mode), self.title)
+        else:
+            return TestResult(result(True, self.fail_mode), self.title)
+
 
 GoRules = enum.Enum("GoRules", {
-    "GoRule26": GoRule26()
+    "GoRule26": GoRule26(),
+    "GoRule29": GoRule29()
 })
 
 def test_go_rules(annotation: List, ontology: ontol.Ontology) -> Dict[str, TestResult]:
+    print(annotation)
     all_results = {}
     for rule in list(GoRules):
         result = rule.value.test(annotation, ontology)

@@ -169,6 +169,10 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         date = self._normalize_gaf_date(date, line)
+        if date == None:
+            return assocparser.ParseResult(line, [], True)
+
+        vals[13] = date
 
         ecomap = self.config.ecomap
         if ecomap is not None:

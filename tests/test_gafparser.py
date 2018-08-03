@@ -21,7 +21,7 @@ def test_skim_gaf():
     p = GafParser()
     p.config.ecomap = EcoMap()
     results = p.skim(open(POMBASE, "r"))
-    assert len(results) == 375
+    assert len(results) == 370
     for r in results:
         print(str(r))
         (s, sn, o) = r
@@ -43,7 +43,6 @@ def test_skim_gaf_qualifiers():
     p.config.exclude_relations = ['contributes_to', 'colocalizes_with']
     results = p.skim(open(QGAF, "r"))
     for r in results:
-        print(str(r))
         (s, sn, o) = r
         assert o.startswith('GO:')
         assert s.startswith('MGI:') or s.startswith('PomBase')
@@ -62,7 +61,7 @@ def test_skim_gpad():
 
 def test_parse_gaf():
     parse_with(POMBASE, GafParser())
-    
+
 def test_parse_gpad():
     parse_with(POMBASE_GPAD, GpadParser())
 
@@ -200,8 +199,8 @@ def test_errors_gaf():
     assert len(msgs) == 17
     assert n_invalid_idspace == 1
 
-    # we expect 7
-    assert len(assocs) == 7
+    # we expect 6
+    assert len(assocs) == 6
 
     w = GafWriter()
     w.write(assocs)
@@ -229,6 +228,12 @@ def test_alt_id_repair():
     assocs = p.parse(gaf, skipheader=True)
     assert len(assocs) > 0
     assert assocs[0]["object"]["id"] == "GO:0043623"
+
+def test_bad_date():
+    p = GafParser()
+    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\tTODAY\tPomBase\tfoo(X:1)")
+    assert assoc_result.skipped == True
+    assert assoc_result.associations == []
 
 def test_factory():
     afa = AssociationSetFactory()
