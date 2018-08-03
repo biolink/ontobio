@@ -16,6 +16,21 @@ def test_result():
     assert qc.result(False, qc.FailMode.HARD) == qc.ResultType.ERROR
     assert qc.result(False, qc.FailMode.SOFT) == qc.ResultType.WARNING
 
+def test_go_rule11():
+    a = ["blah"] * 16
+    a[6] = "ND"
+    a[4] = "GO:0003674"
+
+    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a = ["blah"] * 16
+    a[6] = "ND"
+    a[4] = "GO:1234567"
+
+    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
 def test_go_rule26():
 
     config = assocparser.AssocParserConfig(
@@ -82,7 +97,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config)
-    assert len(test_results.keys()) == 2
+    assert len(test_results.keys()) == 3
     assert test_results["GORULE:0000026"].result_type == qc.ResultType.PASS
     assert test_results["GORULE:0000029"].result_type == qc.ResultType.PASS
 
