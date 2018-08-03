@@ -42,14 +42,22 @@ class GoRule11(GoRule):
         self.root_go_classes = ["GO:0003674", "GO:0005575", "GO:0008150"]
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
-        evidence = annotation[6]
         goclass = annotation[4]
+        evidence = annotation[6]
+        references = annotation[7].split("|")
+
         # If we see a bad evidence, and we're not in a paint file then fail.
-        is_a_root = goclass in self.root_go_classes
-        if evidence == "ND" and not is_a_root:
-            return TestResult(result(False, self.fail_mode), self.title)
+        if evidence == "ND":
+            if goclass in self.root_go_classes and "GO_REF:0000015" in references:
+                return TestResult(result(True, self.fail_mode), self.title)
+            if goclass in self.root_go_classes and "GO_REF:00000015" not in references:
+                return TestResult(ResultType.WARNING, "Annotations with ND evidence should also use a GO_REF:0000015")
+            else:
+                return TestResult(result(False, self.fail_mode), self.title)
         else:
             return TestResult(result(True, self.fail_mode), self.title)
+
+        return out
 
 
 class GoRule26(GoRule):

@@ -18,18 +18,48 @@ def test_result():
 
 def test_go_rule11():
     a = ["blah"] * 16
-    a[6] = "ND"
     a[4] = "GO:0003674"
+    a[6] = "ND"
+    a[7] = "GO_REF:0000015|GO_REF:1234567"
 
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+    # Bad GO ID
     a = ["blah"] * 16
-    a[6] = "ND"
     a[4] = "GO:1234567"
+    a[6] = "ND"
+    a[7] = "GO_REF:0000015"
 
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
+
+    # Bad GO_REF
+    a = ["blah"] * 16
+    a[4] = "GO:0003674"
+    a[6] = "ND"
+    a[7] = "GO_REF:0000001"
+
+    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    # Both Bad GO_REF and Bad GO ID
+    a = ["blah"] * 16
+    a[4] = "GO:1234567"
+    a[6] = "ND"
+    a[7] = "GO_REF:0000001"
+
+    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    # Not ND
+    a = ["blah"] * 16
+    a[4] = "GO:1234567"
+    a[6] = "FOO"
+    a[7] = "GO_REF:0000001"
+
+    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
 
 def test_go_rule26():
 
