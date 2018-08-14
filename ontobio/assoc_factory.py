@@ -32,7 +32,7 @@ class AssociationSetFactory():
         initializes based on an ontology name
         """
 
-    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None, fmt=None):
+    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None, fmt=None, solr_url=None):
         """
         creates an AssociationSet
 
@@ -62,7 +62,8 @@ class AssociationSetFactory():
         assocs = bulk_fetch_cached(subject_category=subject_category,
                                    object_category=object_category,
                                    evidence=evidence,
-                                   taxon=taxon)
+                                   taxon=taxon,
+                                   url=solr_url)
 
         logging.info("Creating map for {} subjects".format(len(assocs)))
 
