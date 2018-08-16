@@ -622,7 +622,7 @@ class Ontology():
             g = self.get_filtered_graph(relations)
         l = []
         for n in g:
-            l.append([n] ++ g.predecessors(b))
+            l.append([n] + g.predecessors(n))
         return l
 
     def text_definition(self, nid):
