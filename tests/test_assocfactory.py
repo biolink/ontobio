@@ -25,18 +25,18 @@ def test_remote_go():
                            subject_category='gene',
                            object_category='function',
                            taxon=MOUSE)
-    
+
     rs = aset.query([TRANSCRIPTION_FACTOR],[])
     print("Mouse genes annotated to TF: {} {}".format(rs, len(rs)))
     for g in rs:
         print("  Gene: {} {}".format(g,aset.label(g)))
     set_tf = rs
-    
+
     rs = aset.query([NUCLEUS],[])
     print("Mouse genes annotated to nucleus: {} {}".format(rs, len(rs)))
     set_nucleus = rs
     assert(len(rs) > 100)
-    
+
     rs = aset.query([TRANSCRIPTION_FACTOR, NUCLEUS],[])
     print("Mouse TF genes annotated to nucleus: {} {}".format(rs, len(rs)))
     assert(len(rs) > 100)
@@ -70,7 +70,7 @@ def test_remote_disease():
                            subject_category='disease',
                            object_category='phenotype',
                            taxon=HUMAN)
-    
+
     rs = aset.query_associations([PD])
     print("Gene Assocs to PD: {} {}".format(rs, len(rs)))
 
@@ -92,7 +92,17 @@ def test_gaf():
     for g in genes:
         print("G={} '{}'".format(g, aset.label(g)))
     assert G1 in genes
-    
+
+def test_create_from_file_no_fmt():
+    """
+    Test loading from gaf while setting fmt to None
+    """
+    ont = OntologyFactory().create('go')
+    f = AssociationSetFactory()
+    aset = f.create(ontology=ont, fmt=None, file=POMBASE)
+    print("SUBJS: {}".format(aset.subjects))
+    assert len(aset.subjects) > 100
+
 
 def test_remote_go_pombase():
     ont = OntologyFactory().create('go')
@@ -100,4 +110,3 @@ def test_remote_go_pombase():
     aset = f.create(ontology=ont, fmt='gaf', file=POMBASE)
     print("SUBJS: {}".format(aset.subjects))
     assert len(aset.subjects) > 100
-    

@@ -98,7 +98,6 @@ GoRules = enum.Enum("GoRules", {
 })
 
 def test_go_rules(annotation: List, ontology: ontol.Ontology) -> Dict[str, TestResult]:
-    print(annotation)
     all_results = {}
     for rule in list(GoRules):
         result = rule.value.test(annotation, ontology)
