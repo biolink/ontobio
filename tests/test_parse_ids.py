@@ -8,7 +8,7 @@ from ontobio.io import assocwriter
 
 def test_no_colon_in_id():
     parser = gafparser.GafParser()
-    valid = parser._validate_id("FOOBAR", "")
+    valid = parser._validate_id("FOOBAR", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
 
     assert not valid
     assert len(parser.report.messages) == 1
@@ -16,7 +16,7 @@ def test_no_colon_in_id():
 
 def test_pipe_in_id():
     parser = gafparser.GafParser()
-    valid = parser._validate_id("F|OO:123", "")
+    valid = parser._validate_id("F|OO:123", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
 
     assert valid
     assert len(parser.report.messages) == 1
@@ -24,7 +24,7 @@ def test_pipe_in_id():
 
 def test_bad_character_in_id():
     parser = gafparser.GafParser()
-    valid = parser._validate_id("FOO:1&23", "")
+    valid = parser._validate_id("FOO:1&23", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
 
     assert not valid
     assert len(parser.report.messages) == 1
@@ -32,7 +32,7 @@ def test_bad_character_in_id():
 
 def test_empty_post_colon():
     parser = gafparser.GafParser()
-    valid = parser._validate_id("FOO:", "")
+    valid = parser._validate_id("FOO:", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
 
     assert not valid
     assert len(parser.report.messages) == 1
@@ -40,7 +40,7 @@ def test_empty_post_colon():
 
 def test_empty_pre_colon():
     parser = gafparser.GafParser()
-    valid = parser._validate_id(":123", "")
+    valid = parser._validate_id(":123", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
 
     assert not valid
     assert len(parser.report.messages) == 1
@@ -48,30 +48,30 @@ def test_empty_pre_colon():
 
 def test_validate_pipe_separated():
     parser = gafparser.GafParser()
-    ids = parser.validate_pipe_separated_ids("PMID:12345", "")
+    ids = parser.validate_pipe_separated_ids("PMID:12345", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
     assert set(ids) == set(["PMID:12345"])
 
-    ids = parser.validate_pipe_separated_ids("PMID:12345|PMID:11111", "")
+    ids = parser.validate_pipe_separated_ids("PMID:12345|PMID:11111", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
     assert set(ids) == set(["PMID:12345", "PMID:11111"])
 
 def test_validate_pipe_separated_with_bad_ids():
     parser = gafparser.GafParser()
-    ids = parser.validate_pipe_separated_ids("PMID:123[2]|PMID:11111", "")
+    ids = parser.validate_pipe_separated_ids("PMID:123[2]|PMID:11111", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
 
     assert ids == None
 
-    ids = parser.validate_pipe_separated_ids("PMID:123[2]", "")
+    ids = parser.validate_pipe_separated_ids("PMID:123[2]", assocparser.SplitLine("", [""] * 17, "taxon:foo"))
     assert ids == None
 
 def test_validate_pipe_separated_empty_allowed():
     parser = gafparser.GafParser()
-    ids = parser.validate_pipe_separated_ids("", "", empty_allowed=True)
+    ids = parser.validate_pipe_separated_ids("", assocparser.SplitLine("", [""] * 17, "taxon:foo"), empty_allowed=True)
 
     assert ids == []
 
 def test_validate_pipe_with_additional_delims():
     parser = gafparser.GafParser()
-    ids = parser.validate_pipe_separated_ids("F:123,B:234|B:111", "", extra_delims=",")
+    ids = parser.validate_pipe_separated_ids("F:123,B:234|B:111", assocparser.SplitLine("", [""] * 17, "taxon:foo"), extra_delims=",")
 
     assert set(ids) == set(["F:123", "B:234", "B:111"])
 

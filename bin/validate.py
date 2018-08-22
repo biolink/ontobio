@@ -123,7 +123,7 @@ def unzip(path, target):
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown"):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -138,7 +138,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False):
     gafwriter = GafWriter(file=outfile)
 
     click.echo("Validating source GAF: {}".format(source_gaf))
-    parser = GafParser(config=config)
+    parser = GafParser(config=config, group=group, dataset=dataset)
     with open(source_gaf) as sg:
         lines = sum(1 for line in sg)
 
@@ -154,7 +154,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False):
         report_md.write(parser.report.to_markdown())
 
     with open(os.path.join(os.path.split(source_gaf)[0], "{}.report.json".format(dataset)), "w") as report_json:
-        report_json.write(json.dumps(parser.report.to_report_json()))
+        report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
 
     return [validated_gaf_path, filtered_associations.name]
 
@@ -343,7 +343,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
         source_gaf = source_gafs[gafzip]
         # TODO (Fix as part of https://github.com/geneontology/go-site/issues/642) Set paint to True when the group is "paint".
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group, like for paint_other.
-        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"))[0]
+        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"), group=group)[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
@@ -351,7 +351,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
 
         end_gaf = valid_gaf
         if paint_src_gaf is not None:
-            paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi, paint=True)[0]
+            paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi, paint=True, group="paint")[0]
             end_gaf = merge_mod_and_paint(valid_gaf, paint_gaf)
         else:
             gafgz = "{}.gz".format(valid_gaf)

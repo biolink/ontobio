@@ -1,4 +1,7 @@
 from ontobio.io.assocparser import AssocParser, AssocParserConfig, Report, ENTITY
+
+from ontobio.io import assocparser
+
 import logging
 import json
 
@@ -43,16 +46,11 @@ class EntityParser(AssocParser):
                 logging.warn("SKIPPING: {}".format(line))
                 skipped.append(line)
             else:
-                for a in new_ents:
-                    #self._validate_entity(a)
-                    rpt = self.report
-                    if 'taxon' in a:
-                        rpt.taxa.add(a['taxon']['id'])
                 ents += new_ents
                 if outfile is not None:
                     outfile.write(parsed_line + "\n")
 
-        self.report.skipped += skipped
+        self.report.skipped += len(skipped)
         self.report.n_lines += n_lines
         #self.report.n_associations += len(ents)
         logging.info("Parsed {} ents from {} lines. Skipped: {}".
@@ -117,12 +115,13 @@ class GpiParser(EntityParser):
             properties
         ] = vals
 
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon=taxon)
 
         ## --
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, line, ENTITY):
+        if not self._validate_id(id, split_line, ENTITY):
             return line, []
 
         ## --
@@ -139,7 +138,7 @@ class GpiParser(EntityParser):
         else:
             parents = [self._normalize_id(x) for x in parents]
             for p in parents:
-                self._validate_id(p,line,ENTITY)
+                self._validate_id(p, split_line, ENTITY)
 
         xref_ids = xrefs.split("|")
         if xrefs == "":
@@ -154,7 +153,7 @@ class GpiParser(EntityParser):
             'parents': parents,
             'xrefs': xref_ids,
             'taxon': {
-                'id': self._taxon_id(taxon)
+                'id': self._taxon_id(taxon, split_line)
             }
         }
         return line, [obj]

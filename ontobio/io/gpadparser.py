@@ -95,20 +95,22 @@ class GpadParser(assocparser.AssocParser):
          annotation_xp,
          annotation_properties] = vals
 
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon=interacting_taxon_id)
+
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, line, ENTITY):
+        if not self._validate_id(id, split_line, ENTITY):
             return assocparser.ParseResult(line, [], True)
 
-        if not self._validate_id(goid, line, ANNOTATION):
+        if not self._validate_id(goid, split_line, ANNOTATION):
             return assocparser.ParseResult(line, [], True)
 
-        date = self._normalize_gaf_date(date, line)
+        date = self._normalize_gaf_date(date, split_line)
 
         if reference == "":
             self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty")
             return assocparser.ParseResult(line, [], True)
 
-        self._validate_id(evidence, line, None)
+        self._validate_id(evidence, split_line, None)
         #TODO: ecomap is currently one-way only
         #ecomap = self.config.ecomap
         #if ecomap != None:
@@ -123,13 +125,13 @@ class GpadParser(assocparser.AssocParser):
 
 
         # Reference Column
-        references = self.validate_pipe_separated_ids(reference, line)
+        references = self.validate_pipe_separated_ids(reference, split_line)
         if references == None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
 
         # With/From
-        withfroms = self.validate_pipe_separated_ids(withfrom, line, empty_allowed=True, extra_delims=",")
+        withfroms = self.validate_pipe_separated_ids(withfrom, split_line, empty_allowed=True, extra_delims=",")
         if withfroms == None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
@@ -139,7 +141,7 @@ class GpadParser(assocparser.AssocParser):
         ## parse annotation extension
         ## See appending in http://doi.org/10.1186/1471-2105-15-155
         ## --
-        object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=line)
+        object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=split_line)
 
         assoc = {
             'source_line': line,
@@ -167,7 +169,7 @@ class GpadParser(assocparser.AssocParser):
         if object_or_exprs is not None and len(object_or_exprs) > 0:
             assoc['object']['extensions'] = {'union_of': object_or_exprs}
 
-        self._validate_assoc(assoc, line)
+        self._validate_assoc(assoc, split_line)
 
         return assocparser.ParseResult(line, [assoc], False)
 

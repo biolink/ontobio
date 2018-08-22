@@ -26,7 +26,8 @@ travis_test:
 cleandist:
 	rm dist/* || true
 
-TAG = $(shell python setup.py --version)
+TAG = v$(shell python setup.py --version)
+
 versioning:
 	git checkout master
 	git add ontobio/__init__.py

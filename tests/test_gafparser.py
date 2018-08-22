@@ -106,14 +106,14 @@ def test_flag_invalid_id():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     p.config.ontology = ont
-    p._validate_ontology_class_id("FAKE:1", "fake")
+    p._validate_ontology_class_id("FAKE:1", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
     assert len(p.report.messages) == 1
 
 def test_no_flag_valid_id():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     p.config.ontology = ont
-    p._validate_ontology_class_id("GO:0016070", "fake")
+    p._validate_ontology_class_id("GO:0016070", "fake", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
     assert len(p.report.messages) == 0
 
 def test_convert_gaf_to_gpad():
@@ -157,9 +157,9 @@ def test_validate_go_idspaces():
         print("MESSAGE: {}".format(m))
     assert len(assocs) == 0
     assert len(p.report.messages) > 1
-    summary = p.report.to_report_json()['summary']
-    assert summary['association_count'] == 0
-    assert summary['line_count'] > 300
+    summary = p.report.to_report_json()
+    assert summary['associations'] == 0
+    assert summary['lines'] > 300
     print(p.report.to_markdown())
 
     # ensure config is not preserved
