@@ -190,18 +190,18 @@ class Report():
         json = self.to_report_json()
         # summary = json['summary']
 
-        s = ""
-        s += "\n## SUMMARY\n\n"
+        s = "# Group: {group} - Dataset: {dataset}\n".format(group=json["group"], dataset=json["dataset"])
+        s += "\n### SUMMARY\n\n"
 
         s += " * Associations: {}\n" . format(json["associations"])
         s += " * Lines in file (incl headers): {}\n" . format(json["lines"])
         s += " * Lines skipped: {}\n" . format(json["skipped_lines"])
 
-        s += "\n## MESSAGES\n\n"
+        s += "\n### MESSAGES\n\n"
         for (rule, messages) in json["messages"].items():
-            s += "### {rule}\n\n".format(rule=rule)
+            s += "#### {rule}\n\n".format(rule=rule)
             s += "* total: {amount}\n".format(amount=len(messages))
-            s += "#### Messages\n"
+            s += "##### Messages\n"
             for message in messages:
                 s += "* {level} - {message}: `{line}`\n".format(level=message["level"], message=message["message"], line=message["line"])
 
