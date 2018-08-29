@@ -305,14 +305,6 @@ class AssocParser(object):
                                 msg="GORULE:0000001: empty line")
             return ParseResult(line, [], True)
 
-    def _validate_assoc(self, assoc, line):
-        """
-        Performs validation on an ontology association structure.
-
-        Currently the only validation is checking the ontology class (object) id against the loaded ontology
-        """
-        self._validate_ontology_class_id(assoc["object"]["id"], line)
-
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
         Map a file to a subset, writing out results
@@ -439,24 +431,32 @@ class AssocParser(object):
 
     # check the term id is in the ontology, and is not obsolete
     def _validate_ontology_class_id(self, id, line, subclassof=None):
+        print("Validating class {}".format(id))
         ont = self.config.ontology
         if ont is None:
             return id
+
         if not ont.has_node(id):
             self.report.warning(line, Report.UNKNOWN_ID, id, "GORULE:0000027")
             return id
+
         if ont.is_obsolete(id):
+            print("should be obsolete")
             # the default behavior should always be to repair, unless the caller explicitly states
             # that this should not be done by setting repair_obsoletes to False
             if self.config.repair_obsoletes is None or self.config.repair_obsoletes:
                 rb = ont.replaced_by(id, strict=False)
+                print("replaced by: {}".format(rb))
                 if len(rb) == 1:
+                    # We can repair
                     self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired")
                     id = rb[0]
                 else:
                     self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020")
+                    id = None
             else:
                 self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020")
+                id = None
         # TODO: subclassof
         return id
 

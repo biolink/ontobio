@@ -223,11 +223,11 @@ def test_alt_id_repair():
     ont = OntologyFactory().create(ALT_ID_ONT)
     p.config.ecomap = EcoMap()
     p.config.ontology = ont
-    gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:0043623\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
+    gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:1\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
 
     assocs = p.parse(gaf, skipheader=True)
-    assert len(assocs) > 0
-    assert assocs[0]["object"]["id"] == "GO:0043623"
+    # GO:0043623 is obsolete, and has replaced by GO:0034622, so we should see that class ID.
+    assert assocs[0]["object"]["id"] == "GO:2"
 
 def test_bad_date():
     p = GafParser()
