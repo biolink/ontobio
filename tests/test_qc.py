@@ -16,51 +16,6 @@ def test_result():
     assert qc.result(False, qc.FailMode.HARD) == qc.ResultType.ERROR
     assert qc.result(False, qc.FailMode.SOFT) == qc.ResultType.WARNING
 
-def test_go_rule11():
-    a = ["blah"] * 16
-    a[4] = "GO:0003674"
-    a[6] = "ND"
-    a[7] = "GO_REF:0000015|GO_REF:1234567"
-
-    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
-    assert test_result.result_type == qc.ResultType.PASS
-
-    # Bad GO ID
-    a = ["blah"] * 16
-    a[4] = "GO:1234567"
-    a[6] = "ND"
-    a[7] = "GO_REF:0000015"
-
-    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
-    assert test_result.result_type == qc.ResultType.ERROR
-
-    # Bad GO_REF
-    a = ["blah"] * 16
-    a[4] = "GO:0003674"
-    a[6] = "ND"
-    a[7] = "GO_REF:0000001"
-
-    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
-    assert test_result.result_type == qc.ResultType.WARNING
-
-    # Both Bad GO_REF and Bad GO ID
-    a = ["blah"] * 16
-    a[4] = "GO:1234567"
-    a[6] = "ND"
-    a[7] = "GO_REF:0000001"
-
-    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
-    assert test_result.result_type == qc.ResultType.ERROR
-
-    # Not ND
-    a = ["blah"] * 16
-    a[4] = "GO:1234567"
-    a[6] = "FOO"
-    a[7] = "GO_REF:0000001"
-
-    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
-    assert test_result.result_type == qc.ResultType.PASS
-
 def test_go_rule26():
 
     config = assocparser.AssocParserConfig(
@@ -127,7 +82,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config)
-    assert len(test_results.keys()) == 3
+    assert len(test_results.keys()) == 2
     assert test_results["GORULE:0000026"].result_type == qc.ResultType.PASS
     assert test_results["GORULE:0000029"].result_type == qc.ResultType.PASS
 
