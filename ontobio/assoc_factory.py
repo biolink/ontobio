@@ -5,6 +5,7 @@ Currently only supports golr query
 """
 
 import networkx as nx
+import pathlib
 import logging
 import os
 import subprocess
@@ -32,7 +33,7 @@ class AssociationSetFactory():
         initializes based on an ontology name
         """
 
-    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None, fmt=None):
+    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None, fmt=None, skim=True):
         """
         creates an AssociationSet
 
@@ -56,7 +57,8 @@ class AssociationSetFactory():
             return self.create_from_file(file=file,
                                          fmt=fmt,
                                          ontology=ontology,
-                                         meta=meta)
+                                         meta=meta,
+                                         skim=skim)
 
         logging.info("Fetching assocs from store")
         assocs = bulk_fetch_cached(subject_category=subject_category,
@@ -126,34 +128,46 @@ class AssociationSetFactory():
 
     def create_from_file(self, file=None, fmt='gaf', skim=True, **args):
         """
-        Creates from a file.
+        Creates from a file. If fmt is set to None then the file suffixes will
+        be used to choose a parser.
 
         Arguments
         ---------
         file : str or file
             input file or filename
-        format : str
+        fmt : str
             name of format e.g. gaf
 
         """
-        p = None
-        if fmt == 'gaf':
-            p = GafParser()
-        elif fmt == 'gpad':
-            p = GpadParser()
-        elif fmt == 'hpoa':
-            p = HpoaParser()
+        if fmt is not None and not fmt.startswith('.'):
+            fmt = '.{}'.format(fmt)
+
+        d = {
+            '.gaf' : GafParser,
+            '.gpad' : GpadParser,
+            '.hpoa' : HpoaParser,
+        }
+
+        if fmt is None:
+            filename = file if isinstance(file, str) else file.name
+            suffixes = pathlib.Path(filename).suffixes
+            iterator = (fn() for ext, fn in d.items() if ext in suffixes)
         else:
+            iterator = (fn() for ext, fn in d.items() if ext == fmt)
+
+        try:
+            parser = next(iterator)
+        except StopIteration:
             logging.error("Format not recognized: {}".format(fmt))
 
-        logging.info("Parsing {} with {}/{}".format(file, fmt, p))
+        logging.info("Parsing {} with {}/{}".format(file, fmt, parser))
+
         if skim:
-            results = p.skim(file)
+            results = parser.skim(file)
             return self.create_from_tuples(results, **args)
         else:
-            assocs = p.parse(file, skipheader=True)
+            assocs = parser.parse(file, skipheader=True)
             return self.create_from_assocs(assocs, **args)
-
 
     def create_from_gaf(self, file, **args):
         """
