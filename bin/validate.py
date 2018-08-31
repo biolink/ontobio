@@ -181,7 +181,7 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
         click.echo("Using {} as the gaf to build data products with".format(gaf_path))
         if products["ttl"]:
             click.echo("Setting up {}".format(product_files["ttl"].name))
-            rdf_writer = assoc_rdfgen.TurtleRdfWriter()
+            rdf_writer = assoc_rdfgen.TurtleRdfWriter(label=os.path.split(product_files["ttl"].name)[1] )
             transformer = assoc_rdfgen.CamRdfTransform(writer=rdf_writer)
             parser_config = assocparser.AssocParserConfig(ontology=ontology_graph)
 
