@@ -11,6 +11,8 @@ import networkx as nx
 import logging
 import re
 
+logging = logging.getLogger(__name__)
+
 class Ontology():
     """An object that represents a basic graph-oriented view over an ontology.
 
