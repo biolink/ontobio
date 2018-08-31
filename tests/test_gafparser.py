@@ -216,18 +216,24 @@ def test_errors_gaf():
                 assert x['filler'] == 'X:1'
             assert len(xs) == 1
 
-ALT_ID_ONT = "tests/resources/alt_id_ont.json"
+ALT_ID_ONT = "tests/resources/obsolete.json"
 
 def test_alt_id_repair():
     p = GafParser()
     ont = OntologyFactory().create(ALT_ID_ONT)
     p.config.ecomap = EcoMap()
     p.config.ontology = ont
-    gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:1\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
 
+    gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:1\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
     assocs = p.parse(gaf, skipheader=True)
-    # GO:0043623 is obsolete, and has replaced by GO:0034622, so we should see that class ID.
+    # GO:1 is obsolete, and has replaced by GO:0034622, so we should see that class ID.
     assert assocs[0]["object"]["id"] == "GO:2"
+
+    gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:4\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
+    assocs = p.parse(gaf, skipheader=True)
+    # GO:4 is obsolete due to it being merged into GO:3
+    assert assocs[0]["object"]["id"] == "GO:3"
+
 
 def test_bad_date():
     p = GafParser()

@@ -675,7 +675,6 @@ class Ontology():
 
     def _get_meta_prop(self, nid, prop):
         n = self.node(nid)
-        print("found node: {}", n)
         if 'meta' in n:
             meta = n['meta']
             if prop in meta:
@@ -708,7 +707,7 @@ class Ontology():
         nid : str
             Node identifier for entity to be queried
         """
-        dep = self._get_meta_prop(nid, 'owl:eprecated')
+        dep = self._get_meta_prop(nid, 'deprecated')
         return  dep is not None and dep
 
 
