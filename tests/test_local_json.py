@@ -61,13 +61,13 @@ def test_graph():
     print("Creating ont")
     ont = factory.create('tests/resources/nucleus.json')
     assert ont.id == 'http://purl.obolibrary.org/obo/go-test.owl'
-    
+
     icp = ont.node(INTRACELLULAR_PART)
     print("ICP: {}".format(icp))
     assert ont.label(INTRACELLULAR_PART) == 'intracellular part'
 
     assert ont.node_type(INTRACELLULAR_PART) == 'CLASS'
-    
+
     graph = ont.get_graph()
     print("GRAPH: {}".format(graph.nodes))
 
@@ -195,7 +195,7 @@ def test_graph():
     # relations
     assert ont.label(PART_OF) == 'part of'
     assert ont.node_type(PART_OF) == 'PROPERTY'
-    
+
     # ensure subontology retains properties
     decs = ont.descendants(CELL, reflexive=True)
     subont = ont.subontology(nodes=decs)
@@ -207,7 +207,7 @@ def test_graph():
     assert s1.xrefs == ['GOC:mah']
 
     assert subont.parents(NUCLEUS) == [IMBO]
-    
+
     from ontobio import GraphRenderer
     w = GraphRenderer.create('obo')
     w.write(subont, query_ids=[CELL, CELL_PART, NUCLEUS])
@@ -244,10 +244,6 @@ def test_obsolete():
         rb = ont.replaced_by(nid)
         if rb is not None:
             print("REPLACED BY: {} {}".format(rb, ont.label(rb)))
-    assert ont.replaced_by('GO:2') == ['GO:1']
-    assert ont.replaced_by('GO:3') == ['GO:1']
-    assert n_obs == 3
-    subont = ont.subontology(nodes=['GO:2','GO:3'])
-    assert subont.replaced_by('GO:2') == ['GO:1']
-    assert subont.replaced_by('GO:3') == ['GO:1']
-
+    assert ont.replaced_by('GO:1') == ['GO:2']
+    assert ont.replaced_by('GO:4') == ['GO:3']
+    assert n_obs == 2
