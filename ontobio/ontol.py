@@ -47,7 +47,7 @@ class Ontology():
         self.graph = graph
         if self.graph is None:
             self.graph = nx.MultiDiGraph()
-        logging.info('Graph initialized, nodes={}'.format(self.graph.nodes()))
+        logging.debug('Graph initialized, nodes={}'.format(self.graph.nodes()))
         self.xref_graph = xref_graph
 
         # obograph
