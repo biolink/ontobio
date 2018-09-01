@@ -1,11 +1,11 @@
 {
   "graphs" : [ {
     "nodes" : [ {
-      "id" : "http://purl.obolibrary.org/obo/GO_0043623",
+      "id" : "http://purl.obolibrary.org/obo/GO_1",
       "meta" : {
         "basicPropertyValues" : [ {
           "pred" : "http://purl.obolibrary.org/obo/IAO_0100001",
-          "val" : "http://purl.obolibrary.org/obo/GO_0034622"
+          "val" : "http://purl.obolibrary.org/obo/GO_2"
         }, {
           "pred" : "http://www.w3.org/2002/07/owl#deprecated",
           "val" : "true"
@@ -24,7 +24,7 @@
       "type" : "PROPERTY",
       "lbl" : "in_subset"
     }, {
-      "id" : "http://purl.obolibrary.org/obo/GO_0034622",
+      "id" : "http://purl.obolibrary.org/obo/GO_2",
       "meta" : {
         "definition" : {
           "val" : "The aggregation, arrangement and bonding together of a set of components to form a protein complex, occurring at the level of an individual cell.",
@@ -41,9 +41,6 @@
           "xrefs" : [ ]
         } ],
         "basicPropertyValues" : [ {
-          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
-          "val" : "GO:0043623"
-        }, {
           "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
           "val" : "biological_process"
         } ]

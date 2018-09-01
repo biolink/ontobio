@@ -168,6 +168,11 @@ class GafParser(assocparser.AssocParser):
             print("skipping because {} not validated!".format(goid))
             return assocparser.ParseResult(line, [], True)
 
+        valid_goid = self._validate_ontology_class_id(goid, line)
+        if valid_goid == None:
+            return assocparser.ParseResult(line, [], True)
+        goid = valid_goid
+
         date = self._normalize_gaf_date(date, line)
         if date == None:
             return assocparser.ParseResult(line, [], True)
@@ -323,9 +328,6 @@ class GafParser(assocparser.AssocParser):
             assoc['subject_extensions'] = subject_extns
         if object_or_exprs is not None and len(object_or_exprs) > 0:
             assoc['object_extensions'] = {'union_of': object_or_exprs}
-
-        self._validate_assoc(assoc, line)
-        # logging.info("Association success: {subject} {rel} {obj}".format(subject=assoc["subject"], rel=assoc["relation"]["id"], obj=assoc["object"]))
 
         return assocparser.ParseResult(line, [assoc], False, evidence.upper())
 
