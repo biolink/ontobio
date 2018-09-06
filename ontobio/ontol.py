@@ -107,7 +107,7 @@ class Ontology():
         # trigger synonym cache
         self.all_synonyms()
         self.all_obsoletes()
-        
+
         # default method - wrap get_graph
         srcg = self.get_graph()
         if prefix is not None:
@@ -243,7 +243,7 @@ class Ontology():
             ancs_in_subset = subset_nodes.intersection(ancs)
             m[n] = list(subont.filter_redundant(ancs_in_subset))
         return m
-        
+
     def filter_redundant(self, ids):
         """
         Return all non-redundant ids from a list
@@ -308,7 +308,7 @@ class Ontology():
         sep=':'
         if nid.startswith('http'):
             if '#' in nid:
-               sep='#' 
+               sep='#'
             else:
                 sep='/'
         parts = nid.split(sep)
@@ -322,7 +322,7 @@ class Ontology():
         """
         pfx,_ = self.prefix_fragment(nid)
         return pfx
-        
+
     def nodes(self):
         """
         Return all nodes in ontology
@@ -357,7 +357,7 @@ class Ontology():
         If stated, either CLASS, PROPERTY or INDIVIDUAL
         """
         return self.node(id)['type']
-    
+
     def relations_used(self):
         """
         Return list of all relations used to connect edges
@@ -537,8 +537,8 @@ class Ontology():
             if d['pred'] == 'equivalentTo':
                 eg.add_edge(u,v)
         return eg
-        
-        
+
+
     def traverse_nodes(self, qids, up=True, down=False, **args):
         """
         Traverse (optionally) up and (optionally) down from an input set of nodes
@@ -712,7 +712,7 @@ class Ontology():
         dep = self._get_meta_prop(nid, 'deprecated')
         return  dep is not None and dep
 
-    
+
     def replaced_by(self, nid, strict=True):
         """
         Returns value of 'replaced by' (IAO_0100001) property for obsolete nodes
@@ -784,7 +784,7 @@ class Ontology():
         if nid not in self.get_graph():
             self.add_node(nid)
         self._add_meta_element(nid, 'deprecated', True)
-        
+
     def _add_meta_element(self, id, k, edict):
         n = self.node(id)
         if n is None:
@@ -801,7 +801,7 @@ class Ontology():
         for n in self.nodes():
             if n in xg:
                 self._add_meta_element(n, 'xrefs', [{'val':x} for x in xg.neighbors(n)])
-        
+
     def add_parent(self, id, pid, relation='subClassOf'):
         """
         Add a new edge to the ontology
@@ -817,7 +817,7 @@ class Ontology():
         if self.xref_graph is None:
             self.xref_graph = nx.MultiGraph()
         self.xref_graph.add_edge(xref, id)
-        
+
     def add_synonym(self, syn):
         """
         Adds a synonym for a node
@@ -841,7 +841,7 @@ class Ontology():
         if 'subsets' not in meta:
             meta['subsets'] = []
         meta['subsets'].append(s)
-        
+
     def all_synonyms(self, include_label=False):
         """
         Retrieves all synonyms
@@ -866,7 +866,7 @@ class Ontology():
         Returns all obsolete nodes
         """
         return [n for n in self.nodes() if self.is_obsolete(n)]
-        
+
     def label(self, nid, id_if_null=False):
         """
         Fetches label for a node
@@ -1074,7 +1074,7 @@ class TextDefinition(AbstractPropertyValue):
             'val': self.val,
             'xrefs': self.xrefs
         }
-        
+
 class Synonym(AbstractPropertyValue):
     """
     Represents a synonym using the OBO model
@@ -1125,12 +1125,12 @@ class Synonym(AbstractPropertyValue):
 
     def is_label(self):
         return self.pred == 'label'
-    
+
     def is_abbreviation(self, v=None):
         if v is not None:
             self.lextype = 'abbreviation'
         return self.lextype is not None and self.lextype.lower() == 'abbreviation'
-    
+
     def exact_or_label(self):
         return self.pred == 'hasExactSynonym' or self.pred == 'label'
 
@@ -1144,7 +1144,7 @@ class Synonym(AbstractPropertyValue):
             'val': self.val,
             'xrefs': self.xrefs
         }
-    
+
     def __cmp__(self, other):
         (x,y) = (str(self),str(other))
         if x > y:
