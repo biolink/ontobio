@@ -98,6 +98,8 @@ class HpoaParser(AssocParser):
 
         # hardcode this, as HPOA is currently human-only
         taxon = 'NCBITaxon:9606'
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon=taxon)
+
 
         # hardcode this, as HPOA is currently disease-only
         db_object_type = 'disease'
@@ -106,13 +108,13 @@ class HpoaParser(AssocParser):
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, line, ENTITY):
+        if not self._validate_id(id, split_line, ENTITY):
             return assocparser.ParseResult(line, [], True)
 
-        if not self._validate_id(hpoid, line, ANNOTATION):
+        if not self._validate_id(hpoid, split_line, ANNOTATION):
             return assocparser.ParseResult(line, [], True)
 
-        valid_hpoid = self._validate_ontology_class_id(hpoid, line)
+        valid_hpoid = self._validate_ontology_class_id(hpoid, split_line)
         if valid_hpoid == None:
             return assocparser.ParseResult(line, [], True)
         hpoid = valid_hpoid
@@ -172,7 +174,7 @@ class HpoaParser(AssocParser):
                 relation = None
 
         # With/From
-        withfroms = self.validate_pipe_separated_ids(withfrom, line, empty_allowed=True, extra_delims=",")
+        withfroms = self.validate_pipe_separated_ids(withfrom, split_line, empty_allowed=True, extra_delims=",")
         if withfroms == None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)

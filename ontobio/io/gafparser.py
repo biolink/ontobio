@@ -15,7 +15,7 @@ class GafParser(assocparser.AssocParser):
 
     ANNOTATION_CLASS_COLUMN=4
 
-    def __init__(self,config=None):
+    def __init__(self, config=None, group="unknown", dataset="unknown"):
         """
         Arguments:
         ---------
@@ -25,7 +25,7 @@ class GafParser(assocparser.AssocParser):
         if config is None:
             config = assocparser.AssocParserConfig()
         self.config = config
-        self.report = assocparser.Report()
+        self.report = assocparser.Report(group=group, dataset=dataset)
         self.gpi = None
         if self.config.gpi_authority_path is not None:
             self.gpi = dict()
@@ -106,13 +106,15 @@ class GafParser(assocparser.AssocParser):
         if len(vals) > 17:
             # If we see more than 17 columns, we will just cut off the columns after column 17
             self.report.warning(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="GORULE:0000001: There were more than 17 columns in this line. Proceeding by cutting off extra columns after column 17.")
+                msg="There were more than 17 columns in this line. Proceeding by cutting off extra columns after column 17.",
+                rule=1)
             vals = vals[:17]
 
 
         if len(vals) != 17:
             self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="GORULE:0000001: There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)))
+                msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)),
+                rule=1)
             return assocparser.ParseResult(line, [], True)
 
         [db,
@@ -133,25 +135,27 @@ class GafParser(assocparser.AssocParser):
          annotation_xp,
          gene_product_isoform] = vals
 
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon=taxon)
+
         ## check for missing columns
         if db == "":
-            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "GORULE:0000001: col1 is empty")
+            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", taxon=taxon, rule=1)
             return assocparser.ParseResult(line, [], True)
         if db_object_id == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "GORULE:0000001: col2 is empty")
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=taxon, rule=1)
             return assocparser.ParseResult(line, [], True)
         if taxon == "":
-            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "GORULE:0000001: taxon column is empty")
+            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty", taxon=taxon, rule=1)
             return assocparser.ParseResult(line, [], True)
         if reference == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "GORULE:0000001: reference column 6 is empty")
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=taxon, rule=1)
             return assocparser.ParseResult(line, [], True)
 
         ## --
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, line, ENTITY):
+        if not self._validate_id(id, split_line, ENTITY):
             print("skipping because {} not validated!".format(id))
             return assocparser.ParseResult(line, [], True)
 
@@ -164,16 +168,16 @@ class GafParser(assocparser.AssocParser):
                 db_object_synonym = entity["synonyms"]
                 db_object_type = entity["type"]
 
-        if not self._validate_id(goid, line, ANNOTATION):
+        if not self._validate_id(goid, split_line, ANNOTATION):
             print("skipping because {} not validated!".format(goid))
             return assocparser.ParseResult(line, [], True)
 
-        valid_goid = self._validate_ontology_class_id(goid, line)
+        valid_goid = self._validate_ontology_class_id(goid, split_line)
         if valid_goid == None:
             return assocparser.ParseResult(line, [], True)
         goid = valid_goid
 
-        date = self._normalize_gaf_date(date, line)
+        date = self._normalize_gaf_date(date, split_line)
         if date == None:
             return assocparser.ParseResult(line, [], True)
 
@@ -183,28 +187,28 @@ class GafParser(assocparser.AssocParser):
         if ecomap is not None:
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
                 self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
-                                msg="GORULE:0000027: Expecting a known ECO GAF code, e.g ISS")
+                                msg="Expecting a known ECO GAF code, e.g ISS")
                 return assocparser.ParseResult(line, [], True)
 
         # Throw out the line if it uses GO_REF:0000033, see https://github.com/geneontology/go-site/issues/563#event-1519351033
         if "GO_REF:0000033" in reference.split("|"):
             self.report.error(line, assocparser.Report.INVALID_ID, reference,
-                                msg="GORULE:0000030: Disallowing GO_REF:0000033 in reference field as of 03/13/2018")
+                                msg="Disallowing GO_REF:0000033 in reference field as of 03/13/2018")
             return assocparser.ParseResult(line, [], True)
 
-        references = self.validate_pipe_separated_ids(reference, line)
+        references = self.validate_pipe_separated_ids(reference, split_line)
         if references == None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
 
         # With/From
-        withfroms = self.validate_pipe_separated_ids(withfrom, line, empty_allowed=True, extra_delims=",")
+        withfroms = self.validate_pipe_separated_ids(withfrom, split_line, empty_allowed=True, extra_delims=",")
         if withfroms == None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
 
         # validation
-        self._validate_symbol(db_object_symbol, line)
+        self._validate_symbol(db_object_symbol, split_line)
 
         # Example use case: mapping from UniProtKB to MOD ID
         if self.config.entity_map is not None:
@@ -215,7 +219,7 @@ class GafParser(assocparser.AssocParser):
             vals[1] = db_object_id
 
         if goid.startswith("GO:") and aspect.upper() not in ["C", "F", "P"]:
-            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect, "GORULE:0000028")
+            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect)
             return assocparser.ParseResult(line, [], True)
 
 
@@ -244,13 +248,13 @@ class GafParser(assocparser.AssocParser):
         ## --
         ## if a second value is specified, this is the interacting taxon
         ## We do not use the second value
-        normalized_taxon = self._taxon_id(taxon.split("|")[0])
+        normalized_taxon = self._taxon_id(taxon.split("|")[0], split_line)
         if normalized_taxon == None:
             self.report.error(line, assocparser.Report.INVALID_TAXON, taxon,
-                                msg="GORULE:0000027: Taxon ID is invalid")
+                                msg="Taxon ID is invalid")
             return assocparser.ParseResult(line, [], True)
 
-        self._validate_taxon(normalized_taxon, line)
+        self._validate_taxon(normalized_taxon, split_line)
 
         ## --
         ## db_object_synonym CARD=0..*
@@ -263,7 +267,7 @@ class GafParser(assocparser.AssocParser):
         ## parse annotation extension
         ## See appendix in http://doi.org/10.1186/1471-2105-15-155
         ## --
-        object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=line)
+        object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=split_line)
 
         ## --
         ## qualifier
@@ -328,6 +332,7 @@ class GafParser(assocparser.AssocParser):
             assoc['subject_extensions'] = subject_extns
         if object_or_exprs is not None and len(object_or_exprs) > 0:
             assoc['object_extensions'] = {'union_of': object_or_exprs}
+
 
         return assocparser.ParseResult(line, [assoc], False, evidence.upper())
 

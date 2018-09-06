@@ -132,7 +132,7 @@ def main():
 
     # TODO: use a factory
     if fmt == 'gaf':
-        p = GafParser()
+        p = GafParser(dataset=args.file)
     elif fmt == 'gpad':
         p = GpadParser()
     elif fmt == 'hpoa':

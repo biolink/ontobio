@@ -2,7 +2,6 @@
 Classes for exporting associations.
 
 """
-import logging
 import re
 
 from ontobio import ecomap

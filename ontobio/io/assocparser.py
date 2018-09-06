@@ -18,10 +18,12 @@ import gzip
 import datetime
 import dateutil.parser
 
-from typing import Optional, List
+from collections import namedtuple
+from typing import Optional, List, Dict
 
 from ontobio import ontol
 from ontobio import ecomap
+from ontobio.io import parsereport
 from ontobio.util.user_agent import get_user_agent
 
 TAXON = 'TAXON'
@@ -43,6 +45,12 @@ class ParseResult(object):
         self.skipped = skipped
         self.evidence_used = evidence_used
 
+
+SplitLine = namedtuple("SplitLine", ["line", "values", "taxon"])
+"""
+This is a collection that views a gaf line in two ways: as the full line, and
+as the separated by tab list of values. We also tack on the taxon.
+"""
 
 class AssocParserConfig():
     """
@@ -116,31 +124,30 @@ class Report():
     """
     LEVELS = [FATAL, ERROR, WARNING]
 
-    def __init__(self):
+    def __init__(self, group="unknown", dataset="unknown"):
         self.messages = []
         self.n_lines = 0
         self.n_assocs = 0
-        self.skipped = []
-        self.subjects = set()
-        self.objects = set()
-        self.taxa = set()
-        self.references = set()
-        self.max_messages = 10000
+        self.skipped = 0
+        self.reporter = parsereport.Report(group, dataset)
 
-    def error(self, line, type, obj, msg=""):
-        self.message(self.ERROR, line, type, obj, msg)
-    def warning(self, line, type, obj, msg=""):
-        self.message(self.WARNING, line, type, obj, msg)
-    def message(self, level, line, type, obj, msg=""):
-        # Only keep max_messages number of messages
-        if len(self.messages) > self.max_messages:
-            # TODO: ensure the message is captured if we are streaming
-            return
-        self.messages.append({'level':level,
-                              'line':line,
-                              'type':type,
-                              'message':msg,
-                              'obj':obj})
+    def error(self, line, type, obj, msg="", taxon="", rule=None):
+        self.message(self.ERROR, line, type, obj, msg, taxon=taxon, rule=rule)
+
+    def warning(self, line, type, obj, msg="", taxon="", rule=None):
+        self.message(self.WARNING, line, type, obj, msg, taxon=taxon, rule=rule)
+
+    def message(self, level, line, type, obj, msg="", taxon="", rule=None):
+        message = {
+            'level': level,
+            'line': line,
+            'type': type,
+            'message': msg,
+            'obj': obj,
+            'taxon': taxon
+        }
+        self.messages.append(message)
+        self.reporter.message(message, rule)
 
 
     def add_associations(self, associations):
@@ -160,88 +167,54 @@ class Report():
         self.n_lines += 1
         if result.skipped:
             logging.info("SKIPPING: {}".format(result.parsed_line))
-            self.skipped.append(result.parsed_line)
+            self.skipped += 1
         else:
             self.add_associations(result.associations)
             if result.evidence_used not in evidence_to_filter:
                 write_to_file(evidence_filtered_file, result.parsed_line + "\n")
 
     def short_summary(self):
-        return "Parsed {} assocs from {} lines. Skipped: {}".format(self.n_assocs, self.n_lines, len(self.skipped))
+        return "Parsed {} assocs from {} lines. Skipped: {}".format(self.n_assocs, self.n_lines, self.skipped)
 
     def to_report_json(self):
         """
         Generate a summary in json format
         """
 
-        N = 10
-        report = {
-            "summary": {
-                "association_count": self.n_assocs,
-                "line_count": self.n_lines,
-                "skipped_line_count": len(self.skipped)
-            },
-            "aggregate_statistics": {
-                "subject_count": len(self.subjects),
-                "object_count": len(self.objects),
-                "taxon_count": len(self.taxa),
-                "reference_count": len(self.references),
-                "taxon_sample": list(self.taxa)[0:N],
-                "subject_sample": list(self.subjects)[0:N],
-                "object_sample": list(self.objects)[0:N]
-            }
-        }
-
-        # grouped messages
-        gm = {}
-        for level in self.LEVELS:
-            gm[level] = []
-        for m in self.messages:
-            level = m['level']
-            gm[level].append(m)
-
-        mgroups = []
-        for level in self.LEVELS:
-            msgs = gm[level]
-            mgroup = {
-                "level": level,
-                "count": len(msgs),
-                "messages": msgs
-            }
-            mgroups.append(mgroup)
-        report['groups'] = mgroups
-        return report
+        return self.reporter.json(self.n_lines, self.n_assocs, self.skipped)
 
     def to_markdown(self):
         """
         Generate a summary in markdown format
         """
         json = self.to_report_json()
-        summary = json['summary']
+        # summary = json['summary']
 
-        s = ""
-        s += "\n## SUMMARY\n\n"
+        s = "# Group: {group} - Dataset: {dataset}\n".format(group=json["group"], dataset=json["dataset"])
+        s += "\n### SUMMARY\n\n"
 
-        s += " * Associations: {}\n" . format(summary['association_count'])
-        s += " * Lines in file (incl headers): {}\n" . format(summary['line_count'])
-        s += " * Lines skipped: {}\n" . format(summary['skipped_line_count'])
+        s += " * Associations: {}\n" . format(json["associations"])
+        s += " * Lines in file (incl headers): {}\n" . format(json["lines"])
+        s += " * Lines skipped: {}\n" . format(json["skipped_lines"])
 
-        stats = json['aggregate_statistics']
-        s += "\n## STATISTICS\n\n"
-        for k,v in stats.items():
-            s += " * {}: {}\n" . format(k,v)
+        s += "\n### MESSAGES\n\n"
+        for (rule, messages) in json["messages"].items():
+            s += "#### {rule}\n\n".format(rule=rule)
+            s += "* total: {amount}\n".format(amount=len(messages))
+            s += "##### Messages\n"
+            for message in messages:
+                s += "* {level} - {message}: `{line}`\n".format(level=message["level"], message=message["message"], line=message["line"])
 
-        s += "\n## MESSAGES\n\n"
-        for g in json['groups']:
-            s += " * {}: {}\n".format(g['level'], g['count'])
-        s += "\n\n"
-        for g in json['groups']:
-            level = g['level']
-            msgs = g['messages']
-            if len(msgs) > 0:
-                s += "### {}\n\n".format(level)
-                for m in msgs:
-                    s += " * {}: obj:'{}' \"{}\" `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
+        # for g in json['groups']:
+        #     s += " * {}: {}\n".format(g['level'], g['count'])
+        # s += "\n\n"
+        # for g in json['groups']:
+        #     level = g['level']
+        #     msgs = g['messages']
+        #     if len(msgs) > 0:
+        #         s += "### {}\n\n".format(level)
+        #         for m in msgs:
+        #             s += " * {}: obj:'{}' \"{}\" `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
         return s
 
 # TODO avoid using names that are builtin python: file, id
@@ -274,7 +247,7 @@ class AssocParser(object):
         a = list(associations)
         return a
 
-    def association_generator(self, file, skipheader=False, outfile=None):
+    def association_generator(self, file, skipheader=False, outfile=None) -> Dict:
         """
         Returns a generator that yields successive associations from file
 
@@ -299,10 +272,10 @@ class AssocParser(object):
         for association in associations:
             pass
 
-    def validate_line(self, line):
+    def validate_line(self, line: SplitLine):
         if line == "":
-            self.report.warning(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
-                                msg="GORULE:0000001: empty line")
+            self.report.warning(line.line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+                                msg="GORULE:0000001: empty line", rule=1)
             return ParseResult(line, [], True)
 
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
@@ -343,7 +316,7 @@ class AssocParser(object):
                 raise ValueError("Line: {} has too few cols, expect class id in col {}".format(line, col))
             cid = vals[col]
             if cid not in class_map or len(class_map[cid]) == 0:
-                self.report.error(line, Report.UNMAPPED_ID, cid)
+                self.report.error(line.line, Report.UNMAPPED_ID, cid)
                 continue
             else:
                 for mcid in class_map[cid]:
@@ -419,24 +392,25 @@ class AssocParser(object):
         toks = id.split(":")
         return toks[0]
 
-    def _validate_taxon(self, taxon, line):
+    def _validate_taxon(self, taxon, line: SplitLine):
         if self.config.valid_taxa is None:
             return True
         else:
             if taxon in self.config.valid_taxa:
                 return True
             else:
-                self.report.error(line, Report.INVALID_TAXON, taxon)
+                self.report.error(line.line, Report.INVALID_TAXON, taxon, taxon=taxon)
                 return False
 
     # check the term id is in the ontology, and is not obsolete
-    def _validate_ontology_class_id(self, id, line, subclassof=None):
+    def _validate_ontology_class_id(self, id, line: SplitLine, subclassof=None):
         ont = self.config.ontology
         if ont is None:
             return id
 
         if not ont.has_node(id):
-            self.report.warning(line, Report.UNKNOWN_ID, id, "GORULE:0000027")
+            self.report.warning(line.line, Report.UNKNOWN_ID, id, "GORULE:0000027",
+                taxon=line.taxon, rule=27)
             return id
 
         if ont.is_obsolete(id):
@@ -446,58 +420,65 @@ class AssocParser(object):
                 rb = ont.replaced_by(id, strict=False)
                 if len(rb) == 1:
                     # We can repair
-                    self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired")
+                    self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired",
+                        taxon=line.taxon, rule=20)
                     id = rb[0]
                 else:
-                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020")
+                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020",
+                        taxon=line.taxon, rule=20)
                     id = None
             else:
-                self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020")
+                self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
+                    taxon=line.taxon, rule=20)
                 id = None
-        # TODO: subclassof
+                
         return id
 
     def _normalize_gaf_date(self, date, line):
         if date is None or date == "":
-            self.report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: empty")
+            self.report.warning(line.line, Report.INVALID_DATE, date, "GORULE:0000001: empty",
+                taxon=line.taxon, rule=1)
             return date
 
         # We check int(date)
         if len(date) == 8 and date.isdigit():
             d = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0)
         else:
-            self.report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYYMMDD, got: {}".format(date))
+            self.report.warning(line.line, Report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYYMMDD, got: {}".format(date),
+                taxon=line.taxon, rule=1)
             try:
                 d = dateutil.parser.parse(date)
             except:
-                self.report.error(line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date))
+                self.report.error(line.line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date),
+                    taxon=line.taxon, rule=1)
                 return None
 
         return d.strftime("%Y%m%d")
 
-    def _validate_symbol(self, symbol, line):
+    def _validate_symbol(self, symbol, line: SplitLine):
         if symbol is None or symbol == "":
-            self.report.warning(line, Report.INVALID_SYMBOL, symbol, "GORULE:0000027: symbol is empty")
+            self.report.warning(line.line, Report.INVALID_SYMBOL, symbol, "GORULE:0000027: symbol is empty",
+                taxon=line.taxon, rule=27)
 
     non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z]")
 
-    def _validate_id(self, id, line, context=None):
+    def _validate_id(self, id, line: SplitLine, context=None):
 
         # we assume that cardinality>1 fields have been split prior to this
         if id.find("|") > -1:
             # non-fatal
-            self.report.warning(line, Report.INVALID_ID, id, "GORULE:0000027: contains pipe in identifier")
+            self.report.warning(line.line, Report.INVALID_ID, id, "GORULE:0000027: contains pipe in identifier", taxon=line.taxon, rule=27)
         if ':' not in id:
-            self.report.error(line, Report.INVALID_ID, id, "GORULE:0000027: must be CURIE/prefixed ID")
+            self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: must be CURIE/prefixed ID", rule=27)
             return False
 
         if AssocParser.non_id_regex.search(id.split(":")[1]):
-            self.report.error(line, Report.INVALID_ID, id, "GORULE:0000027: contains non letter, non number character, or spaces")
+            self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: contains non letter, non number character, or spaces", rule=27)
             return False
 
         (left, right) = id.rsplit(":", maxsplit=1)
         if len(left) == 0 or len(right) == 0:
-            self.report.error(line, Report.INVALID_ID, id, "GORULE:0000027: Empty ID")
+            self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: Empty ID", rule=27)
             return False
 
         idspace = self._get_id_prefix(id)
@@ -505,12 +486,12 @@ class AssocParser(object):
         # conforms to what is expected
         if context == ANNOTATION and self.config.class_idspaces is not None:
             if idspace not in self.config.class_idspaces:
-                self.report.error(line, Report.INVALID_IDSPACE, id, "allowed: {}".format(self.config.class_idspaces))
+                self.report.error(line.line, Report.INVALID_IDSPACE, id, "allowed: {}".format(self.config.class_idspaces), rule=27)
                 return False
 
         return True
 
-    def validate_pipe_separated_ids(self, column, line, empty_allowed=False, extra_delims="") -> Optional[List[str]]:
+    def validate_pipe_separated_ids(self, column, line: SplitLine, empty_allowed=False, extra_delims="") -> Optional[List[str]]:
         if column == "" and empty_allowed:
             return []
 
@@ -538,9 +519,9 @@ class AssocParser(object):
                 localid = localid.replace(db+":","")
         return db + ":" + localid
 
-    def _taxon_id(self, id):
+    def _taxon_id(self, id, line: SplitLine):
         id = id.replace('taxon', 'NCBITaxon')
-        valid = self._validate_id(id, '', TAXON)
+        valid = self._validate_id(id, line, TAXON)
         if valid:
             return id
         else:
@@ -579,7 +560,7 @@ class AssocParser(object):
         else:
             return file
 
-    def _parse_full_extension_expression(self, xp, line=""):
+    def _parse_full_extension_expression(self, xp, line: SplitLine = None):
         if xp == "":
             return None
 
@@ -601,23 +582,23 @@ class AssocParser(object):
 
 
     relation_tuple = re.compile('(.*)\((.*)\)')
-    def _parse_relationship_expression(self, x, line=""):
+    def _parse_relationship_expression(self, x, line: SplitLine = None):
         ## Parses an atomic relational expression
         ## E.g. exists_during(GO:0000753)
         ## Atomic class expressions only
         tuples = AssocParser.relation_tuple.findall(x)
         if len(tuples) != 1:
-            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
+            self.report.error(line.line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
             return None
         (p,v) = tuples[0]
 
-        if self._validate_id(v, line,EXTENSION):
+        if self._validate_id(v, line, EXTENSION):
             return {
                 'property':p,
                 'filler':v
             }
         else:
-            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, x, msg="GORULE:0000027: ID not valid")
+            self.report.error(line.line, Report.EXTENSION_SYNTAX_ERROR, x, msg="GORULE:0000027: ID not valid", rule=27)
             return None
 
 # TODO consider making an Association its own class too to give it a little more

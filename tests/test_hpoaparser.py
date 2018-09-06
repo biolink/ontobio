@@ -53,11 +53,12 @@ def test_validate_hp_idspaces():
     assocs = p.parse(open(ANNFILE,"r"))
     for m in p.report.messages:
         print("MESSAGE: {}".format(m))
+
     assert len(assocs) == 0
     assert len(p.report.messages) > 1
-    summary = p.report.to_report_json()['summary']
-    assert summary['association_count'] == 0
-    assert summary['line_count'] > 300
+    summary = p.report.to_report_json()
+    assert summary['associations'] == 0
+    assert summary['lines'] > 300
     print(p.report.to_markdown())
 
     p = HpoaParser()
