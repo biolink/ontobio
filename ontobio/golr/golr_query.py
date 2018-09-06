@@ -254,7 +254,7 @@ def goassoc_fieldmap(relationship_type=ACTS_UPSTREAM_OF_OR_WITHIN):
         M.SUBJECT_TAXON_CLOSURE: 'taxon_closure',
         M.RELATION: 'qualifier',
         M.OBJECT: 'annotation_class',
-        M.OBJECT_CLOSURE: get_closure_for_relationship_type(relationship_type),
+        M.OBJECT_CLOSURE: REGULATES_CLOSURE if relationship_type == ACTS_UPSTREAM_OF_OR_WITHIN else ISA_PARTOF_CLOSURE,
         M.OBJECT_LABEL: 'annotation_class_label',
         M.OBJECT_TAXON: 'object_taxon',
         M.OBJECT_TAXON_LABEL: 'object_taxon_label',
@@ -275,15 +275,6 @@ def map_field(fn, m) :
         return m[fn]
     else:
         return fn
-
-def get_closure_for_relationship_type(relationship_type):
-    closure = None
-    if relationship_type == ACTS_UPSTREAM_OF_OR_WITHIN:
-        closure = REGULATES_CLOSURE
-    else:
-        closure = ISA_PARTOF_CLOSURE
-
-    return closure
 
 ### CLASSES
 
@@ -1200,7 +1191,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             select_fields.append(M.SUBJECT_CLOSURE)
 
         if self.slim is not None and len(self.slim)>0:
-            select_fields.append(get_closure_for_relationship_type(self.relationship_type))
+            select_fields.append(M.OBJECT_CLOSURE)
 
         if self.field_mapping is not None:
             logging.info("Applying field mapping to SELECT: {}".format(self.field_mapping))
@@ -1325,7 +1316,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if fetch_objects:
             core_object_field = M.OBJECT
             if self.slim is not None and len(self.slim)>0:
-                core_object_field = get_closure_for_relationship_type(self.relationship_type)
+                core_object_field = M.OBJECT_CLOSURE
             object_field = map_field(core_object_field, self.field_mapping)
             if self.invert_subject_object:
                 object_field = map_field(M.SUBJECT, self.field_mapping)
@@ -1443,7 +1434,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         lf = M.label_field(fname)
 
-        gq = GolrAssociationQuery(relationship_type=self.relationship_type) ## TODO - make this a class method
         id = d[fname]
         id = self.make_canonical_identifier(id)
         #if id.startswith('MGI:MGI:'):
@@ -1525,8 +1515,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if len(qualifiers) > 0:
             assoc['qualifiers'] = qualifiers
 
-        if get_closure_for_relationship_type(self.relationship_type) in d:
-            assoc['object_closure'] = d.get(get_closure_for_relationship_type(self.relationship_type))
+        if M.OBJECT_CLOSURE in d:
+            assoc['object_closure'] = d.get(M.OBJECT_CLOSURE)
         if M.IS_DEFINED_BY in d:
             if isinstance(d[M.IS_DEFINED_BY],list):
                 assoc['provided_by'] = d[M.IS_DEFINED_BY]
@@ -1606,7 +1596,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                            'relation':rel,
                            'objects': []}
             if slim is not None and len(slim)>0:
-                mapped_objects = [x for x in d[get_closure_for_relationship_type(self.relationship_type)] if x in slim]
+                mapped_objects = [x for x in d[M.OBJECT_CLOSURE] if x in slim]
                 logging.debug("Mapped objects: {}".format(mapped_objects))
                 amap[k]['objects'] += mapped_objects
             else:
