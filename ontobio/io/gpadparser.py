@@ -104,6 +104,11 @@ class GpadParser(assocparser.AssocParser):
         if not self._validate_id(goid, split_line, ANNOTATION):
             return assocparser.ParseResult(line, [], True)
 
+        valid_goid = self._validate_ontology_class_id(goid, split_line)
+        if valid_goid == None:
+            return assocparser.ParseResult(line, [], True)
+        goid = valid_goid
+
         date = self._normalize_gaf_date(date, split_line)
 
         if reference == "":
@@ -169,7 +174,6 @@ class GpadParser(assocparser.AssocParser):
         if object_or_exprs is not None and len(object_or_exprs) > 0:
             assoc['object']['extensions'] = {'union_of': object_or_exprs}
 
-        self._validate_assoc(assoc, split_line)
 
         return assocparser.ParseResult(line, [assoc], False)
 

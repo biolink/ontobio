@@ -114,6 +114,11 @@ class HpoaParser(AssocParser):
         if not self._validate_id(hpoid, split_line, ANNOTATION):
             return assocparser.ParseResult(line, [], True)
 
+        valid_hpoid = self._validate_ontology_class_id(hpoid, split_line)
+        if valid_hpoid == None:
+            return assocparser.ParseResult(line, [], True)
+        hpoid = valid_hpoid
+
         # validation
         #self._validate_symbol(db_object_symbol, line)
 
@@ -217,8 +222,6 @@ class HpoaParser(AssocParser):
             'date': date,
 
         }
-
-        self._validate_assoc(assoc, split_line)
 
         return assocparser.ParseResult(line, [assoc], False)
 

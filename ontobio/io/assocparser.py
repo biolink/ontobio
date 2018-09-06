@@ -278,14 +278,6 @@ class AssocParser(object):
                                 msg="GORULE:0000001: empty line", rule=1)
             return ParseResult(line, [], True)
 
-    def _validate_assoc(self, assoc, line: SplitLine):
-        """
-        Performs validation on an ontology association structure.
-
-        Currently the only validation is checking the ontology class (object) id against the loaded ontology
-        """
-        self._validate_ontology_class_id(assoc["object"]["id"], line)
-
     def map_to_subset(self, file, outfile=None, ontology=None, subset=None, class_map=None, relations=None):
         """
         Map a file to a subset, writing out results
@@ -415,16 +407,19 @@ class AssocParser(object):
         ont = self.config.ontology
         if ont is None:
             return id
+
         if not ont.has_node(id):
             self.report.warning(line.line, Report.UNKNOWN_ID, id, "GORULE:0000027",
                 taxon=line.taxon, rule=27)
             return id
+
         if ont.is_obsolete(id):
             # the default behavior should always be to repair, unless the caller explicitly states
             # that this should not be done by setting repair_obsoletes to False
             if self.config.repair_obsoletes is None or self.config.repair_obsoletes:
                 rb = ont.replaced_by(id, strict=False)
                 if len(rb) == 1:
+<<<<<<< HEAD
                     self.report.warning(line.line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired",
                         taxon=line.taxon, rule=20)
                     id = rb[0]
@@ -434,6 +429,17 @@ class AssocParser(object):
             else:
                 self.report.warning(line.line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
                     taxon=line.taxon, rule=20)
+=======
+                    # We can repair
+                    self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired")
+                    id = rb[0]
+                else:
+                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020")
+                    id = None
+            else:
+                self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020")
+                id = None
+>>>>>>> master
         # TODO: subclassof
         return id
 

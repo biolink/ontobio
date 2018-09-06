@@ -11,6 +11,8 @@ import networkx as nx
 import logging
 import re
 
+logger = logging.getLogger(__name__)
+
 class Ontology():
     """An object that represents a basic graph-oriented view over an ontology.
 
@@ -47,7 +49,7 @@ class Ontology():
         self.graph = graph
         if self.graph is None:
             self.graph = nx.MultiDiGraph()
-        logging.info('Graph initialized, nodes={}'.format(self.graph.nodes()))
+        logger.debug('Graph initialized, nodes={}'.format(self.graph.nodes()))
         self.xref_graph = xref_graph
 
         # obograph
@@ -105,29 +107,29 @@ class Ontology():
         # trigger synonym cache
         self.all_synonyms()
         self.all_obsoletes()
-        
+
         # default method - wrap get_graph
         srcg = self.get_graph()
         if prefix is not None:
             srcg = srcg.subgraph([n for n in srcg.nodes() if n.startswith(prefix+":")])
         if relations is None:
-            logging.info("No filtering on "+str(self))
+            logger.info("No filtering on "+str(self))
             return srcg
-        logging.info("Filtering {} for {}".format(self, relations))
+        logger.info("Filtering {} for {}".format(self, relations))
         g = nx.MultiDiGraph()
 
         # TODO: copy full metadata
-        logging.info("copying nodes")
+        logger.info("copying nodes")
         for n,d in srcg.nodes_iter(data=True):
             g.add_node(n, attr_dict=d)
 
-        logging.info("copying edges")
+        logger.info("copying edges")
         num_edges = 0
         for x,y,d in srcg.edges_iter(data=True):
             if d['pred'] in relations:
                 num_edges += 1
                 g.add_edge(x,y,attr_dict=d)
-        logging.info("Filtered edges: {}".format(num_edges))
+        logger.info("Filtered edges: {}".format(num_edges))
         return g
 
     def merge(self, ontologies):
@@ -136,9 +138,9 @@ class Ontology():
         """
         if self.xref_graph is None:
             self.xref_graph = nx.MultiGraph()
-        logging.info("Merging source: {} xrefs: {}".format(self, len(self.xref_graph.edges())))        
+        logger.info("Merging source: {} xrefs: {}".format(self, len(self.xref_graph.edges())))
         for ont in ontologies:
-            logging.info("Merging {} into {}".format(ont, self))
+            logger.info("Merging {} into {}".format(ont, self))
             g = self.get_graph()
             srcg = ont.get_graph()
             for n in srcg.nodes():
@@ -218,12 +220,12 @@ class Ontology():
         """
         if subset is not None:
             subset_nodes = self.extract_subset(subset)
-            logging.info("Extracting subset: {} -> {}".format(subset, subset_nodes))
+            logger.info("Extracting subset: {} -> {}".format(subset, subset_nodes))
 
         if subset_nodes is None or len(subset_nodes) == 0:
             raise ValueError("subset nodes is blank")
         subset_nodes = set(subset_nodes)
-        logging.debug("SUBSET: {}".format(subset_nodes))
+        logger.debug("SUBSET: {}".format(subset_nodes))
 
         # Use a sub-ontology for mapping
         subont = self
@@ -241,7 +243,7 @@ class Ontology():
             ancs_in_subset = subset_nodes.intersection(ancs)
             m[n] = list(subont.filter_redundant(ancs_in_subset))
         return m
-        
+
     def filter_redundant(self, ids):
         """
         Return all non-redundant ids from a list
@@ -306,7 +308,7 @@ class Ontology():
         sep=':'
         if nid.startswith('http'):
             if '#' in nid:
-               sep='#' 
+               sep='#'
             else:
                 sep='/'
         parts = nid.split(sep)
@@ -320,7 +322,7 @@ class Ontology():
         """
         pfx,_ = self.prefix_fragment(nid)
         return pfx
-        
+
     def nodes(self):
         """
         Return all nodes in ontology
@@ -355,7 +357,7 @@ class Ontology():
         If stated, either CLASS, PROPERTY or INDIVIDUAL
         """
         return self.node(id)['type']
-    
+
     def relations_used(self):
         """
         Return list of all relations used to connect edges
@@ -391,7 +393,7 @@ class Ontology():
         preds = set()
         for _,ea in graph[obj][subj].items():
             preds.add(ea['pred'])
-        logging.debug('{}->{} = {}'.format(subj,obj,preds))
+        logger.debug('{}->{} = {}'.format(subj,obj,preds))
         return preds
 
     def parents(self, node, relations=None):
@@ -535,8 +537,8 @@ class Ontology():
             if d['pred'] == 'equivalentTo':
                 eg.add_edge(u,v)
         return eg
-        
-        
+
+
     def traverse_nodes(self, qids, up=True, down=False, **args):
         """
         Traverse (optionally) up and (optionally) down from an input set of nodes
@@ -596,10 +598,10 @@ class Ontology():
         g = self.get_filtered_graph(relations)
         nodes = self.get_roots(relations=relations, **args)
         for i in range(level):
-            logging.info(" ITERATING TO LEVEL: {} NODES: {}".format(i, nodes))
+            logger.info(" ITERATING TO LEVEL: {} NODES: {}".format(i, nodes))
             nodes = [c for n in nodes
                      for c in g.successors(n)]
-        logging.info(" FINAL: {}".format(nodes))
+        logger.info(" FINAL: {}".format(nodes))
         return nodes
 
     def parent_index(self, relations=None):
@@ -622,7 +624,7 @@ class Ontology():
             g = self.get_filtered_graph(relations)
         l = []
         for n in g:
-            l.append([n] ++ g.predecessors(b))
+            l.append([n] + g.predecessors(n))
         return l
 
     def text_definition(self, nid):
@@ -710,7 +712,7 @@ class Ontology():
         dep = self._get_meta_prop(nid, 'deprecated')
         return  dep is not None and dep
 
-    
+
     def replaced_by(self, nid, strict=True):
         """
         Returns value of 'replaced by' (IAO_0100001) property for obsolete nodes
@@ -732,7 +734,7 @@ class Ontology():
             if strict:
                 raise ValueError(msg)
             else:
-                logging.error(msg)
+                logger.error(msg)
 
         return vs
 
@@ -782,7 +784,7 @@ class Ontology():
         if nid not in self.get_graph():
             self.add_node(nid)
         self._add_meta_element(nid, 'deprecated', True)
-        
+
     def _add_meta_element(self, id, k, edict):
         n = self.node(id)
         if n is None:
@@ -799,7 +801,7 @@ class Ontology():
         for n in self.nodes():
             if n in xg:
                 self._add_meta_element(n, 'xrefs', [{'val':x} for x in xg.neighbors(n)])
-        
+
     def add_parent(self, id, pid, relation='subClassOf'):
         """
         Add a new edge to the ontology
@@ -815,7 +817,7 @@ class Ontology():
         if self.xref_graph is None:
             self.xref_graph = nx.MultiGraph()
         self.xref_graph.add_edge(xref, id)
-        
+
     def add_synonym(self, syn):
         """
         Adds a synonym for a node
@@ -839,7 +841,7 @@ class Ontology():
         if 'subsets' not in meta:
             meta['subsets'] = []
         meta['subsets'].append(s)
-        
+
     def all_synonyms(self, include_label=False):
         """
         Retrieves all synonyms
@@ -864,7 +866,7 @@ class Ontology():
         Returns all obsolete nodes
         """
         return [n for n in self.nodes() if self.is_obsolete(n)]
-        
+
     def label(self, nid, id_if_null=False):
         """
         Fetches label for a node
@@ -941,13 +943,13 @@ class Ontology():
         g = self.get_graph()
         r_ids = []
         for n in names:
-            logging.debug("Searching for {} syns={}".format(n,synonyms))
+            logger.debug("Searching for {} syns={}".format(n,synonyms))
             if len(n.split(":")) == 2:
                 r_ids.append(n)
             else:
                 matches = set([nid for nid in g.nodes() if self._is_match(self.label(nid), n, **args)])
                 if synonyms:
-                    logging.debug("Searching syns for {}".format(names))
+                    logger.debug("Searching syns for {}".format(names))
                     for nid in g.nodes():
                         for s in self.synonyms(nid):
                             if self._is_match(s.val, n, **args):
@@ -1072,7 +1074,7 @@ class TextDefinition(AbstractPropertyValue):
             'val': self.val,
             'xrefs': self.xrefs
         }
-        
+
 class Synonym(AbstractPropertyValue):
     """
     Represents a synonym using the OBO model
@@ -1123,12 +1125,12 @@ class Synonym(AbstractPropertyValue):
 
     def is_label(self):
         return self.pred == 'label'
-    
+
     def is_abbreviation(self, v=None):
         if v is not None:
             self.lextype = 'abbreviation'
         return self.lextype is not None and self.lextype.lower() == 'abbreviation'
-    
+
     def exact_or_label(self):
         return self.pred == 'hasExactSynonym' or self.pred == 'label'
 
@@ -1142,7 +1144,7 @@ class Synonym(AbstractPropertyValue):
             'val': self.val,
             'xrefs': self.xrefs
         }
-    
+
     def __cmp__(self, other):
         (x,y) = (str(self),str(other))
         if x > y:

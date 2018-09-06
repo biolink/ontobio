@@ -19,6 +19,10 @@ from cachier import cachier
 import datetime
 import logging
 
+from enum import Enum
+
+SEPARATOR = "@|@"
+
 SHELF_LIFE = datetime.timedelta(days=7)
 
 # CACHE STRATEGY:
@@ -32,6 +36,17 @@ cache = lru_cache(maxsize=None)
 
 SUBCLASS_OF = 'subClassOf'
 SUBPROPERTY_OF = 'subPropertyOf'
+
+class EOntology(Enum):
+    GO = "http://rdf.geneontology.org/sparql"
+    HEGROUP = "http://sparql.hegroup.org/sparql"
+    UNIPROT = "https://sparql.uniprot.org/sparql/"
+
+class EDocState(Enum):
+    PRODUCTION = "production"
+    DEVELOPMENT = "development"
+    REVIEW = "review"
+    DELETE = "delete"
 
 # TODO
 # for now we assume ontobee
@@ -133,6 +148,24 @@ def run_sparql(q):
     logging.info("Made wrapper: {}".format(sparql))
     # TODO: iterate over large sets?
     full_q = q + ' LIMIT 250000'
+    sparql.setQuery(q)
+    sparql.setReturnFormat(JSON)
+    logging.info("Query: {}".format(q))
+    results = sparql.query().convert()
+    bindings = results['results']['bindings']
+    logging.info("Rows: {}".format(len(bindings)))
+    for r in bindings:
+        curiefy(r)
+    return bindings
+
+
+def run_sparql_on(q, ontology):
+    """
+    Run a SPARQL query (q) on a given Ontology (Enum EOntology)
+    """
+    logging.info("Connecting to " + ontology.value + " SPARQL endpoint...")
+    sparql = SPARQLWrapper(ontology.value)
+    logging.info("Made wrapper: {}".format(sparql))
     sparql.setQuery(q)
     sparql.setReturnFormat(JSON)
     logging.info("Query: {}".format(q))
@@ -350,6 +383,35 @@ def batch_fetch_labels(ids):
             m[id] = label
     return m
 
+
+
+
+
+
+def transform(data, keysToSplit=[]):
+    """
+    Transform a SPARQL json result by:
+    1) outputing only { key : value }, removing datatype
+    2) for some keys, transform them into array based on SEPARATOR
+    """
+    transformed = { }
+    for key in data:
+        if key in keysToSplit:
+            transformed[key] = data[key]['value'].split(SEPARATOR)
+        else:
+            transformed[key] = data[key]['value']
+    return transformed
+
+def transformArray(data, keysToSplit=[]):
+    """
+    Transform a SPARQL json array based on the rules of transform
+    """
+    transformed = [ ]
+    for item in data:
+        transformed.append(transform(item, keysToSplit))
+    return transformed
+
+    
 ## -- PERSISTENCE --
 
 
