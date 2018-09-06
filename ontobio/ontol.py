@@ -11,6 +11,8 @@ import networkx as nx
 import logging
 import re
 
+logger = logging.getLogger(__name__)
+
 class Ontology():
     """An object that represents a basic graph-oriented view over an ontology.
 
@@ -47,7 +49,7 @@ class Ontology():
         self.graph = graph
         if self.graph is None:
             self.graph = nx.MultiDiGraph()
-        logging.info('Graph initialized, nodes={}'.format(self.graph.nodes()))
+        logger.debug('Graph initialized, nodes={}'.format(self.graph.nodes()))
         self.xref_graph = xref_graph
 
         # obograph
@@ -111,23 +113,23 @@ class Ontology():
         if prefix is not None:
             srcg = srcg.subgraph([n for n in srcg.nodes() if n.startswith(prefix+":")])
         if relations is None:
-            logging.info("No filtering on "+str(self))
+            logger.info("No filtering on "+str(self))
             return srcg
-        logging.info("Filtering {} for {}".format(self, relations))
+        logger.info("Filtering {} for {}".format(self, relations))
         g = nx.MultiDiGraph()
 
         # TODO: copy full metadata
-        logging.info("copying nodes")
+        logger.info("copying nodes")
         for n,d in srcg.nodes_iter(data=True):
             g.add_node(n, attr_dict=d)
 
-        logging.info("copying edges")
+        logger.info("copying edges")
         num_edges = 0
         for x,y,d in srcg.edges_iter(data=True):
             if d['pred'] in relations:
                 num_edges += 1
                 g.add_edge(x,y,attr_dict=d)
-        logging.info("Filtered edges: {}".format(num_edges))
+        logger.info("Filtered edges: {}".format(num_edges))
         return g
 
     def merge(self, ontologies):
@@ -136,9 +138,9 @@ class Ontology():
         """
         if self.xref_graph is None:
             self.xref_graph = nx.MultiGraph()
-        logging.info("Merging source: {} xrefs: {}".format(self, len(self.xref_graph.edges())))
+        logger.info("Merging source: {} xrefs: {}".format(self, len(self.xref_graph.edges())))
         for ont in ontologies:
-            logging.info("Merging {} into {}".format(ont, self))
+            logger.info("Merging {} into {}".format(ont, self))
             g = self.get_graph()
             srcg = ont.get_graph()
             for n in srcg.nodes():
@@ -218,12 +220,12 @@ class Ontology():
         """
         if subset is not None:
             subset_nodes = self.extract_subset(subset)
-            logging.info("Extracting subset: {} -> {}".format(subset, subset_nodes))
+            logger.info("Extracting subset: {} -> {}".format(subset, subset_nodes))
 
         if subset_nodes is None or len(subset_nodes) == 0:
             raise ValueError("subset nodes is blank")
         subset_nodes = set(subset_nodes)
-        logging.debug("SUBSET: {}".format(subset_nodes))
+        logger.debug("SUBSET: {}".format(subset_nodes))
 
         # Use a sub-ontology for mapping
         subont = self
@@ -391,7 +393,7 @@ class Ontology():
         preds = set()
         for _,ea in graph[obj][subj].items():
             preds.add(ea['pred'])
-        logging.debug('{}->{} = {}'.format(subj,obj,preds))
+        logger.debug('{}->{} = {}'.format(subj,obj,preds))
         return preds
 
     def parents(self, node, relations=None):
@@ -596,10 +598,10 @@ class Ontology():
         g = self.get_filtered_graph(relations)
         nodes = self.get_roots(relations=relations, **args)
         for i in range(level):
-            logging.info(" ITERATING TO LEVEL: {} NODES: {}".format(i, nodes))
+            logger.info(" ITERATING TO LEVEL: {} NODES: {}".format(i, nodes))
             nodes = [c for n in nodes
                      for c in g.successors(n)]
-        logging.info(" FINAL: {}".format(nodes))
+        logger.info(" FINAL: {}".format(nodes))
         return nodes
 
     def parent_index(self, relations=None):
@@ -732,7 +734,7 @@ class Ontology():
             if strict:
                 raise ValueError(msg)
             else:
-                logging.error(msg)
+                logger.error(msg)
 
         return vs
 
@@ -941,13 +943,13 @@ class Ontology():
         g = self.get_graph()
         r_ids = []
         for n in names:
-            logging.debug("Searching for {} syns={}".format(n,synonyms))
+            logger.debug("Searching for {} syns={}".format(n,synonyms))
             if len(n.split(":")) == 2:
                 r_ids.append(n)
             else:
                 matches = set([nid for nid in g.nodes() if self._is_match(self.label(nid), n, **args)])
                 if synonyms:
-                    logging.debug("Searching syns for {}".format(names))
+                    logger.debug("Searching syns for {}".format(names))
                     for nid in g.nodes():
                         for s in self.synonyms(nid):
                             if self._is_match(s.val, n, **args):
