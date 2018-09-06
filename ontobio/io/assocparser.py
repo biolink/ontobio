@@ -419,28 +419,19 @@ class AssocParser(object):
             if self.config.repair_obsoletes is None or self.config.repair_obsoletes:
                 rb = ont.replaced_by(id, strict=False)
                 if len(rb) == 1:
-<<<<<<< HEAD
-                    self.report.warning(line.line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired",
-                        taxon=line.taxon, rule=20)
-                    id = rb[0]
-                else:
-                    self.report.warning(line.line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020",
-                        taxon=line.taxon, rule=20)
-            else:
-                self.report.warning(line.line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
-                    taxon=line.taxon, rule=20)
-=======
                     # We can repair
-                    self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired")
+                    self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired",
+                        taxon=line.taxon, rule=20)
                     id = rb[0]
                 else:
-                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020")
+                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020",
+                        taxon=line.taxon, rule=20)
                     id = None
             else:
-                self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020")
+                self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
+                    taxon=line.taxon, rule=20)
                 id = None
->>>>>>> master
-        # TODO: subclassof
+                
         return id
 
     def _normalize_gaf_date(self, date, line):
