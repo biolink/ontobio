@@ -47,6 +47,8 @@ class ParseResult(object):
 
 
 SplitLine = namedtuple("SplitLine", ["line", "values", "taxon"])
+SplitLine.__str__ = lambda self: self.line
+
 """
 This is a collection that views a gaf line in two ways: as the full line, and
 as the separated by tab list of values. We also tack on the taxon.
@@ -191,19 +193,27 @@ class Report():
         # summary = json['summary']
 
         s = "# Group: {group} - Dataset: {dataset}\n".format(group=json["group"], dataset=json["dataset"])
-        s += "\n### SUMMARY\n\n"
-
+        s += "\n## SUMMARY\n\n"
+        s += "This report generated on {}\n".format(datetime.date.today())
         s += " * Associations: {}\n" . format(json["associations"])
         s += " * Lines in file (incl headers): {}\n" . format(json["lines"])
         s += " * Lines skipped: {}\n" . format(json["skipped_lines"])
+        s += "\n## Contents\n\n"
+        for rule, messages in sorted(json["messages"].items(), key=lambda t: t[0]):
+            if rule == "other":
+                s += "[{rule}](#{rule})\n\n".format(rule=rule)
+            else:
+                s += "({num}) [{rule}](#{rule})\n\n".format(num=int(rule.split("-")[1]), rule=rule)
 
-        s += "\n### MESSAGES\n\n"
-        for (rule, messages) in json["messages"].items():
-            s += "#### {rule}\n\n".format(rule=rule)
+        s += "\n## MESSAGES\n\n"
+        for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
+            s += "### {rule}\n\n".format(rule=rule)
             s += "* total: {amount}\n".format(amount=len(messages))
-            s += "##### Messages\n"
+            if len(messages) > 0:
+                s += "#### Messages\n"
             for message in messages:
-                s += "* {level} - {message}: `{line}`\n".format(level=message["level"], message=message["message"], line=message["line"])
+                obj = " ({})".format(message["obj"]) if message["obj"] else ""
+                s += "* {level} - {type}: {message}{obj} -- `{line}`\n".format(level=message["level"], type=message["type"], message=message["message"], line=message["line"], obj=obj)
 
         # for g in json['groups']:
         #     s += " * {}: {}\n".format(g['level'], g['count'])
@@ -431,7 +441,7 @@ class AssocParser(object):
                 self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
                     taxon=line.taxon, rule=20)
                 id = None
-                
+
         return id
 
     def _normalize_gaf_date(self, date, line):
