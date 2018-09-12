@@ -408,19 +408,10 @@ class GolrSearchQuery(GolrAbstractQuery):
             self.fq['document_category'] = "general"
 
         qf = self._format_query_filter(self.search_fields, suffixes)
-        if not self.is_go:
-            monarch_boosts = [
-                "label_searchable^1",
-                "definition_searchable^1",
-                "synonym_searchable^1",
-                "iri_searchable^2",
-                "id_searchable^2",
-                "equivalent_iri_searchable^1",
-                "equivalent_curie_searchable^1",
-                "taxon_label_searchable^1",
-                "taxon_label_synonym_searchable^1"
-            ]
-            qf.extend(monarch_boosts)
+
+        if ":" in self.term:
+            qf["id_kw"] = 20
+            qf["equivalent_curie_kw"] = 20
 
         select_fields = ["*", "score"]
         params = {
@@ -428,7 +419,7 @@ class GolrSearchQuery(GolrAbstractQuery):
             "qt": "standard",
             'fl': ",".join(select_fields),
             "defType": "edismax",
-            "qf": qf,
+            "qf": ["{}^{}".format(field, weight) for field, weight in qf.items()],
             'rows': self.rows
         }
 
@@ -603,11 +594,12 @@ class GolrSearchQuery(GolrAbstractQuery):
 
     @staticmethod
     def _format_query_filter(search_fields, suffixes):
-        qf = []
-        for (f, relevancy) in search_fields.items():
-            fmt = "{}_{}^{}"
+        qf = {}
+        for (field, relevancy) in search_fields.items():
             for suffix in suffixes:
-                qf.append(fmt.format(f,suffix,relevancy))
+                field_filter = "{}_{}".format(field, suffix)
+                weight = "{}".format(relevancy)
+                qf[field_filter] = weight
         return qf
 
     def _get_longest_hl(self, highlights):
