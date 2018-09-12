@@ -187,13 +187,13 @@ class GafParser(assocparser.AssocParser):
         if ecomap is not None:
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
                 self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
-                                msg="Expecting a known ECO GAF code, e.g ISS")
+                                msg="Expecting a known ECO GAF code, e.g ISS", rule=1)
                 return assocparser.ParseResult(line, [], True)
 
         # Throw out the line if it uses GO_REF:0000033, see https://github.com/geneontology/go-site/issues/563#event-1519351033
         if "GO_REF:0000033" in reference.split("|"):
             self.report.error(line, assocparser.Report.INVALID_ID, reference,
-                                msg="Disallowing GO_REF:0000033 in reference field as of 03/13/2018")
+                                msg="Disallowing GO_REF:0000033 in reference field as of 03/13/2018", rule=30)
             return assocparser.ParseResult(line, [], True)
 
         references = self.validate_pipe_separated_ids(reference, split_line)
@@ -219,7 +219,7 @@ class GafParser(assocparser.AssocParser):
             vals[1] = db_object_id
 
         if goid.startswith("GO:") and aspect.upper() not in ["C", "F", "P"]:
-            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect)
+            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect, rule=28)
             return assocparser.ParseResult(line, [], True)
 
 
@@ -227,13 +227,13 @@ class GafParser(assocparser.AssocParser):
         for rule_id, result in go_rule_results.items():
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
-                                    msg="{id}: {message}".format(id=rule_id, message=result.message))
+                                    msg="{id}: {message}".format(id=rule_id, message=result.message), rule=int(rule_id.split(":")[1]))
                 # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
 
             if result.result_type == qc.ResultType.ERROR:
                 self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
-                                    msg="{id}: {message}".format(id=rule_id, message=result.message))
+                                    msg="{id}: {message}".format(id=rule_id, message=result.message), rule=int(rule_id.split(":")[1]))
                 # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
 
