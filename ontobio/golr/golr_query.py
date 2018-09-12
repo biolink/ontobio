@@ -669,7 +669,8 @@ class GolrLayPersonSearch(GolrSearchQuery):
     def set_lay_params(self):
         params = self.solr_params()
         suffixes = ['std', 'kw', 'eng']
-        params['qf'] = self._get_default_weights(suffixes)
+        qf = self._get_default_weights(suffixes)
+        params['qf'] = ["{}^{}".format(field, weight) for field, weight in qf.items()]
         return params
 
     def autocomplete(self):
