@@ -194,7 +194,7 @@ class Report():
 
         s = "# Group: {group} - Dataset: {dataset}\n".format(group=json["group"], dataset=json["dataset"])
         s += "\n## SUMMARY\n\n"
-        s += "This report generated on {}\n".format(datetime.date.today())
+        s += "This report generated on {}\n\n".format(datetime.date.today())
         s += "  * Associations: {}\n" . format(json["associations"])
         s += "  * Lines in file (incl headers): {}\n" . format(json["lines"])
         s += "  * Lines skipped: {}\n" . format(json["skipped_lines"])
