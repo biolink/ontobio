@@ -409,7 +409,7 @@ class GolrSearchQuery(GolrAbstractQuery):
 
         qf = self._format_query_filter(self.search_fields, suffixes)
 
-        if ":" in self.term:
+        if self.term is not None and ":" in self.term:
             qf["id_kw"] = 20
             qf["equivalent_curie_kw"] = 20
 
