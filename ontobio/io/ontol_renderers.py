@@ -398,9 +398,13 @@ class OboJsonGraphRenderer(GraphRenderer):
     
     def node_to_json(self, nid, ontol, **args):
         label = ontol.label(nid)
-        return {'id' : nid,
-                'lbl' : label,
-                'meta': ontol.node(nid).get('meta')}
+        if "include_meta" not in args or args['include_meta']:
+            return {'id' : nid,
+                    'lbl' : label,
+                    'meta': ontol.node(nid).get('meta')}
+        else:
+            return {'id' : nid,
+                'lbl' : label}
     
     def edge_to_json(self, e, ontol, **args):
         (obj,sub,meta) = e
