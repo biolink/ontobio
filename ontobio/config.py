@@ -52,6 +52,7 @@ class ConfigSchema(Schema):
     default_solr_schema = fields.Str()
     ontologies = fields.List(fields.Nested(OntologyConfigSchema))
     categories = fields.List(fields.Nested(CategorySchema))
+    taxon_restriction = fields.List(fields.Str(description="taxon restriction"))
     use_amigo_for = fields.List(fields.Str(description="category to use amigo for"))
 
     @post_load
@@ -108,7 +109,8 @@ class Config():
                  ontologies = None,
                  categories = None,
                  default_solr_schema = None,
-                 use_amigo_for = "function"):
+                 use_amigo_for = "function",
+                 taxon_restriction = None):
         self.solr_assocs = solr_assocs
         self.amigo_solr_assocs = amigo_solr_assocs
         self.solr_search = solr_search
@@ -121,6 +123,7 @@ class Config():
         self.categories = categories
         self.default_solr_schema = default_solr_schema
         self.use_amigo_for = use_amigo_for
+        self.taxon_restriction = taxon_restriction
 
         if self.ontologies is None:
             self.ontologies = []
