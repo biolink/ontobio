@@ -244,6 +244,26 @@ class Ontology():
             m[n] = list(subont.filter_redundant(ancs_in_subset))
         return m
 
+    def fill_in_relations(self, subontology):
+        """
+        Restore paths between nodes disconnected by intermediate nodes missing from subontology
+
+        :param subontology:
+        :return:
+        """
+        for term in subontology.nodes():
+            for ancestor in subontology.nodes():
+                if term == ancestor:
+                    continue
+                sub_ancestors = subontology.subontology(subontology.ancestors(term) + [term])
+                orig_ancestors = self.subontology(self.ancestors(term) + [term])
+                for rel in ['subClassOf', 'BFO:0000050']:
+                    rel_sub_ancestors = sub_ancestors.ancestors(term, relations=[rel])
+                    rel_orig_ancestors = orig_ancestors.ancestors(term, relations=[rel])
+                    if ancestor not in rel_sub_ancestors and ancestor in rel_orig_ancestors:
+                        subontology.graph.add_edge(ancestor, term, pred=rel)
+        return subontology
+
     def filter_redundant(self, ids):
         """
         Return all non-redundant ids from a list
