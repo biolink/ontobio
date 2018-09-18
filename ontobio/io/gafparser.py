@@ -22,10 +22,10 @@ class GafParser(assocparser.AssocParser):
 
         config : a AssocParserConfig object
         """
-        if config is None:
-            config = assocparser.AssocParserConfig()
         self.config = config
-        self.report = assocparser.Report(group=group, dataset=dataset)
+        if config is None:
+            self.config = assocparser.AssocParserConfig()
+        self.report = assocparser.Report(group=group, dataset=dataset, config=config)
         self.gpi = None
         if self.config.gpi_authority_path is not None:
             self.gpi = dict()
