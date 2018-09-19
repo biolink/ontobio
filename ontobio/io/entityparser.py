@@ -38,12 +38,12 @@ class EntityParser(AssocParser):
                 continue
             line = line.strip("\n")
             if line == "":
-                logging.warn("EMPTY LINE")
+                logging.warning("EMPTY LINE")
                 continue
 
             parsed_line, new_ents  = self.parse_line(line)
             if self._skipping_line(new_ents): # Skip if there were no ents
-                logging.warn("SKIPPING: {}".format(line))
+                logging.warning("SKIPPING: {}".format(line))
                 skipped.append(line)
             else:
                 ents += new_ents

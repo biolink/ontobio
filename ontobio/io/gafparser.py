@@ -25,7 +25,7 @@ class GafParser(assocparser.AssocParser):
         self.config = config
         if config is None:
             self.config = assocparser.AssocParserConfig()
-        self.report = assocparser.Report(group=group, dataset=dataset, config=config)
+        self.report = assocparser.Report(group=group, dataset=dataset, config=self.config)
         self.gpi = None
         if self.config.gpi_authority_path is not None:
             self.gpi = dict()
