@@ -211,7 +211,7 @@ class Report():
         for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
             s += "### {rule}\n\n".format(rule=rule)
             if rule != "other" and self.config.rule_titles:
-                s += "{title}\n".format(title=self.config.rule_titles.get(rule, ""))
+                s += "{title}\n\n".format(title=self.config.rule_titles.get(rule, ""))
             s += "* total: {amount}\n".format(amount=len(messages))
             if len(messages) > 0:
                 s += "#### Messages\n"
