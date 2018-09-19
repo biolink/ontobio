@@ -6,6 +6,9 @@ import requests
 import gzip
 import urllib
 import re
+import glob
+
+import yamldown
 
 from functools import wraps
 
@@ -65,6 +68,18 @@ def metadata_file(metadata, group) -> Dict:
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(metadata_yaml, str(e)))
 
+def gorule_title(metadata, rule_id) -> str:
+    gorule_yamldown = os.path.join(metadata, "rules", "{}.md".format(rule_id))
+    try:
+        with open(gorule_yamldown, "r") as gorule_data:
+            click.echo("Found {rule} at {path}".format(rule=rule_id, path=gorule_yamldown))
+            return yamldown.load(gorule_data)[0]["title"]
+    except Exception as e:
+        raise click.ClickException("Could not find or read {}: {}".format(gorule_yamldown, str(e)))
+
+def rule_id(rule_path) -> str:
+    return os.path.splitext(os.path.basename(rule_path))[0]
+
 
 def download_source_gafs(group_metadata, target_dir, exclusions=[]):
     gaf_urls = { data["dataset"]: data["source"] for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions }
@@ -123,7 +138,7 @@ def unzip(path, target):
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown"):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_titles=None):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -131,7 +146,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         filter_out_evidence=["IEA"],
         filtered_evidence_file=filtered_associations,
         gpi_authority_path=gpipath,
-        paint=paint
+        paint=paint,
+        rule_titles=rule_titles
     )
     validated_gaf_path = os.path.join(os.path.split(source_gaf)[0], "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
@@ -336,14 +352,18 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
     for source_zip, source_gaf in source_gafs.items():
         unzip(source_zip, source_gaf)
 
+    # extract the titles for the go rules, this is a dictionary comprehension
+    rule_titles = {rule_id(rule_path): gorule_title(metadata, rule_id(rule_path))
+        for rule_path in glob.glob("{}/*.md".format(os.path.join(metadata, "rules"))) if rule_id(rule_path) not in ["ABOUT", "README", "SOP"]}
+
     paint_metadata = metadata_file(absolute_metadata, "paint")
 
     for dataset in source_gaf_zips.keys():
         gafzip = source_gaf_zips[dataset]
         source_gaf = source_gafs[gafzip]
-        # TODO (Fix as part of https://github.com/geneontology/go-site/issues/642) Set paint to True when the group is "paint".
+        # Set paint to True when the group is "paint".
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group, like for paint_other.
-        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"), group=group)[0]
+        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"), group=group, rule_titles=rule_titles)[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 

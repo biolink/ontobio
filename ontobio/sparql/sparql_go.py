@@ -305,3 +305,36 @@ def userMeta(self, orcid):
     GROUP BY ?name    
     """
 
+
+def goSubsets(self, goid):
+    goid = correctGOID(self, goid)
+    return """
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX obo: <http://www.geneontology.org/formats/oboInOwl#>
+
+    SELECT ?label ?subset
+
+    WHERE {
+        BIND(<http://purl.obolibrary.org/obo/""" + goid + """> as ?goid) .
+        optional { ?goid obo:inSubset ?subset .
+                   ?subset rdfs:comment ?label } .
+    }
+    """
+
+def subsetIdIRI(self, subsetid):
+    return "http://purl.obolibrary.org/obo/go#" + subsetid
+
+def subset(self, subsetid):
+    subseturi = subsetIdIRI(self, subsetid)
+    return """
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX obo: <http://www.geneontology.org/formats/oboInOwl#>
+
+    SELECT ?goid ?label
+    WHERE {
+        BIND(<""" + subseturi + """> as ?subset) .  
+	  	?goid obo:inSubset ?subset .
+  		?goid rdfs:label ?label .
+		FILTER (lang(?label) != "en")
+    }
+    """

@@ -1610,3 +1610,76 @@ class GolrAssociationQuery(GolrAbstractQuery):
             # default to input
             return id
         return ids[0]
+
+
+
+
+
+### This may quite possibly be a temporary code, but it looks a lot simpler than the above for more customizable Solr queries
+import requests
+from enum import Enum
+
+
+## Should take those URLs from config.yaml
+class ESOLR(Enum):
+    GOLR = "http://golr-aux.geneontology.io/solr/"
+    MOLR = "https://solr.monarchinitiative.org/solr/search"
+
+class ESOLRDoc(Enum):
+    ONTOLOGY = "ontology_class"
+    ANNOTATION = "annotation"
+    BIOENTITY = "bioentity"
+
+## Respect the method name for run_sparql_on with enums
+def run_solr_on(solrInstance, category, id, fields):
+    """
+    Return the result of a solr query on the given solrInstance (Enum ESOLR), for a certain document_category (ESOLRDoc) and id
+    """
+    query = solrInstance.value + "select?q=*:*&fq=document_category:\"" + category.value + "\"&fq=id:\"" + id + "\"&fl=" + fields + "&wt=json&indent=on"
+    response = requests.get(query)
+    return response.json()['response']['docs'][0]
+
+def run_solr_text_on(solrInstance, category, q, qf, fields, optionals):
+    """
+    Return the result of a solr query on the given solrInstance (Enum ESOLR), for a certain document_category (ESOLRDoc) and id
+    """
+    if optionals == None:
+        optionals = ""
+    query = solrInstance.value + "select?q=" + q + "&qf=" + qf + "&fq=document_category:\"" + category.value + "\"&fl=" + fields + "&wt=json&indent=on" + optionals
+    # print("QUERY: ", query)
+
+    response = requests.get(query)
+    return response.json()['response']['docs']
+
+
+### Those utility functions should find their place in a common utils.py if any exists
+
+## Utility function to merge two field of a json
+def merge(json, firstField, secondField):
+    """
+    merge two fields of a json into an array of { firstField : secondField }
+    """
+    merged = []
+
+    for i in range(0, len(json[firstField])):
+        merged.append({ json[firstField][i] : json[secondField][i] })
+    return merged
+    
+## Utility function to filter out two fields of a json and give it each a new label
+def mergeWithLabels(json, firstField, firstFieldLabel, secondField, secondFieldLabel):
+    """
+    merge two fields of a json into an array of { firstFieldLabel : firstFieldLabel, secondFieldLabel : secondField }
+    """
+    merged = []
+
+    for i in range(0, len(json[firstField])):
+        merged.append({ firstFieldLabel : json[firstField][i],
+                        secondFieldLabel : json[secondField][i] })
+    return merged
+
+## Utility function to replace in a specific <field> an <old> string by a <new> string
+def replace(json, field, old, new):
+    for i in range(0, len(json)):
+        if json[i][field]:
+            json[i][field] = json[i][field].replace(old, new)
+    return json

@@ -20,7 +20,7 @@ class HpoaParser(AssocParser):
         """
 
         self.config = config
-        self.report = assocparser.Report()
+        self.report = assocparser.Report(config=self.config)
 
     def skim(self, file):
         file = self._ensure_file(file)

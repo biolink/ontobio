@@ -28,4 +28,11 @@ ontologies:
   - id: magic1234
     handle: pato
     pre_load: true
-
+# taxon_restriction: 
+#   - NCBITaxon:10090
+#   - NCBITaxon:9606
+#   - NCBITaxon:10116
+#   - NCBITaxon:559292
+#   - NCBITaxon:6239
+#   - NCBITaxon:7955
+#   - NCBITaxon:7227

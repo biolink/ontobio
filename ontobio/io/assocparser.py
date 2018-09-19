@@ -72,7 +72,8 @@ class AssocParserConfig():
                  filter_out_evidence=None,
                  filtered_evidence_file=None,
                  gpi_authority_path=None,
-                 paint=False):
+                 paint=False,
+                 rule_titles=None):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -87,6 +88,8 @@ class AssocParserConfig():
         self.filtered_evidence_file = filtered_evidence_file
         self.gpi_authority_path = gpi_authority_path
         self.paint = paint
+        self.rule_titles = rule_titles
+        # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
             self.exclude_relations = []
         if self.include_relations is None:
@@ -126,12 +129,13 @@ class Report():
     """
     LEVELS = [FATAL, ERROR, WARNING]
 
-    def __init__(self, group="unknown", dataset="unknown"):
+    def __init__(self, group="unknown", dataset="unknown", config=None):
         self.messages = []
         self.n_lines = 0
         self.n_assocs = 0
         self.skipped = 0
         self.reporter = parsereport.Report(group, dataset)
+        self.config = config
 
     def error(self, line, type, obj, msg="", taxon="", rule=None):
         self.message(self.ERROR, line, type, obj, msg, taxon=taxon, rule=rule)
@@ -198,16 +202,16 @@ class Report():
         s += "  * Associations: {}\n" . format(json["associations"])
         s += "  * Lines in file (incl headers): {}\n" . format(json["lines"])
         s += "  * Lines skipped: {}\n" . format(json["skipped_lines"])
+        ## Table of Contents
         s += "\n## Contents\n\n"
         for rule, messages in sorted(json["messages"].items(), key=lambda t: t[0]):
-            if rule == "other":
-                s += "[{rule}](#{rule})\n\n".format(rule=rule)
-            else:
-                s += "({num}) [{rule}](#{rule})\n\n".format(num=int(rule.split("-")[1]), rule=rule)
+            s += "[{rule}](#{rule})\n\n".format(rule=rule)
 
         s += "\n## MESSAGES\n\n"
         for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
             s += "### {rule}\n\n".format(rule=rule)
+            if rule != "other" and self.config.rule_titles:
+                s += "{title}\n".format(title=self.config.rule_titles.get(rule, ""))
             s += "* total: {amount}\n".format(amount=len(messages))
             if len(messages) > 0:
                 s += "#### Messages\n"
