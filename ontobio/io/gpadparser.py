@@ -12,7 +12,7 @@ class GpadParser(assocparser.AssocParser):
 
     ANNOTATION_CLASS_COLUMN=3
 
-    def __init__(self,config=assocparser.AssocParserConfig()):
+    def __init__(self, config=assocparser.AssocParserConfig()):
         """
         Arguments:
         ---------
@@ -20,7 +20,7 @@ class GpadParser(assocparser.AssocParser):
         config : a AssocParserConfig object
         """
         self.config = config
-        self.report = assocparser.Report()
+        self.report = assocparser.Report(config=self.config)
 
     def skim(self, file):
         file = self._ensure_file(file)

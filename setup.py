@@ -46,7 +46,7 @@ setuptools.setup(
     install_requires=[
         'networkx==1.11',
         'jsobject',
-        'pyyaml',
+        'pyyaml==3.12',
         'pysolr',
         'requests',
         'sparqlwrapper',
@@ -55,7 +55,8 @@ setuptools.setup(
         'marshmallow==3.0.0b3',
         'scipy',
         'pandas',
-        'click'
+        'click',
+        'yamldown'
     ],
 
     # List additional groups of dependencies here (e.g. development
