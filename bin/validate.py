@@ -306,8 +306,12 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
         mod_header, mod_annotations = header_and_annotations(mod)
         paint_header, paint_annotations = header_and_annotations(paint)
 
-        the_header = mod_header + ["!", "!Paint Header copied from {}".format(os.path.basename(paint_gaf_path))] + ["!================================="]
-        the_header += paint_header[7:]
+        the_header = mod_header + \
+            ["!=================================",
+            "!",
+            "!Paint Header copied from {}".format(os.path.basename(paint_gaf_path)),
+            "!================================="]
+        the_header += paint_header[8:] + ["!================================="]
 
         all_lines = the_header + mod_annotations + paint_annotations
 
