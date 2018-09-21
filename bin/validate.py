@@ -151,7 +151,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
     )
     validated_gaf_path = os.path.join(os.path.split(source_gaf)[0], "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
-    gafwriter = GafWriter(file=outfile)
+    gafwriter = GafWriter(file=outfile, source=dataset)
 
     click.echo("Validating source GAF: {}".format(source_gaf))
     parser = GafParser(config=config, group=group, dataset=dataset)
@@ -309,7 +309,7 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
         the_header = mod_header + \
             ["!=================================",
             "!",
-            "!Paint Header copied from {}".format(os.path.basename(paint_gaf_path)),
+            "!PAINT Header copied from {}".format(os.path.basename(paint_gaf_path)),
             "!================================="]
         the_header += paint_header[8:] + ["!================================="]
 
