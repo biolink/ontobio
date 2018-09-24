@@ -151,7 +151,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
     )
     validated_gaf_path = os.path.join(os.path.split(source_gaf)[0], "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
-    gafwriter = GafWriter(file=outfile)
+    gafwriter = GafWriter(file=outfile, source=dataset)
 
     click.echo("Validating source GAF: {}".format(source_gaf))
     parser = GafParser(config=config, group=group, dataset=dataset)
@@ -299,9 +299,6 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
 
         return (headers, annotations)
 
-    def make_paint_header(header, filename: str):
-        return ["! merged_from " + os.path.basename(filename) + ": " + line.split("!")[1].strip() for line in header if not re.match("![\s]*gaf.?version", line) ]
-
     dirs, name = os.path.split(mod_gaf_path)
     merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
     click.echo("Merging paint into base annotations at {}".format(merged_path))
@@ -309,7 +306,18 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
         mod_header, mod_annotations = header_and_annotations(mod)
         paint_header, paint_annotations = header_and_annotations(paint)
 
-        all_lines = mod_header + make_paint_header(paint_header, paint_gaf_path) + mod_annotations + paint_annotations
+        the_header = mod_header + \
+            ["!=================================",
+            "!",
+            "!PAINT Header copied from {}".format(os.path.basename(paint_gaf_path)),
+            "!================================="]
+        the_header += paint_header[8:] + \
+            ["!=================================",
+            "!",
+            "!Documentation about this header can be found here: https://github.com/geneontology/go-site/blob/master/docs/gaf_validation.md",
+            "!"]
+
+        all_lines = the_header + mod_annotations + paint_annotations
 
         with open(merged_path, "w") as merged_file:
             merged_file.write("\n".join(all_lines))
