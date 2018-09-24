@@ -311,7 +311,11 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
             "!",
             "!PAINT Header copied from {}".format(os.path.basename(paint_gaf_path)),
             "!================================="]
-        the_header += paint_header[8:] + ["!================================="]
+        the_header += paint_header[8:] + \
+            ["!=================================",
+            "!",
+            "!Documentation about this header can be found here: https://github.com/geneontology/go-site/blob/master/docs/gaf_validation.md",
+            "!"]
 
         all_lines = the_header + mod_annotations + paint_annotations
 
