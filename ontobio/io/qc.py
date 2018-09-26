@@ -52,6 +52,29 @@ class GoRule11(GoRule):
             return TestResult(result(True, self.fail_mode), self.title)
 
 
+class GoRule16(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", FailMode.SOFT)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        evidence = annotation[6]
+        withfrom = self._list_terms(annotation[7])
+
+        if evidence == "IC":
+            only_go = [t for t in withfrom if t.startswith("GO:")] # Filter terms that aren't GO terms
+            return TestResult(result(len(only_go) >= 1, self.fail_mode), self.title)
+
+        else:
+            return TestResult(result(True, self.fail_mode), self.title)
+
+    def _list_terms(self, pipe_separated):
+        terms = pipe_separated.split("|")
+        terms = [t for t in terms if t != ""] # Remove empty strings
+        return terms
+
+
+
 class GoRule26(GoRule):
 
     def __init__(self):
@@ -85,6 +108,7 @@ class GoRule29(GoRule):
 
 GoRules = enum.Enum("GoRules", {
     "GoRule11": GoRule11(),
+    "GoRule16": GoRule16(),
     "GoRule26": GoRule26(),
     "GoRule29": GoRule29()
 })

@@ -41,6 +41,59 @@ def test_go_rule11():
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+def test_go_rule_16():
+    # No GO term w/ID
+    a = ["blah"] * 16
+    a[6] = "IC"
+    a[7] = "BLAH:12345"
+
+    test_result = qc.GoRule16().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    # withfrom has GO term
+    a = ["blah"] * 16
+    a[6] = "IC"
+    a[7] = "GO:12345"
+
+    test_result = qc.GoRule16().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    # Pipe
+    a = ["blah"] * 16
+    a[6] = "IC"
+    a[7] = "GO:12345|BLAH:54321"
+
+    test_result = qc.GoRule16().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    # Empty withfrom
+    a = ["blah"] * 16
+    a[6] = "IC"
+    a[7] = ""
+
+    test_result = qc.GoRule16().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    # Not IC
+    a = ["blah"] * 16
+    a[6] = "GOT"
+    a[7] = "BLAH:5555555|FOO:999999"
+
+    test_result = qc.GoRule16().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+def test_go_rule_16_list_terms():
+    gr16 = qc.GoRule16()
+
+    withfrom = "GO:12345"
+    assert gr16._list_terms(withfrom) == ["GO:12345"]
+
+    withfrom = ""
+    assert gr16._list_terms(withfrom) == []
+
+    withfrom = "GO:12345|GO:2223334"
+    assert gr16._list_terms(withfrom) == ["GO:12345", "GO:2223334"]
+
 def test_go_rule26():
 
     config = assocparser.AssocParserConfig(
@@ -107,7 +160,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config)
-    assert len(test_results.keys()) == 3
+    assert len(test_results.keys()) == 4
     assert test_results["GORULE:0000026"].result_type == qc.ResultType.PASS
     assert test_results["GORULE:0000029"].result_type == qc.ResultType.PASS
 
