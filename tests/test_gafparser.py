@@ -169,9 +169,18 @@ def test_validate_go_idspaces():
 #POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
 
 def test_qualifiers_gaf():
-    parse_with2(QGAF, GafParser())
-#def test_qualifiers_gpad():
-#    parse_with2(POMBASE_GPAD, GpadParser())
+    ont = OntologyFactory().create(ONT)
+
+    p = GafParser()
+    p.config.ontology = ont
+    assocs = p.parse(open(QGAF, "r"), skipheader=True)
+    neg_assocs = [a for a in assocs if a['negated'] == True]
+    assert len(neg_assocs) == 3
+    for a in assocs:
+        print('REL: {}'.format(a['relation']))
+    assert len([a for a in assocs if a['relation']['id'] == 'involved_in']) == 1
+    assert len([a for a in assocs if a['relation']['id'] == 'contributes_to']) == 1
+
 
 def parse_with2(f, p):
     ont = OntologyFactory().create(ONT)
