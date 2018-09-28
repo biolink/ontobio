@@ -46,6 +46,18 @@ def test_empty_pre_colon():
     assert len(parser.report.messages) == 1
     assert parser.report.messages[0]["level"] == assocparser.Report.ERROR
 
+def test_validate_with_allowed_ids():
+    parser = gafparser.GafParser()
+    valid = parser._validate_id("FOO:123", assocparser.SplitLine("", [""]*17, "taxon:foo"), allowed_ids=["FOO"])
+    assert valid
+
+def test_validate_with_disallowed_id():
+    parser = gafparser.GafParser()
+    valid = parser._validate_id("FOO:123", assocparser.SplitLine("", [""]*17, "taxon:foo"), allowed_ids=["BAR"])
+    assert not valid
+    assert len(parser.report.messages) == 1
+    assert parser.report.messages[0]["level"] == assocparser.Report.WARNING
+
 def test_validate_pipe_separated():
     parser = gafparser.GafParser()
     ids = parser.validate_pipe_separated_ids("PMID:12345", assocparser.SplitLine("", [""] * 17, "taxon:foo"))

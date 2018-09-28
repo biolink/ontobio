@@ -52,6 +52,8 @@ class GafParser(assocparser.AssocParser):
             if len(vals) < 15:
                 logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
+            split_line = assocparser.SplitLine(line=line, values=vals, taxon=vals[12])
+
             negated, relation, _ = self._parse_qualifier(vals[3], vals[8])
 
             # never include NOTs in a skim
@@ -60,7 +62,7 @@ class GafParser(assocparser.AssocParser):
             if self._is_exclude_relation(relation):
                 continue
             id = self._pair_to_id(vals[0], vals[1])
-            if not self._validate_id(id, line, ENTITY):
+            if not self._validate_id(id, split_line, context=ENTITY):
                 continue
             n = vals[2]
             t = vals[4]
@@ -151,12 +153,15 @@ class GafParser(assocparser.AssocParser):
             self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=taxon, rule=1)
             return assocparser.ParseResult(line, [], True)
 
+        if self.config.group_idspace is not None and assigned_by not in self.config.group_idspace:
+            self.report.warning(line, Report.INVALID_ID, assigned_by,
+                "GORULE:0000027: assigned_by is not present in groups reference", taxon=taxon, rule=27)
+
         ## --
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, split_line, ENTITY):
-            print("skipping because {} not validated!".format(id))
+        if not self._validate_id(id, split_line, allowed_ids=self.config.entity_idspaces):
             return assocparser.ParseResult(line, [], True)
 
         # Using a given gpi file to validate the gene object
@@ -168,7 +173,7 @@ class GafParser(assocparser.AssocParser):
                 db_object_synonym = entity["synonyms"]
                 db_object_type = entity["type"]
 
-        if not self._validate_id(goid, split_line, ANNOTATION):
+        if not self._validate_id(goid, split_line, context=ANNOTATION):
             print("skipping because {} not validated!".format(goid))
             return assocparser.ParseResult(line, [], True)
 

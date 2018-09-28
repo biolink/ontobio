@@ -19,7 +19,7 @@ import datetime
 import dateutil.parser
 
 from collections import namedtuple
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Set
 
 from ontobio import ontol
 from ontobio import ecomap
@@ -66,6 +66,7 @@ class AssocParserConfig():
                  valid_taxa=None,
                  class_idspaces=None,
                  entity_idspaces=None,
+                 group_idspace=None,
                  ecomap=ecomap.EcoMap(),
                  exclude_relations=None,
                  include_relations=None,
@@ -73,7 +74,8 @@ class AssocParserConfig():
                  filtered_evidence_file=None,
                  gpi_authority_path=None,
                  paint=False,
-                 rule_titles=None):
+                 rule_titles=None,
+                 dbxrefs=None):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -89,6 +91,9 @@ class AssocParserConfig():
         self.gpi_authority_path = gpi_authority_path
         self.paint = paint
         self.rule_titles = rule_titles
+
+        self.entity_idspaces = None if entity_idspaces is None else set(entity_idspaces)
+        self.group_idspace = None if group_idspace is None else set(group_idspace)
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
             self.exclude_relations = []
@@ -110,6 +115,7 @@ class Report():
 
     # Warnings: TODO link to gorules
     INVALID_ID = "Invalid identifier"
+    INVALID_ID_DBXREF = "ID or symbol not present in DB xrefs file"
     UNKNOWN_ID = "Unknown identifier"
     INVALID_IDSPACE = "Invalid identifier prefix"
     INVALID_TAXON = "Invalid taxon"
@@ -172,7 +178,7 @@ class Report():
 
         self.n_lines += 1
         if result.skipped:
-            logging.info("SKIPPING: {}".format(result.parsed_line))
+            logging.info("SKIPPING (assocparser): {}".format(result.parsed_line))
             self.skipped += 1
         else:
             self.add_associations(result.associations)
@@ -434,15 +440,15 @@ class AssocParser(object):
                 rb = ont.replaced_by(id, strict=False)
                 if len(rb) == 1:
                     # We can repair
-                    self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired",
+                    self.report.warning(line.line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020, but was repaired",
                         taxon=line.taxon, rule=20)
                     id = rb[0]
                 else:
-                    self.report.warning(line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020",
+                    self.report.warning(line.line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020",
                         taxon=line.taxon, rule=20)
                     id = None
             else:
-                self.report.warning(line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
+                self.report.warning(line.line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
                     taxon=line.taxon, rule=20)
                 id = None
 
@@ -476,7 +482,7 @@ class AssocParser(object):
 
     non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z]")
 
-    def _validate_id(self, id, line: SplitLine, context=None):
+    def _validate_id(self, id, line: SplitLine, allowed_ids=None, context=None):
 
         # we assume that cardinality>1 fields have been split prior to this
         if id.find("|") > -1:
@@ -495,12 +501,17 @@ class AssocParser(object):
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: Empty ID", rule=27)
             return False
 
-        idspace = self._get_id_prefix(id)
+        id_prefix = self._get_id_prefix(id)
+
+        if allowed_ids is not None and id_prefix not in allowed_ids:
+            self.report.warning(line.line, Report.INVALID_ID_DBXREF, id_prefix, "allowed: {}".format(allowed_ids), rule=27)
+            return False
+
         # ensure that the ID space of the annotation class (e.g. GO)
         # conforms to what is expected
         if context == ANNOTATION and self.config.class_idspaces is not None:
-            if idspace not in self.config.class_idspaces:
-                self.report.error(line.line, Report.INVALID_IDSPACE, id, "allowed: {}".format(self.config.class_idspaces), rule=27)
+            if id_prefix not in self.config.class_idspaces:
+                self.report.error(line.line, Report.INVALID_IDSPACE, id_prefix, "allowed: {}".format(self.config.class_idspaces), rule=27)
                 return False
 
         return True
@@ -535,7 +546,7 @@ class AssocParser(object):
 
     def _taxon_id(self, id, line: SplitLine):
         id = id.replace('taxon', 'NCBITaxon')
-        valid = self._validate_id(id, line, TAXON)
+        valid = self._validate_id(id, line, context=TAXON)
         if valid:
             return id
         else:
@@ -606,7 +617,7 @@ class AssocParser(object):
             return None
         (p,v) = tuples[0]
 
-        if self._validate_id(v, line, EXTENSION):
+        if self._validate_id(v, line, context=EXTENSION):
             return {
                 'property':p,
                 'filler':v
