@@ -22,7 +22,7 @@ from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
 from ontobio.rdfgen import assoc_rdfgen
 
-from typing import Dict
+from typing import Dict, Set
 
 def thispath():
     os.path.normpath(os.path.abspath(__file__))
@@ -134,11 +134,34 @@ def unzip(path, target):
         with click.progressbar(iterable=chunk_gen()) as chunks:
             for chunk in chunks:
                 tf.write(chunk)
+
+def database_entities(metadata) -> Set[str]:
+    dbxrefs_path = os.path.join(os.path.abspath(metadata), "db-xrefs.yaml")
+    try:
+        with open(dbxrefs_path, "r") as db_xrefs_file:
+            click.echo("Found db-xrefs at {path}".format(path=dbxrefs_path))
+            dbxrefs = yaml.load(db_xrefs_file)
+    except Exception as e:
+        raise click.ClickException("Could not find or read {}: {}".format(dbxrefs_path, str(e)))
+
+    return set([entity["database"] for entity in dbxrefs])
+
+def groups(metadata) -> Set[str]:
+    groups_path = os.path.join(os.path.abspath(metadata), "groups.yaml")
+    try:
+        with open(groups_path, "r") as groups_file:
+            click.echo("Found groups at {path}".format(path=groups_path))
+            groups_list = yaml.load(groups_file)
+    except Exception as e:
+        raise click.ClickException("Could not find or read {}: {}".format(groups_path, str(e)))
+
+    return set([group["shorthand"] for group in groups_list])
+
 """
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_titles=None):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_titles=None, db_entities=None, group_idspace=None):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -147,7 +170,9 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         filtered_evidence_file=filtered_associations,
         gpi_authority_path=gpipath,
         paint=paint,
-        rule_titles=rule_titles
+        rule_titles=rule_titles,
+        entity_idspaces=db_entities,
+        group_idspace=group_idspace
     )
     validated_gaf_path = os.path.join(os.path.split(source_gaf)[0], "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
@@ -365,13 +390,15 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
         for rule_path in glob.glob("{}/*.md".format(os.path.join(metadata, "rules"))) if rule_id(rule_path) not in ["ABOUT", "README", "SOP"]}
 
     paint_metadata = metadata_file(absolute_metadata, "paint")
+    db_entities = database_entities(absolute_metadata)
+    group_ids = groups(absolute_metadata)
 
     for dataset in source_gaf_zips.keys():
         gafzip = source_gaf_zips[dataset]
         source_gaf = source_gafs[gafzip]
         # Set paint to True when the group is "paint".
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group, like for paint_other.
-        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"), group=group, rule_titles=rule_titles)[0]
+        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"), group=group, rule_titles=rule_titles, db_entities=db_entities, group_idspace=group_ids)[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 

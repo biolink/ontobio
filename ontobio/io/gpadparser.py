@@ -43,7 +43,7 @@ class GpadParser(assocparser.AssocParser):
 
 
             id = self._pair_to_id(vals[0], vals[1])
-            if not self._validate_id(id, line, ENTITY):
+            if not self._validate_id(id, line, context=ENTITY):
                 continue
             t = vals[3]
             tuples.append( (id,None,t) )
@@ -98,10 +98,10 @@ class GpadParser(assocparser.AssocParser):
         split_line = assocparser.SplitLine(line=line, values=vals, taxon=interacting_taxon_id)
 
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, split_line, ENTITY):
+        if not self._validate_id(id, split_line, context=ENTITY):
             return assocparser.ParseResult(line, [], True)
 
-        if not self._validate_id(goid, split_line, ANNOTATION):
+        if not self._validate_id(goid, split_line, context=ANNOTATION):
             return assocparser.ParseResult(line, [], True)
 
         valid_goid = self._validate_ontology_class_id(goid, split_line)
@@ -115,7 +115,7 @@ class GpadParser(assocparser.AssocParser):
             self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty")
             return assocparser.ParseResult(line, [], True)
 
-        self._validate_id(evidence, split_line, None)
+        self._validate_id(evidence, split_line)
         #TODO: ecomap is currently one-way only
         #ecomap = self.config.ecomap
         #if ecomap != None:
