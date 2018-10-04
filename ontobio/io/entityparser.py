@@ -121,7 +121,7 @@ class GpiParser(EntityParser):
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, split_line, ENTITY):
+        if not self._validate_id(id, split_line, context=ENTITY):
             return line, []
 
         ## --
@@ -138,7 +138,7 @@ class GpiParser(EntityParser):
         else:
             parents = [self._normalize_id(x) for x in parents]
             for p in parents:
-                self._validate_id(p, split_line, ENTITY)
+                self._validate_id(p, split_line, context=ENTITY)
 
         xref_ids = xrefs.split("|")
         if xrefs == "":

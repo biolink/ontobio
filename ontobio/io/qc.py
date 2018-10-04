@@ -34,6 +34,28 @@ class GoRule(object):
         self.title = title
         self.fail_mode = fail_mode
 
+    def _list_terms(self, pipe_separated):
+        terms = pipe_separated.split("|")
+        terms = [t for t in terms if t != ""] # Remove empty strings
+        return terms
+
+    def _result(self, passes: bool) -> TestResult:
+        return TestResult(result(passes, self.fail_mode), self.title)
+
+class GoRule02(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000002", "No 'NOT' annotations to 'protein binding ; GO:0005515'", FailMode.SOFT)
+
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+
+        qualifier = self._list_terms(annotation[3])
+        goclass = annotation[4]
+
+        fails = (goclass == "GO:0005515" and "NOT" in qualifier)
+        return self._result(not fails)
+
 
 class GoRule08(GoRule):
 
@@ -73,10 +95,8 @@ class GoRule11(GoRule):
         evidence = annotation[6]
 
         # If we see a bad evidence, and we're not in a paint file then fail.
-        if evidence == "ND" and goclass not in self.root_go_classes:
-            return TestResult(result(False, self.fail_mode), self.title)
-        else:
-            return TestResult(result(True, self.fail_mode), self.title)
+        fails = (evidence == "ND" and goclass not in self.root_go_classes)
+        return self._result(not fails)
 
 
 class GoRule16(GoRule):
@@ -95,11 +115,34 @@ class GoRule16(GoRule):
         else:
             return TestResult(result(True, self.fail_mode), self.title)
 
-    def _list_terms(self, pipe_separated):
-        terms = pipe_separated.split("|")
-        terms = [t for t in terms if t != ""] # Remove empty strings
-        return terms
 
+class GoRule17(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000017", "IDA annotations must not have a With/From entry", FailMode.SOFT)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        evidence = annotation[6]
+        withfrom = annotation[7]
+
+        if evidence == "IDA":
+            return self._result(not bool(withfrom))
+        else:
+            return self._result(True)
+
+class GoRule18(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000018", "IPI annotations require a With/From entry", FailMode.SOFT)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        evidence = annotation[6]
+        withfrom = annotation[7]
+
+        if evidence == "IPI":
+            return self._result(bool(withfrom))
+        else:
+            return self._result(True)
 
 
 class GoRule26(GoRule):
@@ -111,40 +154,56 @@ class GoRule26(GoRule):
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         evidence = annotation[6]
         # If we see a bad evidence, and we're not in a paint file then fail.
-        if evidence in self.offending_evidence and not config.paint:
-            return TestResult(result(False, self.fail_mode), self.title)
-        else:
-            return TestResult(result(True, self.fail_mode), self.title)
+        fails = (evidence in self.offending_evidence and not config.paint)
+        return self._result(not fails)
+
 
 class GoRule29(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000029", "All IEAs over a year old are removed", FailMode.HARD)
+        self.one_year = datetime.timedelta(days=365)
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         evidence = annotation[6]
-        annotation_date = annotation[13]
+        date = annotation[13]
 
         now = datetime.datetime.today()
 
-        if evidence == "IEA" and now - datetime.datetime.strptime(annotation_date, "%Y%m%d") > datetime.timedelta(days=365):
-            return TestResult(result(False, self.fail_mode), self.title)
-        else:
-            return TestResult(result(True, self.fail_mode), self.title)
+        fails = (evidence == "IEA" and now - datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0) > self.one_year)
+        return self._result(not fails)
+
+
+class GoRule30(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000030", "Deprecated GO_REFs are not allowed", FailMode.HARD)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        references = self._list_terms(annotation[5])
+        # Not allowed is GO_REF:0000033 and GO_PAINT:x
+        has_goref_33 = "GO_REF:0000033" in references
+        has_go_paint = any([r.startswith("GO_PAINT") for r in references])
+        # don't accept either of has_goref_33 or has_go_paint
+        return self._result(not (has_goref_33 or has_go_paint))
 
 
 GoRules = enum.Enum("GoRules", {
-    "GoRule08": GoRule08(),
+    "GoRule08": GoRule02(),
+    "GoRule02": GoRule08(),
     "GoRule11": GoRule11(),
     "GoRule16": GoRule16(),
+    "GoRule17": GoRule17(),
+    "GoRule18": GoRule18(),
     "GoRule26": GoRule26(),
-    "GoRule29": GoRule29()
+    "GoRule29": GoRule29(),
+    "GoRule30": GoRule30()
 })
 
-def test_go_rules(annotation: List, ontology: ontol.Ontology) -> Dict[str, TestResult]:
+def test_go_rules(annotation: List, config: assocparser.AssocParserConfig) -> Dict[str, TestResult]:
     all_results = {}
     for rule in list(GoRules):
-        result = rule.value.test(annotation, ontology)
+        result = rule.value.test(annotation, config)
         all_results[rule.value.id] = result
 
     return all_results

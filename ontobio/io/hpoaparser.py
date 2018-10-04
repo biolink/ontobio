@@ -40,7 +40,7 @@ class HpoaParser(AssocParser):
             if self._is_exclude_relation(relation):
                 continue
             id = self._pair_to_id(vals[0], vals[1])
-            if not self._validate_id(id, line, ENTITY):
+            if not self._validate_id(id, line, context=ENTITY):
                 continue
             n = vals[2]
             t = vals[4]
@@ -108,10 +108,10 @@ class HpoaParser(AssocParser):
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, split_line, ENTITY):
+        if not self._validate_id(id, split_line, context=ENTITY):
             return assocparser.ParseResult(line, [], True)
 
-        if not self._validate_id(hpoid, split_line, ANNOTATION):
+        if not self._validate_id(hpoid, split_line, context=ANNOTATION):
             return assocparser.ParseResult(line, [], True)
 
         valid_hpoid = self._validate_ontology_class_id(hpoid, split_line)
