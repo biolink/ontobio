@@ -57,6 +57,33 @@ class GoRule02(GoRule):
         return self._result(not fails)
 
 
+class GoRule08(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000008", "No annotations should be made to uninformatively high level terms", FailMode.SOFT)
+        self.do_not_annotate = None
+        self.do_not_manually_annotate = None
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        # Cache the subsets
+        if self.do_not_annotate is None and config.ontology is not None:
+            self.do_not_annotate = set(config.ontology.extract_subset("gocheck_do_not_annotate"))
+            self.do_not_manually_annotate = set(config.ontology.extract_subset("gocheck_do_not_manually_annotate"))
+        elif self.do_not_annotate is None and config.ontology is None:
+            self.do_not_annotate = []
+            self.do_not_manually_annotate = []
+
+        goid = annotation[4]
+        evidence = annotation[6]
+
+        auto_annotated = goid in self.do_not_annotate
+        manually_annotated = evidence != "IEA" and goid in self.do_not_manually_annotate
+        not_high_level = not (auto_annotated or manually_annotated)
+
+        t = result(not_high_level, self.fail_mode)
+        return TestResult(t, self.title)
+
+
 class GoRule11(GoRule):
 
     def __init__(self):
@@ -162,7 +189,8 @@ class GoRule30(GoRule):
 
 
 GoRules = enum.Enum("GoRules", {
-    "GoRule02": GoRule02(),
+    "GoRule08": GoRule02(),
+    "GoRule02": GoRule08(),
     "GoRule11": GoRule11(),
     "GoRule16": GoRule16(),
     "GoRule17": GoRule17(),

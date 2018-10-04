@@ -33,6 +33,33 @@ def test_go_rule02():
     test_result = qc.GoRule02().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+def test_go_rule08():
+    a = ["blah"] * 16
+    a[4] = "GO:0006810" # do not annotate
+    a[6] = "IEA"
+
+    test_result = qc.GoRule08().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    a[6] = "IC"
+    test_result = qc.GoRule08().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    a[4] = "GO:0007049" # do not manually annotate
+    # evidence is IC, non IEA
+    test_result = qc.GoRule08().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    a[6] = "IEA"
+    # IEA, but on not manual, so should pass
+    test_result = qc.GoRule08().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[4] = "GO:0034655" # neither
+    a[6] = "IC"
+    test_result = qc.GoRule08().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+
 def test_go_rule11():
     a = ["blah"] * 16
     a[4] = "GO:0003674"
@@ -224,7 +251,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config)
-    assert len(test_results.keys()) == 8
+    assert len(test_results.keys()) == 9
     assert test_results["GORULE:0000026"].result_type == qc.ResultType.PASS
     assert test_results["GORULE:0000029"].result_type == qc.ResultType.PASS
 
