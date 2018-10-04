@@ -16,6 +16,23 @@ def test_result():
     assert qc.result(False, qc.FailMode.HARD) == qc.ResultType.ERROR
     assert qc.result(False, qc.FailMode.SOFT) == qc.ResultType.WARNING
 
+def test_go_rule02():
+    a = ["blah"] * 16
+    a[3] = "NOT"
+    a[4] = "GO:0005515"
+
+    test_result = qc.GoRule02().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    a[3] = ""
+    test_result = qc.GoRule02().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[3] = "NOT"
+    a[4] = "GO:0003674"
+    test_result = qc.GoRule02().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
 def test_go_rule11():
     a = ["blah"] * 16
     a[4] = "GO:0003674"
@@ -94,6 +111,34 @@ def test_go_rule_16_list_terms():
     withfrom = "GO:12345|GO:2223334"
     assert gr16._list_terms(withfrom) == ["GO:12345", "GO:2223334"]
 
+def test_go_rule_17():
+    # IDA with anything in withfrom
+    a = ["blah"] * 16
+    a[6] = "IDA"
+    a[7] = "BLAH:12345"
+
+    test_result = qc.GoRule17().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    # Nothing in withfrom, passes
+    a[7] = ""
+    test_result = qc.GoRule17().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+def test_go_rule_18():
+    # IDA with nothing in withfrom
+    a = ["blah"] * 16
+    a[6] = "IPI"
+    a[7] = ""
+
+    test_result = qc.GoRule18().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    # Something in withfrom, passes
+    a[7] = "BLAH:12345"
+    test_result = qc.GoRule18().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
 def test_go_rule26():
 
     config = assocparser.AssocParserConfig(
@@ -147,6 +192,25 @@ def test_go_rule29():
     test_result = qc.GoRule29().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+def test_gorule30():
+    a = ["blah"] * 16
+    a[5] = "GO_REF:0000033"
+
+    test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    a[5] = "GO_PAINT:0000000"
+    test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    a[5] = "FOO:123|GO_REF:0000033"
+    test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    a[5] = "FOO:123"
+    test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
 
 def test_all_rules():
     # pass
@@ -160,7 +224,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config)
-    assert len(test_results.keys()) == 4
+    assert len(test_results.keys()) == 8
     assert test_results["GORULE:0000026"].result_type == qc.ResultType.PASS
     assert test_results["GORULE:0000029"].result_type == qc.ResultType.PASS
 
