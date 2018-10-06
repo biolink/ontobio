@@ -49,6 +49,7 @@ class ConfigSchema(Schema):
     scigraph_ontology = fields.Nested(EndpointSchema)
     lay_person_search = fields.Nested(EndpointSchema)
     scigraph_data = fields.Nested(EndpointSchema)
+    owlsim2 = fields.Nested(EndpointSchema)
     default_solr_schema = fields.Str()
     ontologies = fields.List(fields.Nested(OntologyConfigSchema))
     categories = fields.List(fields.Nested(CategorySchema))
@@ -106,6 +107,7 @@ class Config():
                  sparql = None,
                  scigraph_ontology = None,
                  scigraph_data = None,
+                 owlsim2 = None,
                  ontologies = None,
                  categories = None,
                  default_solr_schema = None,
@@ -119,6 +121,7 @@ class Config():
         self.sparql = sparql
         self.scigraph_ontology = scigraph_ontology
         self.scigraph_data = scigraph_data
+        self.owlsim2 = owlsim2
         self.ontologies = ontologies
         self.categories = categories
         self.default_solr_schema = default_solr_schema

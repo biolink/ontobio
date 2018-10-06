@@ -6,3 +6,6 @@ class Categories(Enum):
     genotype = 'genotype'
     disease = 'disease'
     phenotype = 'phenotype'
+    variant = 'variant'
+    genotype = 'genotype'
+    model = 'model'

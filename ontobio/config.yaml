@@ -22,6 +22,9 @@ scigraph_ontology:
 scigraph_data:
   url: "https://scigraph-data.monarchinitiative.org/scigraph/"
   timeout: 2
+owlsim2:
+  url: "https://monarchinitiative.org/owlsim/"
+  timeout: 2
 use_amigo_for:
   - function
 ontologies:
