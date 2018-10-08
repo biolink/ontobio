@@ -89,3 +89,8 @@ def test_validate_pipe_with_additional_delims():
 
     result = parser.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:1990578\tGO_REF:0000024\tISO\tUniProtKB:Q9CXD9|ensembl:ENSMUSP00000038569,PMID:11111\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20150305\tPomBase\t\t")
     assert set(result.associations[0]["evidence"]["with_support_from"]) == set(["UniProtKB:Q9CXD9", "ensembl:ENSMUSP00000038569", "PMID:11111"])
+
+def test_doi_id():
+    parser = gafparser.GafParser()
+    valid = parser._validate_id("DOI:10.1007/BF00127499", assocparser.SplitLine("", [""]*17, "taxon:foo"))
+    assert valid

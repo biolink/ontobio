@@ -492,7 +492,8 @@ class AssocParser(object):
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: must be CURIE/prefixed ID", rule=27)
             return False
 
-        if AssocParser.non_id_regex.search(id.split(":")[1]):
+        # we won't check IDs with doi prefix, everything else we want to check
+        if not id.lower().startswith("doi") and AssocParser.non_id_regex.search(id.split(":")[1]):
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: contains non letter, non number character, or spaces", rule=27)
             return False
 
