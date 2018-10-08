@@ -480,28 +480,29 @@ class AssocParser(object):
             self.report.warning(line.line, Report.INVALID_SYMBOL, symbol, "GORULE:0000027: symbol is empty",
                 taxon=line.taxon, rule=27)
 
-    non_id_regex = re.compile("[^\.:_\-0-9a-zA-Z]")
+    non_id_regex = re.compile(r"[^\.:_\-0-9a-zA-Z]")
+    doi_regex = re.compile(r"^doi:", flags=re.IGNORECASE)
 
     def _validate_id(self, id, line: SplitLine, allowed_ids=None, context=None):
 
         # we assume that cardinality>1 fields have been split prior to this
-        if id.find("|") > -1:
-            # non-fatal
-            self.report.warning(line.line, Report.INVALID_ID, id, "GORULE:0000027: contains pipe in identifier", taxon=line.taxon, rule=27)
+
+        if id == "":
+            self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: identifier is empty", taxon=line.taxon, rule=27)
+            return False
         if ':' not in id:
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: must be CURIE/prefixed ID", rule=27)
             return False
 
-        if AssocParser.non_id_regex.search(id.split(":")[1]):
+        # we won't check IDs with doi prefix, everything else we want to check
+        if not AssocParser.doi_regex.match(id) and AssocParser.non_id_regex.search(id):
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: contains non letter, non number character, or spaces", rule=27)
             return False
 
-        (left, right) = id.rsplit(":", maxsplit=1)
-        if len(left) == 0 or len(right) == 0:
+        (id_prefix, right) = id.rsplit(":", maxsplit=1)
+        if id_prefix == "" or right == "":
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: Empty ID", rule=27)
             return False
-
-        id_prefix = self._get_id_prefix(id)
 
         if allowed_ids is not None and id_prefix not in allowed_ids:
             self.report.warning(line.line, Report.INVALID_ID_DBXREF, id_prefix, "allowed: {}".format(allowed_ids), rule=27)
@@ -606,7 +607,7 @@ class AssocParser(object):
         return object_or_exprs
 
 
-    relation_tuple = re.compile('(.*)\((.*)\)')
+    relation_tuple = re.compile(r'(.*)\((.*)\)')
     def _parse_relationship_expression(self, x, line: SplitLine = None):
         ## Parses an atomic relational expression
         ## E.g. exists_during(GO:0000753)
