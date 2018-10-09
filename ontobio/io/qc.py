@@ -189,8 +189,8 @@ class GoRule30(GoRule):
 
 
 GoRules = enum.Enum("GoRules", {
-    "GoRule08": GoRule02(),
-    "GoRule02": GoRule08(),
+    "GoRule02": GoRule02(),
+    "GoRule08": GoRule08(),
     "GoRule11": GoRule11(),
     "GoRule16": GoRule16(),
     "GoRule17": GoRule17(),
