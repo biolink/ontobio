@@ -500,11 +500,13 @@ class AssocParser(object):
             return False
 
         (id_prefix, right) = id.rsplit(":", maxsplit=1)
-        if id_prefix == "" or right == "":
+        squashed_prefix = self._squashed_double_prefix(id_prefix)
+
+        if squashed_prefix == "" or right == "":
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: Empty ID", rule=27)
             return False
 
-        if allowed_ids is not None and id_prefix not in allowed_ids:
+        if allowed_ids is not None and squashed_prefix not in allowed_ids:
             self.report.warning(line.line, Report.INVALID_ID_DBXREF, id_prefix, "allowed: {}".format(allowed_ids), rule=27)
             return False
 
@@ -531,18 +533,26 @@ class AssocParser(object):
 
         return sorted(valids)
 
-    def _normalize_id(self, id):
-        toks = id.split(":")
-        if len(toks) > 1:
-            return self._pair_to_id(toks[0], ":".join(toks[1:]))
+    def _squashed_double_prefix(self, prefix):
+        split_pre = prefix.split(":")
+        if len(split_pre) == 2 and split_pre[0] == split_pre[1]:
+            return split_pre[0]
         else:
-            return id
+            prefix
 
+    ## These are not currently being used
+    # def _normalize_id(self, id):
+    #     toks = id.split(":")
+    #     if len(toks) > 1:
+    #         return self._pair_to_id(toks[0], ":".join(toks[1:]))
+    #     else:
+    #         return id
+    #
     def _pair_to_id(self, db, localid):
         if self.config.remove_double_prefixes:
             ## Switch MGI:MGI:n to MGI:n
             if localid.startswith(db+":"):
-                localid = localid.replace(db+":","")
+                localid = localid.replace(db+":", "")
         return db + ":" + localid
 
     def _taxon_id(self, id, line: SplitLine):
