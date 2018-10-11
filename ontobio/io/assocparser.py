@@ -500,12 +500,16 @@ class AssocParser(object):
             return False
 
         (id_prefix, right) = id.rsplit(":", maxsplit=1)
+        if id_prefix == "MGI:MGI":
+            ## See ticket https://github.com/geneontology/go-site/issues/91
+            ## For purposes of determining allowed IDs in DB XREF, MGI IDs shall look like `MGI:12345`
+            id_prefix = "MGI"
+
         if id_prefix == "" or right == "":
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: Empty ID", rule=27)
             return False
 
-        squashed_prefix = self._squashed_double_prefix(id_prefix)
-        if allowed_ids is not None and squashed_prefix not in allowed_ids:
+        if allowed_ids is not None and id_prefix not in allowed_ids:
             self.report.warning(line.line, Report.INVALID_ID_DBXREF, id_prefix, "allowed: {}".format(allowed_ids), rule=27)
             return False
 
@@ -531,13 +535,6 @@ class AssocParser(object):
                 return None
 
         return sorted(valids)
-
-    def _squashed_double_prefix(self, prefix):
-        split_pre = prefix.split(":")
-        if len(split_pre) == 2 and split_pre[0] == split_pre[1]:
-            return split_pre[0]
-        else:
-            return prefix
 
     def _normalize_id(self, id):
         toks = id.split(":")
