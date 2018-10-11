@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 class SimResult:
     """
     Data class similarity result
@@ -26,7 +28,8 @@ class IcStatistic:
                  max_max_ic: float,
                  max_sum_ic: float,
                  individual_count: int,
-                 mean_max_ic: float):
+                 mean_max_ic: float,
+                 descendants: Optional[List[str]] = None):
         self.mean_mean_ic = mean_mean_ic
         self.mean_sum_ic = mean_sum_ic
         self.mean_cls = mean_cls
@@ -34,6 +37,7 @@ class IcStatistic:
         self.max_sum_ic = max_sum_ic
         self.individual_count = individual_count
         self.mean_max_ic = mean_max_ic
+        self.descendants = descendants
         return
 
 class AnnotationSufficiency:

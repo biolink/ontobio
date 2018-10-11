@@ -24,3 +24,10 @@ class TestOwlSimIntegration():
         ic_dict = self.owlsim2.get_profile_ic(classes)
         assert isinstance(ic_dict['HP:0000740'], float)
         assert ic_dict['HP:0000740'] > ic_dict['HP:0000739']
+
+    def test_get_annotation_suff(self):
+        classes = ['HP:0000739', 'HP:0000740']
+        negated_classes = []
+        annot_suff = self.owlsim2.get_annotation_sufficiency(classes, negated_classes)
+        #print(annot_suff.__dict__)
+        assert True == True

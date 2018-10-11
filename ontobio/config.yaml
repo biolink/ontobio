@@ -24,7 +24,7 @@ scigraph_data:
   timeout: 2
 owlsim2:
   url: "https://monarchinitiative.org/owlsim/"
-  timeout: 2
+  timeout: 5
 use_amigo_for:
   - function
 ontologies:

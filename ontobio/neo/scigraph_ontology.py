@@ -167,7 +167,7 @@ class RemoteScigraphOntology(Ontology):
         logging.debug("Descendants of {} over {}".format(node, relations))
         g = self._neighbors_graph(node,
                                   direction='INCOMING',
-                                  depth=20,
+                                  depth=40,
                                   relationshipType=self._mkrel(relations))
         arr = [v['id'] for v in g['nodes']]
         if reflexive:
