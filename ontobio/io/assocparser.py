@@ -499,11 +499,11 @@ class AssocParser(object):
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: contains non letter, non number character, or spaces", rule=27)
             return False
 
-        (id_prefix, right) = id.rsplit(":", maxsplit=1)
-        if id_prefix == "MGI:MGI":
+        (id_prefix, right) = id.split(":", maxsplit=1)
+        if right.startswith("MGI:"):
             ## See ticket https://github.com/geneontology/go-site/issues/91
             ## For purposes of determining allowed IDs in DB XREF, MGI IDs shall look like `MGI:12345`
-            id_prefix = "MGI"
+            right = right[4:]
 
         if id_prefix == "" or right == "":
             self.report.error(line.line, Report.INVALID_ID, id, "GORULE:0000027: Empty ID", rule=27)
