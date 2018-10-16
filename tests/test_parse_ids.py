@@ -61,7 +61,6 @@ def test_validate_with_allowed_ids():
 def test_validate_with_disallowed_id():
     parser = gafparser.GafParser()
     valid = parser._validate_id("FOO:123", assocparser.SplitLine("", [""]*17, "taxon:foo"), allowed_ids=["BAR"])
-    assert not valid
     assert len(parser.report.messages) == 1
     assert parser.report.messages[0]["level"] == assocparser.Report.WARNING
 
