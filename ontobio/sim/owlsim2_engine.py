@@ -37,7 +37,7 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
 
     @category_statistics.setter
     def category_statistics(self, value: Dict[str, IcStatistic]):
-        self._statistics = value
+        self._category_statistics = value
 
     def search(
             self,

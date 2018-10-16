@@ -88,7 +88,7 @@ class InformationContentStore(metaclass=ABCMeta):
                           negation_weight: Optional[float] = .25,
                           ic_map: Optional[Dict[str, float]] = None) -> float:
         """
-        Simple score is the average of the summation of the relative
+        Simple score is the average of the relative
         mean ic, max ic, and sum ic (relative to global stats)
 
         :param ic_map: dictionary of class - information content mappings
@@ -107,16 +107,23 @@ class InformationContentStore(metaclass=ABCMeta):
         pos_map = {cls: ic for cls, ic in ic_map.items() if cls in profile}
         neg_map = {cls: ic for cls, ic in ic_map.items() if cls in negated_classes}
 
-        if len(profile) > 0:
-            simple_score = self.__information_score(pos_map, bg_mean_pic,
-                                                    bg_max_pic, bg_mean_sum_pic)
+        mean_ic = mean(pos_map.values()) if len(profile) > 0 else 0
+        max_ic = max(pos_map.values()) if len(profile) > 0 else 0
+        sum_ic = sum(pos_map.values()) if len(profile) > 0 else 0
+
         if len(negated_classes) > 0:
-            negated_score = self.__information_score(neg_map, bg_mean_pic,
-                                                     bg_max_pic, bg_mean_sum_pic)
-            simple_score = np.average(
-                [simple_score, negated_score], weights=[1, negation_weight]
-            )
-        return simple_score
+            weighted_ic = [ic * negation_weight for ic in neg_map.values()]
+            mean_ic = max([np.average([mean_ic, mean(neg_map.values())],
+                                      weights=[1, negation_weight]),
+                           mean_ic])
+            max_ic = max([max_ic] + weighted_ic)
+            sum_ic = sum_ic + sum(weighted_ic)
+
+        return mean([
+            min([mean_ic / bg_mean_pic, 1.0]),
+            min([max_ic / bg_max_pic, 1.0]),
+            min([sum_ic / bg_mean_sum_pic, 1.0])
+        ])
 
     def _get_scaled_score(
             self,
@@ -166,24 +173,3 @@ class InformationContentStore(metaclass=ABCMeta):
                 self.category_statistics[cat].mean_sum_ic, negation_weight, ic_map
             ))
         return mean(scores)
-
-    @staticmethod
-    def __information_score(ic_map: Dict[str, float],
-                            bg_mean_pic,
-                            bg_max_pic,
-                            bg_mean_sum_pic) -> float:
-        """
-        Compute the relative information in a profile
-
-        :param ic_map: dictionary of class - information content mappings
-        :param bg_mean_pic: the average of the average IC in
-                            the background profile annotations
-        :param bg_max_pic: max IC annotated to the background set of profiles
-        :param bg_mean_sum_pic: Average of the profile sum IC in background set
-        :return: simple score (float)
-        """
-        return mean([
-            min([mean(ic_map.values()) / bg_mean_pic, 1.0]),
-            min([max(ic_map.values()) / bg_max_pic, 1.0]),
-            min([sum(ic_map.values()) / bg_mean_sum_pic, 1.0])
-        ])
