@@ -510,8 +510,8 @@ class AssocParser(object):
             return False
 
         if allowed_ids is not None and id_prefix not in allowed_ids:
+            # For now we will just issue a warning here, and we won't filter out the annotation here
             self.report.warning(line.line, Report.INVALID_ID_DBXREF, id_prefix, "allowed: {}".format(allowed_ids), rule=27)
-            return False
 
         # ensure that the ID space of the annotation class (e.g. GO)
         # conforms to what is expected
