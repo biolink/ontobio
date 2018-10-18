@@ -149,7 +149,9 @@ class LexicalMapEngine():
         if not syn.val:
             if syn.pred == 'label':
                 if not self._is_meaningful_ids():
-                    logging.error('Use meaningful ids if label not present: {}'.format(syn))
+                    if not ont.is_obsolete(syn.class_id):
+                        pass
+                        #logging.error('Use meaningful ids if label not present: {}'.format(syn))
             else:
                 logging.warning("Incomplete syn: {}".format(syn))
             return
@@ -402,7 +404,8 @@ class LexicalMapEngine():
         n_total = len(xancs1)
         return (1+n_shared) / (1+n_total), n_shared, n_total
 
-
+    # given an ontology class id,
+    # return map keyed by ontology id, value is a list of (score, ext_class_id) pairs
     def _neighborscores_by_ontology(self, xg, nid):
         xrefmap = defaultdict(list)
         for x in xg.neighbors(nid):
@@ -411,7 +414,7 @@ class LexicalMapEngine():
                 xrefmap[ont.id].append( (score,x) )
         return xrefmap
     
-
+    # normalize direction
     def _dirn(self, edge, i, j):
         if edge['idpair'] == (i,j):
             return 'fwd'
@@ -473,7 +476,7 @@ class LexicalMapEngine():
         for i in xg.nodes():
             xrefmap = self._neighborscores_by_ontology(xg, i)
             for (ontid,score_node_pairs) in xrefmap.items():
-                score_node_pairs.sort()
+                score_node_pairs.sort(reverse=True)
                 (best_score,best_node) = score_node_pairs[0]
                 logging.info("BEST for {}: {} in {} from {}".format(i, best_node, ontid, score_node_pairs))
                 edge = xg[i][best_node]
