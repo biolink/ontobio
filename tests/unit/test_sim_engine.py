@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 class TestAnnotationSufficiency():
     """
-    Unit tests for SimilarityEngine abstract base class
+    Unit tests for InformationContentStore abstract base class
 
     Mock data based on star trek example
     https://www.slideshare.net/mhaendel/patientled-deep-phenotyping-using-a-
@@ -67,28 +67,40 @@ class TestAnnotationSufficiency():
         self.sim_engine = None
 
     def test_get_simple_score(self):
+        """
+        Test ontobio.sim.sim_engine.InformationContentStore._get_simple_score
+        no negation
+        """
         classes = ['blue skin', 'pointy ears']
         negated_classes = []
 
         simple_score = self.sim_engine._get_simple_score(
             classes, negated_classes, self.sim_engine.statistics.mean_mean_ic,
-            self.sim_engine.statistics.max_max_ic, self.sim_engine.statistics.mean_sum_ic,
+            self.sim_engine.statistics.mean_max_ic, self.sim_engine.statistics.mean_sum_ic,
             self.negation_weight, self.mock_ic_values
         )
-        assert simple_score == 0.6418952152958846
+        assert simple_score == 0.7276770236073753
 
     def test_get_simple_score_w_negation(self):
+        """
+        Test ontobio.sim.sim_engine.InformationContentStore._get_simple_score
+        with negation
+        """
         classes = ['blue skin', 'pointy ears']
         negated_classes = ['large ears', 'increased pigmentation']
 
         simple_score = self.sim_engine._get_simple_score(
             classes, negated_classes, self.sim_engine.statistics.mean_mean_ic,
-            self.sim_engine.statistics.max_max_ic, self.sim_engine.statistics.mean_sum_ic,
+            self.sim_engine.statistics.mean_max_ic, self.sim_engine.statistics.mean_sum_ic,
             self.negation_weight, self.mock_ic_values
         )
-        assert simple_score == 0.6506636031950613
+        assert simple_score == 0.7364454115065521
 
     def test_get_cat_score(self):
+        """
+        Test ontobio.sim.sim_engine.InformationContentStore._get_categorical_score
+        no negation
+        """
         classes = ['blue skin', 'pointy ears']
         negated_classes = []
         categories = ['ear feature', 'skin feature']
@@ -101,6 +113,10 @@ class TestAnnotationSufficiency():
         assert categorical_score == 0.7002519289078384
 
     def test_get_cat_score_w_negation(self):
+        """
+        Test ontobio.sim.sim_engine.InformationContentStore._get_categorical_score
+        with negation
+        """
         classes = ['blue skin', 'pointy ears']
         negated_classes = ['large ears', 'increased pigmentation']
 
@@ -114,11 +130,12 @@ class TestAnnotationSufficiency():
         assert categorical_score == 0.7201759238096741
 
     def test_get_scaled_score(self):
-        simple_score = 0.6506636031950613
-        categorical_score = 0.7201759238096741
+        """
+        Test ontobio.sim.sim_engine.InformationContentStore._get_scaled_score
+        """
+        simple_score = 0.73
+        categorical_score = 0.82
         scaled_score = self.sim_engine._get_scaled_score(
             simple_score, categorical_score, self.category_weight)
 
-        assert scaled_score == 0.66791102109192013
-
-
+        assert scaled_score == 0.75233082706766907

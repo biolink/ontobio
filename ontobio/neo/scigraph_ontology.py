@@ -86,13 +86,13 @@ class RemoteScigraphOntology(Ontology):
         else:
             return []
     
-    def _neighbors_graph(self, id=None, **params):
+    def _neighbors_graph(self, **params):
         """
         Get neighbors of a node
 
         parameters are directly passed through to SciGraph: e.g. depth, relationshipType
         """
-        response = self._get_response("graph/neighbors", id, "json", **params)
+        response = self._get_response("graph/neighbors", format="json", **params)
         return response.json()
 
     # Override
@@ -105,7 +105,7 @@ class RemoteScigraphOntology(Ontology):
         logging.debug("Scigraph, Subgraph for {}".format(nodes))
         for n in nodes:
             logging.debug("Parents-of {}".format(n))
-            g = self._neighbors_graph(n,
+            g = self._neighbors_graph(id=n,
                                       direction='OUTGOING',
                                       depth=1,
                                       relationshipType=self._mkrel(relations))
@@ -150,7 +150,7 @@ class RemoteScigraphOntology(Ontology):
     # Override
     def ancestors(self, node, relations=None, reflexive=False):
         logging.debug("Ancestors of {} over {}".format(node, relations))
-        g = self._neighbors_graph(node,
+        g = self._neighbors_graph(id=node,
                                   direction='OUTGOING',
                                   depth=20,
                                   relationshipType=self._mkrel(relations))
@@ -165,7 +165,7 @@ class RemoteScigraphOntology(Ontology):
     # Override
     def descendants(self, node, relations=None, reflexive=False):
         logging.debug("Descendants of {} over {}".format(node, relations))
-        g = self._neighbors_graph(node,
+        g = self._neighbors_graph(id=node,
                                   direction='INCOMING',
                                   depth=40,
                                   relationshipType=self._mkrel(relations))
@@ -179,7 +179,7 @@ class RemoteScigraphOntology(Ontology):
     
     # Override
     def neighbors(self, node, relations=None):
-        g = self._neighbors_graph(node,
+        g = self._neighbors_graph(id=node,
                                   direction='BOTH',
                                   depth=1,
                                   relationshipType=self._mkrel(relations))
@@ -195,7 +195,7 @@ class RemoteScigraphOntology(Ontology):
             
     # Override
     def node(self, nid):
-        g = self._neighbors_graph(nid,
+        g = self._neighbors_graph(id=nid,
                                   depth=0)
         return self._repair(g['nodes'][0])
 

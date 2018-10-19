@@ -12,22 +12,25 @@ class SimilarityEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def compare(self,
-                profile_a: Iterable,
-                profile_b: Iterable,
+                entities_a: Iterable,
+                entities_b: Iterable,
                 method: Optional,
                 filtr: Optional) -> SimResult:
         """
-        Given a list of individuals,
-        return a dictionary with their information content
+        Given two lists of entites (classes, individual)
+        return their similarity
         """
         pass
 
     @abstractmethod
     def search(self,
-               profile: Iterable,
+               entities: Iterable,
+               taxon_filter: int,
+               category_filter: str,
                method: Optional)-> SimResult:
         """
-        Given an input profile, provides a ranking of similar profiles
+        Given an input iterable of classes or individuals,
+        provides a ranking of similar profiles
         """
         pass
 
@@ -83,7 +86,7 @@ class InformationContentStore(metaclass=ABCMeta):
                           profile: List[str],
                           negated_classes: List[str],
                           bg_mean_pic: float,
-                          bg_max_pic: float,
+                          bg_mean_max_pic: float,
                           bg_mean_sum_pic: float,
                           negation_weight: Optional[float] = .25,
                           ic_map: Optional[Dict[str, float]] = None) -> float:
@@ -100,7 +103,6 @@ class InformationContentStore(metaclass=ABCMeta):
         :param ic_map: Average of the profile sum IC in background set
         :return: simple score (float)
         """
-        simple_score = 0.0
         if ic_map is None:
             ic_map = self.get_profile_ic(profile + negated_classes)
 
@@ -121,7 +123,7 @@ class InformationContentStore(metaclass=ABCMeta):
 
         return mean([
             min([mean_ic / bg_mean_pic, 1.0]),
-            min([max_ic / bg_max_pic, 1.0]),
+            min([max_ic / bg_mean_max_pic, 1.0]),
             min([sum_ic / bg_mean_sum_pic, 1.0])
         ])
 
@@ -133,10 +135,6 @@ class InformationContentStore(metaclass=ABCMeta):
         """
         Scaled score is the weighted average of the simple score and
         categorical score
-        :param simple_score:
-        :param categorical_score:
-        :param category_weight:
-        :return: float - scaled score
         """
         return np.average(
             [simple_score, categorical_score], weights=[1, category_weight]
@@ -167,6 +165,9 @@ class InformationContentStore(metaclass=ABCMeta):
             neg_profile = [cls for cls in negated_classes
                            if cls in self.category_statistics[cat].descendants]
 
+            # Note that we're deviating from the publication
+            # to match the reference java implementation where
+            # mean_max_ic is replaced by max_max_ic
             scores.append(self._get_simple_score(
                 pos_profile, neg_profile, self.category_statistics[cat].mean_mean_ic,
                 self.category_statistics[cat].max_max_ic,

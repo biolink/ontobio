@@ -12,6 +12,31 @@ import requests
 
 CONFIG = get_config()
 
+"""
+Dictionary that contains taxon to namespace 
+mappings since owlsim2 offers ns filtering
+and is not taxon aware
+"""
+TAX_TO_NS = {
+    10090: {
+        'gene': 'MGI'
+    },
+    9606: {
+        'disease': 'MONDO',
+        'case': 'MONARCH',
+        'gene': 'HGNC'
+    },
+    7227: {
+        'gene': 'FlyBase'
+    },
+    6239: {
+        'gene': 'WormBase'
+    },
+    7955: {
+        'gene': 'ZFIN'
+    }
+}
+
 
 class OwlSim2Engine(InformationContentStore, SimilarityEngine):
 
@@ -41,9 +66,25 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
 
     def search(
             self,
-            profile: Iterable,
+            nodes: List[str],
+            taxon_filter: int,
+            category_filter: str,
             method: Union[SimAlgorithm, str, None] = SimAlgorithm.PHENODIGM
     ) -> SimResult:
+        owlsim_url = OwlSim2Engine.OWLSIM_URL + 'searchByAttributeSet'
+
+        # Determine if entity is a phenotype or individual containing
+        # a pheno profile (gene, disease, case, etc)
+        pheno_list = []
+
+        node_types = self._get_id_type_map(nodes)
+
+        for node in nodes:
+            if 'phenotype' not in node_types[node]:
+                # enumerate phenotypes
+                pass
+
+
         if method is not SimAlgorithm.PHENODIGM:
             raise NotImplementedError("Sim method not implemented in owlsim2")
         return
@@ -83,11 +124,18 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
         """
         Given a list of individuals, return the annotation sufficiency
         scores
+
+        https://zenodo.org/record/834091#.W8ZnCxhlCV4
         """
         # Simple score is the weighted average of the present and
         # absent phenotypes
         ic_map = self.get_profile_ic(profile + negated_classes)
 
+        # Note that we're deviating from the publication
+        # to match the reference java implementation where
+        # mean_max_ic is replaced by max_max_ic:
+        # https://github.com/owlcollab/owltools/blob/452b4a/
+        # OWLTools-Sim/src/main/java/owltools/sim2/AbstractOwlSim.java#L1038
         simple_score = self._get_simple_score(
             profile, negated_classes, self.statistics.mean_mean_ic,
             self.statistics.max_max_ic, self.statistics.mean_sum_ic,
@@ -107,6 +155,47 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
             scaled_score=scaled_score,
             categorical_score=categorical_score
         )
+
+    def _get_id_type_map(self, id_list: List[str]) -> Dict[str, List]:
+        """
+        Given a list of ids return their types
+
+        We use the scigraph neighbors function because ids can be sent in batch
+        This is magnitudes faster than iteratively querying solr search
+        or the scigraph graph/id function
+
+        :param id_list: list of ids
+        :return: dictionary where the id is the key and the value is a list of types
+        unresolved ids are placed in the 'unresolved' key
+        """
+        type_map = {}
+        scigraph = OntologyFactory().create('scigraph:data')
+        filter_out_types = [
+            'cliqueLeader',
+            'Class',
+            'Node',
+            'Individual',
+            'quality',
+        ]
+
+        chunks = [id_list[i:i + 400] for i in range(0, len(id_list), 400)]
+        for chunk in chunks:
+            params = {
+                'id': chunk,
+                'depth': 0
+            }
+            try:
+                result_graph = scigraph._neighbors_graph(**params)
+            except JSONDecodeError as exception:
+                # Assume json decode is due to an incorrect class ID
+                # Should we handle this?
+                raise ValueError(exception.doc)
+
+            for node in result_graph['nodes']:
+                type_map[node['id']] = [typ.lower() for typ in node['meta']['types']
+                                        if typ not in filter_out_types]
+
+        return type_map
 
 
     @staticmethod
