@@ -1,4 +1,5 @@
 from ontobio.sim.owlsim2_engine import OwlSim2Engine
+from ontobio.sim.api.owlsim2 import OwlSim2Api
 from ontobio.model.similarity import IcStatistic
 from unittest.mock import MagicMock
 from unittest.mock import patch
@@ -18,7 +19,7 @@ class TestAnnotationSufficiency():
     @patch.object(OwlSim2Engine, '_get_owlsim_stats',  MagicMock(return_value=(None, None)))
     def setup_class(self):
 
-        self.sim_engine = OwlSim2Engine()
+        self.sim_engine = OwlSim2Engine(owlsim2=OwlSim2Api())
 
         self.sim_engine.statistics = IcStatistic(
             mean_mean_ic = 6.82480,

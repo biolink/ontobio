@@ -1,5 +1,6 @@
 from ontobio.sim.owlsim2_engine import OwlSim2Engine
 from ontobio.model.similarity import IcStatistic
+from ontobio.sim.api.owlsim2 import OwlSim2Api
 
 
 class TestOwlSimIntegration():
@@ -9,7 +10,7 @@ class TestOwlSimIntegration():
 
     @classmethod
     def setup_class(self):
-        self.owlsim2 = OwlSim2Engine()
+        self.owlsim2 = OwlSim2Engine(OwlSim2Api())
 
     @classmethod
     def teardown_class(self):

@@ -1,4 +1,5 @@
 from ontobio.sim.sim_engine import InformationContentStore, SimilarityEngine
+from ontobio.sim.api.owlsim2 import OwlSim2Api
 from typing import Iterable, Dict, Union, Optional, Tuple, List
 from ontobio.model.similarity import IcStatistic, AnnotationSufficiency, SimResult
 from ontobio.config import get_config
@@ -8,14 +9,12 @@ from json.decoder import JSONDecodeError
 from ontobio.ontol_factory import OntologyFactory
 import datetime
 from cachier import cachier
-import requests
 
 CONFIG = get_config()
 
 """
-Dictionary that contains taxon to namespace 
-mappings since owlsim2 offers ns filtering
-and is not taxon aware
+Dictionary that contains taxon to namespace mappings
+for owlsim2 which requires namespace for filtering
 """
 TAX_TO_NS = {
     10090: {
@@ -37,13 +36,22 @@ TAX_TO_NS = {
     }
 }
 
+# This can be replaced if taxon becomes a node property
+NS_TO_TAX = {
+    'MGI': 10090,
+    'MONDO': 9606,
+    'MONARCH': 9606,
+    'HGNC': 9606,
+    'FlyBase': 7227,
+    'WormBase': 6239,
+    'ZFIN': 7955
+}
+
 
 class OwlSim2Engine(InformationContentStore, SimilarityEngine):
 
-    OWLSIM_URL = CONFIG.owlsim2.url
-    OWLSIM_TIMEOUT = CONFIG.owlsim2.timeout
-
-    def __init__(self):
+    def __init__(self, owlsim2: OwlSim2Api):
+        self.owlsim2 = owlsim2
         stats = self._get_owlsim_stats()
         self._statistics = stats[0]
         self._category_statistics = stats[1]
@@ -71,7 +79,6 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
             category_filter: str,
             method: Union[SimAlgorithm, str, None] = SimAlgorithm.PHENODIGM
     ) -> SimResult:
-        owlsim_url = OwlSim2Engine.OWLSIM_URL + 'searchByAttributeSet'
 
         # Determine if entity is a phenotype or individual containing
         # a pheno profile (gene, disease, case, etc)
@@ -84,7 +91,6 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
                 # enumerate phenotypes
                 pass
 
-
         if method is not SimAlgorithm.PHENODIGM:
             raise NotImplementedError("Sim method not implemented in owlsim2")
         return
@@ -96,15 +102,11 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
                 filtr: Optional) -> SimResult:
         raise NotImplementedError
 
-    def get_profile_ic(self, profile: Iterable) -> Dict:
+    def get_profile_ic(self, profile: List) -> Dict:
         """
         Given a list of individuals, return their information content
         """
-        owlsim_url = OwlSim2Engine.OWLSIM_URL + 'getAttributeInformationProfile'
-        params = {'a': profile}
-        sim_request = requests.get(
-            owlsim_url, params=params, timeout=OwlSim2Engine.OWLSIM_TIMEOUT)
-        sim_response = sim_request.json()
+        sim_response = self.owlsim2.get_attribute_information_profile(profile)
 
         profile_ic = {}
         try:
@@ -156,20 +158,16 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
             categorical_score=categorical_score
         )
 
-    def _get_id_type_map(self, id_list: List[str]) -> Dict[str, List]:
+    @staticmethod
+    def _get_id_type_map(id_list: List[str]) -> Dict[str, List[str]]:
         """
         Given a list of ids return their types
 
-        We use the scigraph neighbors function because ids can be sent in batch
-        This is magnitudes faster than iteratively querying solr search
-        or the scigraph graph/id function
-
         :param id_list: list of ids
         :return: dictionary where the id is the key and the value is a list of types
-        unresolved ids are placed in the 'unresolved' key
+        :raises ValueError: If id is not in scigraph
         """
         type_map = {}
-        scigraph = OntologyFactory().create('scigraph:data')
         filter_out_types = [
             'cliqueLeader',
             'Class',
@@ -184,33 +182,72 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
                 'id': chunk,
                 'depth': 0
             }
-            try:
-                result_graph = scigraph._neighbors_graph(**params)
-            except JSONDecodeError as exception:
-                # Assume json decode is due to an incorrect class ID
-                # Should we handle this?
-                raise ValueError(exception.doc)
 
-            for node in result_graph['nodes']:
+            for node in OwlSim2Engine._get_scigraph_nodes(**params):
                 type_map[node['id']] = [typ.lower() for typ in node['meta']['types']
                                         if typ not in filter_out_types]
 
         return type_map
 
+    @staticmethod
+    def _get_id_label_map(id_list: List[str]) -> Dict[str, str]:
+        """
+        Given a list of ids return their types
+
+        :param id_list: list of ids
+        :return: dictionary where the id is the key and the value is a list of types
+        :raises ValueError: If id is not in scigraph
+        """
+        label_map = {}
+
+        chunks = [id_list[i:i + 400] for i in range(0, len(id_list), 400)]
+        for chunk in chunks:
+            params = {
+                'id': chunk,
+                'depth': 0
+            }
+
+            for node in OwlSim2Engine._get_scigraph_nodes(**params):
+                if 'lbl' in node:
+                    label_map[node['id']] = [label for label in node['label'][0]]
+                else:
+                    label_map[node['id']] = "" # Empty string or None?
+
+        return label_map
 
     @staticmethod
+    def _get_scigraph_nodes(**params):
+        """
+        Generator function for querying scigraph neighbors to get
+        a list of nodes back
+
+        We use the scigraph neighbors function because ids can be sent in batch
+        which is faster than iteratively querying solr search
+        or the scigraph graph/id function
+
+        :return: json decoded result from scigraph_ontology._neighbors_graph
+        :raises ValueError: If id is not in scigraph
+        """
+        scigraph = OntologyFactory().create('scigraph:data')
+        try:
+            result_graph = scigraph._neighbors_graph(**params)
+        except JSONDecodeError as exception:
+            # Assume json decode is due to an incorrect class ID
+            # Should we handle this?
+            raise ValueError(exception.doc)
+
+        yield result_graph['nodes']
+
     @cachier(datetime.timedelta(days=30))
-    def _get_owlsim_stats() -> Tuple[IcStatistic, Dict[str, IcStatistic]]:
+    def _get_owlsim_stats(self) -> Tuple[IcStatistic, Dict[str, IcStatistic]]:
+        """
+        :return Tuple[IcStatistic, Dict[str, IcStatistic]]
+        :raises JSONDecodeError: If the response body does not contain valid json
+        """
         scigraph = OntologyFactory().create('scigraph:ontology')
         category_stats = {}
-        owlsim_url = OwlSim2Engine.OWLSIM_URL + 'getAttributeInformationProfile'
         categories = [enum.value for enum in HpoUpperLevel]
-        params = {
-            'r': categories
-        }
-        sim_request = requests.get(
-            owlsim_url, params=params, timeout=OwlSim2Engine.OWLSIM_TIMEOUT)
-        sim_response = sim_request.json()
+        sim_response = self.owlsim2.get_attribute_information_profile(categories=categories)
 
         try:
             global_stats = IcStatistic(
@@ -238,3 +275,4 @@ class OwlSim2Engine(InformationContentStore, SimilarityEngine):
             raise JSONDecodeError("Cannot parse owlsim2 response: {}".format(exc_msg))
 
         return global_stats, category_stats
+
