@@ -1,12 +1,61 @@
-from typing import List, Optional
+from typing import List, Optional, Union
+
+
+class Node:
+    """
+    Basic node
+    """
+    def __init__(self, id:Union[str,int], label:Optional[str]=None):
+        self.id = id
+        self.label = label
+
+    def __str__(self):
+        return self.id+' "'+str(self.label)+'"'
+
+
+class SimMatch:
+    """
+    Data class similarity match
+    """
+    def __init__(self,
+                 id: str,
+                 label: str,
+                 rank: int,
+                 score: float,
+                 type: Optional[str]=None,
+                 taxon: Optional[Node]=None,
+                 significance: Optional[float]=None):
+        self.id = id
+        self.label = label
+        self.rank = rank
+        self.score = score
+        self.type = type
+        self.taxon = taxon
+        self.significance = significance
+
+
+class SimQuery:
+    """
+    Data class for query
+    """
+    def __init__(self,
+                 ids: List[Node],
+                 negated_ids: Optional[List[Node]]=None,
+                 unresolved_ids: Optional[List[str]]=None):
+        self.ids = ids
+        self.negated_ids = negated_ids if negated_ids is not None else []
+        self.unresolved_ids = unresolved_ids if unresolved_ids is not None else []
+
 
 class SimResult:
     """
     Data class similarity result
     """
-    def __init__(self):
-        "some foo"
-        return
+    def __init__(self,
+                 query: SimQuery,
+                 matches: List[SimMatch]):
+        self.query = query
+        self.matches = matches
 
 
 class IcStatistic:
@@ -37,8 +86,9 @@ class IcStatistic:
         self.max_sum_ic = max_sum_ic
         self.individual_count = individual_count
         self.mean_max_ic = mean_max_ic
-        self.descendants = descendants
+        self.descendants = descendants if descendants is not None else []
         return
+
 
 class AnnotationSufficiency:
     """

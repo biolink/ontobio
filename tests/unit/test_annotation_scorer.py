@@ -1,9 +1,8 @@
-from ontobio.sim.owlsim2_engine import OwlSim2Engine
+from ontobio.sim.annotation_scorer import AnnotationScorer
 from ontobio.sim.api.owlsim2 import OwlSim2Api
 from ontobio.model.similarity import IcStatistic
 from unittest.mock import MagicMock
 from unittest.mock import patch
-
 
 
 class TestAnnotationSufficiency():
@@ -16,12 +15,12 @@ class TestAnnotationSufficiency():
     """
 
     @classmethod
-    @patch.object(OwlSim2Engine, '_get_owlsim_stats',  MagicMock(return_value=(None, None)))
+    @patch.object(OwlSim2Api, '_get_owlsim_stats',  MagicMock(return_value=(None, None)))
     def setup_class(self):
+        self.ic_store = OwlSim2Api()
+        self.annot_scorer = AnnotationScorer(self.ic_store)
 
-        self.sim_engine = OwlSim2Engine(owlsim2=OwlSim2Api())
-
-        self.sim_engine.statistics = IcStatistic(
+        self.ic_store.statistics = IcStatistic(
             mean_mean_ic = 6.82480,
             mean_sum_ic = 120.89767,
             mean_cls = 15.47425,
@@ -30,7 +29,7 @@ class TestAnnotationSufficiency():
             individual_count = 65309,
             mean_max_ic = 9.51535
         )
-        self.sim_engine.category_statistics = {
+        self.ic_store.category_statistics = {
             'ear feature': IcStatistic(
                 mean_mean_ic=7.55126,
                 mean_sum_ic=26.60304,
@@ -65,7 +64,7 @@ class TestAnnotationSufficiency():
 
     @classmethod
     def teardown_class(self):
-        self.sim_engine = None
+        self.annot_scorer = None
 
     def test_get_simple_score(self):
         """
@@ -75,9 +74,9 @@ class TestAnnotationSufficiency():
         classes = ['blue skin', 'pointy ears']
         negated_classes = []
 
-        simple_score = self.sim_engine._get_simple_score(
-            classes, negated_classes, self.sim_engine.statistics.mean_mean_ic,
-            self.sim_engine.statistics.mean_max_ic, self.sim_engine.statistics.mean_sum_ic,
+        simple_score = self.annot_scorer._get_simple_score(
+            classes, negated_classes, self.ic_store.statistics.mean_mean_ic,
+            self.ic_store.statistics.mean_max_ic, self.ic_store.statistics.mean_sum_ic,
             self.negation_weight, self.mock_ic_values
         )
         assert simple_score == 0.7276770236073753
@@ -90,9 +89,9 @@ class TestAnnotationSufficiency():
         classes = ['blue skin', 'pointy ears']
         negated_classes = ['large ears', 'increased pigmentation']
 
-        simple_score = self.sim_engine._get_simple_score(
-            classes, negated_classes, self.sim_engine.statistics.mean_mean_ic,
-            self.sim_engine.statistics.mean_max_ic, self.sim_engine.statistics.mean_sum_ic,
+        simple_score = self.annot_scorer._get_simple_score(
+            classes, negated_classes, self.ic_store.statistics.mean_mean_ic,
+            self.ic_store.statistics.mean_max_ic, self.ic_store.statistics.mean_sum_ic,
             self.negation_weight, self.mock_ic_values
         )
         assert simple_score == 0.7364454115065521
@@ -106,7 +105,7 @@ class TestAnnotationSufficiency():
         negated_classes = []
         categories = ['ear feature', 'skin feature']
 
-        categorical_score = self.sim_engine._get_categorical_score(
+        categorical_score = self.annot_scorer._get_categorical_score(
             classes, negated_classes, categories,
             self.negation_weight, self.mock_ic_values
         )
@@ -123,7 +122,7 @@ class TestAnnotationSufficiency():
 
         categories = ['ear feature', 'skin feature']
 
-        categorical_score = self.sim_engine._get_categorical_score(
+        categorical_score = self.annot_scorer._get_categorical_score(
             classes, negated_classes, categories,
             self.negation_weight, self.mock_ic_values
         )
@@ -136,7 +135,7 @@ class TestAnnotationSufficiency():
         """
         simple_score = 0.73
         categorical_score = 0.82
-        scaled_score = self.sim_engine._get_scaled_score(
+        scaled_score = self.annot_scorer._get_scaled_score(
             simple_score, categorical_score, self.category_weight)
 
         assert scaled_score == 0.75233082706766907

@@ -7,7 +7,7 @@ class PairwiseDist(Enum):
 
 
 class PairwiseSim(Enum):
-    GEOMETRIC = 'geometric'
+    GEOMETRIC = 'geometric'  # geometric mean of ic and jaccard (phenodigm)
     IC        = 'ic'
     JACCARD   = 'jaccard'
 
@@ -22,6 +22,7 @@ class SimAlgorithm(Enum):
     JACCARD = 'jaccard'
     PHENODIGM = 'phenodigm'
     RESNIK = 'resnik'
+    SIM_GIC = 'simGIC'
     COSINE = 'cosine'
     NAIVE_BAYES_TWO_STATE = 'naive-bayes-fixed-weight-two-state'
     NAIVE_BAYES_TWO_STATE_NO_BLANKET = 'naive-bayes-fixed-weight-two-state-NOBLANKET'

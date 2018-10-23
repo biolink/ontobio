@@ -18,6 +18,7 @@ SimScore = float
 ICValue = float
 InformationContent = float
 
+
 class SemSearchEngine(object):
     """
     A semantic search engine can be used to compare individual annotated entities,

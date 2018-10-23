@@ -2,11 +2,9 @@
 Test in-memory semsearch
 """
 from ontobio.io.gafparser import GafParser
-from ontobio.io.gpadparser import GpadParser
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.sim.semsearch import SemSearchEngine
-import tempfile
+from ontobio.sim.api.semsearch import SemSearchEngine
 import logging
 
 POMBASE = "tests/resources/truncated-pombase.gaf"
