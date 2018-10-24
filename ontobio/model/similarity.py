@@ -47,7 +47,7 @@ class SimMatch:
     def __init__(self,
                  id: str,
                  label: str,
-                 rank: int,
+                 rank: Union[int, str],
                  score: Union[float, int],
                  type: Optional[str]=None,
                  taxon: Optional[Node]=None,

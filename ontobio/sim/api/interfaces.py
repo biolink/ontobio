@@ -27,9 +27,8 @@ class SimApi(metaclass=ABCMeta):
         """
         pass
 
-    @staticmethod
     @abstractmethod
-    def matchers() -> List[SimAlgorithm]:
+    def matchers(self) -> List[SimAlgorithm]:
         """
         Return the list of available matchers (eg resnik, boqa, cosine)
         could theoretically be a property with no setter

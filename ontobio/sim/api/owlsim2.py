@@ -62,28 +62,21 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         }
     }
 
+    human_tax = Node(
+        id='NCBITaxon:9606',
+        label='Homo sapiens'
+    )
+
     # This can be replaced if taxon becomes a node property
     NS_TO_TAX = {
         'MGI': Node(
             id='NCBITaxon:10090',
             label='Mus musculus'
         ),
-        'MONDO': Node(
-            id='NCBITaxon:9606',
-            label='Homo sapiens'
-        ),
-        'OMIM': Node(
-            id='NCBITaxon:9606',
-            label='Homo sapiens'
-        ),
-        'MONARCH': Node(
-            id='NCBITaxon:9606',
-            label='Homo sapiens'
-        ),
-        'HGNC': Node(
-            id='NCBITaxon:9606',
-            label='Homo sapiens'
-        ),
+        'MONDO': human_tax,
+        'OMIM': human_tax,
+        'MONARCH': human_tax,
+        'HGNC': human_tax,
         'FlyBase': Node(
             id='NCBITaxon:7227',
             label='Drosophila melanogaster'
@@ -159,7 +152,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         :return: SimResult object
         """
         owlsim_results = self.compare_attribute_sets(reference_classes, query_classes)
-        pass
+        return OwlSim2Api._simsearch_to_simresult(owlsim_results, method, 'compare')
 
     def filtered_search(
             self,
@@ -177,7 +170,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
         owlsim_results = self.search_by_attribute_set(id_list, namespace_filter)
-        return OwlSim2Api._simsearch_to_simresult(owlsim_results, method)
+        return OwlSim2Api._simsearch_to_simresult(owlsim_results, method, 'search')
 
     @staticmethod
     def matchers() -> List[SimAlgorithm]:
@@ -276,12 +269,17 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         return requests.get(owlsim_url, params=params, timeout=self.timeout).json()
 
     @staticmethod
-    def _simsearch_to_simresult(sim_resp: Dict, method: SimAlgorithm) -> SimResult:
+    def _simsearch_to_simresult(
+            sim_resp: Dict,
+            method: SimAlgorithm,
+            mode: str) -> SimResult:
         """
         Convert owlsim json to SimResult object
 
-        :param sim_resp: owlsim response from
-                         search_by_attribute_set() or compare_attribute_sets()
+        :param sim_resp: owlsim response from search_by_attribute_set()
+                        or compare_attribute_sets()
+        :param method: SimAlgorithm
+        :param mode: str, search or compare
         :return: SimResult object
         """
 
@@ -295,15 +293,6 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         matches = []
 
         for result in sim_resp['results']:
-            pairwise_matches = []
-            for pairwise_match in result['matches']:
-                pairwise_matches.append(
-                    PairwiseMatch(
-                        query=ICNode(**pairwise_match['a']),
-                        match=ICNode(**pairwise_match['b']),
-                        lcs=ICNode(**pairwise_match['lcs'])
-                    )
-                )
             ns = result['j']['id'].split(":")[0]
             if ns in OwlSim2Api.NS_TO_TAX:
                 taxon = OwlSim2Api.NS_TO_TAX[ns]
@@ -313,25 +302,47 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
                 SimMatch(
                     id=result['j']['id'],
                     label=result['j']['label'],
-                    rank=result['rank'],
+                    rank=result['rank'] if mode == 'search' else "NaN",
                     score=result[OwlSim2Api.method2key[method]],
                     type=id_type_map[result['j']['id']][0],
                     taxon=taxon,
                     significance="NaN",
-                    pairwise_match=pairwise_matches
+                    pairwise_match=OwlSim2Api._make_pairwise_matches(result)
                 )
             )
 
-        #if 'target_IRIs' in sim_resp:
-        #    target_ids = get_nodes_from_ids(sim_resp['target_IRIs'])
+        if mode == "compare":
+            target_ids = [get_nodes_from_ids(sim_resp['target_IRIs'])]
+        else:
+            target_ids = [[]]
 
         return SimResult(
             query=SimQuery(
                 ids=sim_ids,
-                unresolved_ids=sim_resp['unresolved']
+                unresolved_ids=sim_resp['unresolved'],
+                target_ids=target_ids
             ),
             matches=matches
         )
+
+    @staticmethod
+    def _make_pairwise_matches(result: Dict) -> List[PairwiseMatch]:
+        """
+        Make a list of match object from owlsim results
+        :param result: Single owlsim result
+        :return: List of SimMatch objects
+        """
+        pairwise_matches = []
+        for pairwise_match in result['matches']:
+            pairwise_matches.append(
+                PairwiseMatch(
+                    query=ICNode(**pairwise_match['a']),
+                    match=ICNode(**pairwise_match['b']),
+                    lcs=ICNode(**pairwise_match['lcs'])
+                )
+            )
+
+        return pairwise_matches
 
     @staticmethod
     def _rank_results(results: List[Dict], method: SimAlgorithm) -> List[Dict]:
