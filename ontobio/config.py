@@ -109,7 +109,7 @@ class Config():
                  scigraph_ontology = None,
                  scigraph_data = None,
                  owlsim2 = None,
-                 owlsim3=None,
+                 owlsim3 = None,
                  ontologies = None,
                  categories = None,
                  default_solr_schema = None,

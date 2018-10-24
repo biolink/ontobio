@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 class TestAnnotationSufficiency():
     """
-    Unit tests for InformationContentStore abstract base class
+    Unit tests for AnnotationScorer
 
     Mock data based on star trek example
     https://www.slideshare.net/mhaendel/patientled-deep-phenotyping-using-a-
@@ -65,6 +65,7 @@ class TestAnnotationSufficiency():
     @classmethod
     def teardown_class(self):
         self.annot_scorer = None
+        self.ic_store = None
 
     def test_get_simple_score(self):
         """

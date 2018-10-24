@@ -12,24 +12,23 @@ class SimApi(metaclass=ABCMeta):
                negated_classes: List,
                method: Optional) -> List[SimResult]:
         """
-        Given an input list of classes or individuals,
-        provides a ranking of similar profiles
+        Given an input list of classes, searches for similar lists of classes
+        and provides a ranked list of matches
         """
         pass
 
     @abstractmethod
     def compare(self,
-                classes_a: List,
-                classes_b: List,
+                query_classes: List,
+                reference_classes: List,
                 method: Optional) -> SimResult:
         """
-        Given two lists of entites (classes, individual)
-        return their similarity
+        Given two lists of classes return their similarity
         """
         pass
 
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def matchers() -> List[SimAlgorithm]:
         """
         Return the list of available matchers (eg resnik, boqa, cosine)
@@ -43,6 +42,7 @@ class FilteredSearchable(metaclass=ABCMeta):
     @abstractmethod
     def filtered_search(self,
                id_list: List,
+               negated_classes: List,
                taxon_filter: int,
                category_filter: str,
                method: Optional) -> SimResult:

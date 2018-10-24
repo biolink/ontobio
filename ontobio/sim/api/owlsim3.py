@@ -5,15 +5,16 @@ from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.model.similarity import SimResult
 
 
-
 class OwlSim3Api(SimApi):
     """
     OwlSim3 is the next iteration of owlsim and contains more algorithms
-    including several variations of the BOQA algorithm
+    than owlsim2 including several variations of the BOQA algorithm
 
     Ref:
     https://github.com/monarch-initiative/owlsim-v3
     http://owlsim3.monarchinitiative.org/api/docs/
+
+    Status: not implemented
     """
 
     def __init__(self, url: Optional[str]=None, timeout: Optional[int]=None):
@@ -31,8 +32,8 @@ class OwlSim3Api(SimApi):
         raise NotImplementedError
 
     def compare(self,
-                classes_a: List,
-                classes_b: List,
+                query_classes: List,
+                reference_classes: List,
                 method: Optional) -> SimResult:
         """
         Given two lists of entites (classes, individual)

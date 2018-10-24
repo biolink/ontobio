@@ -22,6 +22,7 @@ class SimAlgorithm(Enum):
     JACCARD = 'jaccard'
     PHENODIGM = 'phenodigm'
     RESNIK = 'resnik'
+    SYMMETRIC_RESNIK = 'symmetric_resnik'
     SIM_GIC = 'simGIC'
     COSINE = 'cosine'
     NAIVE_BAYES_TWO_STATE = 'naive-bayes-fixed-weight-two-state'

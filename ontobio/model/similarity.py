@@ -13,6 +13,33 @@ class Node:
         return self.id+' "'+str(self.label)+'"'
 
 
+class ICNode(Node):
+    """
+    Node with information content
+    """
+
+    def __init__(
+            self,
+            id: Union[str, int],
+            IC: float,
+            label: Optional[str] = None):
+        super().__init__(id,label)
+        self.IC = IC
+
+
+class PairwiseMatch:
+    """
+    Data class for pairwise match
+    """
+    def __init__(self,
+                 query: ICNode,
+                 match: ICNode,
+                 lcs: ICNode):
+        self.query = query
+        self.match = match
+        self.lcs = lcs  # lowest common subsumer
+
+
 class SimMatch:
     """
     Data class similarity match
@@ -21,10 +48,11 @@ class SimMatch:
                  id: str,
                  label: str,
                  rank: int,
-                 score: float,
+                 score: Union[float, int],
                  type: Optional[str]=None,
                  taxon: Optional[Node]=None,
-                 significance: Optional[float]=None):
+                 significance: Union[float, str, None]=None,
+                 pairwise_match: Optional[List[PairwiseMatch]]=None):
         self.id = id
         self.label = label
         self.rank = rank
@@ -32,6 +60,10 @@ class SimMatch:
         self.type = type
         self.taxon = taxon
         self.significance = significance
+        self.pairwise_match = pairwise_match
+
+        if self.pairwise_match is None:
+            self.pairwise_match = []
 
 
 class SimQuery:
@@ -41,10 +73,12 @@ class SimQuery:
     def __init__(self,
                  ids: List[Node],
                  negated_ids: Optional[List[Node]]=None,
-                 unresolved_ids: Optional[List[str]]=None):
+                 unresolved_ids: Optional[List[str]]=None,
+                 target_ids: Optional[List[List[Node]]]=None):
         self.ids = ids
         self.negated_ids = negated_ids if negated_ids is not None else []
         self.unresolved_ids = unresolved_ids if unresolved_ids is not None else []
+        self.target_ids = target_ids if target_ids is not None else [[]]
 
 
 class SimResult:

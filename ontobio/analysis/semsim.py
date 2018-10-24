@@ -1,5 +1,6 @@
 from ontobio.assocmodel import AssociationSet
 
+
 def jaccard_similarity(aset:AssociationSet, s1:str, s2:str) -> float:
     """
     Calculate jaccard index of inferred associations of two subjects

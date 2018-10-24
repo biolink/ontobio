@@ -31,7 +31,7 @@ class AnnotationScorer():
         ic_map = self.ic_store.get_profile_ic(profile + negated_classes)
 
         # Simple score is the weighted average of the present and
-        # absent phenotypes
+        # explicitly stated negative/absent phenotypes
         #
         # Note that we're deviating from the publication
         # to match the reference java implementation where
