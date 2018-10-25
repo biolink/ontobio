@@ -4,9 +4,7 @@ Utility functions for working with monarch identifiers using scigraph
 from typing import List, Dict, Iterator, Iterable, Optional
 from json.decoder import JSONDecodeError
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.model.similarity import Node
-from ontobio.model.OBOGraph import Node as OBONode
-
+from ontobio.model.similarity import Node, TypedNode
 
 
 def namespace_to_taxon() -> Dict[str, Node]:
@@ -133,7 +131,7 @@ def get_taxon(id: str) -> Optional[Node]:
     return taxon
 
 
-def obo_node_from_id(id: str) -> OBONode:
+def typed_node_from_id(id: str) -> TypedNode:
     """
     Get obo node from id
 
@@ -155,12 +153,12 @@ def obo_node_from_id(id: str) -> OBONode:
     else:
         label = None  # Empty string or None?
 
-    node['meta']['types'] = [typ.lower() for typ in node['meta']['types']
+    types = [typ.lower() for typ in node['meta']['types']
                              if typ not in filter_out_types]
-    node['meta']['taxon'] = get_taxon(id)
 
-    return OBONode(
+    return TypedNode(
         id=node['id'],
         label=label,
-        meta=node['meta']
+        type=types[0],
+        taxon = get_taxon(id)
     )

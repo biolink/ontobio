@@ -188,7 +188,6 @@ class SemSearchEngine(SimApi):
         return (mean0+mean1)/2, mean0, mean1
         #return (mean0+mean1)/2, mean0, mean1, idxmax0, idxmax1
 
-
     def search(self,
                id_list: Set,
                negated_classes: Set,

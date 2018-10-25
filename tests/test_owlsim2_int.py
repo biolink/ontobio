@@ -65,3 +65,28 @@ class TestOwlSimIntegration():
         assert search_results.matches[0].taxon.id is not None
         assert len(search_results.matches[0].pairwise_match) > 0
         assert search_results.matches[0].pairwise_match[0].lcs.IC > 0
+
+    def test_sim_compare(self):
+        """
+        Comparison where a disease is the reference
+        """
+        classes_a = ['MONDO:0008199']
+        classes_b = [['HP:0002367', 'HP:0031466', 'HP:0007123']]
+        compare_results = self.pheno_sim.compare(classes_a, classes_b)
+        assert compare_results.reference.id == "MONDO:0008199"
+        assert compare_results.reference.type == "disease"
+        assert compare_results.reference.taxon.id == "NCBITaxon:9606"
+        assert compare_results.matches[0].pairwise_match[0].match.id in classes_b[0]
+        assert compare_results.matches[0].score > 0
+
+    def test_sim_compare_ind(self):
+        """
+        Comparison where a disease is the query
+        """
+        classes_a = ['HP:0002367', 'HP:0031466', 'HP:0007123']
+        classes_b = [['MONDO:0008199']]
+        compare_results = self.pheno_sim.compare(classes_a, classes_b)
+        assert compare_results.matches[0].id == "MONDO:0008199"
+        assert compare_results.matches[0].type == "disease"
+        assert compare_results.matches[0].taxon.id == "NCBITaxon:9606"
+        assert compare_results.matches[0].score > 0

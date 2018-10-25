@@ -1,16 +1,16 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Iterable
 
 
 class Node:
     """
     Basic node
     """
-    def __init__(self, id:Union[str,int], label:Optional[str]=None):
+    def __init__(self, id: Union[str,int], label: Optional[str]=None):
         self.id = id
         self.label = label
 
     def __str__(self):
-        return self.id+' "'+str(self.label)+'"'
+        return self.id + ' "'+str(self.label)+'"'
 
 
 class ICNode(Node):
@@ -27,20 +27,36 @@ class ICNode(Node):
         self.IC = IC
 
 
+class TypedNode(Node):
+    """
+    Node with type and optional taxon
+    """
+
+    def __init__(
+            self,
+            id: Union[str, int],
+            type: str,
+            label: Optional[str] = None,
+            taxon: Optional[Node] = None):
+        super().__init__(id,label)
+        self.type = type
+        self.taxon = taxon
+
+
 class PairwiseMatch:
     """
     Data class for pairwise match
     """
     def __init__(self,
-                 query: ICNode,
+                 reference: ICNode,
                  match: ICNode,
                  lcs: ICNode):
-        self.query = query
+        self.reference = reference
         self.match = match
         self.lcs = lcs  # lowest common subsumer
 
 
-class SimMatch:
+class SimMatch(TypedNode):
     """
     Data class similarity match
     """
@@ -53,12 +69,9 @@ class SimMatch:
                  taxon: Optional[Node]=None,
                  significance: Union[float, str, None]=None,
                  pairwise_match: Optional[List[PairwiseMatch]]=None):
-        self.id = id
-        self.label = label
+        super().__init__(id, type, label, taxon)
         self.rank = rank
         self.score = score
-        self.type = type
-        self.taxon = taxon
         self.significance = significance
         self.pairwise_match = pairwise_match
 
@@ -74,11 +87,21 @@ class SimQuery:
                  ids: List[Node],
                  negated_ids: Optional[List[Node]]=None,
                  unresolved_ids: Optional[List[str]]=None,
-                 target_ids: Optional[List[List[Node]]]=None):
+                 target_ids: Optional[List[List[Node]]]=None,
+                 reference: Optional[TypedNode]=None):
+        """
+        :param ids: list of classes (eg phenotypes)
+        :param negated_ids: list of negated classes (eg phenotypes)
+        :param unresolved_ids: list of unresolved classes
+        :param target_ids: target classes (if in compare mode)
+        :param reference: input query reference or punned class
+                          (eg gene, disease) if in compare mode
+        """
         self.ids = ids
         self.negated_ids = negated_ids if negated_ids is not None else []
         self.unresolved_ids = unresolved_ids if unresolved_ids is not None else []
         self.target_ids = target_ids if target_ids is not None else [[]]
+        self.reference = reference
 
 
 class SimResult:
@@ -112,7 +135,7 @@ class IcStatistic:
                  max_sum_ic: float,
                  individual_count: int,
                  mean_max_ic: float,
-                 descendants: Optional[List[str]] = None):
+                 descendants: Optional[Iterable[str]] = None):
         self.mean_mean_ic = mean_mean_ic
         self.mean_sum_ic = mean_sum_ic
         self.mean_cls = mean_cls

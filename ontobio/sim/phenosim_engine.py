@@ -4,7 +4,7 @@ from ontobio.model.similarity import SimResult, SimQuery, Node
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.sim.api.interfaces import FilteredSearchable
 from ontobio.golr.golr_associations import get_objects_for_subject
-from ontobio.util.scigraph_util import get_id_type_map, get_nodes_from_ids
+from ontobio.util.scigraph_util import get_id_type_map, typed_node_from_id
 
 
 class PhenoSimEngine():
@@ -68,8 +68,7 @@ class PhenoSimEngine():
                                    that comprise one or more phenotypes
         :param method: comparison method
         :return: SimResult object
-        :raises NotImplementedError:
-            - If sim method or filters are not supported
+        :raises NotImplementedError: If sim method or filters are not supported
         """
         if method not in self.sim_api.matchers():
             raise NotImplementedError("Sim method not implemented "
@@ -78,16 +77,30 @@ class PhenoSimEngine():
         is_first_result = True
         comparisons = None
 
-        query_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(reference_ids)
-        for ref_profile in query_profiles:
-            reference_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(ref_profile)
-            sim_result = self.sim_api.compare(query_phenos, reference_phenos, method)
+        reference_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(reference_ids)
+        for query_profile in query_profiles:
+            query_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(query_profile)
+            sim_result = self.sim_api.compare(reference_phenos, query_phenos, method)
+            if len(query_profile) > 1:
+                id = " + ".join(query_profile)
+                sim_result.matches[0].id = id
+                sim_result.matches[0].label = id
+            else:
+                node = typed_node_from_id(query_profile[0])
+                sim_result.matches[0].id = node.id
+                sim_result.matches[0].label = node.label
+                sim_result.matches[0].type = node.type
+                sim_result.matches[0].taxon = node.taxon
+
             if is_first_result:
                 comparisons = sim_result
                 is_first_result = False
             else:
                 comparisons.matches.append(sim_result.matches[0])
                 comparisons.matches.target_ids.append(sim_result.matches.target_ids[0])
+
+        if len(reference_ids) == 1:
+            comparisons.reference = typed_node_from_id(reference_ids[0])
 
         return comparisons
 

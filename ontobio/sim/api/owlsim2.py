@@ -28,7 +28,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
     refs:
       code: https://github.com/owlcollab/owltools/tree/master/OWLTools-Sim
-      phendigm: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3649640/
+      phenodigm: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3649640/
       simGIC:  https://bmcbioinformatics.biomedcentral.com/articles/
                10.1186/1471-2105-9-S5-S4
 
@@ -62,6 +62,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         }
     }
 
+    # Sim algorithm enum and the corresponding owlsim2 key
     method2key = {
         SimAlgorithm.PHENODIGM: 'combinedScore',
         SimAlgorithm.JACCARD: 'simJ',
@@ -331,7 +332,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         for pairwise_match in result['matches']:
             pairwise_matches.append(
                 PairwiseMatch(
-                    query=ICNode(**pairwise_match['a']),
+                    reference=ICNode(**pairwise_match['a']),
                     match=ICNode(**pairwise_match['b']),
                     lcs=ICNode(**pairwise_match['lcs'])
                 )
