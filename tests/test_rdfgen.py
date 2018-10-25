@@ -46,7 +46,9 @@ def test_rdfgen_includes_taxon_in_gp_class():
             'with_support_from': ['SGD:S000001583']
         },
         'provided_by': 'PomBase',
-        'date': '20150305'
+        'date': '20150305',
+        "subject_extensions": [],
+        "object_extensions": {}
     }
 
     rdfWriter = TurtleRdfWriter(label="pombase_single.ttl")

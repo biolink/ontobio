@@ -215,7 +215,7 @@ class CamRdfTransform(RdfTransform):
         if "header" in association and association["header"]:
             return
 
-        if and_xps is None and 'object_extensions' in association:
+        if and_xps is None and association['object_extensions'] != {}:
             x = association['object_extensions']
             for ix in x['union_of']:
                 and_xps = ix['intersection_of']

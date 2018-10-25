@@ -608,7 +608,7 @@ class AssocParser(object):
                     if expr is not None:
                         and_exprs.append(expr)
             if len(and_exprs) > 0:
-                object_or_exprs.append({'intersection_of':and_exprs})
+                object_or_exprs.append({'intersection_of': and_exprs})
         return object_or_exprs
 
 

@@ -304,7 +304,11 @@ class GafParser(assocparser.AssocParser):
         ## This is mapped to a more generic concept of subject_extensions
         subject_extns = []
         if gene_product_isoform is not None and gene_product_isoform != '':
-            subject_extns.append({'property':'isoform', 'filler':gene_product_isoform})
+            subject_extns.append({'property': 'isoform', 'filler': gene_product_isoform})
+
+        object_extensions = {}
+        if object_or_exprs is not None and len(object_or_exprs) > 0:
+            object_extensions['union_of'] = object_or_exprs
 
         ## --
         ## evidence
@@ -331,13 +335,9 @@ class GafParser(assocparser.AssocParser):
             'evidence': evidence_obj,
             'provided_by': assigned_by,
             'date': date,
-
+            'subject_extensions': subject_extns,
+            'object_extensions': object_extensions
         }
-        if len(subject_extns) > 0:
-            assoc['subject_extensions'] = subject_extns
-        if object_or_exprs is not None and len(object_or_exprs) > 0:
-            assoc['object_extensions'] = {'union_of': object_or_exprs}
-
 
         return assocparser.ParseResult(line, [assoc], False, evidence.upper())
 

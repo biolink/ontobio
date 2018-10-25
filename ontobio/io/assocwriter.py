@@ -4,6 +4,7 @@ Classes for exporting associations.
 """
 import re
 import datetime
+import json
 
 from ontobio import ecomap
 
@@ -44,19 +45,24 @@ class AssocWriter():
         else:
             print(line)
 
-    def _extension_expression(self, assoc):
-        if 'object_extensions' in assoc:
-            x = assoc['object_extensions']
-            if isinstance(x,list):
-                return ""
-            # assume disjunctive normal form
-            ixs = []
-            for ix in x['union_of']:
-                rxs = []
-                for rx in ix['intersection_of']:
-                    rxs.append('{}({})'.format(rx['property'], rx['filler']))
-                ixs.append(",".join(rxs))
-            return "|".join(ixs)
+    def _extension_expression(self, object_extensions):
+        unions = []
+        for union_key, union_value in object_extensions.items():
+            if union_key == "union_of":
+                # union_value is list of { "intersection_of" ...}
+                for union_item in union_value:
+                    for intersect_key, intersect_value in union_item.items():
+                        if intersect_key == "intersection_of":
+                            intersections = []
+                            for intersect_item in intersect_value:
+                                prop = intersect_item["property"]
+                                filler = intersect_item["filler"]
+                                full_property = "{property}({filler})".format(property=prop, filler=filler)
+                                intersections.append(full_property)
+                            joined_intersections = ",".join(intersections)
+                            unions.append(joined_intersections)
+
+        return "|".join(unions)
 
     def normalize_taxon(self, taxon):
         global internal_taxon
@@ -132,7 +138,6 @@ class GpadWriter(AssocWriter):
 
         annotation_properties = '' # TODO
         interacting_taxon_id = '' ## TODO
-
         vals = [db,
                 db_object_id,
                 qualifier,
@@ -143,7 +148,7 @@ class GpadWriter(AssocWriter):
                 interacting_taxon_id, # TODO
                 date,
                 assigned_by,
-                self._extension_expression(assoc),
+                self._extension_expression(assoc['object_extensions']),
                 annotation_properties]
 
         self._write_row(vals)
@@ -199,12 +204,14 @@ class GafWriter(AssocWriter):
 
         annotation_properties = '' # TODO
         interacting_taxon_id = '' ## TODO
-        gene_product_isoform = '' ## TODO
+        gene_product_isoform = assoc["subject_extensions"][0] if len(assoc["subject_extensions"]) > 0 else ""
 
         aspect = assoc['aspect']
         taxon = None
         if 'taxon' in subj:
             taxon = self.normalize_taxon(subj['taxon']['id'])
+
+        extension_expression = self._extension_expression(assoc['object_extensions'])
 
         vals = [db,
                 db_object_id,
@@ -221,7 +228,7 @@ class GafWriter(AssocWriter):
                 taxon,
                 date,
                 assigned_by,
-                self._extension_expression(assoc),
+                extension_expression,
                 gene_product_isoform]
 
         self._write_row(vals)
