@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Optional, List
+from typing import Optional, Iterable
 from ontobio.model.similarity import SimResult
 
 
@@ -14,8 +14,8 @@ class SimilarityEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def compare(self,
-                reference_ids: List,
-                query_profiles: List[List],
+                reference_ids: Iterable,
+                query_profiles: Iterable[Iterable],
                 method: Optional) -> SimResult:
         """
         Given two lists of entities (classes, individuals),
@@ -26,8 +26,8 @@ class SimilarityEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def search(self,
-               id_list: List,
-               negated_ids: List,
+               id_list: Iterable,
+               negated_ids: Iterable,
                taxon_filter: int,
                category_filter: str,
                method: Optional)-> SimResult:

@@ -4,7 +4,7 @@ from ontobio.vocabulary.upper import HpoUpperLevel
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.model.similarity import IcStatistic, SimResult, Node, SimMatch, SimQuery, PairwiseMatch, ICNode
 from ontobio.vocabulary.similarity import SimAlgorithm
-from ontobio.util.scigraph_util import get_nodes_from_ids, get_id_type_map
+from ontobio.util.scigraph_util import get_nodes_from_ids, get_id_type_map, get_taxon
 
 from typing import List, Optional, Dict, Tuple, Union
 from json.decoder import JSONDecodeError
@@ -60,35 +60,6 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         7955: {
             'gene': 'ZFIN'
         }
-    }
-
-    human_tax = Node(
-        id='NCBITaxon:9606',
-        label='Homo sapiens'
-    )
-
-    # This can be replaced if taxon becomes a node property
-    NS_TO_TAX = {
-        'MGI': Node(
-            id='NCBITaxon:10090',
-            label='Mus musculus'
-        ),
-        'MONDO': human_tax,
-        'OMIM': human_tax,
-        'MONARCH': human_tax,
-        'HGNC': human_tax,
-        'FlyBase': Node(
-            id='NCBITaxon:7227',
-            label='Drosophila melanogaster'
-        ),
-        'WormBase': Node(
-            id='NCBITaxon:6239',
-            label='Caenorhabditis elegans'
-        ),
-        'ZFIN': Node(
-            id='NCBITaxon:7955',
-            label='Danio rerio'
-        )
     }
 
     method2key = {
@@ -152,7 +123,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         :return: SimResult object
         """
         owlsim_results = self.compare_attribute_sets(reference_classes, query_classes)
-        return OwlSim2Api._simsearch_to_simresult(owlsim_results, method, 'compare')
+        return OwlSim2Api._simcompare_to_simresult(owlsim_results, method)
 
     def filtered_search(
             self,
@@ -170,7 +141,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
         owlsim_results = self.search_by_attribute_set(id_list, namespace_filter)
-        return OwlSim2Api._simsearch_to_simresult(owlsim_results, method, 'search')
+        return OwlSim2Api._simsearch_to_simresult(owlsim_results, method)
 
     @staticmethod
     def matchers() -> List[SimAlgorithm]:
@@ -269,17 +240,12 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         return requests.get(owlsim_url, params=params, timeout=self.timeout).json()
 
     @staticmethod
-    def _simsearch_to_simresult(
-            sim_resp: Dict,
-            method: SimAlgorithm,
-            mode: str) -> SimResult:
+    def _simsearch_to_simresult(sim_resp: Dict, method: SimAlgorithm) -> SimResult:
         """
         Convert owlsim json to SimResult object
 
         :param sim_resp: owlsim response from search_by_attribute_set()
-                        or compare_attribute_sets()
         :param method: SimAlgorithm
-        :param mode: str, search or compare
         :return: SimResult object
         """
 
@@ -293,34 +259,63 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         matches = []
 
         for result in sim_resp['results']:
-            ns = result['j']['id'].split(":")[0]
-            if ns in OwlSim2Api.NS_TO_TAX:
-                taxon = OwlSim2Api.NS_TO_TAX[ns]
-            else:
-                taxon = {}
             matches.append(
                 SimMatch(
                     id=result['j']['id'],
                     label=result['j']['label'],
-                    rank=result['rank'] if mode == 'search' else "NaN",
+                    rank=result['rank'],
                     score=result[OwlSim2Api.method2key[method]],
                     type=id_type_map[result['j']['id']][0],
-                    taxon=taxon,
+                    taxon=get_taxon(result['j']['id']),
                     significance="NaN",
                     pairwise_match=OwlSim2Api._make_pairwise_matches(result)
                 )
             )
 
-        if mode == "compare":
-            target_ids = [get_nodes_from_ids(sim_resp['target_IRIs'])]
-        else:
-            target_ids = [[]]
+        return SimResult(
+            query=SimQuery(
+                ids=sim_ids,
+                unresolved_ids=sim_resp['unresolved'],
+                target_ids=[[]]
+            ),
+            matches=matches
+        )
+
+    @staticmethod
+    def _simcompare_to_simresult(sim_resp: Dict, method: SimAlgorithm) -> SimResult:
+        """
+        Convert owlsim json from compareAttributeSets to SimResult object
+
+        In compare mode owlsim does not provide a id, label, and therefore
+        we cannot infer type and taxon.
+
+        :param sim_resp: owlsim response from compare_attribute_sets()
+        :param method: SimAlgorithm
+        :return: SimResult object
+        """
+
+        sim_ids = get_nodes_from_ids(sim_resp['query_IRIs'])
+        sim_resp['results'] = OwlSim2Api._rank_results(sim_resp['results'], method)
+
+        matches = []
+
+        for result in sim_resp['results']:
+            matches.append(
+                SimMatch(
+                    id="",
+                    label="",
+                    rank="NaN",
+                    score=result[OwlSim2Api.method2key[method]],
+                    significance="NaN",
+                    pairwise_match=OwlSim2Api._make_pairwise_matches(result)
+                )
+            )
 
         return SimResult(
             query=SimQuery(
                 ids=sim_ids,
                 unresolved_ids=sim_resp['unresolved'],
-                target_ids=target_ids
+                target_ids=[get_nodes_from_ids(sim_resp['target_IRIs'])]
             ),
             matches=matches
         )

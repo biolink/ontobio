@@ -4,7 +4,7 @@ Classes for representing ontologies backed by SciGraph endpoint
 E.g.
 https://scigraph-ontology.monarchinitiative.org/scigraph/docs/#!/graph/getNeighbors
 """
-
+from typing import Dict, Set
 import networkx as nx
 import logging
 import ontobio.ontol
@@ -86,7 +86,7 @@ class RemoteScigraphOntology(Ontology):
         else:
             return []
     
-    def _neighbors_graph(self, **params):
+    def _neighbors_graph(self, **params) -> Dict:
         """
         Get neighbors of a node
 
@@ -136,7 +136,6 @@ class RemoteScigraphOntology(Ontology):
         raise NotImplementedError()
     
     # Override
-    # Override
     def nodes(self):
         raise NotImplementedError()
 
@@ -148,34 +147,34 @@ class RemoteScigraphOntology(Ontology):
 
         
     # Override
-    def ancestors(self, node, relations=None, reflexive=False):
+    def ancestors(self, node, relations=None, reflexive=False) -> Set:
         logging.debug("Ancestors of {} over {}".format(node, relations))
         g = self._neighbors_graph(id=node,
                                   direction='OUTGOING',
                                   depth=20,
                                   relationshipType=self._mkrel(relations))
-        arr = [v['id'] for v in g['nodes']]
+        ancestors = {v['id'] for v in g['nodes']}
         if reflexive:
-            arr.add(node)
+            ancestors.add(node)
         else:
             if node in arr:
-                arr.remove(node)
-        return arr
+                ancestors.remove(node)
+        return ancestors
 
     # Override
-    def descendants(self, node, relations=None, reflexive=False):
+    def descendants(self, node, relations=None, reflexive=False)-> Set:
         logging.debug("Descendants of {} over {}".format(node, relations))
         g = self._neighbors_graph(id=node,
                                   direction='INCOMING',
                                   depth=40,
                                   relationshipType=self._mkrel(relations))
-        arr = [v['id'] for v in g['nodes']]
+        descendants = {v['id'] for v in g['nodes']}
         if reflexive:
-            arr.add(node)
+            descendants.add(node)
         else:
-            if node in arr:
-                arr.remove(node)
-        return arr
+            if node in descendants:
+                descendants.remove(node)
+        return descendants
     
     # Override
     def neighbors(self, node, relations=None):

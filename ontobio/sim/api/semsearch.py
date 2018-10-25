@@ -3,6 +3,8 @@ Semantic Search (ALPHA)
 """
 from typing import Union, List, Dict, Set, Optional, Tuple
 from collections import defaultdict
+from ontobio.model.similarity import SimResult
+from ontobio.sim.api.interfaces import SimApi
 import math
 import logging
 
@@ -19,7 +21,7 @@ ICValue = float
 InformationContent = float
 
 
-class SemSearchEngine(object):
+class SemSearchEngine(SimApi):
     """
     A semantic search engine can be used to compare individual annotated entities,
     or to compare pairs of entities.
@@ -185,10 +187,31 @@ class SemSearchEngine(object):
         mean1 = max1.mean()
         return (mean0+mean1)/2, mean0, mean1
         #return (mean0+mean1)/2, mean0, mean1, idxmax0, idxmax1
-        
-    def search(self, cset: Set[ClassId]):
-        slice = self.mica_ic_df.loc[cset]
-        am = self.assocmodel
-        for i in am.subjects:
-            pass # TODO
-    
+
+
+    def search(self,
+               id_list: Set,
+               negated_classes: Set,
+               method: Optional) -> List[SimResult]:
+        """
+        def search(self, cset: Set[ClassId]):
+            slice = self.mica_ic_df.loc[cset]
+            am = self.assocmodel
+            for i in am.subjects:
+                pass # TODO
+        """
+        raise NotImplementedError
+
+    def compare(self,
+                query_classes: Set,
+                reference_classes: Set,
+                method: Optional) -> SimResult:
+        """
+        Given two lists of entites (classes, individual)
+        return their similarity
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def matchers() -> List:
+        raise NotImplementedError

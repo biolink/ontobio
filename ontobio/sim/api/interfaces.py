@@ -8,8 +8,8 @@ class SimApi(metaclass=ABCMeta):
 
     @abstractmethod
     def search(self,
-               id_list: List,
-               negated_classes: List,
+               id_list: Iterable,
+               negated_classes: Iterable,
                method: Optional) -> List[SimResult]:
         """
         Given an input list of classes, searches for similar lists of classes
@@ -19,16 +19,17 @@ class SimApi(metaclass=ABCMeta):
 
     @abstractmethod
     def compare(self,
-                query_classes: List,
-                reference_classes: List,
+                query_classes: Iterable,
+                reference_classes: Iterable,
                 method: Optional) -> SimResult:
         """
         Given two lists of classes return their similarity
         """
         pass
 
+    @staticmethod
     @abstractmethod
-    def matchers(self) -> List[SimAlgorithm]:
+    def matchers() -> List[SimAlgorithm]:
         """
         Return the list of available matchers (eg resnik, boqa, cosine)
         could theoretically be a property with no setter
@@ -40,8 +41,8 @@ class FilteredSearchable(metaclass=ABCMeta):
 
     @abstractmethod
     def filtered_search(self,
-               id_list: List,
-               negated_classes: List,
+               id_list: Iterable,
+               negated_classes: Iterable,
                taxon_filter: int,
                category_filter: str,
                method: Optional) -> SimResult:

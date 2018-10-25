@@ -83,18 +83,39 @@ class PhenoSimEngine():
             reference_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(ref_profile)
             sim_result = self.sim_api.compare(query_phenos, reference_phenos, method)
             if is_first_result:
-                sim_result.matches.target_ids = [get_nodes_from_ids(reference_phenos)]
                 comparisons = sim_result
                 is_first_result = False
             else:
                 comparisons.matches.append(sim_result.matches[0])
-                comparisons.matches.target_ids.append(get_nodes_from_ids(reference_phenos))
+                comparisons.matches.target_ids.append(sim_result.matches.target_ids[0])
 
         return comparisons
 
-
     @staticmethod
     def _resolve_nodes_to_phenotypes(id_list: List[str]) -> List[str]:
+        """
+        Given a list of ids of unknown type, determine which ids
+        are phenotypes, if the id is not a phenotype, check to
+        see if it is associated with one or more phenotypes via
+        the 'has_phenotype' relation
+        :param id_list: list of ids of any type (curies as strings)
+        :return: list of phenotypes (curies as strings)
+        """
+        pheno_list = []
+        node_types = get_id_type_map(id_list)
+
+        for node in id_list:
+            if 'phenotype' in node_types[node]:
+                pheno_list.append(node)
+            else:
+                phenotypes = get_objects_for_subject(
+                    subject=node, object_category='phenotype', relation='RO:0002200'
+                )
+                pheno_list = pheno_list + phenotypes
+        return pheno_list
+
+    @staticmethod
+    def _get_node_info(id_list: List[str]) -> List[str]:
         """
         Given a list of ids of unknown type, determine which ids
         are phenotypes, if the id is not a phenotype, check to
