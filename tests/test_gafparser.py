@@ -11,6 +11,7 @@ import tempfile
 import logging
 import pytest
 import io
+import json
 
 POMBASE = "tests/resources/truncated-pombase.gaf"
 POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
@@ -214,7 +215,7 @@ def test_errors_gaf():
     w = GafWriter()
     w.write(assocs)
     for a in assocs:
-        if 'object_extensions' in a:
+        if a['object_extensions'] != {}:
             # our test file has no ORs, so in DNF this is always the first
             xs = a['object_extensions']['union_of'][0]['intersection_of']
             for x in xs:
@@ -249,6 +250,34 @@ def test_bad_date():
     assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\tTODAY\tPomBase\tfoo(X:1)")
     assert assoc_result.skipped == True
     assert assoc_result.associations == []
+
+def test_subject_extensions():
+    p = GafParser()
+    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tfoo(X:1)\tUniProtKB:P12345")
+    print(json.dumps(assoc_result.associations[0], indent=4))
+    assert "subject_extensions" in assoc_result.associations[0]
+    subject_extensions = assoc_result.associations[0]['subject_extensions']
+    gene_product_form_id = [extension["filler"] for extension in subject_extensions if extension["property"] == "isoform"][0]
+    assert gene_product_form_id == "UniProtKB:P12345"
+
+def test_object_extensions():
+    p = GafParser()
+    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tfoo(X:1)\tUniProtKB:P12345")
+    assert "object_extensions" in assoc_result.associations[0]
+    object_extensions = {
+        "union_of": [
+            {
+                "intersection_of": [
+                    {
+                        "property": "foo",
+                        "filler": "X:1"
+                    }
+                ]
+            }
+        ]
+    }
+    assert assoc_result.associations[0]['object_extensions'] == object_extensions
+
 
 def test_factory():
     afa = AssociationSetFactory()
