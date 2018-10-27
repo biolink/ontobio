@@ -41,9 +41,6 @@ class TestPhenoSimEngine():
     @patch.object(OwlSim2Api, '_get_owlsim_stats',  MagicMock(return_value=(None, None)))
     def setup_class(self):
 
-        scigraph_desc_fh = os.path.join(os.path.dirname(__file__),
-                                        'resources/owlsim2/mock-scigraph-desc.json')
-
         self.resolve_mock = patch.object(PhenoSimEngine, '_resolve_nodes_to_phenotypes',
                                          side_effect=mock_resolve_nodes)
         self.mock_scigraph = patch('ontobio.util.scigraph_util.get_scigraph_nodes',
@@ -76,11 +73,6 @@ class TestPhenoSimEngine():
 
         classes = ['HP:0002367', 'HP:0031466', 'HP:0007123']
         search_results = self.pheno_sim.search(classes)
-
-        print(json.dumps(search_results,
-                       default=lambda obj: getattr(obj, '__dict__', str(obj))
-                       )
-        )
 
         results = json.loads(
             json.dumps(search_results,
