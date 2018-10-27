@@ -100,7 +100,7 @@ class PhenoSimEngine():
                 comparisons.matches.target_ids.append(sim_result.matches.target_ids[0])
 
         if len(reference_ids) == 1:
-            comparisons.reference = typed_node_from_id(reference_ids[0])
+            comparisons.query.reference = typed_node_from_id(reference_ids[0])
 
         return comparisons
 

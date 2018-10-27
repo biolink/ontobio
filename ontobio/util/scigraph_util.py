@@ -104,7 +104,7 @@ def get_nodes_from_ids(id_list: Iterable[str]) -> List[Node]:
 
     for result in get_scigraph_nodes(id_list):
         if 'lbl' in result:
-            label = [label for label in result['lbl'][0]]
+            label = result['lbl']
         else:
             label = None  # Empty string or None?
         node_list.append(Node(result['id'], label))
@@ -133,10 +133,10 @@ def get_taxon(id: str) -> Optional[Node]:
 
 def typed_node_from_id(id: str) -> TypedNode:
     """
-    Get obo node from id
+    Get typed node from id
 
     :param id: id as curie
-    :return: dictionary where the id is the key and the value is a list of types
+    :return: TypedNode object
     """
     filter_out_types = [
         'cliqueLeader',
@@ -149,12 +149,12 @@ def typed_node_from_id(id: str) -> TypedNode:
     node = next(get_scigraph_nodes([id]))
 
     if 'lbl' in node:
-        label = [label for label in node['lbl'][0]]
+        label = node['lbl']
     else:
         label = None  # Empty string or None?
 
     types = [typ.lower() for typ in node['meta']['types']
-                             if typ not in filter_out_types]
+             if typ not in filter_out_types]
 
     return TypedNode(
         id=node['id'],

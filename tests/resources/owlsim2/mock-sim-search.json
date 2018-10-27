@@ -1,0 +1,154 @@
+{
+   "matches":[
+      {
+         "id":"OMIM:611203",
+         "label":"DNAJC5",
+         "pairwise_match":[
+            {
+               "lcs":{
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726",
+                  "label":"Dementia"
+               },
+               "match":{
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726",
+                  "label":"Dementia"
+               },
+               "reference":{
+                  "IC":12.114191960534875,
+                  "id":"HP:0007123",
+                  "label":"Subcortical dementia"
+               }
+            },
+            {
+               "lcs":{
+                  "IC":5.6504313552505065,
+                  "id":"HP:0031466",
+                  "label":"Impairment in personality functioning"
+               },
+               "match":{
+                  "IC":7.553650937506096,
+                  "id":"HP:0000716",
+                  "label":"Depressivity"
+               },
+               "reference":{
+                  "IC":5.6504313552505065,
+                  "id":"HP:0031466",
+                  "label":"Impairment in personality functioning"
+               }
+            },
+            {
+               "lcs":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               },
+               "match":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               },
+               "reference":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               }
+            }
+         ],
+         "rank":1,
+         "score":64,
+         "significance":"NaN",
+         "taxon":{
+            "id":"NCBITaxon:9606",
+            "label":"Homo sapiens"
+         },
+         "type":"gene"
+      },
+      {
+         "id":"MONDO:0008083",
+         "label":"neuronal ceroid lipofuscinosis 4B",
+         "pairwise_match":[
+            {
+               "lcs":{
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726",
+                  "label":"Dementia"
+               },
+               "match":{
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726",
+                  "label":"Dementia"
+               },
+               "reference":{
+                  "IC":12.114191960534875,
+                  "id":"HP:0007123",
+                  "label":"Subcortical dementia"
+               }
+            },
+            {
+               "lcs":{
+                  "IC":5.6504313552505065,
+                  "id":"HP:0031466",
+                  "label":"Impairment in personality functioning"
+               },
+               "match":{
+                  "IC":7.553650937506096,
+                  "id":"HP:0000716",
+                  "label":"Depressivity"
+               },
+               "reference":{
+                  "IC":5.6504313552505065,
+                  "id":"HP:0031466",
+                  "label":"Impairment in personality functioning"
+               }
+            },
+            {
+               "lcs":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               },
+               "match":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               },
+               "reference":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               }
+            }
+         ],
+         "rank":1,
+         "score":64,
+         "significance":"NaN",
+         "taxon":{
+            "id":"NCBITaxon:9606",
+            "label":"Homo sapiens"
+         },
+         "type":"disease"
+      }
+   ],
+   "query":{
+      "ids":[
+         {
+            "id":"HP:0031466",
+            "label":"Impairment in personality functioning"
+         },
+         {
+            "id":"HP:0002367",
+            "label":"Visual hallucinations"
+         },
+         {
+            "id":"HP:0007123",
+            "label":"Subcortical dementia"
+         }
+      ],
+      "negated_ids":[],
+      "reference":null,
+      "target_ids":[[]],
+      "unresolved_ids":[]
+   }
+}

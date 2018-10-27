@@ -2,7 +2,7 @@ from ontobio.sim.api.interfaces import SimApi, InformationContentStore, Filtered
 from ontobio.config import get_config
 from ontobio.vocabulary.upper import HpoUpperLevel
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.model.similarity import IcStatistic, SimResult, Node, SimMatch, SimQuery, PairwiseMatch, ICNode
+from ontobio.model.similarity import IcStatistic, SimResult, SimMatch, SimQuery, PairwiseMatch, ICNode
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.util.scigraph_util import get_nodes_from_ids, get_id_type_map, get_taxon
 
@@ -115,17 +115,6 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             method = method
         )
 
-    def compare(self,
-                reference_classes: List,
-                query_classes: List,
-                method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM) -> SimResult:
-        """
-        Owlsim2 compare, calls compare_attribute_sets, and converts to SimResult object
-        :return: SimResult object
-        """
-        owlsim_results = self.compare_attribute_sets(reference_classes, query_classes)
-        return OwlSim2Api._simcompare_to_simresult(owlsim_results, method)
-
     def filtered_search(
             self,
             id_list: List,
@@ -143,6 +132,17 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
         owlsim_results = self.search_by_attribute_set(id_list, namespace_filter)
         return OwlSim2Api._simsearch_to_simresult(owlsim_results, method)
+
+    def compare(self,
+                reference_classes: List,
+                query_classes: List,
+                method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM) -> SimResult:
+        """
+        Owlsim2 compare, calls compare_attribute_sets, and converts to SimResult object
+        :return: SimResult object
+        """
+        owlsim_results = self.compare_attribute_sets(reference_classes, query_classes)
+        return OwlSim2Api._simcompare_to_simresult(owlsim_results, method)
 
     @staticmethod
     def matchers() -> List[SimAlgorithm]:
@@ -213,6 +213,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             'a': profile_a,
             'b': profile_b,
         }
+
         return requests.get(owlsim_url, params=params, timeout=self.timeout).json()
 
     def get_attribute_information_profile(

@@ -135,9 +135,6 @@ class TestGolrSearchQuery():
         processed_docs = json.load(open(expected_fh))
 
         output_docs = self.manager.autocomplete()
-        print(json.dumps(output_docs,
-                          default=lambda obj: getattr(obj, '__dict__', str(obj)),
-                          sort_keys=True))
 
         assert json.dumps(processed_docs, sort_keys=True) == \
                json.dumps(output_docs,

@@ -1,7 +1,6 @@
 from ontobio.sim.api.owlsim2 import OwlSim2Api
 from ontobio.vocabulary.similarity import SimAlgorithm
-from unittest.mock import MagicMock
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 
 class TestOwlSim2Api():

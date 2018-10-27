@@ -1,8 +1,7 @@
 from ontobio.sim.annotation_scorer import AnnotationScorer
 from ontobio.sim.api.owlsim2 import OwlSim2Api
 from ontobio.model.similarity import IcStatistic
-from unittest.mock import MagicMock
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 
 class TestAnnotationSufficiency():

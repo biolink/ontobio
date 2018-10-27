@@ -94,7 +94,7 @@ class SimQuery:
         :param negated_ids: list of negated classes (eg phenotypes)
         :param unresolved_ids: list of unresolved classes
         :param target_ids: target classes (if in compare mode)
-        :param reference: input query reference or punned class
+        :param reference: input reference individual or punned class
                           (eg gene, disease) if in compare mode
         """
         self.ids = ids
