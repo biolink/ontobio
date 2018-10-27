@@ -23,7 +23,7 @@ foo:
 travis_test:
 	pytest tests/test_*local*.py tests/test_*parser*.py tests/test_qc.py \
 	       tests/test_rdfgen.py tests/test_parse_ids.py tests/test_parse_taxon.py \
-	       tests/unit/
+	       tests/phenosim_engine.py tests/unit/
 
 cleandist:
 	rm dist/* || true
