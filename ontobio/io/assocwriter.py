@@ -204,7 +204,7 @@ class GafWriter(AssocWriter):
 
         annotation_properties = '' # TODO
         interacting_taxon_id = '' ## TODO
-        gene_product_isoform = assoc["subject_extensions"][0] if len(assoc["subject_extensions"]) > 0 else ""
+        gene_product_isoform = assoc["subject_extensions"][0]["filler"] if len(assoc["subject_extensions"]) > 0 else ""
 
         aspect = assoc['aspect']
         taxon = None
