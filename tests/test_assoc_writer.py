@@ -113,6 +113,7 @@ def test_gaf_writer():
         "relation": {
             "id": "part_of"
         },
+        "interacting_taxon": "NCBITaxon:555"
         "evidence": {
             "type": "ISO",
             "has_supporting_reference": [
@@ -141,7 +142,7 @@ def test_gaf_writer():
     out = io.StringIO()
     writer = assocwriter.GafWriter(file=out)
 
-    expected = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20150305\tPomBase\tfoo(X:1)\tUniProtKB:P12345"
+    expected = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896|taxon:555\t20150305\tPomBase\tfoo(X:1)\tUniProtKB:P12345"
     writer.write_assoc(association)
     gaf = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert expected == gaf

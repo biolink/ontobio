@@ -217,6 +217,7 @@ class HpoaParser(AssocParser):
             'relation': {
                 'id': relation
             },
+            'interacting_taxon': None,
             'evidence': evidence,
             'provided_by': assigned_by,
             'date': date,

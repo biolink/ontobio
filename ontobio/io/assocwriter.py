@@ -137,7 +137,7 @@ class GpadWriter(AssocWriter):
         assigned_by = assoc['provided_by']
 
         annotation_properties = '' # TODO
-        interacting_taxon_id = '' ## TODO
+        interacting_taxon_id = assoc['interacting_taxon']
         vals = [db,
                 db_object_id,
                 qualifier,
@@ -168,6 +168,13 @@ class GafWriter(AssocWriter):
         # Just uses the word `source` if source is none. Otherwise uses the name of the source in the header
         self._write("!Header from {source}source gaf:\n".format(source=source+" " if source else ""))
         self._write("!=================================\n")
+
+    def _full_taxon_field(self, taxon, interacting_taxon):
+        full_taxon = taxon
+        if interacting_taxon is not None:
+            full_taxon = "{taxon}|{interacting_taxon}".format(taxon=taxon, interacting_taxon=interacting_taxon)
+
+        return full_taxon
 
     def write_assoc(self, assoc):
         """
@@ -203,13 +210,11 @@ class GafWriter(AssocWriter):
         assigned_by = assoc['provided_by']
 
         annotation_properties = '' # TODO
-        interacting_taxon_id = '' ## TODO
         gene_product_isoform = assoc["subject_extensions"][0] if len(assoc["subject_extensions"]) > 0 else ""
 
         aspect = assoc['aspect']
-        taxon = None
-        if 'taxon' in subj:
-            taxon = self.normalize_taxon(subj['taxon']['id'])
+        interacting_taxon_id = assoc["interacting_taxon"]
+        taxon = self._full_taxon_field(self.normalize_taxon(subj['taxon']['id']), interacting_taxon_id)
 
         extension_expression = self._extension_expression(assoc['object_extensions'])
 

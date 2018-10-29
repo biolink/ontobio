@@ -40,6 +40,7 @@ def test_rdfgen_includes_taxon_in_gp_class():
         'qualifiers': [],
         'aspect': 'C',
         'relation': {'id': 'part_of'},
+        'interacting_taxon': None,
         'evidence': {
             'type': 'ISO',
             'has_supporting_reference': ['GO_REF:0000024'],

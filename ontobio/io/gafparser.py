@@ -253,13 +253,22 @@ class GafParser(assocparser.AssocParser):
         ## --
         ## if a second value is specified, this is the interacting taxon
         ## We do not use the second value
-        normalized_taxon = self._taxon_id(taxon.split("|")[0], split_line)
+        taxons = taxon.split("|")
+        normalized_taxon = self._taxon_id(taxons[0], split_line)
         if normalized_taxon == None:
             self.report.error(line, assocparser.Report.INVALID_TAXON, taxon,
                                 msg="Taxon ID is invalid")
             return assocparser.ParseResult(line, [], True)
 
         self._validate_taxon(normalized_taxon, split_line)
+
+        interacting_taxon = None
+        if len(taxons) == 2:
+            interacting_taxon = self._taxon_id(taxons[1], split_line)
+            if interacting_taxon == None:
+                self.report.error(line, assocparser.Report.INVALID_TAXON, taxon,
+                                    msg="Taxon ID is invalid")
+                return assocparser.ParseResult(line, [], True)
 
         ## --
         ## db_object_synonym CARD=0..*
@@ -332,6 +341,7 @@ class GafParser(assocparser.AssocParser):
             'relation': {
                 'id': relation
             },
+            'interacting_taxon': interacting_taxon,
             'evidence': evidence_obj,
             'provided_by': assigned_by,
             'date': date,

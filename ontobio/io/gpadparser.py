@@ -89,13 +89,13 @@ class GpadParser(assocparser.AssocParser):
          reference,
          evidence,
          withfrom,
-         interacting_taxon_id, # TODO
+         interacting_taxon_id,
          date,
          assigned_by,
          annotation_xp,
          annotation_properties] = vals
 
-        split_line = assocparser.SplitLine(line=line, values=vals, taxon=interacting_taxon_id)
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
 
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, split_line, context=ENTITY):
@@ -116,6 +116,15 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         self._validate_id(evidence, split_line)
+
+        interacting_taxon = None if interacting_taxon_id == "" else interacting_taxon_id
+        if interacting_taxon != None:
+            interacting_taxon = self._taxon_id(interacting_taxon_id, split_line)
+            if interacting_taxon == None:
+                self.report.error(line, assocparser.Report.INVALID_TAXON, interacting_taxon_id,
+                                    msg="Taxon ID is invalid")
+                return assocparser.ParseResult(line, [], True)
+
         #TODO: ecomap is currently one-way only
         #ecomap = self.config.ecomap
         #if ecomap != None:
@@ -160,6 +169,7 @@ class GpadParser(assocparser.AssocParser):
             'relation': {
                 'id': relation
             },
+            'interacting_taxon': interacting_taxon,
             'evidence': {
                 'type': evidence,
                 'with_support_from': withfroms,
