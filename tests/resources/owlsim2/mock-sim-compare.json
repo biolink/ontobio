@@ -1,0 +1,92 @@
+{
+   "matches":[
+      {
+         "type":null,
+         "id":"HP:0002367 + HP:0031466 + HP:0007123",
+         "rank":"NaN",
+         "pairwise_match":[
+            {
+               "reference":{
+                  "label":"Dementia",
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726"
+               },
+               "lcs":{
+                  "label":"Dementia",
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726"
+               },
+               "match":{
+                  "label":"Subcortical dementia",
+                  "IC":12.114191960534875,
+                  "id":"HP:0007123"
+               }
+            },
+            {
+               "reference":{
+                  "label":"Hallucinations",
+                  "IC":8.324595598644068,
+                  "id":"HP:0000738"
+               },
+               "lcs":{
+                  "label":"Hallucinations",
+                  "IC":8.324595598644068,
+                  "id":"HP:0000738"
+               },
+               "match":{
+                  "label":"Visual hallucinations",
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367"
+               }
+            }
+         ],
+         "label":"HP:0002367 + HP:0031466 + HP:0007123",
+         "taxon":null,
+         "significance":"NaN",
+         "score":78
+      }
+   ],
+   "query":{
+      "target_ids":[
+         [
+            {
+               "label":"Impairment in personality functioning",
+               "id":"HP:0031466"
+            },
+            {
+               "label":"Visual hallucinations",
+               "id":"HP:0002367"
+            },
+            {
+               "label":"Subcortical dementia",
+               "id":"HP:0007123"
+            }
+         ]
+      ],
+      "ids":[
+         {
+            "label":"Personality changes",
+            "id":"HP:0000751"
+         },
+         {
+            "label":"Dementia",
+            "id":"HP:0000726"
+         },
+         {
+            "label":"Hallucinations",
+            "id":"HP:0000738"
+         }
+      ],
+      "negated_ids":[],
+      "unresolved_ids":[],
+      "reference":{
+         "type":"disease",
+         "id":"MONDO:0008199",
+         "label":"Parkinson disease, late-onset",
+         "taxon":{
+            "label":"Homo sapiens",
+            "id":"NCBITaxon:9606"
+         }
+      }
+   }
+}

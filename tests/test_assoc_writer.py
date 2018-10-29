@@ -1,4 +1,5 @@
 from ontobio.io import assocwriter
+from ontobio.io import gafparser
 
 import io
 
@@ -125,7 +126,12 @@ def test_gaf_writer():
         },
         "provided_by": "PomBase",
         "date": "20150305",
-        "subject_extensions": ["UniProtKB:P12345"],
+        "subject_extensions": [
+            {
+                "property": "isoform",
+                "filler": "UniProtKB:P12345"
+            }
+        ],
         "object_extensions": {
             "union_of": [
                 {
@@ -146,3 +152,17 @@ def test_gaf_writer():
     writer.write_assoc(association)
     gaf = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert expected == gaf
+
+def test_roundtrip():
+    """
+    Start with a line, parse it, then write it. The beginning line should be the same as what was written.
+    """
+    line = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20150305\tPomBase\tfoo(X:1)\tUniProtKB:P12345"
+    parser = gafparser.GafParser()
+    out = io.StringIO()
+    writer = assocwriter.GafWriter(file=out)
+    assoc_dict = parser.parse_line(line).associations[0]
+    writer.write_assoc(assoc_dict)
+    gaf = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+
+    assert line == gaf

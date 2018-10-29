@@ -1,0 +1,172 @@
+{
+   "unresolved":[],
+   "query_IRIs":[
+      "http://purl.obolibrary.org/obo/HP_0002367",
+      "http://purl.obolibrary.org/obo/HP_0007123",
+      "http://purl.obolibrary.org/obo/HP_0031466"
+   ],
+   "results":[
+      {
+         "system_stats":{
+            "maxSumIC":"6746.96160",
+            "meanMeanIC":"6.82480",
+            "meanMaxIC":"9.51535",
+            "meanN":"15.47425",
+            "individuals":"65309",
+            "maxMaxIC":"16.16108",
+            "meanSumIC":"120.89767"
+         },
+         "simJ":0.24,
+         "simGIC":0.18611943539618386,
+         "bmaSymIC":3.8294818893181324,
+         "bmaInverseAsymIC":2.9637437984628057,
+         "maxIC":10.771155042699807,
+         "combinedScore":64,
+         "matches":[
+            {
+               "lcs":{
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726",
+                  "label":"Dementia"
+               },
+               "a":{
+                  "IC":12.114191960534875,
+                  "id":"HP:0007123",
+                  "label":"Subcortical dementia"
+               },
+               "b":{
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726",
+                  "label":"Dementia"
+               }
+            },
+            {
+               "lcs":{
+                  "IC":5.6504313552505065,
+                  "id":"HP:0031466",
+                  "label":"Impairment in personality functioning"
+               },
+               "a":{
+                  "IC":5.6504313552505065,
+                  "id":"HP:0031466",
+                  "label":"Impairment in personality functioning"
+               },
+               "b":{
+                  "IC":7.553650937506096,
+                  "id":"HP:0000716",
+                  "label":"Depressivity"
+               }
+            },
+            {
+               "lcs":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               },
+               "a":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               },
+               "b":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               }
+            }
+         ],
+         "i":"_query",
+         "bmaAsymIC":7.869592979976322,
+         "j":{
+            "id":"OMIM:611203",
+            "label":"DNAJC5"
+         },
+         "maxIC_class":{
+            "IC":10.771155042699807,
+            "id":"HP:0002367",
+            "label":"Visual hallucinations"
+         }
+      },
+      {
+         "system_stats":{
+            "maxSumIC":"6746.96160",
+            "meanMeanIC":"6.82480",
+            "meanMaxIC":"9.51535",
+            "meanN":"15.47425",
+            "individuals":"65309",
+            "maxMaxIC":"16.16108",
+            "meanSumIC":"120.89767"
+         },
+         "simJ":0.24,
+         "simGIC":0.18611943539618386,
+         "bmaSymIC":3.8294818893181324,
+         "bmaInverseAsymIC":2.9637437984628057,
+         "maxIC":10.771155042699807,
+         "combinedScore":64,
+         "matches":[
+            {
+               "lcs":{
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726",
+                  "label":"Dementia"
+               },
+               "a":{
+                  "IC":12.114191960534875,
+                  "id":"HP:0007123",
+                  "label":"Subcortical dementia"
+               },
+               "b":{
+                  "IC":7.187192541978653,
+                  "id":"HP:0000726",
+                  "label":"Dementia"
+               }
+            },
+            {
+               "lcs":{
+                  "IC":5.6504313552505065,
+                  "id":"HP:0031466",
+                  "label":"Impairment in personality functioning"
+               },
+               "a":{
+                  "IC":5.6504313552505065,
+                  "id":"HP:0031466",
+                  "label":"Impairment in personality functioning"
+               },
+               "b":{
+                  "IC":7.553650937506096,
+                  "id":"HP:0000716",
+                  "label":"Depressivity"
+               }
+            },
+            {
+               "lcs":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               },
+               "a":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               },
+               "b":{
+                  "IC":10.771155042699807,
+                  "id":"HP:0002367",
+                  "label":"Visual hallucinations"
+               }
+            }
+         ],
+         "i":"_query",
+         "bmaAsymIC":7.869592979976322,
+         "j":{
+            "id":"MONDO:0008083",
+            "label":"neuronal ceroid lipofuscinosis 4B"
+         },
+         "maxIC_class":{
+            "IC":10.771155042699807,
+            "id":"HP:0002367",
+            "label":"Visual hallucinations"
+         }
+      }
+   ]
+}

@@ -181,6 +181,7 @@ def flip(d, x, y):
     d[x] = dy
     d[y] = dx
 
+
 def solr_quotify(v):
     if isinstance(v, list):
         if len(v) == 1:
@@ -190,12 +191,6 @@ def solr_quotify(v):
     else:
         # TODO - escape quotes
         return '"{}"'.format(v)
-
-
-# We take the monarch golr as default
-# Note that these can be overridden using a config object
-#monarch_golr_url = "https://solr.monarchinitiative.org/solr/golr/"
-#monarch_solr = pysolr.Solr(monarch_golr_url, timeout=5)
 
 
 def translate_facet_field(fcs, invert_subject_object = False):
