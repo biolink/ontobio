@@ -157,7 +157,7 @@ def test_roundtrip():
     """
     Start with a line, parse it, then write it. The beginning line should be the same as what was written.
     """
-    line = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20150305\tPomBase\tfoo(X:1)\tUniProtKB:P12345"
+    line = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896|taxon:555\t20150305\tPomBase\tfoo(X:1)\tUniProtKB:P12345"
     parser = gafparser.GafParser()
     out = io.StringIO()
     writer = assocwriter.GafWriter(file=out)
