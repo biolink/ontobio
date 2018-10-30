@@ -1,6 +1,6 @@
 from ontobio.io import assocwriter
 from ontobio.io import gafparser
-
+import json
 import io
 
 def test_empty_extension_expression():
@@ -114,7 +114,7 @@ def test_gaf_writer():
         "relation": {
             "id": "part_of"
         },
-        "interacting_taxon": "NCBITaxon:555"
+        "interacting_taxon": "NCBITaxon:555",
         "evidence": {
             "type": "ISO",
             "has_supporting_reference": [
