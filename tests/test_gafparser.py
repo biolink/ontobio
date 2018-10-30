@@ -208,8 +208,6 @@ def test_errors_gaf():
             n_invalid_idspace += 1
     assert len(msgs) == 17
     assert n_invalid_idspace == 1
-
-    # we expect 6
     assert len(assocs) == 6
 
     w = GafWriter()

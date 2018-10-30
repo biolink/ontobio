@@ -68,6 +68,9 @@ class AssocWriter():
         global internal_taxon
         global external_taxon
 
+        if taxon == None:
+            return ""
+
         if external_taxon.match(taxon):
             # If we match here, then the internal view already exists and we're good
             return internal_taxon
@@ -210,11 +213,12 @@ class GafWriter(AssocWriter):
         assigned_by = assoc['provided_by']
 
         annotation_properties = '' # TODO
-        gene_product_isoform = assoc["subject_extensions"][0] if len(assoc["subject_extensions"]) > 0 else ""
+        # if we have any subject extensions, list each one that has a "property" equal to "isoform", take the first one, and grab the "filler"
+        gene_product_isoform = [e for e in assoc["subject_extensions"] if e["property"] == "isoform"][0]["filler"] if len(assoc["subject_extensions"]) > 0 else ""
 
         aspect = assoc['aspect']
         interacting_taxon_id = assoc["interacting_taxon"]
-        taxon = self._full_taxon_field(self.normalize_taxon(subj['taxon']['id']), interacting_taxon_id)
+        taxon = self._full_taxon_field(self.normalize_taxon(subj['taxon']['id']), self.normalize_taxon(interacting_taxon_id))
 
         extension_expression = self._extension_expression(assoc['object_extensions'])
 
