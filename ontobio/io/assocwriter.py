@@ -174,7 +174,7 @@ class GafWriter(AssocWriter):
 
     def _full_taxon_field(self, taxon, interacting_taxon):
         full_taxon = taxon
-        if interacting_taxon is not None:
+        if interacting_taxon not in [None, ""]:
             full_taxon = "{taxon}|{interacting_taxon}".format(taxon=taxon, interacting_taxon=interacting_taxon)
 
         return full_taxon
