@@ -182,7 +182,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
     def search_by_attribute_set(
             self,
             profile: List[str],
-            limit: Optional[int] = 20,
+            limit: Optional[int] = 100,
             namespace_filter: Optional[str]=None) -> Dict:
         """
         Given a list of phenotypes, returns a ranked list of individuals
