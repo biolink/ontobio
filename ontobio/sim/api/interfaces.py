@@ -10,6 +10,7 @@ class SimApi(metaclass=ABCMeta):
     def search(self,
                id_list: Iterable,
                negated_classes: Iterable,
+               limit: Optional[int],
                method: Optional) -> List[SimResult]:
         """
         Given an input list of classes, searches for similar lists of classes
@@ -43,8 +44,9 @@ class FilteredSearchable(metaclass=ABCMeta):
     def filtered_search(self,
                id_list: Iterable,
                negated_classes: Iterable,
-               taxon_filter: int,
-               category_filter: str,
+               limit: Optional[int],
+               taxon_filter: Optional,
+               category_filter: Optional,
                method: Optional) -> SimResult:
         """
         Given an input iterable of classes or individuals,

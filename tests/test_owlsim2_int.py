@@ -73,9 +73,9 @@ class TestOwlSimIntegration():
         classes_a = ['MONDO:0008199']
         classes_b = [['HP:0002367', 'HP:0031466', 'HP:0007123']]
         compare_results = self.pheno_sim.compare(classes_a, classes_b)
-        assert compare_results.reference.id == "MONDO:0008199"
-        assert compare_results.reference.type == "disease"
-        assert compare_results.reference.taxon.id == "NCBITaxon:9606"
+        assert compare_results.query.reference.id == "MONDO:0008199"
+        assert compare_results.query.reference.type == "disease"
+        assert compare_results.query.reference.taxon.id == "NCBITaxon:9606"
         assert compare_results.matches[0].pairwise_match[0].match.id in classes_b[0]
         assert compare_results.matches[0].score > 0
 
