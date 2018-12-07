@@ -7,32 +7,39 @@ from typing import List, Dict
 from ontobio import ontol
 from ontobio.io import assocparser
 
-FailMode = enum.Enum("FailMode", {"SOFT": "soft", "HARD": "hard"})
-ResultType = enum.Enum("Result", {"PASS": "Pass", "WARNING": "Warning", "ERROR": "Error"})
+ReportType = enum.Enum("Report", {"NONE": "none", "LOG": "log", "CURATOR": "curator"})
+ActionType = enum.Enum("Action", {"PASS": "Pass", "FILTER": "Filter", "REPAIR": "Repair", "WARN": "Warn", "ERROR": "Error"})
 TestResult = collections.namedtuple("TestResult", ["result_type", "message"])
 
 """
 Send True for passes, and this returns the PASS ResultType, and if False, then
-depending on the fail mode it returns either WARNING or ERROR ResultType.
+returns whether or not it should be reported to curators.
 """
-def result(passes: bool, fail_mode: FailMode) -> ResultType:
+def result(passes: bool, action_type: ActionType) -> ReportType:
     if passes:
-        return ResultType.PASS
+        return ReportType.NONE
 
     # Else we didn't pass
-    if fail_mode == FailMode.SOFT:
-        return ResultType.WARNING
+    if action_type == ActionType.ERROR:
+        return ReportType.CURATOR
 
-    if fail_mode == FailMode.HARD:
-        return ResultType.ERROR
+    if action_type == ActionType.WARN:
+        return ReportType.CURATOR
+
+    if action_type == ActionType.REPAIR:
+        return ReportType.CURATOR
+
+    if action_type == ActionType.FILTER:
+        return ReportType.LOG
 
 
 class GoRule(object):
 
-    def __init__(self, id, title, fail_mode: FailMode):
+    def __init__(self, id, title, action_type: ActionType, report_type: ReportType):
         self.id = id
         self.title = title
-        self.fail_mode = fail_mode
+        self.action =action_type
+        self.report = report_type
 
     def _list_terms(self, pipe_separated):
         terms = pipe_separated.split("|")
@@ -45,7 +52,7 @@ class GoRule(object):
 class GoRule02(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000002", "No 'NOT' annotations to 'protein binding ; GO:0005515'", FailMode.SOFT)
+        super().__init__("GORULE:0000002", "No 'NOT' annotations to 'protein binding ; GO:0005515'", ActionType.WARN, ReportType.CURATOR)
 
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
@@ -60,7 +67,7 @@ class GoRule02(GoRule):
 class GoRule08(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000008", "No annotations should be made to uninformatively high level terms", FailMode.SOFT)
+        super().__init__("GORULE:0000008", "No annotations should be made to uninformatively high level terms", ActionType.WARN, ReportType.CURATOR)
         self.do_not_annotate = None
         self.do_not_manually_annotate = None
 
@@ -87,7 +94,7 @@ class GoRule08(GoRule):
 class GoRule11(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000011", "ND annotations to root nodes only", FailMode.HARD)
+        super().__init__("GORULE:0000011", "ND annotations to root nodes only", ActionType.ERROR, ReportType.CURATOR)
         self.root_go_classes = ["GO:0003674", "GO:0005575", "GO:0008150"]
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
@@ -102,7 +109,7 @@ class GoRule11(GoRule):
 class GoRule16(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", FailMode.SOFT)
+        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", ActionType.WARN, ReportType.CURATOR)
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         evidence = annotation[6]
@@ -119,7 +126,7 @@ class GoRule16(GoRule):
 class GoRule17(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000017", "IDA annotations must not have a With/From entry", FailMode.SOFT)
+        super().__init__("GORULE:0000017", "IDA annotations must not have a With/From entry", ActionType.WARN, ReportType.CURATOR)
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         evidence = annotation[6]
@@ -133,7 +140,7 @@ class GoRule17(GoRule):
 class GoRule18(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000018", "IPI annotations require a With/From entry", FailMode.SOFT)
+        super().__init__("GORULE:0000018", "IPI annotations require a With/From entry", ActionType.WARN, ReportType.CURATOR)
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         evidence = annotation[6]
@@ -148,7 +155,7 @@ class GoRule18(GoRule):
 class GoRule26(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000026", "IBA evidence codes should be filtered from main MOD gaf sources", FailMode.HARD)
+        super().__init__("GORULE:0000026", "IBA evidence codes should be filtered from main MOD gaf sources", ActionType.ERROR, ReportType.CURATOR)
         self.offending_evidence = ["IBA"]
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
@@ -161,7 +168,7 @@ class GoRule26(GoRule):
 class GoRule29(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000029", "All IEAs over a year old are removed", FailMode.HARD)
+        super().__init__("GORULE:0000029", "All IEAs over a year old are removed", ActionType.ERROR, ReportType.CURATOR)
         self.one_year = datetime.timedelta(days=365)
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
@@ -177,7 +184,7 @@ class GoRule29(GoRule):
 class GoRule30(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000030", "Deprecated GO_REFs are not allowed", FailMode.HARD)
+        super().__init__("GORULE:0000030", "Deprecated GO_REFs are not allowed", ActionType.ERROR, ReportType.CURATOR)
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         references = self._list_terms(annotation[5])
