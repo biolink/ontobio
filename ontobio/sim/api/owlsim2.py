@@ -100,6 +100,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             self,
             id_list: List,
             negated_classes: List,
+            limit: Optional[int] = 100,
             method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM) -> SimResult:
         """
         Owlsim2 search, calls search_by_attribute_set, and converts to SimResult object
@@ -110,6 +111,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         return self.filtered_search(
             id_list = id_list,
             negated_classes = negated_classes,
+            limit = limit,
             taxon_filter = None,
             category_filter = None,
             method = method
@@ -119,8 +121,9 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             self,
             id_list: List,
             negated_classes: List,
-            taxon_filter: Optional[int],
-            category_filter: Optional[str],
+            limit: Optional[int] = 100,
+            taxon_filter: Optional[int] = None,
+            category_filter: Optional[str] = None,
             method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM) -> SimResult:
         """
         Owlsim2 filtered search, resolves taxon and category to a namespace,
@@ -130,7 +133,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             logging.warning("Owlsim2 does not support negation, ignoring neg classes")
 
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
-        owlsim_results = self.search_by_attribute_set(id_list, namespace_filter)
+        owlsim_results = self.search_by_attribute_set(id_list, limit, namespace_filter)
         return OwlSim2Api._simsearch_to_simresult(owlsim_results, method)
 
     def compare(self,
@@ -167,14 +170,19 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         try:
             for cls in sim_response['input']:
                 profile_ic[cls['id']] = cls['IC']
-        except JSONDecodeError as exc_msg:
-            raise JSONDecodeError("Cannot parse owlsim2 response: {}".format(exc_msg))
+        except JSONDecodeError as json_exc:
+            raise JSONDecodeError(
+                "Cannot parse owlsim2 response: {}".format(json_exc.msg),
+                json_exc.doc,
+                json_exc.pos
+            )
 
         return profile_ic
 
     def search_by_attribute_set(
             self,
             profile: List[str],
+            limit: Optional[int] = 100,
             namespace_filter: Optional[str]=None) -> Dict:
         """
         Given a list of phenotypes, returns a ranked list of individuals
@@ -190,6 +198,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
         params = {
             'a': profile,
+            'limit': limit,
             'target': namespace_filter
         }
         return requests.get(owlsim_url, params=params, timeout=self.timeout).json()
@@ -424,8 +433,12 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
                     descendants=scigraph.descendants(cat_stat['id'], relations=["subClassOf"])
                 )
 
-        except JSONDecodeError as exc_msg:
-            raise JSONDecodeError("Cannot parse owlsim2 response: {}".format(exc_msg))
+        except JSONDecodeError as json_exc:
+            raise JSONDecodeError(
+                "Cannot parse owlsim2 response: {}".format(json_exc.msg),
+                json_exc.doc,
+                json_exc.pos
+            )
 
         return global_stats, category_stats
 

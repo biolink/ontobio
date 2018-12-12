@@ -24,6 +24,7 @@ class OwlSim3Api(SimApi):
     def search(self,
                id_list: List,
                negated_classes: List,
+               limit: Optional[int],
                method: Optional) -> List[SimResult]:
         """
         Given an input list of classes or individuals,

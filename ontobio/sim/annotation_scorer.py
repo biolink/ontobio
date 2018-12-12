@@ -6,7 +6,7 @@ import numpy as np
 from statistics import mean
 
 
-class AnnotationScorer():
+class AnnotationScorer:
     """
     Computes the annotation sufficiency scores as described
     by https://zenodo.org/record/834091#.W8ZnCxhlCV4
@@ -72,7 +72,7 @@ class AnnotationScorer():
         :param ic_map: dictionary of class - information content mappings
         :param bg_mean_pic: the average of the average IC in
                             the background profile annotations
-        :param bg_max_pic: max IC annotated to the background set of profiles
+        :param bg_mean_max_pic: max IC annotated to the background set of profiles
         :param bg_mean_sum_pic: Average of the profile sum IC in background set
         :param negation_weight: Average of the profile sum IC in background set
         :param ic_map: Average of the profile sum IC in background set
@@ -102,8 +102,8 @@ class AnnotationScorer():
             min([sum_ic / bg_mean_sum_pic, 1.0])
         ])
 
+    @staticmethod
     def _get_scaled_score(
-            self,
             simple_score: float,
             categorical_score: float,
             category_weight: Optional[float] = .5) -> float:

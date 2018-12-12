@@ -22,6 +22,7 @@ class PhenoSimEngine():
             self,
             id_list: List[str],
             negated_ids: Optional[List] = None,
+            limit: Optional[int] = 100,
             taxon_filter: Optional[int]= None,
             category_filter: Optional[str]= None,
             method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM
@@ -49,10 +50,10 @@ class PhenoSimEngine():
                 raise NotImplementedError("filtered search not implemented "
                                           "in {}".format(str(self.sim_api)))
             search_result = self.sim_api.filtered_search(
-                pheno_list, negated_ids, taxon_filter, category_filter, method
+                pheno_list, negated_ids, limit, taxon_filter, category_filter, method
             )
         else:
-            search_result = self.sim_api.search(pheno_list, negated_ids, method)
+            search_result = self.sim_api.search(pheno_list, negated_ids, limit, method)
 
         return search_result
 
