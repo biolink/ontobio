@@ -90,3 +90,12 @@ class TestOwlSimIntegration():
         assert compare_results.matches[0].type == "disease"
         assert compare_results.matches[0].taxon.id == "NCBITaxon:9606"
         assert compare_results.matches[0].score > 0
+
+    def test_sim_compare_multiple(self):
+        """
+        Comparison against multiple profiles
+        """
+        classes_a = ['HP:0002367', 'HP:0031466', 'HP:0007123']
+        classes_b = [['HP:0000716', 'HP:0011307'],['HP:0001004']]
+        compare_results = self.pheno_sim.compare(classes_a, classes_b)
+        assert compare_results.query.target_ids[1][0].id == 'HP:0001004'

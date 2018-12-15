@@ -98,7 +98,7 @@ class PhenoSimEngine():
                 is_first_result = False
             else:
                 comparisons.matches.append(sim_result.matches[0])
-                comparisons.matches.target_ids.append(sim_result.matches.target_ids[0])
+                comparisons.query.target_ids.append(sim_result.query.target_ids[0])
 
         if len(reference_ids) == 1:
             comparisons.query.reference = typed_node_from_id(reference_ids[0])
