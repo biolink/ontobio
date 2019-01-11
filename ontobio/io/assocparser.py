@@ -292,9 +292,9 @@ class AssocParser(object):
         for association in associations:
             pass
 
-    def validate_line(self, line: SplitLine):
+    def validate_line(self, line):
         if line == "":
-            self.report.warning(line.line, Report.WRONG_NUMBER_OF_COLUMNS, "",
+            self.report.warning(line, Report.WRONG_NUMBER_OF_COLUMNS, "",
                                 msg="GORULE:0000001: empty line", rule=1)
             return ParseResult(line, [], True)
 
@@ -336,7 +336,7 @@ class AssocParser(object):
                 raise ValueError("Line: {} has too few cols, expect class id in col {}".format(line, col))
             cid = vals[col]
             if cid not in class_map or len(class_map[cid]) == 0:
-                self.report.error(line.line, Report.UNMAPPED_ID, cid)
+                self.report.error(line, Report.UNMAPPED_ID, cid)
                 continue
             else:
                 for mcid in class_map[cid]:
@@ -454,7 +454,7 @@ class AssocParser(object):
 
         return id
 
-    def _normalize_gaf_date(self, date, line):
+    def _normalize_gaf_date(self, date, line: SplitLine):
         if date is None or date == "":
             self.report.warning(line.line, Report.INVALID_DATE, date, "GORULE:0000001: empty",
                 taxon=line.taxon, rule=1)
