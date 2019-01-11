@@ -4,7 +4,7 @@ Tests for ontobio.golr.golr_associations
 from ontobio.golr.golr_associations import search_associations, search_associations_compact, select_distinct_subjects, get_objects_for_subject, get_subjects_for_object
 
 
-HUMAN_SHH = 'NCBIGene:6469'
+HUMAN_SHH = 'HGNC:10848'
 HOLOPROSENCEPHALY = 'HP:0001360'
 TWIST_ZFIN = 'ZFIN:ZDB-GENE-050417-357'
 DVPF = 'GO:0009953'
