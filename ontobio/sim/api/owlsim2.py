@@ -365,13 +365,14 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         sorted_results = sorted(
             results, reverse=True, key=lambda k: k[OwlSim2Api.method2key[method]]
         )
-        rank = 1
-        previous_score = sorted_results[0][OwlSim2Api.method2key[method]]
-        for result in sorted_results:
-            if previous_score > result[OwlSim2Api.method2key[method]]:
-                rank += 1
-            result['rank'] = rank
-            previous_score = result[OwlSim2Api.method2key[method]]
+        if len(sorted_results) > 0:
+            rank = 1
+            previous_score = sorted_results[0][OwlSim2Api.method2key[method]]
+            for result in sorted_results:
+                if previous_score > result[OwlSim2Api.method2key[method]]:
+                    rank += 1
+                result['rank'] = rank
+                previous_score = result[OwlSim2Api.method2key[method]]
 
         return sorted_results
 

@@ -1,5 +1,6 @@
 from ontobio.sim.phenosim_engine import PhenoSimEngine
 from ontobio.sim.api.owlsim2 import OwlSim2Api
+from ontobio.vocabulary.similarity import SimAlgorithm
 
 from unittest.mock import MagicMock, patch
 import os
@@ -81,7 +82,6 @@ class TestPhenoSimEngine():
         )
         assert expected_sim_results == results
 
-
     def test_sim_compare(self):
         # Load fake output from owlsim2 and mock compare
         mock_search_fh = os.path.join(os.path.dirname(__file__),
@@ -104,3 +104,17 @@ class TestPhenoSimEngine():
                        )
         )
         assert expected_sim_results == results
+
+    def test_no_results(self):
+        """
+        Make sure ontobio handles no results correctly
+        """
+        # Load fake output from owlsim2 where no results are returned
+        mock_search_fh = os.path.join(os.path.dirname(__file__),
+                                      'resources/owlsim2/mock-owlsim-noresults.json')
+        mock_search = json.load(open(mock_search_fh))
+        self.owlsim2_api.search_by_attribute_set = MagicMock(return_value=mock_search)
+
+        classes = ['HP:0002367', 'HP:0031466', 'HP:0007123']
+        search_results = self.pheno_sim.search(classes, method=SimAlgorithm.SIM_GIC)
+        assert search_results.matches == []
