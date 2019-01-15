@@ -18,8 +18,8 @@ addons:
     - pandoc
  
 # command to run tests
-script:
-  - pytest
+script: 
+  - PYTHONPATH=. make travis_test
 
 #after_success:
 #  coveralls
