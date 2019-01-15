@@ -157,7 +157,7 @@ class RemoteScigraphOntology(Ontology):
         if reflexive:
             ancestors.add(node)
         else:
-            if node in arr:
+            if node in ancestors:
                 ancestors.remove(node)
         return ancestors
 
