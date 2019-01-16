@@ -412,7 +412,7 @@ class Ontology():
         """
         g = self.get_graph()
         if node in g:
-            parents = [x for x in g.predecessors(node)]
+            parents = list(g.predecessors(node))
             if relations is None:
                 return parents
             else:
@@ -441,7 +441,7 @@ class Ontology():
         """
         g = self.get_graph()
         if node in g:
-            children = [ x for x in g.successors(node)]
+            children = list(g.successors(node))
             if relations is None:
                 return children
             else:
@@ -583,7 +583,7 @@ class Ontology():
         """
         g = self.get_filtered_graph(relations=relations, prefix=prefix)
         # note: we also eliminate any singletons, which includes obsolete classes
-        roots = [n for n in g.nodes() if len([x for x in g.predecessors(n)]) == 0 and len([x for x in g.successors(n)]) > 0]
+        roots = [n for n in g.nodes() if len(list(g.predecessors(n))) == 0 and len(list(g.successors(n))) > 0]
         return roots
 
     def get_level(self, level, relations=None, **args):
@@ -624,7 +624,7 @@ class Ontology():
             g = self.get_filtered_graph(relations)
         l = []
         for n in g:
-            l.append([n] + [p for p in g.predecessors(n)])
+            l.append([n] + list(g.predecessors(n)))
         return l
 
     def text_definition(self, nid):
@@ -918,7 +918,7 @@ class Ontology():
             if nid not in xg:
                 return []
             if bidirectional:
-                return [x for x in xg.neighbors(nid)]
+                return list(xg.neighbors(nid))
             else:
                 return [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
 
