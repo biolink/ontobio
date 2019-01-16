@@ -39,7 +39,7 @@ def test_factory():
     labels = [ont.label(n) for n in nodes]
     print(labels)
     # Note: it's possible wd may change rendering this false
-    assert 'Fear of frogs' in labels
+    assert 'fear of frogs' in labels
     from ontobio.io.ontol_renderers import GraphRenderer
     w = GraphRenderer.create('tree')
     w.write(ont, query_ids=qids)
