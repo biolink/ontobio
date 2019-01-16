@@ -44,7 +44,7 @@ setuptools.setup(
 
     # Dependencies
     install_requires=[
-        'networkx==1.11',
+        'networkx==2.2',
         'jsobject',
         'pyyaml==3.13',
         'pysolr',
