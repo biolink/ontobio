@@ -19,9 +19,9 @@ def test_remote_sparql():
     nodes = g.nodes()
     print(len(nodes))
     assert len(nodes) > 100
-    nbrs = g.successors(PLOIDY)
+    nbrs = [n for n in g.successors(PLOIDY)]
     print("SUCC:"+str(nbrs))
-    parents = g.predecessors(PLOIDY)
+    parents = [p for p in g.predecessors(PLOIDY)]
     print("PRED:"+str(parents))
     assert parents == ['PATO:0001396']
     ancs = ancestors(g, PLOIDY)

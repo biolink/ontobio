@@ -219,7 +219,7 @@ class SimpleListGraphRenderer(GraphRenderer):
         for n in ontol.nodes():
             s += self.render_noderef(ontol, n, **args) + "\n"
             #for n2 in ontol.parents(n):
-            #    for _,ea in g[n2][n].items():
+            #    for _,ea in g.get_edge_data(n2,n).items():
             #        s += '  {} {}'.format(str(ea['pred']), self.render_noderef(ontol, n2, **args))
             #        s += "\n"
         return s
@@ -255,7 +255,7 @@ class AsciiTreeGraphRenderer(GraphRenderer):
         s += "\n"
         for c in ontol.children(n):
             preds = []
-            for _,ea in g[n][c].items():
+            for _,ea in g.get_edge_data(n,c).items():
                 preds.append(ea['pred'])
             s+= self._show_tree_node(",".join(preds), c, ontol, depth+1, path+[n], **args)
         return s
@@ -270,7 +270,7 @@ class OboFormatGraphRenderer(GraphRenderer):
         super().__init__(**args)
         
     def render(self, ontol, **args):
-        ts = ontol.nodes()
+        ts = [n for n in ontol.nodes()]
         ts.sort()
         s = "ontology: auto\n\n"
         for n in ts:
@@ -349,7 +349,7 @@ class OboFormatGraphRenderer(GraphRenderer):
         s += self.tag('id ! TODO', nid)
         s += self.tag('name', n['label'])
         for p in g.predecessors(nid):
-            for _,ea in g[p][nid].items():
+            for _,ea in g.get_edge_data(p,nid).items():
                 pred = ea['pred']
                 if p in g and 'label' in g.node[p]:
                     p = '{} ! {}'.format(p, g.node[p]['label'])
@@ -386,7 +386,7 @@ class OboJsonGraphRenderer(GraphRenderer):
             node_objs.append(self.node_to_json(n, ontol, **args))
         obj['nodes'] = node_objs
         edge_objs = []
-        for e in g.edges_iter(data=True):
+        for e in g.edges(data=True):
             edge_objs.append(self.edge_to_json(e, ontol, **args))
         obj['edges'] = edge_objs
 

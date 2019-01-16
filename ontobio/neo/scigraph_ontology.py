@@ -113,7 +113,7 @@ class RemoteScigraphOntology(Ontology):
             r_edges += g['edges']
         digraph = nx.MultiDiGraph()
         for n in r_nodes:
-            digraph.add_node(n['id'], attr_dict=self._repair(n))
+            digraph.add_node(n['id'], **self._repair(n))
         for e in r_edges:
             digraph.add_edge(e['obj'],e['sub'], pred=e['pred'])
         return digraph

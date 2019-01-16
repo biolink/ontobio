@@ -62,9 +62,8 @@ class RdfMapper():
 
         # propagate label from type
         for s in typemap.keys():
-            g[s]['types'] = typemap[s]
+            g.nodes[s]['types'] = typemap[s]
             if self.tbox_ontology is not None:
-                if 'label' not in g[s]:
-                    g[s]['label'] = ";".join([self.tbox_ontology.label(x) for x in typemap[s] if self.tbox_ontology.label(x) is not None])
-            
+                if 'label' not in g.nodes[s]:
+                    g.nodes[s]['label'] = ";".join([self.tbox_ontology.label(x) for x in typemap[s] if self.tbox_ontology.label(x) is not None])
         

@@ -39,7 +39,7 @@ class OboJsonMapper(object):
             if node_type is not None and ('type' not in n or n['type'] != node_type):
                 continue
             id = self.contract_uri(n['id'])
-            digraph.add_node(id, attr_dict=n)
+            digraph.add_node(id, **n)
             if 'lbl' in n:
                 digraph.node[id]['label'] = n['lbl']
             if parse_meta and 'meta' in n:

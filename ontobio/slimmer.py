@@ -77,12 +77,12 @@ def get_minimal_subgraph(g, nodes):
 def remove_nodes(g, rmnodes):
     logging.info("Removing {} from {}".format(rmnodes,g))
     newg = nx.MultiDiGraph()
-    for n,nd in g.nodes(data=True):
+    for (n,nd) in g.nodes(data=True):
         if n not in rmnodes:
-            newg.add_node(n, attr_dict=nd)
+            newg.add_node(n, **nd)
             parents = _traverse(g, set([n]), set(rmnodes), set())
             for p in parents:
-                newg.add_edge(p,n,attr_dict={'pred':'subClassOf'})
+                newg.add_edge(p,n,**{'pred':'subClassOf'})
     return newg     
 
 def _traverse(g, nset, rmnodes, acc):
