@@ -1,6 +1,9 @@
 from ontobio.sim.phenosim_engine import PhenoSimEngine
 from ontobio.sim.api.owlsim2 import OwlSim2Api
 from ontobio.vocabulary.similarity import SimAlgorithm
+from ontobio.model.similarity import IcStatistic
+
+
 
 from unittest.mock import MagicMock, patch
 import os
@@ -48,6 +51,15 @@ class TestPhenoSimEngine():
                                    side_effect=mock_get_scigraph_nodes)
 
         self.owlsim2_api = OwlSim2Api()
+        self.owlsim2_api.statistics = IcStatistic(
+            mean_mean_ic=6.82480,
+            mean_sum_ic=120.89767,
+            mean_cls=15.47425,
+            max_max_ic=16.16108,
+            max_sum_ic=6746.96160,
+            individual_count=65309,
+            mean_max_ic=9.51535
+        )
         self.pheno_sim = PhenoSimEngine(self.owlsim2_api)
 
         self.resolve_mock.start()

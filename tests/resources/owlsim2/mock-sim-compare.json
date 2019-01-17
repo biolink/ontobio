@@ -88,5 +88,8 @@
             "id":"NCBITaxon:9606"
          }
       }
+   },
+   "metadata": {
+      "max_max_ic": 16.16108
    }
 }

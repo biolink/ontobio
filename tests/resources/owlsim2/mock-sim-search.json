@@ -150,5 +150,8 @@
       "reference":null,
       "target_ids":[[]],
       "unresolved_ids":[]
+   },
+   "metadata": {
+      "max_max_ic": 16.16108
    }
 }
