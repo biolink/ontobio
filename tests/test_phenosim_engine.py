@@ -1,9 +1,7 @@
 from ontobio.sim.phenosim_engine import PhenoSimEngine
-from ontobio.sim.api.owlsim2 import OwlSim2Api
+from ontobio.sim.api.owlsim2 import OwlSim2Api, search_by_attribute_set
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.model.similarity import IcStatistic
-
-
 
 from unittest.mock import MagicMock, patch
 import os
@@ -33,7 +31,6 @@ def mock_get_scigraph_nodes(id_list):
     for node in scigraph_res['nodes']:
         if node['id'] in ids:
             yield node
-
 
 class TestPhenoSimEngine():
     """
@@ -77,7 +74,8 @@ class TestPhenoSimEngine():
         mock_search_fh = os.path.join(os.path.dirname(__file__),
                                       'resources/owlsim2/mock-owlsim-search.json')
         mock_search = json.load(open(mock_search_fh))
-        self.owlsim2_api.search_by_attribute_set = MagicMock(return_value=mock_search)
+        patch('ontobio.sim.api.owlsim2.search_by_attribute_set',
+              return_value=mock_search).start()
 
         expected_fh = os.path.join(os.path.dirname(__file__),
                                    'resources/owlsim2/mock-sim-search.json')
@@ -99,7 +97,8 @@ class TestPhenoSimEngine():
         mock_search_fh = os.path.join(os.path.dirname(__file__),
                                       'resources/owlsim2/mock-owlsim-compare.json')
         mock_compare = json.load(open(mock_search_fh))
-        self.owlsim2_api.compare_attribute_sets = MagicMock(return_value=mock_compare)
+        patch('ontobio.sim.api.owlsim2.compare_attribute_sets',
+              return_value=mock_compare).start()
 
         expected_fh = os.path.join(os.path.dirname(__file__),
                                    'resources/owlsim2/mock-sim-compare.json')
@@ -125,7 +124,9 @@ class TestPhenoSimEngine():
         mock_search_fh = os.path.join(os.path.dirname(__file__),
                                       'resources/owlsim2/mock-owlsim-noresults.json')
         mock_search = json.load(open(mock_search_fh))
-        self.owlsim2_api.search_by_attribute_set = MagicMock(return_value=mock_search)
+
+        patch('ontobio.sim.api.owlsim2.search_by_attribute_set',
+              return_value=mock_search).start()
 
         classes = ['HP:0002367', 'HP:0031466', 'HP:0007123']
         search_results = self.pheno_sim.search(classes, method=SimAlgorithm.SIM_GIC)
