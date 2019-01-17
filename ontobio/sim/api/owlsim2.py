@@ -75,7 +75,7 @@ def compare_attribute_sets(
 
 @cachier(SHELF_LIFE)
 def get_attribute_information_profile(
-        url,
+        url: str,
         profile: Optional[Tuple[str]]=None,
         categories: Optional[Tuple[str]]=None) -> Dict:
     """
