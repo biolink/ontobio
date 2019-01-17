@@ -42,6 +42,14 @@ class TypedNode(Node):
         self.type = type
         self.taxon = taxon
 
+class SimMetadata():
+    """
+    Metadata returned with sim result
+    """
+
+    def __init__(self, max_max_ic: float):
+        self.max_max_ic = max_max_ic
+
 
 class PairwiseMatch:
     """
@@ -110,9 +118,11 @@ class SimResult:
     """
     def __init__(self,
                  query: SimQuery,
-                 matches: List[SimMatch]):
+                 matches: List[SimMatch],
+                 metadata: SimMetadata):
         self.query = query
         self.matches = matches
+        self.metadata = metadata
 
 
 class IcStatistic:

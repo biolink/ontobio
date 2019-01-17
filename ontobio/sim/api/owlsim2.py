@@ -2,7 +2,8 @@ from ontobio.sim.api.interfaces import SimApi, InformationContentStore, Filtered
 from ontobio.config import get_config
 from ontobio.vocabulary.upper import HpoUpperLevel
 from ontobio.ontol_factory import OntologyFactory
-from ontobio.model.similarity import IcStatistic, SimResult, SimMatch, SimQuery, PairwiseMatch, ICNode
+from ontobio.model.similarity import IcStatistic, SimResult, SimMatch,\
+    SimQuery, PairwiseMatch, ICNode, SimMetadata
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.util.scigraph_util import get_nodes_from_ids, get_id_type_map, get_taxon
 
@@ -12,6 +13,91 @@ import logging
 from cachier import cachier
 import datetime
 import requests
+
+"""
+Functions that directly access the owlsim rest API are kept
+outside the class to utilize cachier
+"""
+
+TIMEOUT = get_config().owlsim2.timeout
+SHELF_LIFE = datetime.timedelta(days=30)
+
+
+@cachier(SHELF_LIFE)
+def search_by_attribute_set(
+        url: str,
+        profile: Tuple[str],
+        limit: Optional[int] = 100,
+        namespace_filter: Optional[str]=None) -> Dict:
+    """
+    Given a list of phenotypes, returns a ranked list of individuals
+    individuals can be filtered by namespace, eg MONDO, MGI, HGNC
+    :returns Dict with the structure: {
+        'unresolved' : [...]
+        'query_IRIs' : [...]
+        'results': {...}
+    }
+    :raises JSONDecodeError: If the response body does not contain valid json.
+    """
+    owlsim_url = url + 'searchByAttributeSet'
+
+    params = {
+        'a': profile,
+        'limit': limit,
+        'target': namespace_filter
+    }
+    return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
+
+
+@cachier(SHELF_LIFE)
+def compare_attribute_sets(
+        url: str,
+        profile_a: Tuple[str],
+        profile_b: Tuple[str]) -> Dict:
+    """
+    Given two phenotype profiles, returns their similarity
+    :returns Dict with the structure: {
+        'unresolved' : [...]
+        'query_IRIs' : [...]
+        'target_IRIs': [...]
+        'results': {...}
+    }
+    """
+    owlsim_url = url + 'compareAttributeSets'
+
+    params = {
+        'a': profile_a,
+        'b': profile_b,
+    }
+
+    return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
+
+
+@cachier(SHELF_LIFE)
+def get_attribute_information_profile(
+        url: str,
+        profile: Optional[Tuple[str]]=None,
+        categories: Optional[Tuple[str]]=None) -> Dict:
+    """
+    Get the information content for a list of phenotypes
+    and the annotation sufficiency simple and
+    and categorical scores if categories are provied
+
+    Ref: https://zenodo.org/record/834091#.W8ZnCxhlCV4
+    Note that the simple score varies slightly from the pub in that
+    it uses max_max_ic instead of mean_max_ic
+
+    If no arguments are passed this function returns the
+    system (loaded cohort) stats
+    :raises JSONDecodeError: If the response body does not contain valid json.
+    """
+    owlsim_url = url + 'getAttributeInformationProfile'
+
+    params = {
+        'a': profile,
+        'r': categories
+    }
+    return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
 
 
 class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
@@ -109,12 +195,12 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         """
 
         return self.filtered_search(
-            id_list = id_list,
-            negated_classes = negated_classes,
-            limit = limit,
-            taxon_filter = None,
-            category_filter = None,
-            method = method
+            id_list=id_list,
+            negated_classes=negated_classes,
+            limit=limit,
+            taxon_filter=None,
+            category_filter=None,
+            method=method
         )
 
     def filtered_search(
@@ -133,8 +219,8 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             logging.warning("Owlsim2 does not support negation, ignoring neg classes")
 
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
-        owlsim_results = self.search_by_attribute_set(id_list, limit, namespace_filter)
-        return OwlSim2Api._simsearch_to_simresult(owlsim_results, method)
+        owlsim_results = search_by_attribute_set(self.url, tuple(id_list), limit, namespace_filter)
+        return self._simsearch_to_simresult(owlsim_results, method)
 
     def compare(self,
                 reference_classes: List,
@@ -144,8 +230,8 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         Owlsim2 compare, calls compare_attribute_sets, and converts to SimResult object
         :return: SimResult object
         """
-        owlsim_results = self.compare_attribute_sets(reference_classes, query_classes)
-        return OwlSim2Api._simcompare_to_simresult(owlsim_results, method)
+        owlsim_results = compare_attribute_sets(self.url, tuple(reference_classes), tuple(query_classes))
+        return self._simcompare_to_simresult(owlsim_results, method)
 
     @staticmethod
     def matchers() -> List[SimAlgorithm]:
@@ -164,7 +250,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         """
         Given a list of individuals, return their information content
         """
-        sim_response = self.get_attribute_information_profile(profile)
+        sim_response = get_attribute_information_profile(self.url, tuple(profile))
 
         profile_ic = {}
         try:
@@ -179,79 +265,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
         return profile_ic
 
-    def search_by_attribute_set(
-            self,
-            profile: List[str],
-            limit: Optional[int] = 100,
-            namespace_filter: Optional[str]=None) -> Dict:
-        """
-        Given a list of phenotypes, returns a ranked list of individuals
-        individuals can be filtered by namespace, eg MONDO, MGI, HGNC
-        :returns Dict with the structure: {
-          'unresolved' : [...]
-          'query_IRIs' : [...]
-          'results': {...}
-        }
-        :raises JSONDecodeError: If the response body does not contain valid json.
-        """
-        owlsim_url = self.url + 'searchByAttributeSet'
-
-        params = {
-            'a': profile,
-            'limit': limit,
-            'target': namespace_filter
-        }
-        return requests.get(owlsim_url, params=params, timeout=self.timeout).json()
-
-    def compare_attribute_sets(
-            self,
-            profile_a: List[str],
-            profile_b: List[str]) -> Dict:
-        """
-        Given two phenotype profiles, returns their similarity
-        :returns Dict with the structure: {
-          'unresolved' : [...]
-          'query_IRIs' : [...]
-          'target_IRIs': [...]
-          'results': {...}
-        }
-        """
-        owlsim_url = self.url + 'compareAttributeSets'
-
-        params = {
-            'a': profile_a,
-            'b': profile_b,
-        }
-
-        return requests.get(owlsim_url, params=params, timeout=self.timeout).json()
-
-    def get_attribute_information_profile(
-            self,
-            profile: Optional[List[str]]=None,
-            categories: Optional[List[str]]=None) -> Dict:
-        """
-        Get the information content for a list of phenotypes
-        and the annotation sufficiency simple and
-        and categorical scores if categories are provied
-
-        Ref: https://zenodo.org/record/834091#.W8ZnCxhlCV4
-        Note that the simple score varies slightly from the pub in that
-        it uses max_max_ic instead of mean_max_ic
-
-        If no arguments are passed this function returns the
-        system (loaded cohort) stats
-        :raises JSONDecodeError: If the response body does not contain valid json.
-        """
-        owlsim_url = self.url + 'getAttributeInformationProfile'
-
-        params = {
-            'a': profile,
-            'r': categories
-        }
-        return requests.get(owlsim_url, params=params, timeout=self.timeout).json()
-
-    @staticmethod
-    def _simsearch_to_simresult(sim_resp: Dict, method: SimAlgorithm) -> SimResult:
+    def _simsearch_to_simresult(self, sim_resp: Dict, method: SimAlgorithm) -> SimResult:
         """
         Convert owlsim json to SimResult object
 
@@ -289,11 +303,13 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
                 unresolved_ids=sim_resp['unresolved'],
                 target_ids=[[]]
             ),
-            matches=matches
+            matches=matches,
+            metadata=SimMetadata(
+                max_max_ic=self.statistics.max_max_ic
+            )
         )
 
-    @staticmethod
-    def _simcompare_to_simresult(sim_resp: Dict, method: SimAlgorithm) -> SimResult:
+    def _simcompare_to_simresult(self, sim_resp: Dict, method: SimAlgorithm) -> SimResult:
         """
         Convert owlsim json from compareAttributeSets to SimResult object
 
@@ -328,7 +344,10 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
                 unresolved_ids=sim_resp['unresolved'],
                 target_ids=[get_nodes_from_ids(sim_resp['target_IRIs'])]
             ),
-            matches=matches
+            matches=matches,
+            metadata=SimMetadata(
+                max_max_ic=self.statistics.max_max_ic
+            )
         )
 
     @staticmethod
@@ -401,7 +420,6 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
         return OwlSim2Api.TAX_TO_NS[taxon_filter][category_filter.lower()]
 
-    @cachier(datetime.timedelta(days=30))
     def _get_owlsim_stats(self) -> Tuple[IcStatistic, Dict[str, IcStatistic]]:
         """
         :return Tuple[IcStatistic, Dict[str, IcStatistic]]
@@ -410,7 +428,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         scigraph = OntologyFactory().create('scigraph:ontology')
         category_stats = {}
         categories = [enum.value for enum in HpoUpperLevel]
-        sim_response = self.get_attribute_information_profile(categories=categories)
+        sim_response = get_attribute_information_profile(self.url, categories=tuple(categories))
 
         try:
             global_stats = IcStatistic(

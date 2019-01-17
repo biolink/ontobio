@@ -1,6 +1,6 @@
 from ontobio.sim.api.interfaces import SimApi
 from typing import Iterable, Dict, Union, Optional, List
-from ontobio.model.similarity import SimResult, SimQuery, Node
+from ontobio.model.similarity import SimResult, TypedNode
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.sim.api.interfaces import FilteredSearchable
 from ontobio.golr.golr_associations import get_objects_for_subject
@@ -102,6 +102,13 @@ class PhenoSimEngine():
 
         if len(reference_ids) == 1:
             comparisons.query.reference = typed_node_from_id(reference_ids[0])
+        else:
+            reference_id = " + ".join(reference_ids)
+            comparisons.query.reference = TypedNode(
+                id=reference_id,
+                label=reference_id,
+                type='unknown'
+            )
 
         return comparisons
 
