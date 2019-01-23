@@ -817,6 +817,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  facet_limit=25,
                  facet_mincount=1,
                  facet_pivot_fields=None,
+                 stats=False,
+                 stats_field=None,
                  facet_on = 'on',
                  pivot_subject_object=False,
                  unselect_evidence=False,
@@ -867,6 +869,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.facet_limit=facet_limit
         self.facet_mincount=facet_mincount
         self.facet_pivot_fields=facet_pivot_fields
+        self.stats=stats
+        self.stats_field=stats_field
         self.facet_on=facet_on
         self.pivot_subject_object=pivot_subject_object
         self.unselect_evidence=unselect_evidence
@@ -1235,6 +1239,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if len(facet_pivot_fields) > 0:
             params['facet.pivot'] = ",".join(facet_pivot_fields)
             params['facet.pivot.mincount'] = 1
+
+        if self.stats_field:
+            self.stats = True
+            params['stats.field'] = self.stats_field
+        params['stats'] = json.dumps(self.stats)
 
         return params
 
