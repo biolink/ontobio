@@ -74,7 +74,7 @@ def get_digraph(ont, relations=None, writecache=False):
             digraph.add_edge(o,s,pred=p)
     logging.info("Getting labels (may be cached)")
     for (n,label) in fetchall_labels(ont):
-        digraph.add_node(n, attr_dict={'label':label})
+        digraph.add_node(n, **{'label':label})
     return digraph
 
 def get_xref_graph(ont):

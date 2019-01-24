@@ -35,7 +35,7 @@ def test_align():
     print(ont1.all_synonyms())
     print(ont2.all_synonyms())
     g = lexmap.get_xref_graph()
-    for x,y,d in g.edges_iter(data=True):
+    for (x,y,d) in g.edges(data=True):
         print("{}<->{} :: {}".format(x,y,d))
     for x in g.nodes():
         print("{} --> {}".format(x,lexmap.grouped_mappings(x)))

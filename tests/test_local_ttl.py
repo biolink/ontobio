@@ -26,7 +26,7 @@ def test_local_json_parse():
     w = GraphRenderer.create(None)
     w.write_subgraph(ont, nodes)
     i = 'http://model.geneontology.org/0000000300000001/0000000300000007'
-    ni = g[i]
+    ni = g.nodes[i]
     print(str(ni))
     ['GO:0060070'] == ni['types']
     nbrs = ont.neighbors(i)

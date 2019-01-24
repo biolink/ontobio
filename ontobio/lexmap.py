@@ -325,10 +325,10 @@ class LexicalMapEngine():
         # graph of best matches
         xg = nx.Graph()
         for i in g.nodes():
-            for j in nx.neighbors(g,i):
+            for j in g.neighbors(i):
                 best = 0
                 bestm = None
-                for m in g[i][j].values():
+                for m in g.get_edge_data(i,j).values():
                     (s1,s2) = m['syns']
                     score = self._combine_syns(s1,s2)
                     if score > best:
@@ -375,7 +375,7 @@ class LexicalMapEngine():
         the semantic similarity of matches.
         """
         logging.info("scoring xrefs by semantic similarity for {} nodes in {}".format(len(xg.nodes()), ont))
-        for (i,j,d) in xg.edges_iter(data=True):
+        for (i,j,d) in xg.edges(data=True):
             pfx1 = self._id_to_ontology(i)
             pfx2 = self._id_to_ontology(j)
             ancs1 = self._blanket(i)
@@ -434,7 +434,7 @@ class LexicalMapEngine():
         Compares a base xref graph with another one
         """
         ont = self.merged_ontology
-        for (i,j,d) in xg1.edges_iter(data=True):
+        for (i,j,d) in xg1.edges(data=True):
             ont_left = self._id_to_ontology(i)
             ont_right = self._id_to_ontology(j)
             unique_lr = True
@@ -490,7 +490,7 @@ class LexicalMapEngine():
                     edge_ij = xg[i][j]
                     dirn_ij = self._dirn(edge_ij, i, j)
                     edge_ij['cpr_'+dirn_ij] = score / sum([s for s,_ in score_node_pairs])
-        for (i,j,edge) in xg.edges_iter(data=True):
+        for (i,j,edge) in xg.edges(data=True):
             # reciprocal score is set if (A) i is best for j, and (B) j is best for i
             rs = 0
             if 'best_fwd' in edge and 'best_rev' in edge:
@@ -799,7 +799,7 @@ class LexicalMapEngine():
         cliques = self.cliques(xg)
         ont = self.merged_ontology
         items = []
-        for x,y,d in xg.edges_iter(data=True):
+        for (x,y,d) in xg.edges(data=True):
             # xg is a non-directional Graph object.
             # to get a deterministic ordering we use the idpair key
             (x,y) = d['idpair']
@@ -868,9 +868,9 @@ class LexicalMapEngine():
         list of sets
         """
         g = nx.DiGraph()
-        for x,y in self.merged_ontology.get_graph().edges():
+        for (x,y) in self.merged_ontology.get_graph().edges():
             g.add_edge(x,y)
-        for x,y in xg.edges():
+        for (x,y) in xg.edges():
             g.add_edge(x,y)
             g.add_edge(y,x)
         return list(strongly_connected_components(g))

@@ -120,15 +120,15 @@ class Ontology():
 
         # TODO: copy full metadata
         logger.info("copying nodes")
-        for n,d in srcg.nodes_iter(data=True):
-            g.add_node(n, attr_dict=d)
+        for (n,d) in srcg.nodes(data=True):
+            g.add_node(n, **d)
 
         logger.info("copying edges")
         num_edges = 0
-        for x,y,d in srcg.edges_iter(data=True):
+        for (x,y,d) in srcg.edges(data=True):
             if d['pred'] in relations:
                 num_edges += 1
-                g.add_edge(x,y,attr_dict=d)
+                g.add_edge(x,y,**d)
         logger.info("Filtered edges: {}".format(num_edges))
         return g
 
@@ -144,12 +144,12 @@ class Ontology():
             g = self.get_graph()
             srcg = ont.get_graph()
             for n in srcg.nodes():
-                g.add_node(n, attr_dict=srcg.node[n])
+                g.add_node(n, **srcg.node[n])
             for (o,s,m) in srcg.edges(data=True):
-                g.add_edge(o,s,attr_dict=m)
+                g.add_edge(o,s,**m)
             if ont.xref_graph is not None:
                 for (o,s,m) in ont.xref_graph.edges(data=True):
-                    self.xref_graph.add_edge(o,s,attr_dict=m)
+                    self.xref_graph.add_edge(o,s,**m)
 
     def subgraph(self, nodes=None):
         """
@@ -364,7 +364,7 @@ class Ontology():
         """
         g = self.get_graph()
         types = set()
-        for x,y,d in g.edges_iter(data=True):
+        for (x,y,d) in g.edges(data=True):
             types.add(d['pred'])
         return list(types)
 
@@ -412,7 +412,7 @@ class Ontology():
         """
         g = self.get_graph()
         if node in g:
-            parents = g.predecessors(node)
+            parents = list(g.predecessors(node))
             if relations is None:
                 return parents
             else:
@@ -441,7 +441,7 @@ class Ontology():
         """
         g = self.get_graph()
         if node in g:
-            children = g.successors(node)
+            children = list(g.successors(node))
             if relations is None:
                 return children
             else:
@@ -533,7 +533,7 @@ class Ontology():
             bidirectional networkx graph of all equivalency relations
         """
         eg = nx.Graph()
-        for u,v,d in self.get_graph().edges_iter(data=True):
+        for (u,v,d) in self.get_graph().edges(data=True):
             if d['pred'] == 'equivalentTo':
                 eg.add_edge(u,v)
         return eg
@@ -583,7 +583,7 @@ class Ontology():
         """
         g = self.get_filtered_graph(relations=relations, prefix=prefix)
         # note: we also eliminate any singletons, which includes obsolete classes
-        roots = [n for n in g.nodes() if len(g.predecessors(n)) == 0 and len(g.successors(n)) > 0]
+        roots = [n for n in g.nodes() if len(list(g.predecessors(n))) == 0 and len(list(g.successors(n))) > 0]
         return roots
 
     def get_level(self, level, relations=None, **args):
@@ -624,7 +624,7 @@ class Ontology():
             g = self.get_filtered_graph(relations)
         l = []
         for n in g:
-            l.append([n] + g.predecessors(n))
+            l.append([n] + list(g.predecessors(n)))
         return l
 
     def text_definition(self, nid):
@@ -918,7 +918,7 @@ class Ontology():
             if nid not in xg:
                 return []
             if bidirectional:
-                return xg.neighbors(nid)
+                return list(xg.neighbors(nid))
             else:
                 return [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
 
