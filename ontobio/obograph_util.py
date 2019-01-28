@@ -12,6 +12,9 @@ from prefixcommons.curie_util import contract_uri
 from ontobio.ontol import LogicalDefinition
 from ontobio.vocabulary.relations import map_legacy_pred
 
+logger = logging.getLogger(__name__)
+
+
 class OboJsonMapper(object):
     def __init__(self,
                  digraph=None,
@@ -26,7 +29,7 @@ class OboJsonMapper(object):
         Converts a single obograph to Digraph edges and adds to an existing networkx DiGraph
         """
         digraph = self.digraph
-        logging.info("NODES: {}".format(len(og['nodes'])))
+        logger.info("NODES: {}".format(len(og['nodes'])))
 
         # if client passes an xref_graph we must parse metadata
         if xref_graph is not None:
@@ -49,7 +52,7 @@ class OboJsonMapper(object):
                 if xref_graph is not None and 'xrefs' in meta:
                     for x in meta['xrefs']:
                         xref_graph.add_edge(self.contract_uri(x['val']), id, source=id)
-        logging.info("EDGES: {}".format(len(og['edges'])))
+        logger.info("EDGES: {}".format(len(og['edges'])))
         for e in og['edges']:
             sub = self.contract_uri(e['sub'])
             obj = self.contract_uri(e['obj'])
@@ -61,7 +64,7 @@ class OboJsonMapper(object):
                 digraph.add_edge(obj, sub, pred=pred)
         if 'equivalentNodesSets' in og:
             nslist = og['equivalentNodesSets']
-            logging.info("CLIQUES: {}".format(len(nslist)))
+            logger.info("CLIQUES: {}".format(len(nslist)))
             for ns in nslist:
                 equivNodeIds = ns['nodeIds']
                 for i in ns['nodeIds']:
@@ -119,7 +122,7 @@ def convert_json_object(obographdoc, **args):
     xref_graph = networkx.MultiGraph()
     logical_definitions = []
     context = obographdoc.get('@context',{})
-    logging.info("CONTEXT: {}".format(context))
+    logger.info("CONTEXT: {}".format(context))
     mapper = OboJsonMapper(digraph=digraph, context=context)
     ogs = obographdoc['graphs']
     base_og = ogs[0]

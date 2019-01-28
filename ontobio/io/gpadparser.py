@@ -3,6 +3,9 @@ from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
 
 import logging
 
+logger = logging.getLogger(__name__)
+
+
 class GpadParser(assocparser.AssocParser):
     """
     Parser for GO GPAD Format
@@ -30,7 +33,7 @@ class GpadParser(assocparser.AssocParser):
                 continue
             vals = line.split("\t")
             if len(vals) != 12:
-                logging.error("Unexpected number of columns: {}. GPAD should have 12.".format(vals))
+                logger.error("Unexpected number of columns: {}. GPAD should have 12.".format(vals))
             rel = vals[2]
 
             negated, relation, _ = self._parse_qualifier(vals[2], None)

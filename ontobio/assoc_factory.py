@@ -21,6 +21,8 @@ from ontobio.util.user_agent import get_user_agent
 from collections import defaultdict
 
 SHELF_LIFE = datetime.timedelta(days=3)
+logger = logging.getLogger(__name__)
+
 
 class AssociationSetFactory():
     """
@@ -60,13 +62,13 @@ class AssociationSetFactory():
                                          meta=meta,
                                          skim=skim)
 
-        logging.info("Fetching assocs from store")
+        logger.info("Fetching assocs from store")
         assocs = bulk_fetch_cached(subject_category=subject_category,
                                    object_category=object_category,
                                    evidence=evidence,
                                    taxon=taxon)
 
-        logging.info("Creating map for {} subjects".format(len(assocs)))
+        logger.info("Creating map for {} subjects".format(len(assocs)))
 
 
 
@@ -158,9 +160,9 @@ class AssociationSetFactory():
         try:
             parser = next(iterator)
         except StopIteration:
-            logging.error("Format not recognized: {}".format(fmt))
+            logger.error("Format not recognized: {}".format(fmt))
 
-        logging.info("Parsing {} with {}/{}".format(file, fmt, parser))
+        logger.info("Parsing {} with {}/{}".format(file, fmt, parser))
 
         if skim:
             results = parser.skim(file)
@@ -201,5 +203,5 @@ class AssociationSetFactory():
 
 @cachier(stale_after=SHELF_LIFE)
 def bulk_fetch_cached(**args):
-        logging.info("Fetching assocs from store (will be cached)")
+        logger.info("Fetching assocs from store (will be cached)")
         return bulk_fetch(**args)

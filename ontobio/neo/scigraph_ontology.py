@@ -12,6 +12,9 @@ import requests
 from ontobio.ontol import Ontology
 from ontobio.util.user_agent import get_user_agent
 
+logger = logging.getLogger(__name__)
+
+
 class RemoteScigraphOntology(Ontology):
     """
     ontology backed by SciGraph endpoint.
@@ -46,24 +49,24 @@ class RemoteScigraphOntology(Ontology):
         else:
             handle = "ontology"
 
-        logging.info("Connecting: {} {}".format(handle, url))
+        logger.info("Connecting: {} {}".format(handle, url))
         if url is None:
             if config is None:
                 from ontobio.config import get_config
                 config = get_config()
             if config is not None:
-                logging.info("Fetching scigraph URL from config: {}".format(handle))                
+                logger.info("Fetching scigraph URL from config: {}".format(handle))
                 urlObj = config.scigraph_ontology
                 if handle == 'data':
-                    logging.info("Using scigraph_data URL")
+                    logger.info("Using scigraph_data URL")
                     urlObj = config.scigraph_data
                 if urlObj is not None:
                     url = urlObj.url
-                    logging.info("Set URL from config={} {}".format(url, urlObj))
+                    logger.info("Set URL from config={} {}".format(url, urlObj))
             if url is None:
                 url = 'https://scigraph-ontology.monarchinitiative.org/scigraph'
         self.url = url
-        logging.info("Base SciGraph URL: {}".format(url))
+        logger.info("Base SciGraph URL: {}".format(url))
         return
 
     # Internal wrapper onto requests API
@@ -102,9 +105,9 @@ class RemoteScigraphOntology(Ontology):
         r_nodes = []
         r_edges = []
         
-        logging.debug("Scigraph, Subgraph for {}".format(nodes))
+        logger.debug("Scigraph, Subgraph for {}".format(nodes))
         for n in nodes:
-            logging.debug("Parents-of {}".format(n))
+            logger.debug("Parents-of {}".format(n))
             g = self._neighbors_graph(id=n,
                                       direction='OUTGOING',
                                       depth=1,
@@ -148,7 +151,7 @@ class RemoteScigraphOntology(Ontology):
         
     # Override
     def ancestors(self, node, relations=None, reflexive=False) -> Set:
-        logging.debug("Ancestors of {} over {}".format(node, relations))
+        logger.debug("Ancestors of {} over {}".format(node, relations))
         g = self._neighbors_graph(id=node,
                                   direction='OUTGOING',
                                   depth=20,
@@ -163,7 +166,7 @@ class RemoteScigraphOntology(Ontology):
 
     # Override
     def descendants(self, node, relations=None, reflexive=False)-> Set:
-        logging.debug("Descendants of {} over {}".format(node, relations))
+        logger.debug("Descendants of {} over {}".format(node, relations))
         g = self._neighbors_graph(id=node,
                                   direction='INCOMING',
                                   depth=40,
@@ -232,9 +235,9 @@ class RemoteScigraphOntology(Ontology):
         results = set()
         for name in names:
             for r in self._vocab_search(name, searchSynonyms=synonyms):
-                logging.debug("RESULT={}".format(r))
+                logger.debug("RESULT={}".format(r))
                 results.add(r['curie'])
-        logging.debug("Search {} -> {}".format(names, results))
+        logger.debug("Search {} -> {}".format(names, results))
         return list(results)
 
     # this uses one of two routes depending on whether exact or inexact

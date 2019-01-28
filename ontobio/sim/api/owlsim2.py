@@ -22,6 +22,8 @@ outside the class to utilize cachier
 TIMEOUT = get_config().owlsim2.timeout
 SHELF_LIFE = datetime.timedelta(days=30)
 
+logger = logging.getLogger(__name__)
+
 
 @cachier(SHELF_LIFE)
 def search_by_attribute_set(
@@ -216,7 +218,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         calls search_by_attribute_set, and converts to SimResult object
         """
         if len(negated_classes) > 0:
-            logging.warning("Owlsim2 does not support negation, ignoring neg classes")
+            logger.warning("Owlsim2 does not support negation, ignoring neg classes")
 
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
         owlsim_results = search_by_attribute_set(self.url, tuple(id_list), limit, namespace_filter)
