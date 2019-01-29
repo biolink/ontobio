@@ -95,7 +95,7 @@ class GafParser(assocparser.AssocParser):
             return parsed
 
         if self.is_header(line):
-            return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], True)
+            return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
 
         vals = [el.strip() for el in line.split("\t")]
 
@@ -350,6 +350,3 @@ class GafParser(assocparser.AssocParser):
         }
 
         return assocparser.ParseResult(line, [assoc], False, evidence.upper())
-
-    def is_header(self, line):
-        return line.startswith("!")

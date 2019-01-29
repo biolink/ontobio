@@ -142,6 +142,7 @@ class Report():
         self.skipped = 0
         self.reporter = parsereport.Report(group, dataset)
         self.config = config
+        self.header = []
 
     def error(self, line, type, obj, msg="", taxon="", rule=None):
         self.message(self.ERROR, line, type, obj, msg, taxon=taxon, rule=rule)
@@ -167,7 +168,10 @@ class Report():
             self.add_association(a)
 
     def add_association(self, association):
-        self.n_assocs += 1
+        if "header" in association and association["header"]:
+            self.header.append(association["line"])
+        else:
+            self.n_assocs += 1
         # self.subjects.add(association['subject']['id'])
         # self.objects.add(association['object']['id'])
         # self.references.update(association['evidence']['has_supporting_reference'])
@@ -208,8 +212,11 @@ class Report():
         s += "  * Associations: {}\n" . format(json["associations"])
         s += "  * Lines in file (incl headers): {}\n" . format(json["lines"])
         s += "  * Lines skipped: {}\n" . format(json["skipped_lines"])
+        # Header from GAF
+        s += "## Header From Original Association File\n\n"
+        s += "\n".join(["> {}  ".format(head) for head in self.header])
         ## Table of Contents
-        s += "\n## Contents\n\n"
+        s += "\n\n## Contents\n\n"
         for rule, messages in sorted(json["messages"].items(), key=lambda t: t[0]):
             s += "[{rule}](#{rule})\n\n".format(rule=rule)
 
@@ -243,6 +250,8 @@ class AssocParser(object):
     """
     Abstract superclass of all association parser classes
     """
+    def is_header(self, line):
+        return line.startswith("!")
 
     def parse(self, file, skipheader=False, outfile=None):
         """Parse a line-oriented association file into a list of association dict objects
