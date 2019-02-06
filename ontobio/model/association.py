@@ -8,14 +8,19 @@ from typing import List, Optional, NamedTuple
 
 # Note: This requires python 3.7
 
+# why named tuple and not a class?
 Subject = collections.namedtuple("Subject", ["id", "label", "type", "fullname", "synonyms", "taxon"])
 Term = collections.namedtuple("Term", ["id", "taxon"])
+
+# this should be kept general for the general association class
 Aspect = enum.Enum("Aspect", {
     "F": "F",
     "P": "P",
     "C": "C"
     })
 Curie = typing.NewType("Curie", str)
+Provider = typing.NewType("Provider", str)
+Date = typing.NewType("Date", str) ## actual datetime object is false precision
 
 class Evidence(NamedTuple):
     type: Curie # Curie of the ECO class
@@ -44,14 +49,14 @@ class Association:
     relation: Curie # This is the relation Curie
     object: Term
     negated: bool
-    qualifiers: List[str]
+    qualifiers: List[Curie]
     aspect: Aspect
     interacting_taxon: Optional[Curie]
     evidence: Evidence
     subject_extensions: List[ExtensionUnit]
     object_extensions: ExtensionExpression
-    provided_by: str
-    date: datetime.datetime
+    provided_by: Provider
+    date: Date
     properties: Dict[Curie, List[str]]
 
     def __repr__(self):
