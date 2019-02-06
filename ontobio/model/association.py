@@ -42,15 +42,14 @@ class ExtensionExpression(NamedTuple):
     """
     conjunctions: List[ExtensionConjunctions]
 
-@dataclass(repr=False, unsafe_hash=True)
-class Association:
+class Association(NamedTuple):
     source_line: str
     subject: Subject
     relation: Curie # This is the relation Curie
     object: Term
     negated: bool
     qualifiers: List[Curie]
-    aspect: Aspect
+    aspect: Optional[Aspect]
     interacting_taxon: Optional[Curie]
     evidence: Evidence
     subject_extensions: List[ExtensionUnit]
@@ -59,5 +58,5 @@ class Association:
     date: Date
     properties: Dict[Curie, List[str]]
 
-    def __repr__(self):
+    def __str__(self):
         return self.source_line
