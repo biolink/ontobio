@@ -81,19 +81,27 @@ def rule_id(rule_path) -> str:
     return os.path.splitext(os.path.basename(rule_path))[0]
 
 
-def download_source_gafs(group_metadata, target_dir, exclusions=[]):
+def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None):
     gaf_urls = { data["dataset"]: data["source"] for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions }
 
     click.echo("Found {}".format(", ".join(gaf_urls.keys())))
     downloaded_paths = {}
     for dataset, gaf_url in gaf_urls.items():
+        # Local target download path setup - path and then directories
         path = os.path.join(target_dir, "groups", group_metadata["id"], "{}-src.gaf.gz".format(dataset))
         os.makedirs(os.path.split(path)[0], exist_ok=True)
 
         click.echo("Downloading source gaf to {}".format(path))
-        if urllib.parse.urlparse(gaf_url)[0] in ["ftp", "file"]:
+        if urllib.parse.urlparse(gaf_url).scheme in ["ftp", "file"]:
             urllib.request.urlretrieve(gaf_url, path)
         else:
+            is_relative = not urllib.parse.urlparse(gaf_url).path.startswith("/")
+            if is_relative and base_download_url is not None:
+                gaf_url = urllib.parse.urljoin(base_download_url, gaf_url)
+            elif is_relative and base_download_url is None:
+                # This is bad and we have to jump out`since we have no way of constructing a real gaf url
+                raise click.ClickException("Option --base-download-url was not specified and the config url {} is a relative path.".format(gaf_url))
+
             response = requests.get(gaf_url, stream=True, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
             content_length = int(response.headers.get("Content-Length", None))
 
@@ -362,7 +370,8 @@ def cli():
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 @click.option("--exclude", "-x", multiple=True)
-def produce(group, metadata, gpad, ttl, target, ontology, exclude):
+@click.option("--base-download-url", "-b", default=None)
+def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url):
 
     products = {
         "gaf": True,
@@ -380,7 +389,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude):
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
 
-    source_gaf_zips = download_source_gafs(group_metadata, absolute_target, exclusions=exclude)
+    source_gaf_zips = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url)
     source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset)) for dataset, zip_path in source_gaf_zips.items()}
     for source_zip, source_gaf in source_gafs.items():
         unzip(source_zip, source_gaf)
