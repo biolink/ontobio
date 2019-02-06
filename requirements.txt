@@ -21,3 +21,4 @@ pytest_logging>=0.0
 pydotplus>=0.0
 cachier==1.1.8
 plotly==2.0.7
+dataclasses==0.6

@@ -4,9 +4,9 @@ import collections
 import enum
 import datetime
 
-from typing import List, Optional, NamedTuple
+from typing import List, Optional, NamedTuple, Dict
+from dataclasses import dataclass
 
-# Note: This requires python 3.7
 
 # why named tuple and not a class?
 Subject = collections.namedtuple("Subject", ["id", "label", "type", "fullname", "synonyms", "taxon"])
