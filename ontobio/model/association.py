@@ -5,7 +5,6 @@ import enum
 import datetime
 
 from typing import List, Optional, NamedTuple, Dict
-from dataclasses import dataclass
 
 
 # why named tuple and not a class?
