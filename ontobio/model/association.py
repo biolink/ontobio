@@ -5,35 +5,44 @@ import enum
 import datetime
 
 from typing import List, Optional, NamedTuple, Dict
+from dataclasses import dataclass
 
-
-# why named tuple and not a class?
-Subject = collections.namedtuple("Subject", ["id", "label", "type", "fullname", "synonyms", "taxon"])
-Term = collections.namedtuple("Term", ["id", "taxon"])
-
-# this should be kept general for the general association class
-Aspect = enum.Enum("Aspect", {
-    "F": "F",
-    "P": "P",
-    "C": "C"
-    })
+Aspect = typing.NewType("Aspect", str)
 Curie = typing.NewType("Curie", str)
 Provider = typing.NewType("Provider", str)
-Date = typing.NewType("Date", str) ## actual datetime object is false precision
+Date = typing.NewType("Date", str)
 
-class Evidence(NamedTuple):
+@dataclass
+class Subject:
+    id: Curie
+    label: str
+    type: str
+    fullname: str
+    synonyms: List[str]
+    taxon: Curie
+
+@dataclass
+class Term:
+    id: Curie
+    taxon: Curie
+
+@dataclass
+class Evidence:
     type: Curie # Curie of the ECO class
     has_supporting_reference: List[Curie]
     with_support_from: List[Curie]
 
-class ExtensionUnit(NamedTuple):
+@dataclass
+class ExtensionUnit:
     relation: Curie
     term: Curie
 
-class ExtensionConjunctions(NamedTuple):
+@dataclass
+class ExtensionConjunctions:
     extensions: List[ExtensionUnit]
 
-class ExtensionExpression(NamedTuple):
+@dataclass
+class ExtensionExpression:
     """
     ExtensionExpression ::= ConjunctionExpression { "|" ConjunctionExpression }
     ConjunctionExpression ::= ExtensionUnit { "," ExtensionUnit }
@@ -41,7 +50,8 @@ class ExtensionExpression(NamedTuple):
     """
     conjunctions: List[ExtensionConjunctions]
 
-class Association(NamedTuple):
+@dataclass(repr=True, unsafe_hash=True)
+class Association:
     source_line: str
     subject: Subject
     relation: Curie # This is the relation Curie
