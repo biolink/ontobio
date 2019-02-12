@@ -103,7 +103,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
                 raise click.ClickException("Option --base-download-url was not specified and the config url {} is a relative path.".format(gaf_url))
 
             response = requests.get(gaf_url, stream=True, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
-            content_length = int(response.headers.get("Content-Length", None))
+            content_length = int(response.headers.get("Content-Length", 0))
 
             with open(path, "wb") as downloaded:
                 with click.progressbar(iterable=response.iter_content(chunk_size=512 * 1024), length=content_length, show_percent=True) as chunks:
