@@ -1,9 +1,9 @@
 from ontobio.sim.phenosim_engine import PhenoSimEngine
-from ontobio.sim.api.owlsim2 import OwlSim2Api, search_by_attribute_set
+from ontobio.sim.api.owlsim2 import OwlSim2Api
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.model.similarity import IcStatistic
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 import os
 import json
 
