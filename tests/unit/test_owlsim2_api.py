@@ -9,8 +9,8 @@ class TestOwlSim2Api():
     """
 
     @classmethod
-    @patch.object(OwlSim2Api, '_get_owlsim_stats',  MagicMock(return_value=(None, None)))
     def setup_class(self):
+        patch('ontobio.sim.api.owlsim2.get_owlsim_stats',  return_value=(None, None)).start()
         self.sim_api = OwlSim2Api()
 
     @classmethod
