@@ -51,8 +51,8 @@ class ExtensionExpression:
     conjunctions: List[ExtensionConjunctions]
 
 @dataclass(repr=True, unsafe_hash=True)
-class Association:
-    source_line: str
+class GoAssociation:
+    source_line: Optional[str]
     subject: Subject
     relation: Curie # This is the relation Curie
     object: Term
@@ -66,6 +66,3 @@ class Association:
     provided_by: Provider
     date: Date
     properties: Dict[Curie, List[str]]
-
-    def __str__(self):
-        return self.source_line
