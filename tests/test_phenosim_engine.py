@@ -1,9 +1,9 @@
 from ontobio.sim.phenosim_engine import PhenoSimEngine
-from ontobio.sim.api.owlsim2 import OwlSim2Api, search_by_attribute_set
+from ontobio.sim.api.owlsim2 import OwlSim2Api
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.model.similarity import IcStatistic
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 import os
 import json
 
@@ -39,8 +39,9 @@ class TestPhenoSimEngine():
     """
 
     @classmethod
-    @patch.object(OwlSim2Api, '_get_owlsim_stats',  MagicMock(return_value=(None, None)))
     def setup_class(self):
+
+        patch('ontobio.sim.api.owlsim2.get_owlsim_stats',  return_value=(None, None)).start()
 
         self.resolve_mock = patch.object(PhenoSimEngine, '_resolve_nodes_to_phenotypes',
                                          side_effect=mock_resolve_nodes)
