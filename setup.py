@@ -46,7 +46,7 @@ setuptools.setup(
     install_requires=[
         'networkx==2.2',
         'jsobject',
-        'pyyaml==4.2b4',
+        'pyyaml==5.1b3',
         'pysolr',
         'requests',
         'sparqlwrapper',
