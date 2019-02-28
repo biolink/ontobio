@@ -227,7 +227,7 @@ def reset_config():
 
 def load_config(path):
     f = open(path,'r')
-    obj = yaml.load(f)
+    obj = yaml.load(f, Loader=yaml.FullLoader)
     schema = ConfigSchema()
     config = schema.load(obj).data
     errs = schema.validate(obj)

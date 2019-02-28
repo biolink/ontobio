@@ -64,7 +64,7 @@ def metadata_file(metadata, group) -> Dict:
     try:
         with open(metadata_yaml, "r") as group_data:
             click.echo("Found {group} metadata at {path}".format(group=group, path=metadata_yaml))
-            return yaml.load(group_data)
+            return yaml.load(group_data, Loader=yaml.FullLoader)
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(metadata_yaml, str(e)))
 
@@ -148,7 +148,7 @@ def database_entities(metadata) -> Set[str]:
     try:
         with open(dbxrefs_path, "r") as db_xrefs_file:
             click.echo("Found db-xrefs at {path}".format(path=dbxrefs_path))
-            dbxrefs = yaml.load(db_xrefs_file)
+            dbxrefs = yaml.load(db_xrefs_file, Loader=yaml.FullLoader)
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(dbxrefs_path, str(e)))
 
@@ -159,7 +159,7 @@ def groups(metadata) -> Set[str]:
     try:
         with open(groups_path, "r") as groups_file:
             click.echo("Found groups at {path}".format(path=groups_path))
-            groups_list = yaml.load(groups_file)
+            groups_list = yaml.load(groups_file, Loader=yaml.FullLoader)
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(groups_path, str(e)))
 
