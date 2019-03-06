@@ -56,7 +56,8 @@ setuptools.setup(
         'scipy',
         'pandas',
         'click',
-        'yamldown'
+        'yamldown',
+        'dataclasses'
     ],
 
     # List additional groups of dependencies here (e.g. development
