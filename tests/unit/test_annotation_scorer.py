@@ -1,7 +1,7 @@
 from ontobio.sim.annotation_scorer import AnnotationScorer
 from ontobio.sim.api.owlsim2 import OwlSim2Api
 from ontobio.model.similarity import IcStatistic
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 
 class TestAnnotationSufficiency():
@@ -14,8 +14,8 @@ class TestAnnotationSufficiency():
     """
 
     @classmethod
-    @patch.object(OwlSim2Api, '_get_owlsim_stats',  MagicMock(return_value=(None, None)))
     def setup_class(self):
+        patch('ontobio.sim.api.owlsim2.get_owlsim_stats',  return_value=(None, None)).start()
         self.ic_store = OwlSim2Api()
         self.annot_scorer = AnnotationScorer(self.ic_store)
 

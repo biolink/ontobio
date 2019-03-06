@@ -100,6 +100,49 @@ def get_attribute_information_profile(
     return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
 
 
+@cachier(SHELF_LIFE)
+def get_owlsim_stats(url) -> Tuple[IcStatistic, Dict[str, IcStatistic]]:
+    """
+    :return Tuple[IcStatistic, Dict[str, IcStatistic]]
+    :raises JSONDecodeError: If the response body does not contain valid json
+    """
+    scigraph = OntologyFactory().create('scigraph:ontology')
+    category_stats = {}
+    categories = [enum.value for enum in HpoUpperLevel]
+    sim_response = get_attribute_information_profile(url, categories=tuple(categories))
+
+    try:
+        global_stats = IcStatistic(
+            mean_mean_ic=float(sim_response['system_stats']['meanMeanIC']),
+            mean_sum_ic=float(sim_response['system_stats']['meanSumIC']),
+            mean_cls=float(sim_response['system_stats']['meanN']),
+            max_max_ic=float(sim_response['system_stats']['maxMaxIC']),
+            max_sum_ic=float(sim_response['system_stats']['maxSumIC']),
+            individual_count=int(sim_response['system_stats']['individuals']),
+            mean_max_ic=float(sim_response['system_stats']['meanMaxIC'])
+        )
+        for cat_stat in sim_response['categorical_scores']:
+            category_stats[cat_stat['id']] = IcStatistic(
+                mean_mean_ic=float(cat_stat['system_stats']['meanMeanIC']),
+                mean_sum_ic=float(cat_stat['system_stats']['meanSumIC']),
+                mean_cls=float(cat_stat['system_stats']['meanN']),
+                max_max_ic=float(cat_stat['system_stats']['maxMaxIC']),
+                max_sum_ic=float(cat_stat['system_stats']['maxSumIC']),
+                individual_count=int(cat_stat['system_stats']['individuals']),
+                mean_max_ic=float(cat_stat['system_stats']['meanMaxIC']),
+                descendants=scigraph.descendants(cat_stat['id'], relations=["subClassOf"])
+            )
+
+    except JSONDecodeError as json_exc:
+        raise JSONDecodeError(
+            "Cannot parse owlsim2 response: {}".format(json_exc.msg),
+            json_exc.doc,
+            json_exc.pos
+        )
+
+    return global_stats, category_stats
+
+
 class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
     """
     Owlsim2 is part of the owltools package and uses a modified
@@ -162,7 +205,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         self.timeout = timeout if timeout is not None else get_config().owlsim2.timeout
 
         # Init ic stats
-        stats = self._get_owlsim_stats()
+        stats = get_owlsim_stats(self.url)
         self._statistics = stats[0]
         self._category_statistics = stats[1]
 
@@ -420,46 +463,6 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
         return OwlSim2Api.TAX_TO_NS[taxon_filter][category_filter.lower()]
 
-    def _get_owlsim_stats(self) -> Tuple[IcStatistic, Dict[str, IcStatistic]]:
-        """
-        :return Tuple[IcStatistic, Dict[str, IcStatistic]]
-        :raises JSONDecodeError: If the response body does not contain valid json
-        """
-        scigraph = OntologyFactory().create('scigraph:ontology')
-        category_stats = {}
-        categories = [enum.value for enum in HpoUpperLevel]
-        sim_response = get_attribute_information_profile(self.url, categories=tuple(categories))
-
-        try:
-            global_stats = IcStatistic(
-                mean_mean_ic=float(  sim_response['system_stats']['meanMeanIC']),
-                mean_sum_ic= float(  sim_response['system_stats']['meanSumIC']),
-                mean_cls=    float(  sim_response['system_stats']['meanN']),
-                max_max_ic=  float(  sim_response['system_stats']['maxMaxIC']),
-                max_sum_ic=  float(  sim_response['system_stats']['maxSumIC']),
-                individual_count=int(sim_response['system_stats']['individuals']),
-                mean_max_ic= float(  sim_response['system_stats']['meanMaxIC'])
-            )
-            for cat_stat in sim_response['categorical_scores']:
-                category_stats[cat_stat['id']] = IcStatistic(
-                    mean_mean_ic=float(  cat_stat['system_stats']['meanMeanIC']),
-                    mean_sum_ic= float(  cat_stat['system_stats']['meanSumIC']),
-                    mean_cls=    float(  cat_stat['system_stats']['meanN']),
-                    max_max_ic=  float(  cat_stat['system_stats']['maxMaxIC']),
-                    max_sum_ic=  float(  cat_stat['system_stats']['maxSumIC']),
-                    individual_count=int(cat_stat['system_stats']['individuals']),
-                    mean_max_ic= float(  cat_stat['system_stats']['meanMaxIC']),
-                    descendants=scigraph.descendants(cat_stat['id'], relations=["subClassOf"])
-                )
-
-        except JSONDecodeError as json_exc:
-            raise JSONDecodeError(
-                "Cannot parse owlsim2 response: {}".format(json_exc.msg),
-                json_exc.doc,
-                json_exc.pos
-            )
-
-        return global_stats, category_stats
 
     def __str__(self):
         return "owlsim2 api: {}".format(self.url)

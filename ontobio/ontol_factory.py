@@ -75,7 +75,7 @@ class OntologyFactory():
             return default_ontology
         return create_ontology(handle, **args)
 
-#@cachier(stale_after=SHELF_LIFE)
+@cachier(stale_after=SHELF_LIFE)
 def create_ontology(handle=None, **args):
     ont = None
     logging.info("Determining strategy to load '{}' into memory...".format(handle))
