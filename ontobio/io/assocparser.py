@@ -383,6 +383,9 @@ class AssocParser(object):
         return False
 
     def compute_aspect(self, term):
+        if self.config.ontology == None:
+            return None
+
         BP = "GO:0008150"
         CC = "GO:0005575"
         MF = "GO:0003674"

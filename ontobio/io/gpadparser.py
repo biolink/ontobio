@@ -39,7 +39,7 @@ class GpadParser(assocparser.AssocParser):
 
 
     def skim(self, file):
-        file = assocparser._ensure_file(file)
+        file = self._ensure_file(file)
         tuples = []
         for line in file:
             if line.startswith("!"):
@@ -58,7 +58,7 @@ class GpadParser(assocparser.AssocParser):
                 continue
 
 
-            id = assocparser._pair_to_id(vals[0], vals[1], self.config)
+            id = self._pair_to_id(vals[0], vals[1])
             if not self._validate_id(id, line, context=ENTITY):
                 continue
             t = vals[3]
@@ -175,6 +175,7 @@ class GpadParser(assocparser.AssocParser):
 
         subject_symbol = id
         subject_fullname = id
+        subject_synonyms = []
         if self.gpi is not None:
             gp = self.gpi.get(id, {})
             if gp is not {}:
