@@ -50,7 +50,7 @@ def zipup(file_path):
 
     with open(file_path, "rb") as p:
         with gzip.open(target, "wb") as tf:
-                    tf.write(p.read())
+            tf.write(p.read())
 
 def find(l, finder):
     filtered = [n for n in l if finder(n)]
@@ -83,7 +83,7 @@ def rule_id(rule_path) -> str:
 def source_path(dataset_metadata, target_dir, group):
     extension = dataset_metadata["type"]
     if dataset_metadata["compression"]:
-        extension = "{ext}.{comp}".format(ext=extension, comp=dataset_metadata["compression"])
+        extension = "{ext}.gz".format(ext=extension)
 
     path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
     return path
@@ -131,6 +131,10 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
             unzipped = os.path.splitext(path)[0]
             unzip(path, unzipped)
             path = unzipped
+        else:
+            # otherwise file is coming in uncompressed. But we want to make sure
+            # to zip up the original source also
+            zipup(path)
 
         downloaded_paths.append((dataset_metadata, path))
 
