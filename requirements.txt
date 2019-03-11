@@ -22,3 +22,4 @@ pydotplus>=0.0
 cachier==1.1.8
 plotly==2.0.7
 pyyaml==5.1b3
+yamldown>=0.1.7
