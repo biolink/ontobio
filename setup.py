@@ -46,7 +46,7 @@ setuptools.setup(
     install_requires=[
         'networkx==2.2',
         'jsobject',
-        'pyyaml>=4.2b1',
+        'pyyaml==5.1b3',
         'pysolr',
         'requests',
         'sparqlwrapper',
@@ -56,8 +56,8 @@ setuptools.setup(
         'scipy',
         'pandas',
         'click',
-        'yamldown',
-        'dataclasses==0.6'
+        'dataclasses==0.6',
+        'yamldown>=0.1.7'
     ],
 
     # List additional groups of dependencies here (e.g. development

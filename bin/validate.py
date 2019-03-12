@@ -50,7 +50,7 @@ def zipup(file_path):
 
     with open(file_path, "rb") as p:
         with gzip.open(target, "wb") as tf:
-                    tf.write(p.read())
+            tf.write(p.read())
 
 def find(l, finder):
     filtered = [n for n in l if finder(n)]
@@ -64,7 +64,7 @@ def metadata_file(metadata, group) -> Dict:
     try:
         with open(metadata_yaml, "r") as group_data:
             click.echo("Found {group} metadata at {path}".format(group=group, path=metadata_yaml))
-            return yaml.load(group_data)
+            return yaml.load(group_data, Loader=yaml.FullLoader)
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(metadata_yaml, str(e)))
 
@@ -80,15 +80,30 @@ def gorule_title(metadata, rule_id) -> str:
 def rule_id(rule_path) -> str:
     return os.path.splitext(os.path.basename(rule_path))[0]
 
+def source_path(dataset_metadata, target_dir, group):
+    extension = dataset_metadata["type"]
+    if dataset_metadata["compression"]:
+        extension = "{ext}.gz".format(ext=extension)
+
+    path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
+    return path
+
 
 def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None):
-    gaf_urls = { data["dataset"]: data["source"] for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions }
+    """
+    This looks at a group metadata dictionary and downloads each GAF source that is not in the exclusions list.
+    For each downloaded file, keep track of the path of the file. If the file is zipped, it will unzip it here.
+    This function returns a list of tuples of the dataset dictionary mapped to the downloaded source path.
+    """
+    gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions ]
+    # Map of dataset metadata to gaf download url
 
-    click.echo("Found {}".format(", ".join(gaf_urls.keys())))
-    downloaded_paths = {}
-    for dataset, gaf_url in gaf_urls.items():
+    click.echo("Found {}".format(", ".join( [ kv[0]["dataset"] for kv in gaf_urls ] )))
+    downloaded_paths = []
+    for dataset_metadata, gaf_url in gaf_urls:
+        dataset = dataset_metadata["dataset"]
         # Local target download path setup - path and then directories
-        path = os.path.join(target_dir, "groups", group_metadata["id"], "{}-src.gaf.gz".format(dataset))
+        path = source_path(dataset_metadata, target_dir, group_metadata["id"])
         os.makedirs(os.path.split(path)[0], exist_ok=True)
 
         click.echo("Downloading source gaf to {}".format(path))
@@ -103,7 +118,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
                 raise click.ClickException("Option --base-download-url was not specified and the config url {} is a relative path.".format(gaf_url))
 
             response = requests.get(gaf_url, stream=True, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
-            content_length = int(response.headers.get("Content-Length", None))
+            content_length = int(response.headers.get("Content-Length", 0))
 
             with open(path, "wb") as downloaded:
                 with click.progressbar(iterable=response.iter_content(chunk_size=512 * 1024), length=content_length, show_percent=True) as chunks:
@@ -111,7 +126,17 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
                         if chunk:
                             downloaded.write(chunk)
 
-        downloaded_paths[dataset] = path
+        if dataset_metadata["compression"] == "gzip":
+            # Unzip any downloaded file that has gzip, strip of the gzip extension
+            unzipped = os.path.splitext(path)[0]
+            unzip(path, unzipped)
+            path = unzipped
+        else:
+            # otherwise file is coming in uncompressed. But we want to make sure
+            # to zip up the original source also
+            zipup(path)
+
+        downloaded_paths.append((dataset_metadata, path))
 
     return downloaded_paths
 
@@ -148,7 +173,7 @@ def database_entities(metadata) -> Set[str]:
     try:
         with open(dbxrefs_path, "r") as db_xrefs_file:
             click.echo("Found db-xrefs at {path}".format(path=dbxrefs_path))
-            dbxrefs = yaml.load(db_xrefs_file)
+            dbxrefs = yaml.load(db_xrefs_file, Loader=yaml.FullLoader)
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(dbxrefs_path, str(e)))
 
@@ -159,7 +184,7 @@ def groups(metadata) -> Set[str]:
     try:
         with open(groups_path, "r") as groups_file:
             click.echo("Found groups at {path}".format(path=groups_path))
-            groups_list = yaml.load(groups_file)
+            groups_list = yaml.load(groups_file, Loader=yaml.FullLoader)
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(groups_path, str(e)))
 
@@ -389,10 +414,9 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
 
-    source_gaf_zips = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url)
-    source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset)) for dataset, zip_path in source_gaf_zips.items()}
-    for source_zip, source_gaf in source_gafs.items():
-        unzip(source_zip, source_gaf)
+    downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url)
+    # dict of Dataset Metadata --> downloaded source paths (unzipped)
+    # source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset["dataset"])) for dataset, zip_path in source_gaf_zips.items()}
 
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_titles = {rule_id(rule_path): gorule_title(metadata, rule_id(rule_path))
@@ -402,9 +426,8 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     db_entities = database_entities(absolute_metadata)
     group_ids = groups(absolute_metadata)
 
-    for dataset in source_gaf_zips.keys():
-        gafzip = source_gaf_zips[dataset]
-        source_gaf = source_gafs[gafzip]
+    for dataset_metadata, source_gaf in downloaded_gaf_sources:
+        dataset = dataset_metadata["dataset"]
         # Set paint to True when the group is "paint".
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group, like for paint_other.
         valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"), group=group, rule_titles=rule_titles, db_entities=db_entities, group_idspace=group_ids)[0]

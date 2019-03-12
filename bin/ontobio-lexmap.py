@@ -87,7 +87,7 @@ def main():
     config = {}
     if args.config is not None:
         f = open(args.config,'r')
-        config = yaml.load(f)
+        config = yaml.load(f, Loader=yaml.FullLoader)
         f.close()
 
     # add pre-defined weights to config
