@@ -162,7 +162,7 @@ def translate_file_to_ontology(handle, **args):
     else:
         if not (handle.endswith(".obo") or handle.endswith(".owl")):
             logging.info("Attempting to parse non obo or owl file with owltools: "+handle)
-        encoded = hashlib.sha256(handle.encode()).hexdigest()
+        encoded = get_checksum(handle)
         logging.info(" encoded: "+str(encoded))
         fn = '/tmp/'+encoded
         if not os.path.isfile(fn):
@@ -173,3 +173,11 @@ def translate_file_to_ontology(handle, **args):
             logging.info("using cached file: "+fn)
         g = obograph_util.convert_json_file(fn, **args)
         return Ontology(handle=handle, payload=g)
+
+def get_checksum(file):
+    """
+    Get SHA256 hash from the contents of a given file
+    """
+    with open(file, 'rb') as FH:
+        contents = FH.read()
+    return hashlib.sha256(contents).hexdigest()
