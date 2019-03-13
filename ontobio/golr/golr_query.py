@@ -1450,6 +1450,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         if 'aspect' in d and id.startswith('GO:'):
             obj['aspect'] = ASPECT_MAP[d['aspect']]
+            del d['aspect']
 
         cf = fname + "_category"
         if cf in d:
