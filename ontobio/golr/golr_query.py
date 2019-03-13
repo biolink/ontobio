@@ -1195,7 +1195,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
 
-        if self._use_amigo_schema:
+        if self._use_amigo_schema(object_category):
             select_fields += [x for x in M.AMIGO_SPECIFIC_FIELDS if x not in select_fields]
 
         ## true if iterate in windows of max_size until all results found
@@ -1524,7 +1524,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             assoc['evidence'] = d[M.EVIDENCE_OBJECT]
             assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
 
-        if self._use_amigo_schema:
+        if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:
                 if f in d:
                     assoc[f] = d[f]
