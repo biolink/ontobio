@@ -56,6 +56,7 @@ setuptools.setup(
         'scipy',
         'pandas',
         'click',
+        'dataclasses==0.6',
         'yamldown>=0.1.7'
     ],
 
