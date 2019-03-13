@@ -111,7 +111,7 @@ class GolrFields:
     EVIDENCE_OBJECT_LABEL='evidence_object_label'
     _VERSION_='_version_'
     SUBJECT_GENE_CLOSURE_LABEL_SEARCHABLE='subject_gene_closure_label_searchable'
-
+    ASPECT='aspect'
     RELATION='relation'
     RELATION_LABEL='relation_label'
 
@@ -134,7 +134,8 @@ class GolrFields:
         'evidence_subset_closure',
         'evidence_subset_closure_label',
         'evidence_type_closure',
-        'evidence_type_closure_label'
+        'evidence_type_closure_label',
+        'aspect'
     ]
 
     # golr convention: for any entity FOO, the id is denoted 'foo'
@@ -168,6 +169,13 @@ INVERT_FIELDS_MAP = {
     M.SUBJECT_TAXON_LABEL: M.OBJECT_TAXON_LABEL,
     M.SUBJECT_CLOSURE_MAP: M.OBJECT_CLOSURE_MAP,
 }
+
+ASPECT_MAP = {
+    'F': 'GO:0003674',
+    'P': 'GO:0008150',
+    'C': 'GO:0005575'
+}
+
 
 # normalize to what Monarch uses
 PREFIX_NORMALIZATION_MAP = {
@@ -1439,6 +1447,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         if lf in d:
             obj['label'] = d[lf]
+
+        if 'aspect' in d and id.startswith('GO:'):
+            obj['aspect'] = ASPECT_MAP[d['aspect']]
 
         cf = fname + "_category"
         if cf in d:
