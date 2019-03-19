@@ -10,7 +10,7 @@ class Report(object):
     def __init__(self, group, dataset):
         self.group = group
         self.dataset = dataset
-        self.messages = {} # type: Dict[str, List[Message]]
+        self.messages = {} # type: Dict[str, List[Message]] # rule id --> List of messages
         self.messages["other"] = []
         self._rule_message_cap = 10000
 

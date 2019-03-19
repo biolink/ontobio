@@ -7,6 +7,7 @@ import json
 
 # TODO - use abstract parent for both entity and assoc
 class EntityParser(AssocParser):
+
     def parse(self, file, outfile=None):
         """Parse a line-oriented entity file into a list of entity dict objects
 
@@ -63,7 +64,7 @@ class EntityParser(AssocParser):
 
 class GpiParser(EntityParser):
 
-    def __init__(self,config=None):
+    def __init__(self, config=None):
         """
         Arguments:
         ---------
@@ -72,7 +73,10 @@ class GpiParser(EntityParser):
         """
         if config is None:
             config = AssocParserConfig()
+            print("We created a GPI config object")
+
         self.config = config
+        print("init, config = {}".format(config))
         self.report = Report()
 
     def parse_line(self, line):
