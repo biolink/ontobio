@@ -78,7 +78,7 @@ class AssocParserConfig():
                  paint=False,
                  rule_metadata=None,
                  dbxrefs=None,
-                 suppress_rule_tags=[]):
+                 suppress_rule_reporting_tags=[]):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -94,7 +94,7 @@ class AssocParserConfig():
         self.gpi_authority_path = gpi_authority_path
         self.paint = paint
         self.rule_metadata = rule_metadata
-        self.suppress_rule_tags = suppress_rule_tags
+        self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
 
         self.entity_idspaces = None if entity_idspaces is None else set(entity_idspaces)
         self.group_idspace = None if group_idspace is None else set(group_idspace)
@@ -225,7 +225,7 @@ class Report():
         ## Table of Contents
         s += "\n\n## Contents\n\n"
         for rule, messages in sorted(json["messages"].items(), key=lambda t: t[0]):
-            any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_tags])
+            any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_reporting_tags])
             # For each tag we say to suppress output for, check if it matches any tag in the rule. If any matches
             if self.config.rule_metadata and any_suppress_tag_in_rule_metadata:
                 continue
@@ -234,7 +234,7 @@ class Report():
 
         s += "\n## MESSAGES\n\n"
         for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
-            any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_tags])
+            any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_reporting_tags])
 
             # Skip if the rule metadata has "silent" as a tag
             if self.config.rule_metadata and any_suppress_tag_in_rule_metadata:

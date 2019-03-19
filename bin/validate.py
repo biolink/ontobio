@@ -203,7 +203,7 @@ def groups(metadata) -> Set[str]:
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, suppress_rule_tags=[]):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, suppress_rule_reporting_tags=[]):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -215,7 +215,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         rule_metadata=rule_metadata,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
-        suppress_rule_tags=suppress_rule_tags
+        suppress_rule_reporting_tags=suppress_rule_reporting_tags
     )
     validated_gaf_path = os.path.join(os.path.split(source_gaf)[0], "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
@@ -406,8 +406,8 @@ def cli():
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 @click.option("--exclude", "-x", multiple=True)
 @click.option("--base-download-url", "-b", default=None)
-@click.option("--suppress-rule-tag", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
-def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_tag):
+@click.option("--suppress-rule-reporting-tag", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
+def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag):
 
     products = {
         "gaf": True,
@@ -447,7 +447,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
             rule_metadata=rule_metadata,
             db_entities=db_entities,
             group_idspace=group_ids,
-            suppress_rule_tags=suppress_rule_tag)[0]
+            suppress_rule_reporting_tags=suppress_rule_reporting_tag)[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
