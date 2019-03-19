@@ -77,6 +77,15 @@ def gorule_title(metadata, rule_id) -> str:
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(gorule_yamldown, str(e)))
 
+def gorule_metadata(metadata, rule_id) -> str:
+    gorule_yamldown = os.path.join(metadata, "rules", "{}.md".format(rule_id))
+    try:
+        with open(gorule_yamldown, "r") as gorule_data:
+            click.echo("Found {rule} at {path}".format(rule=rule_id, path=gorule_yamldown))
+            return yamldown.load(gorule_data)[0]
+    except Exception as e:
+        raise click.ClickException("Could not find or read {}: {}".format(gorule_yamldown, str(e)))
+
 def rule_id(rule_path) -> str:
     return os.path.splitext(os.path.basename(rule_path))[0]
 
@@ -194,7 +203,7 @@ def groups(metadata) -> Set[str]:
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_titles=None, db_entities=None, group_idspace=None):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, suppress_rule_tags=[]):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -203,9 +212,10 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         filtered_evidence_file=filtered_associations,
         gpi_authority_path=gpipath,
         paint=paint,
-        rule_titles=rule_titles,
+        rule_metadata=rule_metadata,
         entity_idspaces=db_entities,
-        group_idspace=group_idspace
+        group_idspace=group_idspace,
+        suppress_rule_tags=suppress_rule_tags
     )
     validated_gaf_path = os.path.join(os.path.split(source_gaf)[0], "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
@@ -396,7 +406,8 @@ def cli():
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 @click.option("--exclude", "-x", multiple=True)
 @click.option("--base-download-url", "-b", default=None)
-def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url):
+@click.option("--suppress-rule-tag", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
+def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_tag):
 
     products = {
         "gaf": True,
@@ -419,7 +430,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     # source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset["dataset"])) for dataset, zip_path in source_gaf_zips.items()}
 
     # extract the titles for the go rules, this is a dictionary comprehension
-    rule_titles = {rule_id(rule_path): gorule_title(metadata, rule_id(rule_path))
+    rule_metadata = {rule_id(rule_path): gorule_metadata(metadata, rule_id(rule_path))
         for rule_path in glob.glob("{}/*.md".format(os.path.join(metadata, "rules"))) if rule_id(rule_path) not in ["ABOUT", "README", "SOP"]}
 
     paint_metadata = metadata_file(absolute_metadata, "paint")
@@ -430,7 +441,13 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
         dataset = dataset_metadata["dataset"]
         # Set paint to True when the group is "paint".
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group, like for paint_other.
-        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph, paint=(group=="paint"), group=group, rule_titles=rule_titles, db_entities=db_entities, group_idspace=group_ids)[0]
+        valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph,
+            paint=(group=="paint"),
+            group=group,
+            rule_metadata=rule_metadata,
+            db_entities=db_entities,
+            group_idspace=group_ids,
+            suppress_rule_tags=suppress_rule_tag)[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 

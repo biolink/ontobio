@@ -57,6 +57,8 @@ as the separated by tab list of values. We also tack on the taxon.
 class AssocParserConfig():
     """
     Configuration for an association parser
+
+    rule_metadata: Dictionary of rule IDs to metadata pulled out by yamldown
     """
     def __init__(self,
                  remove_double_prefixes=False,
@@ -74,8 +76,9 @@ class AssocParserConfig():
                  filtered_evidence_file=None,
                  gpi_authority_path=None,
                  paint=False,
-                 rule_titles=None,
-                 dbxrefs=None):
+                 rule_metadata=None,
+                 dbxrefs=None,
+                 suppress_rule_tags=[]):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -90,7 +93,8 @@ class AssocParserConfig():
         self.filtered_evidence_file = filtered_evidence_file
         self.gpi_authority_path = gpi_authority_path
         self.paint = paint
-        self.rule_titles = rule_titles
+        self.rule_metadata = rule_metadata
+        self.suppress_rule_tags = suppress_rule_tags
 
         self.entity_idspaces = None if entity_idspaces is None else set(entity_idspaces)
         self.group_idspace = None if group_idspace is None else set(group_idspace)
@@ -157,7 +161,8 @@ class Report():
             'type': type,
             'message': msg,
             'obj': obj,
-            'taxon': taxon
+            'taxon': taxon,
+            'rule': rule
         }
         self.messages.append(message)
         self.reporter.message(message, rule)
@@ -218,13 +223,28 @@ class Report():
         ## Table of Contents
         s += "\n\n## Contents\n\n"
         for rule, messages in sorted(json["messages"].items(), key=lambda t: t[0]):
+            any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_tags])
+            # For each tag we say to suppress output for, check if it matches any tag in the rule. If any matches
+            if self.config.rule_metadata and any_suppress_tag_in_rule_metadata:
+                continue
+
             s += "[{rule}](#{rule})\n\n".format(rule=rule)
 
         s += "\n## MESSAGES\n\n"
         for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
+            any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_tags])
+
+            # Skip if the rule metadata has "silent" as a tag
+            if self.config.rule_metadata and any_suppress_tag_in_rule_metadata:
+                # If there is a rule metadata, and the rule ID is in the config,
+                # get the list of tags if present and check for existence of "silent".
+                # If contained, continue to the next rule.
+                continue
+
+
             s += "### {rule}\n\n".format(rule=rule)
-            if rule != "other" and self.config.rule_titles:
-                s += "{title}\n\n".format(title=self.config.rule_titles.get(rule, ""))
+            if rule != "other" and self.config.rule_metadata:
+                s += "{title}\n\n".format(title=self.config.rule_metadata.get(rule, {}).get("title", ""))
             s += "* total: {amount}\n".format(amount=len(messages))
             if len(messages) > 0:
                 s += "#### Messages\n"
