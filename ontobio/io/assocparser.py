@@ -145,6 +145,8 @@ class Report():
         self.n_assocs = 0
         self.skipped = 0
         self.reporter = parsereport.Report(group, dataset)
+        if config is None:
+            config = AssocParserConfig()
         self.config = config
         self.header = []
 
