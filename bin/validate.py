@@ -93,10 +93,18 @@ def gorule_metadata(metadata, rule_id) -> str:
 def rule_id(rule_path) -> str:
     return os.path.splitext(os.path.basename(rule_path))[0]
 
-def download_a_dataset_source(group, dataset, target_dir, source_url, base_download_url=None):
+def source_path(dataset_metadata, target_dir, group):
+    extension = dataset_metadata["type"]
+    if dataset_metadata["compression"]:
+        extension = "{ext}.gz".format(ext=extension)
+
+    path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
+    return path
+
+def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None):
     # Local target download path setup - path and then directories
     file_name = source_url.split("/")[-1]
-    path = os.path.join(target_dir, "groups", group, file_name)
+    path = source_path(dataset_metadata, target_dir, group)
     os.makedirs(os.path.split(path)[0], exist_ok=True)
 
     click.echo("Downloading source to {}".format(path))
@@ -147,14 +155,14 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
     This function returns a list of tuples of the dataset dictionary mapped to the downloaded source path.
     """
     gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions ]
-    # Map of dataset metadata to gaf download url
+    # List of dataset metadata to gaf download url
 
     click.echo("Found {}".format(", ".join( [ kv[0]["dataset"] for kv in gaf_urls ] )))
     downloaded_paths = []
     for dataset_metadata, gaf_url in gaf_urls:
         dataset = dataset_metadata["dataset"]
         # Local target download path setup - path and then directories
-        path = download_a_dataset_source(group_metadata["id"], dataset, target_dir, gaf_url, base_download_url=base_download_url)
+        path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url, base_download_url=base_download_url)
 
         if dataset_metadata["compression"] == "gzip":
             # Unzip any downloaded file that has gzip, strip of the gzip extension
@@ -175,7 +183,7 @@ def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_di
     if mixin_dataset is None:
         return None
 
-    path = download_a_dataset_source(group_id, mixin_dataset["dataset"], target_dir, mixin_dataset["source"], base_download_url=base_download_url)
+    path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url)
 
     unzipped = os.path.splitext(path)[0] # Strip off the .gz extension, leaving just the unzipped filename
     unzip(path, unzipped)
