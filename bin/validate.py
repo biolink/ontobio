@@ -149,12 +149,12 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
     gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions ]
     # Map of dataset metadata to gaf download url
 
-    click.echo("Found {}".format(", ".join(gaf_urls.keys())))
-    downloaded_paths = {}
-    for dataset, gaf_url in gaf_urls.items():
+    click.echo("Found {}".format(", ".join( [ kv[0]["dataset"] for kv in gaf_urls ] )))
+    downloaded_paths = []
+    for dataset_metadata, gaf_url in gaf_urls:
+        dataset = dataset_metadata["dataset"]
+        # Local target download path setup - path and then directories
         path = download_a_dataset_source(group_metadata["id"], dataset, target_dir, gaf_url, base_download_url=base_download_url)
-
-        downloaded_paths[dataset] = path
 
         if dataset_metadata["compression"] == "gzip":
             # Unzip any downloaded file that has gzip, strip of the gzip extension
@@ -237,7 +237,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_titles=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[]):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[]):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
