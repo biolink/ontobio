@@ -404,6 +404,24 @@ class AssocParser(object):
                 return True
         return False
 
+    def compute_aspect(self, term):
+        if self.config.ontology == None:
+            return None
+
+        BP = "GO:0008150"
+        CC = "GO:0005575"
+        MF = "GO:0003674"
+
+        ancestors = self.config.ontology.ancestors(term)
+        if BP in ancestors:
+            return "P"
+        if CC in ancestors:
+            return "C"
+        if MF in ancestors:
+            return "F"
+
+        return None
+
     ## we generate both qualifier and relation field
     ## Returns: (negated, relation, other_qualifiers)
     def _parse_qualifier(self, qualifier, aspect):

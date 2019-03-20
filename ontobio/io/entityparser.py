@@ -1,12 +1,10 @@
-from ontobio.io.assocparser import AssocParser, AssocParserConfig, Report, ENTITY
-
 from ontobio.io import assocparser
 
 import logging
 import json
 
 # TODO - use abstract parent for both entity and assoc
-class EntityParser(AssocParser):
+class EntityParser(assocparser.AssocParser):
 
     def parse(self, file, outfile=None):
         """Parse a line-oriented entity file into a list of entity dict objects
@@ -61,6 +59,26 @@ class EntityParser(AssocParser):
         file.close()
         return ents
 
+def load_gpi(self, gpi_path):
+    """
+    Loads a GPI as a file from the `config.gpi_authority_path`
+    """
+    if self.config.gpi_authority_path is not None:
+        gpis = dict()
+        parser = entityparser.GpiParser()
+        with open(self.config.gpi_authority_path) as gpi_f:
+            entities = parser.parse(file=gpi_f)
+            for entity in entities:
+                gpis[entity["id"]] = {
+                    "symbol": entity["label"],
+                    "name": entity["full_name"],
+                    "synonyms": entitywriter.stringify(entity["synonyms"]),
+                    "type": entity["type"]
+                }
+        return gpis
+
+    # If there is no config file path, return None
+    return None
 
 class GpiParser(EntityParser):
 
@@ -69,15 +87,12 @@ class GpiParser(EntityParser):
         Arguments:
         ---------
 
-        config : a AssocParserConfig object
+        config : a assocparser.AssocParserConfig object
         """
         if config is None:
-            config = AssocParserConfig()
-            print("We created a GPI config object")
-
+            config = assocparser.AssocParserConfig()
         self.config = config
-        print("init, config = {}".format(config))
-        self.report = Report()
+        self.report = assocparser.Report()
 
     def parse_line(self, line):
         """Parses a single line of a GPI.
@@ -99,7 +114,7 @@ class GpiParser(EntityParser):
         vals = line.split("\t")
 
         if len(vals) < 7:
-            self.report.error(line, Report.WRONG_NUMBER_OF_COLUMNS, "")
+            self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "")
             return line, []
 
         if len(vals) < 10 and len(vals) >= 7:
@@ -125,7 +140,7 @@ class GpiParser(EntityParser):
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, split_line, context=ENTITY):
+        if not self._validate_id(id, split_line, context=assocparser.Report):
             return line, []
 
         ## --
@@ -142,7 +157,7 @@ class GpiParser(EntityParser):
         else:
             parents = [self._normalize_id(x) for x in parents]
             for p in parents:
-                self._validate_id(p, split_line, context=ENTITY)
+                self._validate_id(p, split_line, context=assocparser.Report)
 
         xref_ids = xrefs.split("|")
         if xrefs == "":
@@ -172,12 +187,12 @@ class BgiParser(EntityParser):
         Arguments:
         ---------
 
-        config : a AssocParserConfig object
+        config : a assocparser.AssocParserConfig object
         """
         if config is None:
-            config = AssocParserConfig()
+            config = assocparser.AssocParserConfig()
         self.config = config
-        self.report = Report()
+        self.report = assocparser.Report()
 
     def parse(self, file, outfile=None):
         """Parse a BGI (basic gene info) JSON file

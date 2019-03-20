@@ -1,4 +1,6 @@
 from ontobio.io import assocparser
+from ontobio.io import entityparser
+from ontobio.io import entitywriter
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
 
 import logging
@@ -10,9 +12,8 @@ class GpadParser(assocparser.AssocParser):
     https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-1_2.md
     """
 
-    ANNOTATION_CLASS_COLUMN=3
 
-    def __init__(self, config=assocparser.AssocParserConfig()):
+    def __init__(self, config=assocparser.AssocParserConfig(), group="unknown", dataset="unknown"):
         """
         Arguments:
         ---------
@@ -20,7 +21,22 @@ class GpadParser(assocparser.AssocParser):
         config : a AssocParserConfig object
         """
         self.config = config
-        self.report = assocparser.Report(config=self.config)
+        self.report = assocparser.Report(config=self.config, group="unknown", dataset="unknown")
+        self.gpi = None
+        if self.config.gpi_authority_path is not None:
+            self.gpi = dict()
+            parser = entityparser.GpiParser()
+            with open(self.config.gpi_authority_path) as gpi_f:
+                entities = parser.parse(file=gpi_f)
+                for entity in entities:
+                    self.gpi[entity["id"]] = {
+                        "symbol": entity["label"],
+                        "name": entity["full_name"],
+                        "synonyms": entitywriter.stringify(entity["synonyms"]),
+                        "type": entity["type"]
+                    }
+                print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
+
 
     def skim(self, file):
         file = self._ensure_file(file)
@@ -71,7 +87,7 @@ class GpadParser(assocparser.AssocParser):
             return parsed
 
         if self.is_header(line):
-            return assocparser.ParseResult(line, [], False)
+            return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
 
         vals = [el.strip() for el in line.split("\t")]
         if len(vals) < 10 or len(vals) > 12:
@@ -157,10 +173,26 @@ class GpadParser(assocparser.AssocParser):
         ## --
         object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=split_line)
 
+        subject_symbol = id
+        subject_fullname = id
+        subject_synonyms = []
+        if self.gpi is not None:
+            gp = self.gpi.get(id, {})
+            if gp is not {}:
+                subject_symbol = gp["symbol"]
+                subject_fullname = gp["name"]
+                subject_synonyms = gp["synonyms"].split("|")
+
         assoc = {
             'source_line': line,
             'subject': {
-                'id':id
+                'id': id,
+                'label': subject_symbol,
+                'fullname': subject_fullname,
+                'synonyms': subject_synonyms,
+                'taxon': {
+                    'id': interacting_taxon
+                },
             },
             'object': {
                 'id':goid
@@ -175,14 +207,16 @@ class GpadParser(assocparser.AssocParser):
                 'with_support_from': withfroms,
                 'has_supporting_reference': references
             },
+            'subject_extensions': [],
+            'object_extensions': {},
+            'aspect': self.compute_aspect(goid),
             'provided_by': assigned_by,
             'date': date,
-
         }
         if len(other_qualifiers) > 0:
             assoc['qualifiers'] = other_qualifiers
         if object_or_exprs is not None and len(object_or_exprs) > 0:
-            assoc['object']['extensions'] = {'union_of': object_or_exprs}
+            assoc['object_extensions'] = {'union_of': object_or_exprs}
 
 
         return assocparser.ParseResult(line, [assoc], False)

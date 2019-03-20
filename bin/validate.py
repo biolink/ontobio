@@ -12,9 +12,10 @@ import yamldown
 
 from functools import wraps
 
-from ontobio.util.user_agent import get_user_agent
+# from ontobio.util.user_agent import get_user_agent
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
+from ontobio.io.gpadparser import GpadParser
 from ontobio.io.assocwriter import GafWriter
 from ontobio.io.assocwriter import GpadWriter
 from ontobio.io import assocparser
@@ -59,14 +60,17 @@ def find(l, finder):
     else:
         return filtered[0]
 
-def metadata_file(metadata, group) -> Dict:
+def metadata_file(metadata, group, empty_ok=False) -> Dict:
     metadata_yaml = os.path.join(metadata, "datasets", "{}.yaml".format(group))
     try:
         with open(metadata_yaml, "r") as group_data:
             click.echo("Found {group} metadata at {path}".format(group=group, path=metadata_yaml))
             return yaml.load(group_data, Loader=yaml.FullLoader)
     except Exception as e:
-        raise click.ClickException("Could not find or read {}: {}".format(metadata_yaml, str(e)))
+        if not empty_ok:
+            raise click.ClickException("Could not find or read {}: {}".format(metadata_yaml, str(e)))
+        else:
+            return None
 
 def gorule_title(metadata, rule_id) -> str:
     gorule_yamldown = os.path.join(metadata, "rules", "{}.md".format(rule_id))
@@ -97,6 +101,52 @@ def source_path(dataset_metadata, target_dir, group):
     path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
     return path
 
+def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None):
+    # Local target download path setup - path and then directories
+    file_name = source_url.split("/")[-1]
+    path = source_path(dataset_metadata, target_dir, group)
+    os.makedirs(os.path.split(path)[0], exist_ok=True)
+
+    click.echo("Downloading source to {}".format(path))
+
+    # Parse urls
+    source_url_parsed = urllib.parse.urlparse(source_url)
+    base_download_url_parsed = urllib.parse.urlparse(base_download_url) if base_download_url != None else None
+
+    # Compute scheme:
+    scheme = "file"
+    if source_url_parsed.scheme != "":
+        scheme = source_url_parsed.scheme
+    elif base_download_url_parsed.scheme != "":
+        scheme = base_download_url_parsed.scheme
+
+    # Compute joined url, including dealing with relative paths
+    joined_url = source_url
+    if not source_url_parsed.path.startswith("/"):
+        # We're relative
+        if base_download_url is not None:
+            joined_url = urllib.parse.urljoin(base_download_url, source_url)
+        else:
+            # This is bad and we have to jump out`since we have no way of constructing a real gaf url
+            raise click.ClickException("Option `--base-download-url` was not specified and the config url {} is a relative path.".format(source_url))
+
+    # including scheme and such
+    reconstructed_url = urllib.parse.urlunsplit((scheme, urllib.parse.urlparse(joined_url).netloc, urllib.parse.urlparse(joined_url).path, source_url_parsed.query, ""))
+
+    # Using urllib to download if scheme is ftp or file. Otherwise we can use requests and use a progressbar
+    if scheme in ["ftp", "file"]:
+        urllib.request.urlretrieve(reconstructed_url, path)
+    else:
+        response = requests.get(reconstructed_url, stream=True)
+        content_length = int(response.headers.get("Content-Length", 0))
+
+        with open(path, "wb") as downloaded:
+            with click.progressbar(iterable=response.iter_content(chunk_size=512 * 1024), length=content_length, show_percent=True) as chunks:
+                for chunk in chunks:
+                    if chunk:
+                        downloaded.write(chunk)
+
+    return path
 
 def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None):
     """
@@ -105,35 +155,14 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
     This function returns a list of tuples of the dataset dictionary mapped to the downloaded source path.
     """
     gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions ]
-    # Map of dataset metadata to gaf download url
+    # List of dataset metadata to gaf download url
 
     click.echo("Found {}".format(", ".join( [ kv[0]["dataset"] for kv in gaf_urls ] )))
     downloaded_paths = []
     for dataset_metadata, gaf_url in gaf_urls:
         dataset = dataset_metadata["dataset"]
         # Local target download path setup - path and then directories
-        path = source_path(dataset_metadata, target_dir, group_metadata["id"])
-        os.makedirs(os.path.split(path)[0], exist_ok=True)
-
-        click.echo("Downloading source gaf to {}".format(path))
-        if urllib.parse.urlparse(gaf_url).scheme in ["ftp", "file"]:
-            urllib.request.urlretrieve(gaf_url, path)
-        else:
-            is_relative = not urllib.parse.urlparse(gaf_url).path.startswith("/")
-            if is_relative and base_download_url is not None:
-                gaf_url = urllib.parse.urljoin(base_download_url, gaf_url)
-            elif is_relative and base_download_url is None:
-                # This is bad and we have to jump out`since we have no way of constructing a real gaf url
-                raise click.ClickException("Option --base-download-url was not specified and the config url {} is a relative path.".format(gaf_url))
-
-            response = requests.get(gaf_url, stream=True, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})
-            content_length = int(response.headers.get("Content-Length", 0))
-
-            with open(path, "wb") as downloaded:
-                with click.progressbar(iterable=response.iter_content(chunk_size=512 * 1024), length=content_length, show_percent=True) as chunks:
-                    for chunk in chunks:
-                        if chunk:
-                            downloaded.write(chunk)
+        path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url, base_download_url=base_download_url)
 
         if dataset_metadata["compression"] == "gzip":
             # Unzip any downloaded file that has gzip, strip of the gzip extension
@@ -149,18 +178,23 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
 
     return downloaded_paths
 
-def check_and_download_paint_source(paint_metadata, group_id, dataset, target_dir):
-    paint_dataset = find(paint_metadata["datasets"], lambda d: d["dataset"] == "paint_{}".format(dataset))
-    if paint_dataset is None:
+def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None):
+    mixin_dataset = find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
+    if mixin_dataset is None:
         return None
 
-    path = os.path.join(target_dir, "groups", group_id, "{}-src.gaf.gz".format(paint_dataset["dataset"]))
-    click.echo("Downloading paint to {}".format(path))
-    urllib.request.urlretrieve(paint_dataset["source"], path)
-    unzipped = os.path.join(os.path.split(path)[0], "{}-src.gaf".format(paint_dataset["dataset"]))
+    path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url)
+
+    unzipped = os.path.splitext(path)[0] # Strip off the .gz extension, leaving just the unzipped filename
     unzip(path, unzipped)
     return unzipped
 
+def mixin_dataset(mixin_metadata, dataset):
+    mixin_dataset_version = find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
+    if mixin_dataset_version is None:
+        return None # Blah
+
+    return mixin_dataset_version
 
 def unzip(path, target):
     click.echo("Unzipping {}".format(path))
@@ -199,11 +233,19 @@ def groups(metadata) -> Set[str]:
 
     return set([group["shorthand"] for group in groups_list])
 
+def create_parser(config, group, dataset, format="gaf"):
+    if format == "gpad":
+        return GpadParser(config=config, group=group, dataset=dataset)
+    else:
+        # We assume it's gaf as we only support in this instant gaf and gpad
+        return GafParser(config=config, group=group, dataset=dataset)
+
+
 """
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, suppress_rule_reporting_tags=[]):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[]):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -217,12 +259,13 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags
     )
-    validated_gaf_path = os.path.join(os.path.split(source_gaf)[0], "{}_valid.gaf".format(dataset))
+    split_source = os.path.split(source_gaf)[0]
+    validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
     gafwriter = GafWriter(file=outfile, source=dataset)
 
-    click.echo("Validating source GAF: {}".format(source_gaf))
-    parser = GafParser(config=config, group=group, dataset=dataset)
+    click.echo("Validating source {}: {}".format(format, source_gaf))
+    parser = create_parser(config, group, dataset, format)
     with open(source_gaf) as sg:
         lines = sum(1 for line in sg)
 
@@ -375,12 +418,14 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
         paint_header, paint_annotations = header_and_annotations(paint)
 
         the_header = mod_header + \
-            ["!=================================",
+            [
+            "!=================================",
             "!",
             "!PAINT Header copied from {}".format(os.path.basename(paint_gaf_path)),
             "!================================="]
         the_header += paint_header[8:] + \
-            ["!=================================",
+            [
+            "!=================================",
             "!",
             "!Documentation about this header can be found here: https://github.com/geneontology/go-site/blob/master/docs/gaf_validation.md",
             "!"]
@@ -391,6 +436,85 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
             merged_file.write("\n".join(all_lines))
 
     return merged_path
+
+@gzips
+def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
+    def header_and_annotations(gaf_file):
+        headers = []
+        annotations = []
+
+        for line in gaf_file.readlines():
+            line = line.rstrip("\n")
+            if line.startswith("!"):
+                headers.append(line)
+            else:
+                annotations.append(line)
+
+        return (headers, annotations)
+
+    def make_mixin_header(header_lines, path):
+        the_header = [
+            "!Header copied from {}".format(os.path.basename(path)),
+            "!================================="
+        ] + header_lines[8:] + ["!"]
+        return the_header
+    # ####################################################################
+    # Set up merged final gaf product path
+    dirs, name = os.path.split(valid_gaf_path)
+    merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
+    valid_header = []
+    annotations = []
+    with open(valid_gaf_path) as valid_file:
+        valid_header, annotations = header_and_annotations(valid_file)
+
+    mixin_headers = []
+    for mixin_gaf_path in mixin_gaf_paths:
+        with open(mixin_gaf_path) as mixin_file:
+            mixin_header, mixin_annotations = header_and_annotations(mixin_file)
+
+            mixin_headers += make_mixin_header(mixin_header, mixin_gaf_path)
+            annotations += mixin_annotations
+
+    full_header = valid_header + \
+    [
+        "!=================================",
+        "!"
+    ] + mixin_headers + \
+    [
+        "!=================================",
+        "!",
+        "!Documentation about this header can be found here: https://github.com/geneontology/go-site/blob/master/docs/gaf_validation.md",
+        "!"
+    ]
+    all_lines = full_header + annotations
+
+    with open(merged_path, "w") as merged_file:
+        merged_file.write("\n".join(all_lines))
+
+    return merged_path
+
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None):
+
+    end_gaf = valid_gaf
+    mixin_gaf_paths = []
+    for mixin_metadata in mixin_metadata_list:
+        mixin_src = check_and_download_mixin_source(mixin_metadata, group_id, dataset, target, base_download_url=base_download_url)
+
+        if mixin_src is not None:
+            mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
+            mixin_dataset_id = mixin_dataset_metadata["dataset"]
+            format = mixin_dataset_metadata["type"]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=mixin_metadata["id"]=="paint", group=mixin_metadata["id"], format=format)[0]
+            mixin_gaf_paths.append(mixin_gaf)
+
+    if mixin_gaf_paths:
+        # If we found and processed any mixin gafs, then lets merge them.
+        end_gaf = merge_all_mixin_gaf_into_mod_gaf(valid_gaf, mixin_gaf_paths)
+    else:
+        gafgz = "{}.gz".format(valid_gaf)
+        os.rename(gafgz, os.path.join(os.path.split(gafgz)[0], "{}.gaf.gz".format(dataset)))
+
+    return end_gaf
 
 
 @click.group()
@@ -434,6 +558,9 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
         for rule_path in glob.glob("{}/*.md".format(os.path.join(metadata, "rules"))) if rule_id(rule_path) not in ["ABOUT", "README", "SOP"]}
 
     paint_metadata = metadata_file(absolute_metadata, "paint")
+    noctua_metadata = metadata_file(absolute_metadata, "noctua")
+    mixin_metadata_list = filter(lambda m: m != None, [paint_metadata, noctua_metadata])
+
     db_entities = database_entities(absolute_metadata)
     group_ids = groups(absolute_metadata)
 
@@ -451,17 +578,12 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
-        paint_src_gaf = check_and_download_paint_source(paint_metadata, group_metadata["id"], dataset, absolute_target)
-
-        end_gaf = valid_gaf
-        if paint_src_gaf is not None:
-            paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi, paint=True, group="paint")[0]
-            end_gaf = merge_mod_and_paint(valid_gaf, paint_gaf)
-        else:
-            gafgz = "{}.gz".format(valid_gaf)
-            os.rename(gafgz, os.path.join(os.path.split(gafgz)[0], "{}.gaf.gz".format(dataset)))
-
+        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
+
+
+
+
 
 
 @cli.command()
@@ -475,7 +597,7 @@ def paint(group, dataset, metadata, target, ontology):
     absolute_target = os.path.abspath(target)
     os.makedirs(os.path.join(absolute_target, "groups"), exist_ok=True)
     paint_metadata = metadata_file(absolute_metadata, "paint")
-    paint_src_gaf = check_and_download_paint_source(paint_metadata, dataset, absolute_target)
+    paint_src_gaf = check_and_download_mixin_source(paint_metadata, dataset, absolute_target)
 
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
