@@ -1,15 +1,15 @@
 solr_assocs:
   url: "https://solr.monarchinitiative.org/solr/golr"
-  timeout: 10
+  timeout: 60
 amigo_solr_assocs:
   url: "http://golr-aux.geneontology.io/solr"
   timeout: 4
 solr_search:
   url: "https://solr.monarchinitiative.org/solr/search"
-  timeout: 5
+  timeout: 10
 lay_person_search:
   url: "https://solr.monarchinitiative.org/solr/hpo-pl"
-  timeout: 5
+  timeout: 10
 amigo_solr_search:
   url: "http://golr-aux.geneontology.io/solr"
   timeout: 2
