@@ -171,9 +171,9 @@ INVERT_FIELDS_MAP = {
 }
 
 ASPECT_MAP = {
-    'F': 'molecular_activity',
-    'P': 'biological_process',
-    'C': 'cellular_component'
+    'F': 'GO:0003674',
+    'P': 'GO:0008150',
+    'C': 'GO:0005575'
 }
 
 
@@ -1448,6 +1448,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if lf in d:
             obj['label'] = d[lf]
 
+        if 'aspect' in d and id.startswith('GO:'):
+            obj['aspect'] = ASPECT_MAP[d['aspect']]
+            del d['aspect']
+
         cf = fname + "_category"
         if cf in d:
             obj['categories'] = [d[cf]]
@@ -1531,10 +1535,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if M.EVIDENCE_OBJECT in d:
             assoc['evidence'] = d[M.EVIDENCE_OBJECT]
             assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
-
-        if M.ASPECT in d:
-            assoc[M.OBJECT_CATEGORY] = ASPECT_MAP[d[M.ASPECT]]
-            del d[M.ASPECT]
 
         if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:
