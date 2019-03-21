@@ -171,9 +171,9 @@ INVERT_FIELDS_MAP = {
 }
 
 ASPECT_MAP = {
-    'F': 'GO:0003674',
-    'P': 'GO:0008150',
-    'C': 'GO:0005575'
+    'F': 'molecular_activity',
+    'P': 'biological_process',
+    'C': 'cellular_component'
 }
 
 
@@ -1449,7 +1449,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             obj['label'] = d[lf]
 
         if 'aspect' in d and id.startswith('GO:'):
-            obj['aspect'] = ASPECT_MAP[d['aspect']]
+            obj['category'] = ASPECT_MAP[d['aspect']]
             del d['aspect']
 
         cf = fname + "_category"
