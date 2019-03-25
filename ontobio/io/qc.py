@@ -56,6 +56,18 @@ class GoRule02(GoRule):
         fails = (goclass == "GO:0005515" and "NOT" in qualifier)
         return self._result(not fails)
 
+class GoRule06(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000006", "IEP and HEP usage is restricted to terms from the Biological Process ontology", FailMode.HARD)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+
+        aspect = annotation[8]
+        evidence = annotation[6]
+        fails = evidence in ["IEP", "HEP"] and aspect != "P"
+        return self._result(not fails)
+
 
 class GoRule08(GoRule):
 
