@@ -33,6 +33,25 @@ def test_go_rule02():
     test_result = qc.GoRule02().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+def test_go_rule_06():
+    a = ["blah"] * 16
+    a[6] = "HEP"
+    a[8] = "C"
+    test_result = qc.GoRule06().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    a = ["blah"] * 16
+    a[6] = "HEP"
+    a[8] = "P"
+    test_result = qc.GoRule06().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a = ["blah"] * 16
+    a[6] = "IEA"
+    a[8] = "P"
+    test_result = qc.GoRule06().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
 def test_go_rule08():
     a = ["blah"] * 16
     a[4] = "GO:0006810" # do not annotate
