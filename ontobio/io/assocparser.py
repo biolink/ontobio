@@ -228,6 +228,7 @@ class Report():
             any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_reporting_tags])
             # For each tag we say to suppress output for, check if it matches any tag in the rule. If any matches
             if self.config.rule_metadata and any_suppress_tag_in_rule_metadata:
+                print("Skipping {rule_num} because the tag(s) '{tag}' are suppressed".format(rule_num=rule, tag=", ".join(self.config.suppress_rule_reporting_tags)))
                 continue
 
             s += "[{rule}](#{rule})\n\n".format(rule=rule)
