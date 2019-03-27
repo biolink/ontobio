@@ -547,7 +547,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
 
     group_metadata = metadata_file(absolute_metadata, group)
     click.echo("Loading ontology: {}...".format(ontology))
-    ontology_graph = OntologyFactory().create(ontology)
+    ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
 
     downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url)
     # dict of Dataset Metadata --> downloaded source paths (unzipped)
