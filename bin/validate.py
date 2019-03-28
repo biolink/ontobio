@@ -5,6 +5,7 @@ import yaml
 import requests
 import gzip
 import urllib
+import shutil
 import re
 import glob
 
@@ -512,7 +513,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
         end_gaf = merge_all_mixin_gaf_into_mod_gaf(valid_gaf, mixin_gaf_paths)
     else:
         gafgz = "{}.gz".format(valid_gaf)
-        os.rename(gafgz, os.path.join(os.path.split(gafgz)[0], "{}.gaf.gz".format(dataset)))
+        shutil.copyfile(gafgz, os.path.join(os.path.split(gafgz)[0], "{}.gaf.gz".format(dataset)))
 
     return end_gaf
 
