@@ -157,12 +157,22 @@ class GafParser(assocparser.AssocParser):
             self.report.warning(line, Report.INVALID_ID, assigned_by,
                 "GORULE:0000027: assigned_by is not present in groups reference", taxon=taxon, rule=27)
 
+        if self.config.entity_idspaces is not None and db not in self.config.entity_idspaces:
+            # Are we a synonym?
+            upgrade = self.config.entity_idspaces.reverse(db)
+            if upgrade is not None:
+                # If we found a synonym
+                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "{} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=taxon, rule=27)
+                db = upgrade
+
         ## --
         ## db + db_object_id. CARD=1
         ## --
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, split_line, allowed_ids=self.config.entity_idspaces):
+
             return assocparser.ParseResult(line, [], True)
+
 
         # Using a given gpi file to validate the gene object
         if self.gpi is not None:

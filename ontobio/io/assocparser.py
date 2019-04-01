@@ -18,7 +18,7 @@ import gzip
 import datetime
 import dateutil.parser
 
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from typing import Optional, List, Dict, Set
 
 from ontobio import ontol
@@ -35,6 +35,68 @@ EXTENSION = 'EXTENSION'
 def write_to_file(optional_file, text):
     if optional_file:
         optional_file.write(text)
+
+###############################################
+
+class BiDiMultiMap(dict):
+
+    def __init__(self, *args):
+        super(BiDiMultiMap, self).__init__(*args)
+        self.__reverse = dict()
+
+    def __setitem__(self, key, val):
+
+        # Turn everything into a set
+        inval = None
+        if isinstance(val, set):
+            inval = val
+        elif isinstance(val, iter):
+            inval = set(val)
+        elif val == None:
+            inval = set()
+        else:
+            inval = set([val])
+
+        olds = self.get(key, [])
+        super(BiDiMultiMap, self).__setitem__(key, inval)
+        # Remove old value mappings from the key
+        for old in olds:
+            if old in self.__reverse:
+                del self.__reverse[old]
+
+        # Add the items
+        for v in inval:
+            self.__reverse[v] = key
+
+    def __delitem__(self, key):
+        vs = self[key]
+        super(BiDiMultiMap, self).__delitem__(key)
+        for v in vs:
+            del self.__reverse[v]
+
+
+    def reverse(self, element):
+        """
+        Returns the key that has element in the set for the mapping of `key`, or
+        None, of there is no such element.
+
+        Example:
+        Given "FB" --> set("fb", "FlyBase")
+
+        reverse("fb") --> "FB"
+        reverse("FlyBase") --> "FB"
+        reverse("Foo") --> None
+        """
+        return self.__reverse.get(element, None)
+
+# d = BiDiMultiMap()
+#
+# d["FB"] = set(["fb", "FlyBase"])
+# d.reverse("fb") # returns "FB"
+# d.reverse("FlyBase") # returns "FB"
+# d.reverse("mgi:mgi") # returns None
+
+###############################################
 
 
 class ParseResult(object):
@@ -96,7 +158,7 @@ class AssocParserConfig():
         self.rule_metadata = rule_metadata
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
 
-        self.entity_idspaces = None if entity_idspaces is None else set(entity_idspaces)
+        self.entity_idspaces = entity_idspaces
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
