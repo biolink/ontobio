@@ -3,31 +3,31 @@ solr_assocs:
   timeout: 60
 amigo_solr_assocs:
   url: "http://golr-aux.geneontology.io/solr"
-  timeout: 4
+  timeout: 15
 solr_search:
   url: "https://solr.monarchinitiative.org/solr/search"
-  timeout: 10
+  timeout: 15
 lay_person_search:
   url: "https://solr.monarchinitiative.org/solr/hpo-pl"
-  timeout: 10
+  timeout: 15
 amigo_solr_search:
   url: "http://golr-aux.geneontology.io/solr"
-  timeout: 2
+  timeout: 15
 sparql:
   url: "http://sparql.hegroup.org/sparql"
-  timeout: 2
+  timeout: 30
 scigraph_ontology:
   url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
-  timeout: 2
+  timeout: 15
 scigraph_data:
   url: "https://scigraph-data.monarchinitiative.org/scigraph/"
-  timeout: 2
+  timeout: 15
 owlsim2:
   url: "https://monarchinitiative.org/owlsim/"
-  timeout: 10
+  timeout: 15
 owlsim3:
   url: "http://owlsim3.monarchinitiative.org/api/"
-  timeout: 5
+  timeout: 15
 use_amigo_for:
   - function
 ontologies:
