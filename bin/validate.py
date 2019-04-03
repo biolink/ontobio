@@ -212,7 +212,7 @@ def unzip(path, target):
             for chunk in chunks:
                 tf.write(chunk)
 
-def database_entities(metadata) -> Set[str]:
+def database_entities(metadata):
     dbxrefs_path = os.path.join(os.path.abspath(metadata), "db-xrefs.yaml")
     try:
         with open(dbxrefs_path, "r") as db_xrefs_file:
@@ -221,7 +221,11 @@ def database_entities(metadata) -> Set[str]:
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(dbxrefs_path, str(e)))
 
-    return set([entity["database"] for entity in dbxrefs])
+    d = assocparser.BiDiMultiMap()
+    for entity in dbxrefs:
+        d[entity["database"]] = set(entity.get("synonyms", []))
+
+    return d
 
 def groups(metadata) -> Set[str]:
     groups_path = os.path.join(os.path.abspath(metadata), "groups.yaml")
