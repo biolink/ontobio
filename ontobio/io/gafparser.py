@@ -162,7 +162,7 @@ class GafParser(assocparser.AssocParser):
             upgrade = self.config.entity_idspaces.reverse(db)
             if upgrade is not None:
                 # If we found a synonym
-                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "{} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=taxon, rule=27)
+                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "GORULE:0000027: {} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=taxon, rule=27)
                 db = upgrade
 
         ## --
