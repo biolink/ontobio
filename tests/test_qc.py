@@ -111,7 +111,7 @@ def test_go_rule_16():
     a[7] = "BLAH:12345"
 
     test_result = qc.GoRule16().test(a, assocparser.AssocParserConfig())
-    assert test_result.result_type == qc.ResultType.WARNING
+    assert test_result.result_type == qc.ResultType.ERROR
 
     # withfrom has GO term
     a = ["blah"] * 16
@@ -135,7 +135,7 @@ def test_go_rule_16():
     a[7] = ""
 
     test_result = qc.GoRule16().test(a, assocparser.AssocParserConfig())
-    assert test_result.result_type == qc.ResultType.WARNING
+    assert test_result.result_type == qc.ResultType.ERROR
 
     # Not IC
     a = ["blah"] * 16
