@@ -114,7 +114,7 @@ class GoRule11(GoRule):
 class GoRule16(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", FailMode.SOFT)
+        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", FailMode.HARD)
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         evidence = annotation[6]
