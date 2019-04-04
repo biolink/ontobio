@@ -677,7 +677,7 @@ class Ontology():
         Arguments
         ---------
         nid : str
-             Node identifier for entity to be queried
+             Node identifier for relation to be queried
 
         Returns
         -------
@@ -1175,7 +1175,9 @@ class Synonym(AbstractPropertyValue):
 
 class PropertyChainAxiom(object):
     """
-    Represents a property chain axiom used to infer the existence of a property from a chain of properties
+    Represents a property chain axiom used to infer the existence of a property from a chain of properties.
+    
+    See the OWL primer for a description of property chains: https://www.w3.org/TR/owl2-primer/#Property_Chains
     """
 
     def __init__(self, predicate_id, chain_predicate_ids):
