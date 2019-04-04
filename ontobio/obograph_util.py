@@ -9,7 +9,7 @@ import json
 import networkx
 import logging
 from prefixcommons.curie_util import contract_uri
-from ontobio.ontol import LogicalDefinition
+from ontobio.ontol import LogicalDefinition, PropertyChainAxiom
 from ontobio.vocabulary.relations import map_legacy_pred
 
 class OboJsonMapper(object):
@@ -20,6 +20,7 @@ class OboJsonMapper(object):
         self.context = context if context is not None else {}
 
     def add_obograph_digraph(self, og, node_type=None, predicates=None, xref_graph=None, logical_definitions=None,
+                             property_chain_axioms=None,
                              parse_meta=True,
                              **args):
         """
@@ -77,6 +78,11 @@ class OboJsonMapper(object):
                                        [(self.contract_uri(x['propertyId']),
                                          self.contract_uri(x['fillerId'])) for x in a['restrictions'] if x is not None])
                 logical_definitions.append(ld)
+        if property_chain_axioms is not None and 'propertyChainAxioms' in og:
+            for a in og['propertyChainAxioms']:
+                pca = PropertyChainAxiom(predicate_id=self.contract_uri(a['predicateId']),
+                                         chain_predicate_ids=[self.contract_uri(x) for x in a['chainPredicateIds']])
+                property_chain_axioms.append(pca)
 
     def transform_meta(self, m):
         if 'basicPropertyValues' in m:
@@ -118,6 +124,7 @@ def convert_json_object(obographdoc, **args):
     digraph = networkx.MultiDiGraph()
     xref_graph = networkx.MultiGraph()
     logical_definitions = []
+    property_chain_axioms = []
     context = obographdoc.get('@context',{})
     logging.info("CONTEXT: {}".format(context))
     mapper = OboJsonMapper(digraph=digraph, context=context)
@@ -126,7 +133,8 @@ def convert_json_object(obographdoc, **args):
     for og in ogs:
         # TODO: refactor this
         mapper.add_obograph_digraph(og, xref_graph=xref_graph,
-                                    logical_definitions=logical_definitions, **args)
+                                    logical_definitions=logical_definitions,
+                                    property_chain_axioms=property_chain_axioms, **args)
 
     return {
         'id': base_og.get('id'),
@@ -134,5 +142,6 @@ def convert_json_object(obographdoc, **args):
         'graph': mapper.digraph,
         'xref_graph': xref_graph,
         'graphdoc': obographdoc,
-        'logical_definitions': logical_definitions
+        'logical_definitions': logical_definitions,
+        'property_chain_axioms': property_chain_axioms
         }

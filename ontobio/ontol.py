@@ -64,6 +64,7 @@ class Ontology():
             self.xref_graph = payload.get('xref_graph')
             self.graphdoc = payload.get('graphdoc')
             self.all_logical_definitions = payload.get('logical_definitions')
+            self.all_property_chain_axioms = payload.get('property_chain_axioms')
 
     def __str__(self):
         return '{} handle: {} meta: {}'.format(self.id, self.handle, self.meta)
@@ -669,6 +670,25 @@ class Ontology():
         else:
             return []
 
+    def get_property_chain_axioms(self, nid):
+        """
+        Retrieves property chain axioms for a class id
+
+        Arguments
+        ---------
+        nid : str
+             Node identifier for relation to be queried
+
+        Returns
+        -------
+        PropertyChainAxiom
+        """
+        pcas = self.all_property_chain_axioms
+        if pcas is not None:
+            return [x for x in pcas if x.predicate_id == nid]
+        else:
+            return []
+
     def get_node_type(self, nid):
         n = self.node(nid)
         if 'type' in n:
@@ -1152,3 +1172,35 @@ class Synonym(AbstractPropertyValue):
         if x < y:
             return -1
         return 0
+
+class PropertyChainAxiom(object):
+    """
+    Represents a property chain axiom used to infer the existence of a property from a chain of properties.
+    
+    See the OWL primer for a description of property chains: https://www.w3.org/TR/owl2-primer/#Property_Chains
+    """
+
+    def __init__(self, predicate_id, chain_predicate_ids):
+        """
+        Arguments
+        ---------
+         - predicate_id : string
+             the object property
+         - chain_predicate_ids: list
+             ordered list of chained properties
+
+        """
+        self.predicate_id = predicate_id
+        self.chain_predicate_ids = chain_predicate_ids
+
+    def __str__(self):
+        return '{} ({})'.format(self.predicate_id, " o ".join(self.chain_predicate_ids))
+
+    def as_dict(self):
+        """
+        Returns PropertyChainAxiom as obograph dict
+        """
+        return {
+            "predicateId": self.predicate_id,
+            "chainPredicateIds": self.chain_predicate_ids
+        }
