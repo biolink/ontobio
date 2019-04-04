@@ -671,6 +671,18 @@ class Ontology():
             return []
 
     def get_property_chain_axioms(self, nid):
+        """
+        Retrieves property chain axioms for a class id
+
+        Arguments
+        ---------
+        nid : str
+             Node identifier for entity to be queried
+
+        Returns
+        -------
+        PropertyChainAxiom
+        """
         pcas = self.all_property_chain_axioms
         if pcas is not None:
             return [x for x in pcas if x.predicate_id == nid]
@@ -1161,9 +1173,21 @@ class Synonym(AbstractPropertyValue):
             return -1
         return 0
 
-class PropertyChainAxiom(AbstractPropertyValue):
+class PropertyChainAxiom(object):
+    """
+    Represents a property chain axiom used to infer the existence of a property from a chain of properties
+    """
 
     def __init__(self, predicate_id, chain_predicate_ids):
+        """
+        Arguments
+        ---------
+         - predicate_id : string
+             the object property
+         - chain_predicate_ids: list
+             ordered list of chained properties
+
+        """
         self.predicate_id = predicate_id
         self.chain_predicate_ids = chain_predicate_ids
 
@@ -1171,6 +1195,9 @@ class PropertyChainAxiom(AbstractPropertyValue):
         return '{} ({})'.format(self.predicate_id, " o ".join(self.chain_predicate_ids))
 
     def as_dict(self):
+        """
+        Returns PropertyChainAxiom as obograph dict
+        """
         return {
             "predicateId": self.predicate_id,
             "chainPredicateIds": self.chain_predicate_ids
