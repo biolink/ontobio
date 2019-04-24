@@ -46,7 +46,8 @@ from collections import OrderedDict
 from ontobio.vocabulary.relations import HomologyTypes
 from ontobio.model.GolrResults import SearchResults, AutocompleteResult, Highlight
 from ontobio.util.user_agent import get_user_agent
-
+from prefixcommons.curie_util import expand_uri
+from ontobio.util.scigraph_util import get_curie_map
 
 INVOLVED_IN="involved_in"
 ACTS_UPSTREAM_OF_OR_WITHIN="acts_upstream_of_or_within"
@@ -1187,6 +1188,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     M.EVIDENCE_GRAPH
                 ]
 
+        if not self._use_amigo_schema(object_category):
+            select_fields.append(M.SUBJECT_CATEGORY)
+            select_fields.append(M.OBJECT_CATEGORY)
+
         if self.map_identifiers is not None:
             select_fields.append(M.SUBJECT_CLOSURE)
 
@@ -1438,23 +1443,29 @@ class GolrAssociationQuery(GolrAbstractQuery):
             return None
 
         lf = M.label_field(fname)
-
         id = d[fname]
         id = self.make_canonical_identifier(id)
         #if id.startswith('MGI:MGI:'):
         #    id = id.replace('MGI:MGI:','MGI:')
         obj = {'id': id}
 
+        if id:
+            if self._use_amigo_schema(self.object_category):
+                iri = expand_uri(id)
+            else:
+                iri = expand_uri(id, [get_curie_map('{}/cypher/curies'.format(self.config.scigraph_data.url))])
+            obj['iri'] = iri
+
         if lf in d:
             obj['label'] = d[lf]
 
-        if 'aspect' in d and id.startswith('GO:'):
-            obj['category'] = ASPECT_MAP[d['aspect']]
-            del d['aspect']
-
         cf = fname + "_category"
         if cf in d:
-            obj['categories'] = [d[cf]]
+            obj['category'] = [d[cf]]
+
+        if 'aspect' in d and id.startswith('GO:'):
+            obj['category'] = [ASPECT_MAP[d['aspect']]]
+            del d['aspect']
 
         return obj
 
