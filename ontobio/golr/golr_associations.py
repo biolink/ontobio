@@ -22,7 +22,8 @@ def get_association(id, **kwargs):
     Fetch an association object by ID
     """
     results = search_associations(id=id, **kwargs)
-    return results['associations'][0]
+    assoc = results['associations'][0] if len(results['associations']) > 0 else {}
+    return assoc
 
 def search_associations(**kwargs):
 
