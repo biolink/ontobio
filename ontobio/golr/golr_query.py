@@ -903,10 +903,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
             self.non_null_fields = []
 
         if self.facet_fields is None:
-            self.facet_fields = [
-                M.SUBJECT_TAXON_LABEL,
-                M.OBJECT_CLOSURE
-            ]
+            if self.facet:
+                self.facet_fields = [
+                    M.SUBJECT_TAXON_LABEL,
+                    M.OBJECT_CLOSURE
+                ]
 
     def update_solr_url(self, url, timeout=2):
         self.url = url
@@ -1206,7 +1207,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 facet_pivot_fields = [ map_field(fn, self.field_mapping) for fn in facet_pivot_fields ]
                 logging.info("APPLIED field mapping to PIV: {}".format(facet_pivot_fields))
 
-        facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
+        if facet_fields:
+            facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
 
         if self._use_amigo_schema(object_category):
             select_fields += [x for x in M.AMIGO_SPECIFIC_FIELDS if x not in select_fields]
@@ -1229,7 +1231,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             'q': qstr,
             'fq': filter_queries,
             'facet': 'on' if facet else 'off',
-            'facet.field': facet_fields,
+            'facet.field': facet_fields if facet_fields else [],
             'facet.limit': facet_limit,
             'facet.mincount': self.facet_mincount,
             'fl': ",".join(select_fields),
@@ -1337,10 +1339,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
             oq_params['rows'] = 0
             oq_params['facet.mincount'] = 1
             oq_results = self.solr.search(**oq_params)
-            ff = oq_results.facets['facet_fields']
-            ofl = ff.get(object_field)
-            # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
-            payload['objects'] = ofl[0::2]
+            if self.facet:
+                ff = oq_results.facets['facet_fields']
+                ofl = ff.get(object_field)
+                # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
+                payload['objects'] = ofl[0::2]
 
         fetch_subjects=self.fetch_subjects
         if fetch_subjects:
@@ -1357,12 +1360,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
             oq_params['rows'] = 0
             oq_params['facet.mincount'] = 1
             oq_results = self.solr.search(**oq_params)
-            ff = oq_results.facets['facet_fields']
-            ofl = ff.get(subject_field)
-            # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
-            payload['subjects'] = ofl[0::2]
-            if len(payload['subjects']) == self.max_rows:
-                payload['is_truncated'] = True
+            if self.facet:
+                ff = oq_results.facets['facet_fields']
+                ofl = ff.get(subject_field)
+                # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
+                payload['subjects'] = ofl[0::2]
+                if len(payload['subjects']) == self.max_rows:
+                    payload['is_truncated'] = True
 
         if self.slim is not None and len(self.slim)>0:
             if 'objects' in payload:
