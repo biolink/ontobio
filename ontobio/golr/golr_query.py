@@ -828,7 +828,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  facet_pivot_fields=None,
                  stats=False,
                  stats_field=None,
-                 facet_on = 'on',
+                 facet=True,
                  pivot_subject_object=False,
                  unselect_evidence=False,
                  rows=10,
@@ -880,7 +880,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.facet_pivot_fields=facet_pivot_fields
         self.stats=stats
         self.stats_field=stats_field
-        self.facet_on=facet_on
+        self.facet=facet
         self.pivot_subject_object=pivot_subject_object
         self.unselect_evidence=unselect_evidence
         self.max_rows=100000
@@ -1031,13 +1031,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         ## facet fields
         facet_fields=self.facet_fields
-        facet_on=self.facet_on
+        facet=self.facet
         facet_limit=self.facet_limit
         select_fields=self.select_fields
 
         if self.use_compact_associations:
             facet_fields = []
-            facet_on = 'off'
+            facet = False
             facet_limit = 0
             select_fields = [
                 M.SUBJECT,
@@ -1228,7 +1228,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         params = {
             'q': qstr,
             'fq': filter_queries,
-            'facet': facet_on,
+            'facet': 'on' if facet else 'off',
             'facet.field': facet_fields,
             'facet.limit': facet_limit,
             'facet.mincount': self.facet_mincount,
