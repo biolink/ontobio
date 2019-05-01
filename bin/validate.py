@@ -184,6 +184,7 @@ def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_di
     if mixin_dataset is None:
         return None
 
+    click.echo("Merging mixin dataset {}".format(mixin_dataset["source"]))
     path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url)
 
     unzipped = os.path.splitext(path)[0] # Strip off the .gz extension, leaving just the unzipped filename
@@ -464,6 +465,7 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
         ] + header_lines[8:] + ["!"]
         return the_header
     # ####################################################################
+
     # Set up merged final gaf product path
     dirs, name = os.path.split(valid_gaf_path)
     merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
@@ -564,7 +566,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
 
     paint_metadata = metadata_file(absolute_metadata, "paint")
     noctua_metadata = metadata_file(absolute_metadata, "noctua")
-    mixin_metadata_list = filter(lambda m: m != None, [paint_metadata, noctua_metadata])
+    mixin_metadata_list = list(filter(lambda m: m != None, [paint_metadata, noctua_metadata]))
 
     db_entities = database_entities(absolute_metadata)
     group_ids = groups(absolute_metadata)
