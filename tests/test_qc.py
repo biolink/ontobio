@@ -270,7 +270,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config)
-    assert len(test_results.keys()) == 9
+    assert len(test_results.keys()) == 10
     assert test_results["GORULE:0000026"].result_type == qc.ResultType.PASS
     assert test_results["GORULE:0000029"].result_type == qc.ResultType.PASS
 
