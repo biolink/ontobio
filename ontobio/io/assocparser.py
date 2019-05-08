@@ -139,6 +139,7 @@ class AssocParserConfig():
                  gpi_authority_path=None,
                  paint=False,
                  rule_metadata=None,
+                 gorefs=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[]):
 
@@ -156,6 +157,7 @@ class AssocParserConfig():
         self.gpi_authority_path = gpi_authority_path
         self.paint = paint
         self.rule_metadata = rule_metadata
+        self.gorefs = gorefs
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
 
         self.entity_idspaces = entity_idspaces
@@ -188,6 +190,7 @@ class Report():
     INVALID_SYMBOL = "Invalid symbol"
     INVALID_DATE = "Invalid date"
     INVALID_ASPECT = "Invalid aspect code. Should be C, P, or F"
+    INVALID_REFERENCES = "Only one reference per ID space allowed"
     UNMAPPED_ID = "Unmapped identifier"
     UNKNOWN_EVIDENCE_CLASS = "Unknown evidence class"
     OBSOLETE_CLASS = "Obsolete class"
@@ -647,6 +650,24 @@ class AssocParser(object):
                 return None
 
         return sorted(valids)
+
+    def validate_references(self, references: List, line: SplitLine):
+        """
+        This checks that each reference has a different ID space.
+        See https://github.com/geneontology/go-site/issues/1063#issuecomment-490651143.
+        """
+        found_id_spaces = dict() # Map from seen ID space to reference used for that ID
+        for reference in references:
+            id_space = reference.split(":", maxsplit=1)[0]
+            if id_space in found_id_spaces:
+                # If we find one, then we bail with a warning
+                match = found_id_spaces[id_space]
+                self.report.warning(line.line, Report.INVALID_REFERENCES, "|".join(references), "References {} and {} share the same ID space".format(reference, match))
+                return False
+
+            found_id_spaces[id_space] = reference
+
+        return True
 
     def _normalize_id(self, id):
         toks = id.split(":")

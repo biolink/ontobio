@@ -100,3 +100,13 @@ def test_doi_id():
     parser = gafparser.GafParser()
     valid = parser._validate_id("DOI:10.1007/BF00127499", assocparser.SplitLine("", [""]*17, "taxon:foo"))
     assert valid
+
+def test_validate_references():
+    parser = gafparser.GafParser()
+    valid = parser.validate_references(["MGI:12345", "PMID:23456"], assocparser.SplitLine("", [""]*17, "taxon:foo"))
+    assert valid
+
+def test_validate_references_same_prefix():
+    parser = gafparser.GafParser()
+    valid = parser.validate_references(["MGI:123", "MGI:234"], assocparser.SplitLine("", [""]*17, "taxon:foo"))
+    assert not valid
