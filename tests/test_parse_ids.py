@@ -109,4 +109,6 @@ def test_validate_references():
 def test_validate_references_same_prefix():
     parser = gafparser.GafParser()
     valid = parser.validate_references(["MGI:123", "MGI:234"], assocparser.SplitLine("", [""]*17, "taxon:foo"))
+    assert len(parser.report.messages) == 1
+    assert parser.report.messages[0]["type"] == assocparser.Report.INVALID_REFERENCES
     assert not valid
