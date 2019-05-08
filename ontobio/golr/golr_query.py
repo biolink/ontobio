@@ -115,7 +115,11 @@ class GolrFields:
     ASPECT='aspect'
     RELATION='relation'
     RELATION_LABEL='relation_label'
-
+    FREQUENCY='frequency'
+    FREQUENCY_LABEL='frequency_label'
+    ONSET='onset'
+    ONSET_LABEL='onset_label'
+    
     # This is a temporary fix until
     # https://github.com/biolink/ontobio/issues/126 is resolved.
 
@@ -1180,7 +1184,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 M.OBJECT,
                 M.OBJECT_LABEL,
                 M.OBJECT_TAXON,
-                M.OBJECT_TAXON_LABEL
+                M.OBJECT_TAXON_LABEL,
+                M.FREQUENCY,
+                M.FREQUENCY_LABEL,
+                M.ONSET,
+                M.ONSET_LABEL
             ]
             if not self.unselect_evidence:
                 select_fields += [
