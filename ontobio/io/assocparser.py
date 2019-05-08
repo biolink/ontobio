@@ -662,7 +662,7 @@ class AssocParser(object):
             if id_space in found_id_spaces:
                 # If we find one, then we bail with a warning
                 match = found_id_spaces[id_space]
-                self.report.warning(line.line, Report.INVALID_REFERENCES, "|".join(references), "References {} and {} share the same ID space".format(reference, match))
+                self.report.warning(line.line, Report.INVALID_REFERENCES, "|".join(references), "References {} and {} share the same ID space".format(reference, match), rule=1)
                 return False
 
             found_id_spaces[id_space] = reference
