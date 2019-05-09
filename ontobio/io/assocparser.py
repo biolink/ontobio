@@ -648,6 +648,28 @@ class AssocParser(object):
 
         return sorted(valids)
 
+    def normalize_refs(self, references, line: SplitLine):
+        allowed_prefixes = {"PMID", "PMC", "doi", "GO_REF"}
+
+        found_bad_refs = []
+        okay_ref = []
+        for ref in references:
+            prefix = ref.split(":", maxsplit=1)[0]
+            if prefix in allowed_prefixes:
+                # then we found a good ref, so we'll keep it
+                okay_ref.append(ref)
+            else:
+                found_bad_refs.append(ref)
+
+        if found_bad_refs:
+            self.report.warning(line.line, Report.INVALID_IDSPACE, ", ".join(found_bad_refs), "References should only be from ID prefixes PMID, PMD, doi, or GO_REF", rule=33)
+
+        # If we only have one reference then let's just use that one. Otherwise, make sure only the good ones get through
+        if len(references) == 1:
+            return references
+        else:
+            return okay_ref
+
     def _normalize_id(self, id):
         toks = id.split(":")
         if len(toks) > 1:
