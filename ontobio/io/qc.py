@@ -209,7 +209,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule18": GoRule18(),
     "GoRule26": GoRule26(),
     "GoRule29": GoRule29(),
-    "GoRule30": GoRule30()
+    "GoRule30": GoRule30(),
 })
 
 def test_go_rules(annotation: List, config: assocparser.AssocParserConfig) -> Dict[str, TestResult]:
