@@ -112,3 +112,29 @@ def test_validate_references_same_prefix():
     assert len(parser.report.messages) == 1
     assert parser.report.messages[0]["type"] == assocparser.Report.INVALID_REFERENCES
     assert not valid
+
+def test_normalize_refs_single_bad_ref():
+    parser = gafparser.GafParser()
+    ref = parser.normalize_refs(["FB:123"], assocparser.SplitLine("", [""]*17, "taxon:foo"))
+    assert ref == ["FB:123"]
+    assert len(parser.report.messages) == 1
+    assert parser.report.messages[0]["type"] == assocparser.Report.INVALID_IDSPACE
+
+def test_normalize_refs_many_bad_refs():
+    parser = gafparser.GafParser()
+    refs = parser.normalize_refs(["FB:123", "FB:234"], assocparser.SplitLine("", [""]*17, "taxon:foo"))
+    assert refs == ["FB:123", "FB:234"]
+    assert len(parser.report.messages) == 1
+    assert parser.report.messages[0]["type"] == assocparser.Report.INVALID_IDSPACE
+
+def test_normalize_refs_good_and_bad_refs():
+    parser = gafparser.GafParser()
+    refs = parser.normalize_refs(["FB:123", "PMID:234"], assocparser.SplitLine("", [""]*17, "taxon:foo"))
+    assert refs == ["PMID:234"]
+    assert len(parser.report.messages) == 1
+    assert parser.report.messages[0]["type"] == assocparser.Report.INVALID_IDSPACE
+
+def test_normalize_refs_good():
+    parser = gafparser.GafParser()
+    refs = parser.normalize_refs(["PMID:123"], assocparser.SplitLine("", [""]*17, "taxon:foo"))
+    assert refs == ["PMID:123"]
