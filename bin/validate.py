@@ -212,26 +212,7 @@ def unzip(path, target):
         with click.progressbar(iterable=chunk_gen()) as chunks:
             for chunk in chunks:
                 tf.write(chunk)
-
-def gorefs_synonyms(metadata) -> assocparser.BiDiMultiMap:
-    gorefs = assocparser.BiDiMultiMap()
-    all_goref_yamldowns = glob.glob(os.path.join(metadata, "gorefs", "goref-*.md"))
-    for goref_yamldown in all_goref_yamldowns:
-        try:
-            with open(goref_yamldown, "r") as goref_data:
-                goref_meta = yamldown.load(goref_data)[0]
-                external_ids = goref_meta.get("external_accession", [])
-                alt_ids = goref_meta.get("alt_id", [])
-                citation = goref_meta.get("citation", [])
-
-                # Place all of these IDs as synonyms including self
-                synonyms = external_ids + alt_ids + list(citation) + [goref_meta["id"]]
-                gorefs[goref_meta["id"]] = set(synonyms)
-
-        except Exception as e:
-            raise click.ClickException("Could not find or read {}: {}".format(goref_yamldown, str(e)))
-
-    return gorefs
+                
 
 def database_entities(metadata):
     dbxrefs_path = os.path.join(os.path.abspath(metadata), "db-xrefs.yaml")
@@ -591,7 +572,6 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
 
     db_entities = database_entities(absolute_metadata)
     group_ids = groups(absolute_metadata)
-    gorefs = gorefs_synonyms(absolute_metadata)
 
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
