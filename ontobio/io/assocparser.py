@@ -664,8 +664,8 @@ class AssocParser(object):
         if found_bad_refs:
             self.report.warning(line.line, Report.INVALID_IDSPACE, ", ".join(found_bad_refs), "References should only be from ID prefixes PMID, PMD, doi, or GO_REF", rule=33)
 
-        # If we only have one reference then let's just use that one. Otherwise, make sure only the good ones get through
-        if len(references) == 1:
+        # If we only have bad references, just pass it through
+        if len(okay_ref) == 0:
             return references
         else:
             return okay_ref
