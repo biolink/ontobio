@@ -1554,19 +1554,19 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if M.EVIDENCE_OBJECT in d:
             assoc['evidence'] = d[M.EVIDENCE_OBJECT]
             assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
+
         if M.FREQUENCY in d:
             assoc[M.FREQUENCY] = {
                 'id': d[M.FREQUENCY]
             }
-
         if M.FREQUENCY_LABEL in d:
             assoc[M.FREQUENCY]['label'] = d[M.FREQUENCY_LABEL]
-
         if M.ONSET in d:
-            assoc[M.ONSET] = d[M.ONSET]
-
+            assoc[M.ONSET] = {
+                'id': d[M.ONSET]
+            }
         if M.ONSET_LABEL in d:
-            assoc[M.ONSET_LABEL] = d[M.ONSET_LABEL]
+            assoc[M.ONSET]['label'] = d[M.ONSET_LABEL]
 
         if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:
