@@ -1,7 +1,8 @@
 """
-Tests for ontobio.golr.golr_associations
+Integration tests for ontobio.golr.golr_associations
 """
-from ontobio.golr.golr_associations import search_associations, search_associations_compact, select_distinct_subjects, get_objects_for_subject, get_subjects_for_object
+from ontobio.golr.golr_associations import search_associations, search_associations_compact,\
+    select_distinct_subjects, get_objects_for_subject, get_subjects_for_object
 
 
 HUMAN_SHH = 'HGNC:10848'
@@ -162,5 +163,3 @@ def test_species_facet():
     fcs = payload['facet_counts']
     print(str(fcs))
     assert 'Homo sapiens' in fcs['subject_taxon_label'].keys()
-   
-    

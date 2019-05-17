@@ -973,10 +973,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         # URL to use for querying solr
         if self._use_amigo_schema(object_category):
-            if self.url is None:
-                endpoint = self.get_config().amigo_solr_assocs
-                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
-                self.update_solr_url(**solr_config)
+            # Override solr config and use go solr
+            endpoint = self.get_config().amigo_solr_assocs
+            solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+            self.update_solr_url(**solr_config)
 
             self.field_mapping=goassoc_fieldmap(self.relationship_type)
 
