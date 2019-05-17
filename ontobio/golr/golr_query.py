@@ -115,7 +115,11 @@ class GolrFields:
     ASPECT='aspect'
     RELATION='relation'
     RELATION_LABEL='relation_label'
-
+    FREQUENCY='frequency'
+    FREQUENCY_LABEL='frequency_label'
+    ONSET='onset'
+    ONSET_LABEL='onset_label'
+    
     # This is a temporary fix until
     # https://github.com/biolink/ontobio/issues/126 is resolved.
 
@@ -1180,7 +1184,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 M.OBJECT,
                 M.OBJECT_LABEL,
                 M.OBJECT_TAXON,
-                M.OBJECT_TAXON_LABEL
+                M.OBJECT_TAXON_LABEL,
+                M.FREQUENCY,
+                M.FREQUENCY_LABEL,
+                M.ONSET,
+                M.ONSET_LABEL
             ]
             if not self.unselect_evidence:
                 select_fields += [
@@ -1546,6 +1554,19 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if M.EVIDENCE_OBJECT in d:
             assoc['evidence'] = d[M.EVIDENCE_OBJECT]
             assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
+
+        if M.FREQUENCY in d:
+            assoc[M.FREQUENCY] = {
+                'id': d[M.FREQUENCY]
+            }
+        if M.FREQUENCY_LABEL in d:
+            assoc[M.FREQUENCY]['label'] = d[M.FREQUENCY_LABEL]
+        if M.ONSET in d:
+            assoc[M.ONSET] = {
+                'id': d[M.ONSET]
+            }
+        if M.ONSET_LABEL in d:
+            assoc[M.ONSET]['label'] = d[M.ONSET_LABEL]
 
         if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:
