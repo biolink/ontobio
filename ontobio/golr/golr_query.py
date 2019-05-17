@@ -912,6 +912,15 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 M.OBJECT_CLOSURE
             ]
 
+        if self.solr is None:
+            if self.url is None:
+                endpoint = self.get_config().solr_assocs
+                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+            else:
+                solr_config = {'url': self.url, 'timeout': 5}
+
+            self.update_solr_url(**solr_config)
+
     def update_solr_url(self, url, timeout=2):
         self.url = url
         solr_config = {'url': url, 'timeout': timeout}
@@ -962,19 +971,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
             logging.info("Inferring Object category: {} from {}".
                          format(object_category, object))
 
-        solr_config = {'url': self.url, 'timeout': 5}
-        if self.solr is None:
-            if self.url is None:
-                endpoint = self.get_config().solr_assocs
-                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
-            else:
-                solr_config = {'url': self.url, 'timeout': 5}
-
         # URL to use for querying solr
         if self._use_amigo_schema(object_category):
             if self.url is None:
                 endpoint = self.get_config().amigo_solr_assocs
                 solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+                self.update_solr_url(**solr_config)
+
             self.field_mapping=goassoc_fieldmap(self.relationship_type)
 
             # awkward hack: we want to avoid typing on the amigo golr gene field,
@@ -995,8 +998,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 cc = self.get_config().get_category_class(object_category)
                 if cc is not None and object is None:
                     object = cc
-
-        self.update_solr_url(**solr_config)
 
         ## subject params
         subject_taxon=self.subject_taxon
