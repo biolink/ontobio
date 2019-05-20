@@ -210,9 +210,8 @@ class TestGolrSearchParams():
             'MONDO'
         ]
         expected = [
-            '-prefix:"OMIA"',
-            '-prefix:"Orphanet"',
-            'prefix:"DO" OR prefix:"OMIM" OR prefix:"MONDO"'
+            'prefix:(-OMIA AND -Orphanet)',
+            'prefix:("DO" OR "OMIM" OR "MONDO")'
         ]
         self.manager.prefix = prefix_filter
         params = self.manager.solr_params()
