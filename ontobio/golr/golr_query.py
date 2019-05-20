@@ -195,12 +195,12 @@ def flip(d, x, y):
     d[y] = dx
 
 
-def solr_quotify(v):
+def solr_quotify(v, operator="OR"):
     if isinstance(v, list):
         if len(v) == 1:
-            return solr_quotify(v[0])
+            return solr_quotify(v[0], operator)
         else:
-            return '({})'.format(" OR ".join([solr_quotify(x) for x in v]))
+            return '({})'.format(" {} ".format(operator).join([solr_quotify(x) for x in v]))
     else:
         # TODO - escape quotes
         return '"{}"'.format(v)
@@ -457,14 +457,14 @@ class GolrSearchQuery(GolrAbstractQuery):
                                if p_filt.startswith('-')]
             positive_filter = [p_filt for p_filt in self.prefix
                                if not p_filt.startswith('-')]
-            for pfix_filter in negative_filter:
-                params['fq'].append('-prefix:"{}"'.format(pfix_filter[1:]))
 
-            if len(positive_filter) > 0:
-                or_filter = 'prefix:"{}"'.format(positive_filter[0])
-                for pfix_filter in positive_filter[1:]:
-                    or_filter += ' OR prefix:"{}"'.format(pfix_filter)
-                params['fq'].append(or_filter)
+            if negative_filter:
+                neg_filter = '({})'.format(
+                    " AND ".join([filt for filt in negative_filter]))
+                params['fq'].append('prefix:{}'.format(neg_filter))
+
+            if positive_filter:
+                params['fq'].append('prefix:{}'.format(solr_quotify(positive_filter)))
 
         if self.boost_fx is not None:
             params['bf'] = []
@@ -584,8 +584,16 @@ class GolrSearchQuery(GolrAbstractQuery):
     def _process_highlight(self, results: pysolr.Results, doc) -> Highlight:
         hl = results.highlighting[doc['id']]
         highlights = []
-        for hl_list in hl.values():
+        primary_label_matches = []  # Store all primary label
+        for field, hl_list in hl.items():
+            if field.startswith('label'):
+                primary_label_matches.extend(hl_list)
             highlights.extend(hl_list)
+
+        # If we've matched on the primary label, get the longest
+        # from the list, else use other fields
+        if primary_label_matches:
+            highlights = primary_label_matches
         try:
             highlight = Highlight(
                 highlight=self._get_longest_hl(highlights),
