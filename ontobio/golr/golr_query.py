@@ -115,7 +115,11 @@ class GolrFields:
     ASPECT='aspect'
     RELATION='relation'
     RELATION_LABEL='relation_label'
-
+    FREQUENCY='frequency'
+    FREQUENCY_LABEL='frequency_label'
+    ONSET='onset'
+    ONSET_LABEL='onset_label'
+    
     # This is a temporary fix until
     # https://github.com/biolink/ontobio/issues/126 is resolved.
 
@@ -909,6 +913,15 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     M.OBJECT_CLOSURE
                 ]
 
+        if self.solr is None:
+            if self.url is None:
+                endpoint = self.get_config().solr_assocs
+                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+            else:
+                solr_config = {'url': self.url, 'timeout': 5}
+
+            self.update_solr_url(**solr_config)
+
     def update_solr_url(self, url, timeout=2):
         self.url = url
         solr_config = {'url': url, 'timeout': timeout}
@@ -959,19 +972,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
             logging.info("Inferring Object category: {} from {}".
                          format(object_category, object))
 
-        solr_config = {'url': self.url, 'timeout': 5}
-        if self.solr is None:
-            if self.url is None:
-                endpoint = self.get_config().solr_assocs
-                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
-            else:
-                solr_config = {'url': self.url, 'timeout': 5}
-
         # URL to use for querying solr
         if self._use_amigo_schema(object_category):
-            if self.url is None:
-                endpoint = self.get_config().amigo_solr_assocs
-                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+            # Override solr config and use go solr
+            endpoint = self.get_config().amigo_solr_assocs
+            solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+            self.update_solr_url(**solr_config)
+
             self.field_mapping=goassoc_fieldmap(self.relationship_type)
 
             # awkward hack: we want to avoid typing on the amigo golr gene field,
@@ -992,8 +999,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 cc = self.get_config().get_category_class(object_category)
                 if cc is not None and object is None:
                     object = cc
-
-        self.update_solr_url(**solr_config)
 
         ## subject params
         subject_taxon=self.subject_taxon
@@ -1181,7 +1186,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 M.OBJECT,
                 M.OBJECT_LABEL,
                 M.OBJECT_TAXON,
-                M.OBJECT_TAXON_LABEL
+                M.OBJECT_TAXON_LABEL,
+                M.FREQUENCY,
+                M.FREQUENCY_LABEL,
+                M.ONSET,
+                M.ONSET_LABEL
             ]
             if not self.unselect_evidence:
                 select_fields += [
@@ -1550,6 +1559,19 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if M.EVIDENCE_OBJECT in d:
             assoc['evidence'] = d[M.EVIDENCE_OBJECT]
             assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
+
+        if M.FREQUENCY in d:
+            assoc[M.FREQUENCY] = {
+                'id': d[M.FREQUENCY]
+            }
+        if M.FREQUENCY_LABEL in d:
+            assoc[M.FREQUENCY]['label'] = d[M.FREQUENCY_LABEL]
+        if M.ONSET in d:
+            assoc[M.ONSET] = {
+                'id': d[M.ONSET]
+            }
+        if M.ONSET_LABEL in d:
+            assoc[M.ONSET]['label'] = d[M.ONSET_LABEL]
 
         if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:

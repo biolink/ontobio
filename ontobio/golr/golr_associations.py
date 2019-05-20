@@ -29,6 +29,7 @@ def search_associations(**kwargs):
 
     """
     Fetch a set of association objects based on a query.
+    :rtype:
     """
     logging.info("CREATING_GOLR_QUERY {}".format(kwargs))
     q = GolrAssociationQuery(**kwargs)
