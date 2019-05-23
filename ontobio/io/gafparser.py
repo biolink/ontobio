@@ -241,16 +241,19 @@ class GafParser(assocparser.AssocParser):
 
 
         go_rule_results = qc.test_go_rules(vals, self.config)
-        for rule_id, result in go_rule_results.items():
+        for rule, result in go_rule_results.all_results.items():
+
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
-                                    msg="{id}: {message}".format(id=rule_id, message=result.message), rule=int(rule_id.split(":")[1]))
+                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
 
             if result.result_type == qc.ResultType.ERROR:
                 self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
-                                    msg="{id}: {message}".format(id=rule_id, message=result.message), rule=int(rule_id.split(":")[1]))
+                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
                 # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
+
+        vals = go_rule_results.annotation
 
         ## --
         ## end of line re-processing

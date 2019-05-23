@@ -175,6 +175,9 @@ class Report():
     """
 
     # Levels
+    """
+    3 warning levels
+    """
     FATAL = 'FATAL'
     ERROR = 'ERROR'
     WARNING = 'WARNING'
@@ -196,10 +199,6 @@ class Report():
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
     VIOLATES_GO_RULE = "Violates GO Rule"
 
-    """
-    3 warning levels
-    """
-    LEVELS = [FATAL, ERROR, WARNING]
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
         self.messages = []
@@ -541,7 +540,7 @@ class AssocParser(object):
             return id
 
         if not ont.has_node(id):
-            self.report.warning(line.line, Report.UNKNOWN_ID, id, "GORULE:0000027",
+            self.report.warning(line.line, Report.UNKNOWN_ID, id, "Class ID {} is not present in the ontology".format(id),
                 taxon=line.taxon, rule=27)
             return id
 

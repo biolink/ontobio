@@ -15,7 +15,7 @@ import json
 
 POMBASE = "tests/resources/truncated-pombase.gaf"
 POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
-ONT = "tests/resources/go-truncated-pombase.json"
+ONT = "tests/resources/goslim_pombe.json"
 QGAF = "tests/resources/test-qualifiers.gaf"
 
 def test_skim_gaf():
@@ -77,6 +77,7 @@ def parse_with(f, p):
         p.config.ontology = ont
 
     results = p.parse(open(f, "r"), skipheader=True)
+    print(p.report.to_markdown())
     r1 = results[0]
     # TODO: test datafile does not have ECOs yet!!
     assert r1['evidence']['type'] == 'ISO' or r1['evidence']['type'] == 'ECO:0000201'
@@ -114,7 +115,7 @@ def test_no_flag_valid_id():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     p.config.ontology = ont
-    p._validate_ontology_class_id("GO:0016070", "fake", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
+    p._validate_ontology_class_id("GO:0006914", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
     assert len(p.report.messages) == 0
 
 def test_convert_gaf_to_gpad():
