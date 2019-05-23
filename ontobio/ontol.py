@@ -357,7 +357,7 @@ class Ontology():
         """
         If stated, either CLASS, PROPERTY or INDIVIDUAL
         """
-        return self.node(id)['type']
+        return self.node(id).get('type', None)
 
     def relations_used(self):
         """
@@ -918,7 +918,7 @@ class Ontology():
             else:
                 return None
 
-    def xrefs(self, nid, bidirectional=False):
+    def xrefs(self, nid, bidirectional=False, prefix=None):
         """
         Fetches xrefs for a node
 
@@ -933,16 +933,19 @@ class Ontology():
         ------
         list[str]
         """
+        xrefs = []
         if self.xref_graph is not None:
             xg = self.xref_graph
             if nid not in xg:
-                return []
-            if bidirectional:
-                return list(xg.neighbors(nid))
+                xrefs = []
             else:
-                return [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
-
-        return []
+                if bidirectional:
+                    xrefs = list(xg.neighbors(nid))
+                else:
+                    xrefs = [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
+                if prefix is not None:
+                    xrefs = [x for x in xrefs if self.prefix(x) == prefix]
+        return xrefs
 
 
     def resolve_names(self, names, synonyms=False, **args):
