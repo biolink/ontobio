@@ -1,5 +1,13 @@
 """
 Classes for representing ontologies backed by a SPARQL endpoint
+
+```
+Ontology
+  RemoteSparqlOntology
+    EagerRemoteSparqlOntology
+    LazyRemoteSparqlOntology
+```
+
 """
 
 import networkx as nx
