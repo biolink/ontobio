@@ -89,6 +89,14 @@ def test_graph():
     assert CELLULAR_COMPONENT in ancs
     assert CELL not in ancs
     assert NUCLEUS not in ancs
+    assert INTRACELLULAR_PART not in ancs
+
+    ancs = ont.ancestors(INTRACELLULAR_PART, relations=['subClassOf'], reflexive=True)
+    print("ANCS intracellular part(subclass): {}".format(ancs))
+    assert CELLULAR_COMPONENT in ancs
+    assert CELL not in ancs
+    assert NUCLEUS not in ancs
+    assert INTRACELLULAR_PART in ancs
 
     # note: queries over *only* part_of are a non-use case, as we
     # typically always include subClassOf, due to how these chain
