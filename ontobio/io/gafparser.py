@@ -8,6 +8,8 @@ from ontobio.io import qc
 from ontobio.io import entityparser
 from ontobio.io import entitywriter
 
+import click
+
 class GafParser(assocparser.AssocParser):
     """
     Parser for GO GAF format
@@ -235,10 +237,6 @@ class GafParser(assocparser.AssocParser):
             db_object_id = toks[1:]
             vals[1] = db_object_id
 
-        if goid.startswith("GO:") and aspect.upper() not in ["C", "F", "P"]:
-            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect, rule=28)
-            return assocparser.ParseResult(line, [], True)
-
 
         go_rule_results = qc.test_go_rules(vals, self.config)
         for rule, result in go_rule_results.all_results.items():
@@ -252,6 +250,9 @@ class GafParser(assocparser.AssocParser):
                                     msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
                 # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
+
+        if vals != go_rule_results.annotation:
+            print("Original line Repaired:\n{orig}\n==>\n{new}".format(vals, go_rule_results.annotation))
 
         vals = go_rule_results.annotation
 

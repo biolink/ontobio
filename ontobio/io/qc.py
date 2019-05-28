@@ -224,15 +224,16 @@ class GoRule28(RepairRule):
         }
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
-        aspect = annotation[8]
+        aspect = annotation[8].upper()
         goterm = annotation[4]
 
         if config.ontology is None:
             return TestResult(ResultType.PASS, self.title, annotation)
 
-
-
         namespaces = [predval for predval in config.ontology.get_graph().node.get(goterm, {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
+        # the namespaces expression cascades through the json representation of this
+        # ontology using empty dict/list if the key is not present
+
         if len(namespaces) == 0:
             # If this doesn't exist, then it's fine
             return TestResult(ResultType.PASS, self.title, annotation)

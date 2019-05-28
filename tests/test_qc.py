@@ -221,8 +221,8 @@ def test_go_rule28():
     )
 
     a = ["blah"] * 16
-    a[4] = "GO:0005829"
-    a[8] = "C"
+    a[4] = "GO:0005975"
+    a[8] = "P"
 
     test_result = qc.GoRule28().test(a, config)
 
@@ -230,14 +230,14 @@ def test_go_rule28():
     assert test_result.result == a
 
     a = ["blah"] * 16
-    a[4] = "GO:0005829"
-    a[8] = "P"
+    a[4] = "GO:0005975"
+    a[8] = "C"
 
     test_result = qc.GoRule28().test(a, config)
 
     assert test_result.result_type == qc.ResultType.WARNING
     fixed_a = a
-    fixed_a[8] = "C"
+    fixed_a[8] = "P"
     assert test_result.result == fixed_a
     assert test_result.message == "Found violation of: `Aspect can only be one of C, P, F` but was repaired"
 

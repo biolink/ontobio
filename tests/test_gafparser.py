@@ -15,7 +15,7 @@ import json
 
 POMBASE = "tests/resources/truncated-pombase.gaf"
 POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
-ONT = "tests/resources/goslim_pombe.json"
+ONT = "tests/resources/go-truncated-pombase.json"
 QGAF = "tests/resources/test-qualifiers.gaf"
 
 def test_skim_gaf():
@@ -115,7 +115,7 @@ def test_no_flag_valid_id():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     p.config.ontology = ont
-    p._validate_ontology_class_id("GO:0006914", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
+    p._validate_ontology_class_id("GO:0000785", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
     assert len(p.report.messages) == 0
 
 def test_convert_gaf_to_gpad():
