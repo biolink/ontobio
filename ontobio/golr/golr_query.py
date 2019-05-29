@@ -425,7 +425,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         params = {
             'q': '{0} "{0}"'.format(self.term),
             "qt": "standard",
-            'fl': ",".join(select_fields),
+            'fl': ",".join(list(filter(None, select_fields))),
             "defType": "edismax",
             "qf": ["{}^{}".format(field, weight) for field, weight in qf.items()],
             'rows': self.rows
@@ -1251,7 +1251,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             'facet.field': facet_fields if facet_fields else [],
             'facet.limit': facet_limit,
             'facet.mincount': self.facet_mincount,
-            'fl': ",".join(select_fields),
+            'fl': ",".join(list(filter(None, select_fields))),
             'rows': rows
         }
 
