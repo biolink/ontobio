@@ -214,6 +214,33 @@ def test_go_rule26():
     test_result = qc.GoRule26().test(a, config)
     assert test_result.result_type == qc.ResultType.ERROR
 
+def test_go_rule28():
+
+    config = assocparser.AssocParserConfig(
+        ontology=ontology
+    )
+
+    a = ["blah"] * 16
+    a[4] = "GO:0005975"
+    a[8] = "P"
+
+    test_result = qc.GoRule28().test(a, config)
+
+    assert test_result.result_type == qc.ResultType.PASS
+    assert test_result.result == a
+
+    a = ["blah"] * 16
+    a[4] = "GO:0005975"
+    a[8] = "C"
+
+    test_result = qc.GoRule28().test(a, config)
+
+    assert test_result.result_type == qc.ResultType.WARNING
+    fixed_a = a
+    fixed_a[8] = "P"
+    assert test_result.result == fixed_a
+    assert test_result.message == "Found violation of: `Aspect can only be one of C, P, F` but was repaired"
+
 def test_go_rule29():
     a = ["blah"] * 16
     a[6] = "IEA"
@@ -269,10 +296,11 @@ def test_all_rules():
     a[6] = "ANY"
     a[13] = "20180330"
 
-    test_results = qc.test_go_rules(a, config)
-    assert len(test_results.keys()) == 9
-    assert test_results["GORULE:0000026"].result_type == qc.ResultType.PASS
-    assert test_results["GORULE:0000029"].result_type == qc.ResultType.PASS
+    test_results = qc.test_go_rules(a, config).all_results
+    print(test_results)
+    assert len(test_results.keys()) == 10
+    assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
+    assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
 
 if __name__ == "__main__":
