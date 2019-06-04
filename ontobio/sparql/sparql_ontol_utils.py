@@ -69,15 +69,15 @@ def get_digraph(ont, relations=None, writecache=False):
     """
     Creates a basic graph object corresponding to a remote ontology
     """
-
+    config = get_config()
     digraph = networkx.MultiDiGraph()
     logging.info("Getting edges (may be cached)")
-    for (s,p,o) in get_edges(ont, ignore_cache=get_config().ignore_cache):
+    for (s,p,o) in get_edges(ont, ignore_cache=config.ignore_cache):
         p = map_legacy_pred(p)
         if relations is None or p in relations:
             digraph.add_edge(o,s,pred=p)
     logging.info("Getting labels (may be cached)")
-    for (n,label) in fetchall_labels(ont):
+    for (n,label) in fetchall_labels(ont, ignore_cache=config.ignore_cache):
         digraph.add_node(n, **{'label':label})
     return digraph
 
@@ -86,8 +86,8 @@ def get_xref_graph(ont):
     Creates a basic graph object corresponding to a remote ontology
     """
     g = networkx.MultiGraph()
-    for (c,x) in fetchall_xrefs(ont):
-        g.add_edge(c,x,source=c)
+    for (c, x) in fetchall_xrefs(ont, ignore_cache=get_config().ignore_cache):
+        g.add_edge(c, x, source=c)
     return g
 
 
@@ -97,7 +97,7 @@ def get_edges(ont):
     Fetches all basic edges from a remote ontology
     """
     logging.info("QUERYING:"+ont)
-    edges = [(c,SUBCLASS_OF, d) for (c,d) in fetchall_isa(ont)]
+    edges = [(c, SUBCLASS_OF, d) for (c, d) in fetchall_isa(ont)]
     edges += fetchall_svf(ont)
     edges += [(c,SUBPROPERTY_OF, d) for (c,d) in fetchall_subPropertyOf(ont)]
     if len(edges) == 0:
