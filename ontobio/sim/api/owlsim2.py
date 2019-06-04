@@ -1,5 +1,5 @@
 from ontobio.sim.api.interfaces import SimApi, InformationContentStore, FilteredSearchable
-from ontobio.config import get_config
+
 from ontobio.vocabulary.upper import HpoUpperLevel
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.model.similarity import IcStatistic, SimResult, SimMatch,\
@@ -10,7 +10,10 @@ from ontobio.util.scigraph_util import get_nodes_from_ids, get_id_type_map, get_
 from typing import List, Optional, Dict, Tuple, Union
 from json.decoder import JSONDecodeError
 import logging
+
+from ontobio.config import get_config
 from cachier import cachier
+
 import datetime
 import requests
 
@@ -109,7 +112,10 @@ def get_owlsim_stats(url) -> Tuple[IcStatistic, Dict[str, IcStatistic]]:
     scigraph = OntologyFactory().create('scigraph:ontology')
     category_stats = {}
     categories = [enum.value for enum in HpoUpperLevel]
-    sim_response = get_attribute_information_profile(url, categories=tuple(categories))
+    sim_response = get_attribute_information_profile(
+        url, categories=tuple(categories),
+        ignore_cache=get_config().ignore_cache
+    )
 
     try:
         global_stats = IcStatistic(
@@ -201,11 +207,14 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
     }
 
     def __init__(self, url: Optional[str]=None, timeout: Optional[int]=None):
+
+        self.config = get_config()
+
         self.url = url if url is not None else get_config().owlsim2.url
         self.timeout = timeout if timeout is not None else get_config().owlsim2.timeout
 
         # Init ic stats
-        stats = get_owlsim_stats(self.url)
+        stats = get_owlsim_stats(self.url, ignore_cache=self.config.ignore_cache)
         self._statistics = stats[0]
         self._category_statistics = stats[1]
 
@@ -262,7 +271,10 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             logging.warning("Owlsim2 does not support negation, ignoring neg classes")
 
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
-        owlsim_results = search_by_attribute_set(self.url, tuple(id_list), limit, namespace_filter)
+        owlsim_results = search_by_attribute_set(
+            self.url, tuple(id_list), limit,
+            namespace_filter, ignore_cache=self.config.ignore_cache
+        )
         return self._simsearch_to_simresult(owlsim_results, method)
 
     def compare(self,
@@ -273,7 +285,10 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         Owlsim2 compare, calls compare_attribute_sets, and converts to SimResult object
         :return: SimResult object
         """
-        owlsim_results = compare_attribute_sets(self.url, tuple(reference_classes), tuple(query_classes))
+        owlsim_results = compare_attribute_sets(
+            self.url, tuple(reference_classes), tuple(query_classes),
+            ignore_cache=self.config.ignore_cache
+        )
         return self._simcompare_to_simresult(owlsim_results, method)
 
     @staticmethod
@@ -293,8 +308,10 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         """
         Given a list of individuals, return their information content
         """
-        sim_response = get_attribute_information_profile(self.url, tuple(profile))
-
+        sim_response = get_attribute_information_profile(
+            self.url, tuple(profile),
+            ignore_cache=self.config.ignore_cache
+        )
         profile_ic = {}
         try:
             for cls in sim_response['input']:

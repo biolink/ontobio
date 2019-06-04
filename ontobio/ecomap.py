@@ -1,6 +1,9 @@
 import requests
 from contextlib import closing
+
+from ontobio.config import get_config
 from cachier import cachier
+
 import datetime
 import logging
 
@@ -32,10 +35,11 @@ class EcoMap():
 
     def __init__(self):
         self._mappings = None
+        self.config = get_config()
     
     def mappings(self):
         if self._mappings is None:
-            s = get_ecomap_str(self.PURL)
+            s = get_ecomap_str(self.PURL, ignore_cache=self.config.ignore_cache)
             self._mappings = self.parse_ecomap_str(s)
         return self._mappings
 

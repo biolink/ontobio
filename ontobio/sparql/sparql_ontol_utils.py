@@ -15,7 +15,10 @@ from prefixcommons.curie_util import contract_uri, expand_uri
 from ontobio.vocabulary.relations import map_legacy_pred
 from functools import lru_cache
 import networkx
+
+from ontobio.config import get_config
 from cachier import cachier
+
 import datetime
 import logging
 
@@ -66,9 +69,10 @@ def get_digraph(ont, relations=None, writecache=False):
     """
     Creates a basic graph object corresponding to a remote ontology
     """
+
     digraph = networkx.MultiDiGraph()
     logging.info("Getting edges (may be cached)")
-    for (s,p,o) in get_edges(ont):
+    for (s,p,o) in get_edges(ont, ignore_cache=get_config().ignore_cache):
         p = map_legacy_pred(p)
         if relations is None or p in relations:
             digraph.add_edge(o,s,pred=p)

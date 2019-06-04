@@ -4,13 +4,12 @@ Factory class for generating association sets based on a variety of handle types
 Currently only supports golr query
 """
 
-import networkx as nx
 import pathlib
 import logging
-import os
-import subprocess
-import hashlib
+
+from ontobio.config import get_config
 from cachier import cachier
+
 import datetime
 from ontobio.golr.golr_associations import bulk_fetch
 from ontobio.assocmodel import AssociationSet, AssociationSetMetadata
@@ -32,6 +31,7 @@ class AssociationSetFactory():
         """
         initializes based on an ontology name
         """
+        self.config = get_config()
 
     def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None, fmt=None, skim=True):
         """
@@ -64,7 +64,8 @@ class AssociationSetFactory():
         assocs = bulk_fetch_cached(subject_category=subject_category,
                                    object_category=object_category,
                                    evidence=evidence,
-                                   taxon=taxon)
+                                   taxon=taxon,
+                                   ignore_cache=self.config.ignore_cache)
 
         logging.info("Creating map for {} subjects".format(len(assocs)))
 
