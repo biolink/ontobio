@@ -229,6 +229,8 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         """
         initializes based on an ontology name
         """
+        super().__init__()
+
         self.id = get_named_graph(handle)
         self.handle = handle
         logging.info("Creating eager-remote-sparql from "+str(handle))
@@ -258,6 +260,7 @@ class LazyRemoteSparqlOntology(RemoteSparqlOntology):
     """
 
     def __init__(self):
+        super().__init__()
         self.all_logical_definitions = [] ## TODO
 
 
