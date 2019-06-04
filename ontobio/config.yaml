@@ -1,5 +1,5 @@
 # Enable caching of ontology in the code base
-ignore_cache: True
+ignore_cache: False
 #
 solr_assocs:
   url: "https://solr.monarchinitiative.org/solr/golr"
