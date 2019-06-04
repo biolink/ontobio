@@ -41,7 +41,7 @@ class ConfigSchema(Schema):
     """
     Marshmallow schema for configuration objects.
     """
-    ignore_cache = fields.Nested(EndpointSchema)
+    ignore_cache = fields.Boolean()
     sparql = fields.Nested(EndpointSchema, description="SPARQL URL to use for ontology queries")
     solr_assocs = fields.Nested(EndpointSchema)
     solr_search = fields.Nested(EndpointSchema)
