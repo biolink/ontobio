@@ -23,6 +23,13 @@ The development version can be downloaded from GitHub.
     pip install -e .[dev,test]
 
 
+Alternately, pip can be directly used to install the master (or other) branch from git, as a pip requirement:
+
+::
+
+    pip install git+https://github.com/biolink/ontobio@master#egg=ontobio
+
+
 With pyvenv
 -----------
 
