@@ -5,6 +5,7 @@ __relation_label_lookup = {
     "has input": "http://purl.obolibrary.org/obo/RO_0002233",
     "results in specification of": "http://purl.obolibrary.org/obo/RO_0002356",
     "part of": "http://purl.obolibrary.org/obo/BFO_0000050",
+    "has part": "http://purl.obolibrary.org/obo/BFO_0000051",
     "results in development of": "http://purl.obolibrary.org/obo/RO_0002296",
     "results in movement of": "http://purl.obolibrary.org/obo/RO_0002565",
     "occurs at": "http://purl.obolibrary.org/obo/GOREL_0000501",
