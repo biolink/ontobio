@@ -399,7 +399,16 @@ class Ontology():
 
     def parents(self, node, relations=None):
         """
-        Return all direct parents of specified node.
+        Return all direct 'parents' of specified node.
+        
+        Note that in the context of ontobio, 'parent' means any node that
+        is traversed in a single hop along an edge from a subject to object.
+        For example, if the ontology has an edge "finger part-of some hand", then
+        "hand" is the parent of finger.
+        This can sometimes be counter-intutitive, for example, if the ontology
+        contains has-part axioms. If the ontology has an edge
+        "X receptor activity has-part some X binding", then "X binding" is the 'parent'
+        of "X receptor activity" over a has-part edge.
 
         Wraps networkx by default.
 
