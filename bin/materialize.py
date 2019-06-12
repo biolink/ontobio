@@ -43,8 +43,6 @@ def cli():
 @click.option("--gaf", "-g", type=click.File("r"), required=True)
 def infer(ontology_path, target, gaf):
     ontology_graph = ontology(ontology_path)
-    # mf_set = molecular_function_set(ontology_graph)
-    # definitions = logical_definitions(ontology_graph)
 
     writer = GafWriter(file=target)
     assoc_generator = gafparser_generator(ontology_graph, gaf)
@@ -65,6 +63,35 @@ def infer(ontology_path, target, gaf):
         if line_count % 100 == 0:
             click.echo("Processed {} lines".format(line_count))
 
+@cli.command()
+@click.option("--ontology", "-o", "ontology_path", type=click.Path(exists=True), required=True)
+@click.option("--relation", "-r", required=True)
+@click.option("--allowed-trees", multiple=True, default=["biological_process", "molecular_function", "cellular_component"])
+def termable(ontology_path, relation, allowed_trees):
+    ontology_graph = ontology(ontology_path)
+
+    accum = dict()
+    for term in ontology_graph.nodes():
+        if term.split(":")[0] != "GO":
+            continue
+
+        go_tree = [d["val"] for d in ontology_graph.node(term)["meta"]["basicPropertyValues"] if d["pred"] == "OIO:hasOBONamespace"]
+        if len(go_tree) > 0 and go_tree[0] not in allowed_trees:
+            continue
+
+        ns = neighbor_by_relation(ontology_graph, term, relation)
+        if len(ns) > 0:
+            accum[term] = ns
+
+    click.echo(json.dumps(accum, indent=4))
+
+    desc = []
+    for term in accum.keys():
+        if ontology_graph.children(term, relations=["subClassOf"]):
+            desc.append(term)
+
+    click.echo(desc)
+
 
 
 def ontology(path) -> ontol.Ontology:
@@ -83,7 +110,7 @@ def ancestors(term: str, ontology: ontol.Ontology) -> Set[str]:
 
     global __ancestors_cache
     if term not in __ancestors_cache:
-        anc = set(ontology.ancestors(term, relations=["subClassOf"]))
+        anc = set(ontology.ancestors(term, relations=["subClassOf"], reflexive=True))
         __ancestors_cache[term] = anc
         click.echo("Found {} (from adding to cache: {} terms added)".format(len(anc), len(__ancestors_cache)))
     else:
@@ -110,18 +137,17 @@ def gafparser_generator(ontology_graph: ontol.Ontology, gaf_file):
 
     return parser.association_generator(gaf_file, skipheader=True)
 
-def restrictions_for_term(term, logical_definitions: Dict):
-    restrictions = dict() # Property --> Filler
-    defs = logical_definitions.get(term, [])
-    click.echo("Restrictions for {}: {}".format(term, defs))
-    for d in defs:
-        for r in d.restrictions:
-            restrictions[r[0]] = r[1]
-    return restrictions
+# def restrictions_for_term(term, logical_definitions: Dict):
+#     restrictions = dict() # Property --> Filler
+#     defs = logical_definitions.get(term, [])
+#     click.echo("Restrictions for {}: {}".format(term, defs))
+#     for d in defs:
+#         for r in d.restrictions:
+#             restrictions[r[0]] = r[1]
+#     return restrictions
 
 def neighbor_by_relation(ontology_graph: ontol.Ontology, term, relation):
-    edges = ontology_graph.get_graph().edges(data=True, nbunch=term)
-    return [n2 for (n1, n2, r) in edges if r["pred"] == relation]
+    return ontology_graph.parents(term, relations=[relation])
 
 def transform_relation(mf_annotation, new_mf, ontology_graph):
     new_annotation = mf_annotation
