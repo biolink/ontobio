@@ -307,6 +307,24 @@ def test_gorule36():
     test_result = qc.GoRule37().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
 
+def test_gorule42():
+    a = ["blah"] * 16
+    a[6] = "IKR"
+    a[3] = "NOT"
+
+    test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[6] = "BLA" # Not IKR so this rule is fine
+    test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[6] = "IKR"
+    a[3] = ""  # No NOT qualifier, so wrong
+    test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+
 
 def test_all_rules():
     # pass
@@ -321,7 +339,7 @@ def test_all_rules():
 
     test_results = qc.test_go_rules(a, config).all_results
     print(test_results)
-    assert len(test_results.keys()) == 12
+    assert len(test_results.keys()) == 13
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 

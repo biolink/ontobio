@@ -299,6 +299,21 @@ class GoRule37(GoRule):
 
         return result
 
+class GoRule42(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000042", "Qualifier: IKR evidence code requires a NOT qualifier", FailMode.HARD)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        evidence = annotation[6]
+        qualifier = self._list_terms(annotation[3])
+
+        result = self._result(True)
+        if evidence == "IKR":
+            result = self._result("NOT" in qualifier)
+
+        return result
+
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
     "GoRule06": GoRule06(),
@@ -311,7 +326,8 @@ GoRules = enum.Enum("GoRules", {
     "GoRule28": GoRule28(),
     "GoRule29": GoRule29(),
     "GoRule30": GoRule30(),
-    "GoRule37": GoRule37()
+    "GoRule37": GoRule37(),
+    "GORule42": GoRule42()
 })
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
