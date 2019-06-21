@@ -324,6 +324,25 @@ def test_gorule42():
     test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
 
+def test_gorule50():
+    a = ["blah"] * 16
+    a[6] = "ISS"
+    a[1] = "HELLO:123"
+    a[7] = "HELLO:123"
+
+    test_result = qc.GoRule50().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    a[1] = "BYE:567"
+    test_result = qc.GoRule50().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[1] = "HELLO:123"
+    a[6] = "BLA"
+    # Not ISS, so fine to have repeated columns
+    test_result = qc.GoRule50().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
 
 
 def test_all_rules():
