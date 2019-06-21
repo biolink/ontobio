@@ -314,6 +314,23 @@ class GoRule42(GoRule):
 
         return result
 
+class GoRule50(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000050", "Annotations to ISS, ISA and ISO should not be self-referential", FailMode.SOFT)
+        self.the_evidences = ["ISS", "ISA", "ISO"]
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        # should not have the same identifier in the 'gene product column' (column 2) and in the 'with/from' column (column 8)
+        evidence = annotation[6]
+        result = self._result(True)
+        if evidence in self.the_evidences:
+            # Ensure the gp ID is not an entry in withfrom
+            result = self._result(annotation[1] not in self._list_terms(annotation[7]))
+
+        return result
+
+
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
     "GoRule06": GoRule06(),
