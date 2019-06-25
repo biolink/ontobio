@@ -282,9 +282,58 @@ class GoRule30(GoRule):
         # don't accept either of has_goref_33 or has_go_paint
         return self._result(not (has_goref_33 or has_go_paint))
 
+class GoRule37(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000037", "IBA annotations should ONLY be assigned_by GO_Central and have PMID:21873635 as a reference", FailMode.HARD)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        # If the evidence code is IBA, then (1) the assigned_by field must be GO_Central and (2) the reference field must be PMID:21873635
+        evidence = annotation[6]
+        references = self._list_terms(annotation[5])
+        assigned_by = annotation[14]
+
+        result = self._result(True) # By default we pass
+        if evidence == "IBA":
+            result = self._result(assigned_by == "GO_Central" and "PMID:21873635" in references)
+
+        return result
+
+class GoRule42(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000042", "Qualifier: IKR evidence code requires a NOT qualifier", FailMode.HARD)
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        evidence = annotation[6]
+        qualifier = self._list_terms(annotation[3])
+
+        result = self._result(True)
+        if evidence == "IKR":
+            result = self._result("NOT" in qualifier)
+
+        return result
+
+class GoRule50(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000050", "Annotations to ISS, ISA and ISO should not be self-referential", FailMode.SOFT)
+        self.the_evidences = ["ISS", "ISA", "ISO"]
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        # should not have the same identifier in the 'gene product column' (column 2) and in the 'with/from' column (column 8)
+        evidence = annotation[6]
+        result = self._result(True)
+        if evidence in self.the_evidences:
+            # Ensure the gp ID is not an entry in withfrom
+            result = self._result(annotation[1] not in self._list_terms(annotation[7]))
+
+        return result
+
 
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
+    "GoRule06": GoRule06(),
     "GoRule08": GoRule08(),
     "GoRule11": GoRule11(),
     "GoRule16": GoRule16(),
@@ -293,7 +342,9 @@ GoRules = enum.Enum("GoRules", {
     "GoRule26": GoRule26(),
     "GoRule28": GoRule28(),
     "GoRule29": GoRule29(),
-    "GoRule30": GoRule30()
+    "GoRule30": GoRule30(),
+    "GoRule37": GoRule37(),
+    "GORule42": GoRule42()
 })
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
