@@ -473,20 +473,16 @@ class Ontology():
             ancestor node IDs
 
         """
-        if reflexive:
-            ancs = self.ancestors(node, relations, reflexive=False)
-            ancs.append(node)
-            return ancs
-
-        g = None
-        if relations is None:
-            g = self.get_graph()
-        else:
-            g = self.get_filtered_graph(relations)
-        if node in g:
-            return list(nx.ancestors(g, node))
-        else:
-            return []
+        seen = set()
+        nextnodes = [node]
+        while len(nextnodes) > 0:
+            nn = nextnodes.pop()
+            if not nn in seen:
+                seen.add(nn)
+                nextnodes += self.parents(nn, relations=relations)
+        if not reflexive:
+            seen -= {node}
+        return list(seen)
 
     def descendants(self, node, relations=None, reflexive=False):
         """
@@ -511,19 +507,16 @@ class Ontology():
         list[str]
             descendant node IDs
         """
-        if reflexive:
-            decs = self.descendants(node, relations, reflexive=False)
-            decs.append(node)
-            return decs
-        g = None
-        if relations is None:
-            g = self.get_graph()
-        else:
-            g = self.get_filtered_graph(relations)
-        if node in g:
-            return list(nx.descendants(g, node))
-        else:
-            return []
+        seen = set()
+        nextnodes = [node]
+        while len(nextnodes) > 0:
+            nn = nextnodes.pop()
+            if not nn in seen:
+                seen.add(nn)
+                nextnodes += self.children(nn, relations=relations)
+        if not reflexive:
+            seen -= {node}
+        return list(seen)
 
 
     def equiv_graph(self):
@@ -1179,7 +1172,7 @@ class Synonym(AbstractPropertyValue):
 class PropertyChainAxiom(object):
     """
     Represents a property chain axiom used to infer the existence of a property from a chain of properties.
-    
+
     See the OWL primer for a description of property chains: https://www.w3.org/TR/owl2-primer/#Property_Chains
     """
 
