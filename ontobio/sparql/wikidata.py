@@ -6,7 +6,10 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from prefixcommons.curie_util import contract_uri, expand_uri
 from functools import lru_cache
 import networkx
+
+from ontobio.config import get_config
 from cachier import cachier
+
 import datetime
 import logging
 
@@ -88,7 +91,7 @@ def ensure_prefixed(x, prefix):
                 
 def fetchall_xrefs(prefix):
     m = {}
-    pairs = fetchall_triples_xrefs(prefix)
+    pairs = fetchall_triples_xrefs(prefix, ignore_cache=get_config().ignore_cache)
     if len(pairs) == LIMIT:
         logging.error("Too many: {} {}".format(LIMIT, pairs[:10]))
         return None

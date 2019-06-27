@@ -12,9 +12,13 @@ Ontology
 
 import networkx as nx
 import logging
+
+from ontobio.config import get_config
+
 import ontobio.ontol
 from ontobio.ontol import Ontology, Synonym, TextDefinition
-from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, fetchall_syns, fetchall_textdefs, fetchall_labels, fetchall_obs, OIO_SYNS
+from ontobio.sparql.sparql_ontol_utils import get_digraph, get_named_graph, get_xref_graph, run_sparql, \
+     fetchall_syns, fetchall_textdefs, fetchall_obs, OIO_SYNS
 from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
 
 
@@ -22,6 +26,9 @@ class RemoteSparqlOntology(Ontology):
     """
     Local or remote ontology
     """
+
+    def __init__(self):
+        self.config = get_config()
 
     def extract_subset(self, subset):
         """
@@ -70,7 +77,7 @@ class RemoteSparqlOntology(Ontology):
     def all_text_definitions(self):
         logging.debug("Fetching all textdefs...")
         if self.all_text_definitions_cache is None:
-            vals = fetchall_textdefs(self.graph_name)
+            vals = fetchall_textdefs(self.graph_name, ignore_cache=self.config.ignore_cache)
             tds = [TextDefinition(c,v) for (c,v) in vals]
             for td in tds:
                 self.add_text_definition(td)
@@ -86,7 +93,7 @@ class RemoteSparqlOntology(Ontology):
     def all_obsoletes(self):
         logging.debug("Fetching all obsoletes...")
         if self.all_obsoletes_cache is None:
-            obsnodes = fetchall_obs(self.graph_name)
+            obsnodes = fetchall_obs(self.graph_name, ignore_cache=self.config.ignore_cache)
             for n in obsnodes:
                 self.set_obsolete(n)
             self.all_obsoletes_cache = obsnodes # TODO: check if still used
@@ -103,7 +110,7 @@ class RemoteSparqlOntology(Ontology):
         logging.debug("Fetching all syns...")
         # TODO: include_label in cache
         if self.all_synonyms_cache is None:
-            syntups = fetchall_syns(self.graph_name)
+            syntups = fetchall_syns(self.graph_name, ignore_cache=self.config.ignore_cache)
             syns = [Synonym(t[0],pred=t[1], val=t[2]) for t in syntups]
             for syn in syns:
                 self.add_synonym(syn)
@@ -222,6 +229,8 @@ class EagerRemoteSparqlOntology(RemoteSparqlOntology):
         """
         initializes based on an ontology name
         """
+        super().__init__()
+
         self.id = get_named_graph(handle)
         self.handle = handle
         logging.info("Creating eager-remote-sparql from "+str(handle))
@@ -251,6 +260,7 @@ class LazyRemoteSparqlOntology(RemoteSparqlOntology):
     """
 
     def __init__(self):
+        super().__init__()
         self.all_logical_definitions = [] ## TODO
 
 
