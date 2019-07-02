@@ -102,10 +102,34 @@ def source_path(dataset_metadata, target_dir, group):
     path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
     return path
 
-def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None):
+def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None, replace_existing_files=True):
+    """
+    This will download a dataset source given the group name,
+    the metadata stanza for the dataset, and the target directory that all downloads
+    occur in.
+
+    The path will be built from these elements and then the URL will be found
+    from which to download the file.
+
+    `base_download_url` if set will change the URL to a local relative path, rather
+    than a true download. This means the dataset_metadata could have "relative/path/to/gaf"
+    and the absolute on disk path will be constructed by appending the found metadata
+    path to `base_download_url`.
+
+    `replace_existing_files` by default is True. This will overwrite any existing file, always
+    updating. With `replace_existing_files` False the path will be checked if a file already
+    exists there and if so the actual download will not proceed. The found file
+    will be assumed to be the correct file.
+    """
     # Local target download path setup - path and then directories
     file_name = source_url.split("/")[-1]
     path = source_path(dataset_metadata, target_dir, group)
+
+    # Just return the path if we find that it exists already
+    if os.path.exists(path) and not replace_existing_files:
+        click.echo("{} already exists, no need to download - skipping".format(path))
+        return path
+
     os.makedirs(os.path.split(path)[0], exist_ok=True)
 
     click.echo("Downloading source to {}".format(path))
@@ -149,7 +173,7 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
 
     return path
 
-def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None):
+def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None, replace_existing_files=True):
     """
     This looks at a group metadata dictionary and downloads each GAF source that is not in the exclusions list.
     For each downloaded file, keep track of the path of the file. If the file is zipped, it will unzip it here.
@@ -163,7 +187,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
     for dataset_metadata, gaf_url in gaf_urls:
         dataset = dataset_metadata["dataset"]
         # Local target download path setup - path and then directories
-        path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url, base_download_url=base_download_url)
+        path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url, base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
         if dataset_metadata["compression"] == "gzip":
             # Unzip any downloaded file that has gzip, strip of the gzip extension
@@ -179,13 +203,13 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
 
     return downloaded_paths
 
-def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None):
+def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None, replace_existing_files=True):
     mixin_dataset = find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
     if mixin_dataset is None:
         return None
 
     click.echo("Merging mixin dataset {}".format(mixin_dataset["source"]))
-    path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url)
+    path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
     unzipped = os.path.splitext(path)[0] # Strip off the .gz extension, leaving just the unzipped filename
     unzip(path, unzipped)
@@ -500,12 +524,12 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     return merged_path
 
-def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None):
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, replace_existing_files=True):
 
     end_gaf = valid_gaf
     mixin_gaf_paths = []
     for mixin_metadata in mixin_metadata_list:
-        mixin_src = check_and_download_mixin_source(mixin_metadata, group_id, dataset, target, base_download_url=base_download_url)
+        mixin_src = check_and_download_mixin_source(mixin_metadata, group_id, dataset, target, base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
         if mixin_src is not None:
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
@@ -537,8 +561,9 @@ def cli():
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 @click.option("--exclude", "-x", multiple=True)
 @click.option("--base-download-url", "-b", default=None)
-@click.option("--suppress-rule-reporting-tag", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
-def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag):
+@click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
+@click.option("--skip-existing-files", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
+def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files):
 
     products = {
         "gaf": True,
@@ -556,7 +581,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
 
-    downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url)
+    downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
     # dict of Dataset Metadata --> downloaded source paths (unzipped)
     # source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset["dataset"])) for dataset, zip_path in source_gaf_zips.items()}
 
@@ -585,7 +610,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
-        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url)
+        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
 
 
