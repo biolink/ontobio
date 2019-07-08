@@ -4,18 +4,16 @@ Factory class for generating ontology objects based on a variety of handle types
 See :ref:`inputs` on readthedocs for more details
 """
 
+import networkx as nx
 import logging
 import ontobio.obograph_util as obograph_util
-
+import ontobio.sparql.sparql_ontology
 from ontobio.ontol import Ontology
 from ontobio.sparql.sparql_ontology import EagerRemoteSparqlOntology
 import os
 import subprocess
 import hashlib
-
-from ontobio.config import get_config
 from cachier import cachier
-
 import datetime
 
 SHELF_LIFE = datetime.timedelta(days=3)
@@ -49,7 +47,6 @@ class OntologyFactory():
             see `create`
         """
         self.handle = handle
-        self.config = get_config()
 
     def create(self, handle=None, handle_type=None, **args):
         """
@@ -73,10 +70,10 @@ class OntologyFactory():
             global default_ontology
             if default_ontology is None:
                 logging.info("Creating new instance of default ontology")
-                default_ontology = create_ontology(default_ontology_handle, ignore_cache=self.config.ignore_cache)
+                default_ontology = create_ontology(default_ontology_handle)
             logging.info("Using default_ontology")
             return default_ontology
-        return create_ontology(handle, ignore_cache=self.config.ignore_cache, **args)
+        return create_ontology(handle, **args)
 
 @cachier(stale_after=SHELF_LIFE)
 def create_ontology(handle=None, **args):
@@ -85,10 +82,7 @@ def create_ontology(handle=None, **args):
 
     if handle.find("+") > -1:
         handles = handle.split("+")
-        # RMB: 3-Jun-2019: appending the **args to
-        # this recursive call of create_ontology,
-        # just in case they are relevant?
-        onts = [create_ontology(ont, **args) for ont in handles]
+        onts = [create_ontology(ont) for ont in handles]
         ont = onts.pop()
         ont.merge(onts)
         return ont
