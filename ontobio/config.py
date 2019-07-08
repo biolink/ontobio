@@ -41,7 +41,6 @@ class ConfigSchema(Schema):
     """
     Marshmallow schema for configuration objects.
     """
-    ignore_cache = fields.Boolean()
     sparql = fields.Nested(EndpointSchema, description="SPARQL URL to use for ontology queries")
     solr_assocs = fields.Nested(EndpointSchema)
     solr_search = fields.Nested(EndpointSchema)
@@ -67,8 +66,8 @@ class Endpoint():
     RESTish endpoint
     """
     def __init__(self,
-                 url=None,
-                 timeout=None):
+                 url = None,
+                 timeout = None):
         self.url = url
         self.timeout = timeout
 
@@ -77,20 +76,20 @@ class OntologyConfig():
     Maps local id of ontology to a handle
     """
     def __init__(self,
-                 id=None,
-                 handle=None,
-                 pre_load=False):
+                 id = None,
+                 handle = None,
+                 pre_load = False):
         self.id = id
         self.handle = handle
-        self.pre_load = pre_load
+        self.pre_load  = pre_load
 
 class Category():
     """
     Maps category to class
     """
     def __init__(self,
-                 id=None,
-                 superclass=None):
+                 id = None,
+                 superclass = None):
         self.id = id
         self.superclass = superclass
 
@@ -101,23 +100,21 @@ class Config():
 
     """
     def __init__(self,
-                 ignore_cache=None,
-                 solr_assocs=None,
-                 amigo_solr_assocs=None,
-                 solr_search=None,
-                 amigo_solr_search=None,
-                 lay_person_search=None,
-                 sparql=None,
-                 scigraph_ontology=None,
-                 scigraph_data=None,
-                 owlsim2=None,
-                 owlsim3=None,
-                 ontologies=None,
-                 categories=None,
-                 default_solr_schema=None,
-                 use_amigo_for="function",
-                 taxon_restriction=None):
-        self.ignore_cache = ignore_cache
+                 solr_assocs = None,
+                 amigo_solr_assocs = None,
+                 solr_search = None,
+                 amigo_solr_search = None,
+                 lay_person_search = None,
+                 sparql = None,
+                 scigraph_ontology = None,
+                 scigraph_data = None,
+                 owlsim2 = None,
+                 owlsim3 = None,
+                 ontologies = None,
+                 categories = None,
+                 default_solr_schema = None,
+                 use_amigo_for = "function",
+                 taxon_restriction = None):
         self.solr_assocs = solr_assocs
         self.amigo_solr_assocs = amigo_solr_assocs
         self.solr_search = solr_search
