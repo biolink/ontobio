@@ -73,10 +73,10 @@ class OntologyFactory():
             global default_ontology
             if default_ontology is None:
                 logging.info("Creating new instance of default ontology")
-                default_ontology = create_ontology(default_ontology_handle, ignore_cache=self.config.ignore_cache)
+                default_ontology = create_ontology(default_ontology_handle, **args)
             logging.info("Using default_ontology")
             return default_ontology
-        return create_ontology(handle, ignore_cache=self.config.ignore_cache, **args)
+        return create_ontology(handle, **args)
 
 @cachier(stale_after=SHELF_LIFE)
 def create_ontology(handle=None, **args):
