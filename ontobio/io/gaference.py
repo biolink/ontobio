@@ -1,5 +1,7 @@
 import re
 import enum
+import json
+
 
 from dataclasses import dataclass
 from typing import NewType, List, Dict
@@ -7,6 +9,8 @@ from prefixcommons import curie_util
 
 from ontobio.model import association
 from ontobio.rdfgen import relations
+
+import logging
 
 prefix_context = {key: value for context in curie_util.default_curie_maps + [curie_util.read_biocontext("go_context")] for key, value in context.items()}
 
@@ -64,6 +68,20 @@ ProblemType = enum.Enum("ProblemType", {"TAXON": "taxon", "EXTENSION": "extensio
 class InferenceResult:
     inferred_gafs: List[Gaf]
     problem: ProblemType
+    
+
+def load_gaferencer_inferences_from_file(gaferencer_out) -> Dict[AnnotationKey, InferenceValue]:
+    
+    gaferencer_out_dict = dict()
+    try:
+        logging.warning("gaferencer_out = {}".format(gaferencer_out))
+        with open(gaferencer_out) as gaferencer_file:
+            gaferencer_out_dict = json.load(gaferencer_file)
+    except Exception as e:
+        logging.warning("Could not load file {}: {}".format(gaferencer_out, str(e)))
+        return None
+        
+    return build_annotation_inferences(gaferencer_out_dict)
 
 
 def build_annotation_inferences(gaferencer_out: List[Dict]) -> Dict[AnnotationKey, InferenceValue]:
@@ -88,7 +106,6 @@ def produce_inferences(gaf: Gaf, inference_table: Dict[AnnotationKey, InferenceV
     keys = make_keys_from_gaf(gaf)  # type: List[AnnotationKey]
     results = []  # type: List[InferenceResult]
     for key in keys:
-        print(key)
         inferred_value = inference_table.get(key, None)
         if inferred_value != None:
             inferred_gafs_result = gaf_inferences_from_value(gaf, inferred_value)  # type: InferenceResult

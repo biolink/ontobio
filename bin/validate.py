@@ -22,6 +22,7 @@ from ontobio.io.assocwriter import GpadWriter
 from ontobio.io import assocparser
 from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
+from ontobio.io import gaference
 from ontobio.rdfgen import assoc_rdfgen
 
 from typing import Dict, Set
@@ -275,7 +276,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[]):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -287,7 +288,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         rule_metadata=rule_metadata,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
-        suppress_rule_reporting_tags=suppress_rule_reporting_tags
+        suppress_rule_reporting_tags=suppress_rule_reporting_tags,
+        annotation_inferences=annotation_inferences
     )
     split_source = os.path.split(source_gaf)[0]
     validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
@@ -563,7 +565,8 @@ def cli():
 @click.option("--base-download-url", "-b", default=None)
 @click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
 @click.option("--skip-existing-files", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
-def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files):
+@click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
+def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
 
     products = {
         "gaf": True,
@@ -582,8 +585,6 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
 
     downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
-    # dict of Dataset Metadata --> downloaded source paths (unzipped)
-    # source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset["dataset"])) for dataset, zip_path in source_gaf_zips.items()}
 
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = {rule_id(rule_path): gorule_metadata(metadata, rule_id(rule_path))
@@ -596,6 +597,10 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     db_entities = database_entities(absolute_metadata)
     group_ids = groups(absolute_metadata)
 
+    gaferences = None
+    if gaferencer_file:
+        gaferences = gaference.load_gaferencer_inferences_from_file(gaferencer_file)
+            
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
         # Set paint to True when the group is "paint".
@@ -606,15 +611,14 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
             rule_metadata=rule_metadata,
             db_entities=db_entities,
             group_idspace=group_ids,
-            suppress_rule_reporting_tags=suppress_rule_reporting_tag)[0]
+            suppress_rule_reporting_tags=suppress_rule_reporting_tag,
+            annotation_inferences=gaferences
+            )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
         end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
-
-
-
 
 
 

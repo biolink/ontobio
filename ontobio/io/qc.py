@@ -6,6 +6,7 @@ import datetime
 from typing import List, Dict, Any, Tuple
 from ontobio import ontol
 from ontobio.io import assocparser
+from ontobio.io import gaference
 
 FailMode = enum.Enum("FailMode", {"SOFT": "soft", "HARD": "hard"})
 ResultType = enum.Enum("Result", {"PASS": "Pass", "WARNING": "Warning", "ERROR": "Error"})
@@ -154,6 +155,25 @@ class GoRule11(GoRule):
         # If we see a bad evidence, and we're not in a paint file then fail.
         fails = (evidence == "ND" and goclass not in self.root_go_classes)
         return self._result(not fails)
+
+class GoRule13(GoRule):
+    
+    def __init__(self):
+        super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.SOFT)
+        
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        if config.annotation_inferences is None:
+            # Auto pass if we don't have inferences
+            return self._result(True)
+
+        inference_results = gaference.produce_inferences(annotation, config.annotation_inferences) #type: List[gaference.InferenceResult]
+        taxon_passing = True
+        for result in inference_results:
+            if result.problem == gaference.ProblemType.TAXON:
+                taxon_passing = False
+                break
+        
+        return self._result(taxon_passing)
 
 
 class GoRule16(GoRule):
@@ -336,6 +356,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule06": GoRule06(),
     "GoRule08": GoRule08(),
     "GoRule11": GoRule11(),
+    "GoRule13": GoRule13(),
     "GoRule16": GoRule16(),
     "GoRule17": GoRule17(),
     "GoRule18": GoRule18(),
