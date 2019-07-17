@@ -358,7 +358,7 @@ def test_all_rules():
 
     test_results = qc.test_go_rules(a, config).all_results
     print(test_results)
-    assert len(test_results.keys()) == 13
+    assert len(test_results.keys()) == 14
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 

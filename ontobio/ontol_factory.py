@@ -70,7 +70,7 @@ class OntologyFactory():
             global default_ontology
             if default_ontology is None:
                 logging.info("Creating new instance of default ontology")
-                default_ontology = create_ontology(default_ontology_handle)
+                default_ontology = create_ontology(default_ontology_handle, **args)
             logging.info("Using default_ontology")
             return default_ontology
         return create_ontology(handle, **args)

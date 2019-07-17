@@ -7,6 +7,7 @@ from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
 from ontobio.io import entityparser
 from ontobio.io import entitywriter
+from ontobio.io import gaference
 
 import click
 

@@ -27,7 +27,8 @@ __relation_label_lookup = {
     "has target end location": "http://purl.obolibrary.org/obo/RO_0002339",
     "produced by": "http://purl.obolibrary.org/obo/RO_0003001",
     "has end location": "http://purl.obolibrary.org/obo/RO_0002232",
-    "directly positively regulates": "http://purl.obolibrary.org/obo/RO_0002629"
+    "directly positively regulates": "http://purl.obolibrary.org/obo/RO_0002629",
+    "has direct input": "http://purl.obolibrary.org/obo/GOREL_0000752"
 }
 
 def label_relation_lookup():
