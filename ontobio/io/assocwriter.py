@@ -193,6 +193,7 @@ class GafWriter(AssocWriter):
             self._write(assoc["line"] + "\n")
             return
 
+        # print("Writing assoc {}".format(assoc))
         subj = assoc['subject']
 
         db, db_object_id = self._split_prefix(subj)
@@ -203,6 +204,7 @@ class GafWriter(AssocWriter):
             qualifier = "|".join(list(filter(None, ["NOT", qualifier])))
 
         goid = assoc['object']['id']
+        print("goid = {}".format(goid))
 
         ev = assoc['evidence']
         evidence = ev['type']
@@ -239,5 +241,7 @@ class GafWriter(AssocWriter):
                 assigned_by,
                 extension_expression,
                 gene_product_isoform]
+                
+        print("vals = {}".format(vals))
 
         self._write_row(vals)

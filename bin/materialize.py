@@ -9,6 +9,7 @@ import shutil
 import re
 import glob
 import logging
+import copy
 
 import yamldown
 
@@ -46,7 +47,7 @@ def cli(log):
     logger.addHandler(console_handler)
     if log:
         click.echo("Setting up logging to {}".format(log))
-        logfile_handler = logging.FileHandler(log)
+        logfile_handler = logging.FileHandler(log, mode="w")
         logfile_handler.setLevel(logging.INFO)
         logger.addHandler(logfile_handler)
         logger.setLevel(logging.INFO)
@@ -138,7 +139,7 @@ def neighbor_by_relation(ontology_graph: ontol.Ontology, term, relation):
     return ontology_graph.parents(term, relations=[relation])
 
 def transform_relation(mf_annotation, new_mf, ontology_graph):
-    new_annotation = mf_annotation
+    new_annotation = copy.deepcopy(mf_annotation)
     new_annotation["object"]["id"] = new_mf
     return new_annotation
 
@@ -146,6 +147,7 @@ def materialize_inferences(ontology_graph: ontol.Ontology, annotation):
     materialized_annotations = [] #(gp, new_mf)
 
     mf = annotation["object"]["id"]
+    gp = annotation["subject"]["id"]
     global __ancestors_cache
     mf_ancestors = ancestors(mf, ontology_graph, __ancestors_cache)
 
@@ -159,7 +161,7 @@ def materialize_inferences(ontology_graph: ontol.Ontology, annotation):
         # if has_part_mfs:
         #     logger.info("\tHas Parent --> {parent} \"{parentdef}\"".format(parent=mf_anc, parentdef=ontology_graph.label(mf_anc)))
         if has_part_mfs:
-            messages.append((mf, mf_anc, has_part_mfs))
+            messages.append((gp, mf, mf_anc, has_part_mfs))
 
 
         for new_mf in has_part_mfs:
@@ -169,15 +171,13 @@ def materialize_inferences(ontology_graph: ontol.Ontology, annotation):
             materialized_annotations.append(new_annotation)
 
 
-    messages = [ message for message in messages if message[2] ] # Filter out empty has_parts
+    messages = [ message for message in messages if message[3] ] # Filter out empty has_parts
     for message in messages:
-        logger.info("\nFor {term} \"{termdef}\":".format(term=message[0], termdef=ontology_graph.label(message[0])))
+        logger.info("\nFor {gp} -> {term} \"{termdef}\":".format(gp=message[0], term=message[1], termdef=ontology_graph.label(message[1])))
         logger.info("\tHas Parent --> {parent} \"{parentdef}\"".format(parent=message[1], parentdef=ontology_graph.label(message[1])))
-        for part in message[2]:
+        for part in message[3]:
             logger.info("\t\t has_part --> {part} \"{partdef}\"".format(part=part, partdef=ontology_graph.label(part)))
-
-
-
+    
     return materialized_annotations
 
 
