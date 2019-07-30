@@ -16,9 +16,9 @@ install:
 addons:
   apt_packages:
     - pandoc
- 
+
 # command to run tests
-script: 
+script:
   - PYTHONPATH=. make travis_test
 
 #after_success:
