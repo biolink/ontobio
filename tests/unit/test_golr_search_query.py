@@ -16,10 +16,10 @@ class TestGolrSearchQuery():
         # Mock the PySolr search function to
         # return our test docs
         input_fh = os.path.join(os.path.dirname(__file__),
-                                'resources/solr/solr-docs.json')
+                                'resources/solr/input/solr-docs.json')
         input_docs = json.load(open(input_fh))
-        self.test_results = pysolr.Results(input_docs)
-        self.manager.solr.search = MagicMock(return_value=self.test_results)
+        self.pysolr_results = pysolr.Results(input_docs)
+        self.manager.solr.search = MagicMock(return_value=self.pysolr_results)
 
     @classmethod
     def teardown_class(self):
@@ -62,10 +62,11 @@ class TestGolrSearchQuery():
         test that _process_autocomplete_results returns the
         expected object
         """
-        expected_fh = os.path.join(os.path.dirname(__file__),
-                                   'resources/solr/autocomplete-expected.json')
+        expected_fh = os.path.join(
+            os.path.dirname(__file__),
+            'resources/solr/expected/autocomplete.json')
         processed_docs = json.load(open(expected_fh))
-        output_docs = self.manager._process_autocomplete_results(self.test_results)
+        output_docs = self.manager._process_autocomplete_results(self.pysolr_results)
 
         assert json.dumps(processed_docs, sort_keys=True) == \
                json.dumps(output_docs,
@@ -79,10 +80,10 @@ class TestGolrSearchQuery():
         expected object
         """
         expected_fh = os.path.join(os.path.dirname(__file__),
-                                   'resources/solr/search-expected.json')
+                                   'resources/solr/expected/search.json')
         processed_docs = json.load(open(expected_fh))
 
-        output_docs = self.manager._process_search_results(self.test_results)
+        output_docs = self.manager._process_search_results(self.pysolr_results)
 
         assert json.dumps(processed_docs, sort_keys=True) == \
                json.dumps(output_docs,
@@ -95,7 +96,7 @@ class TestGolrSearchQuery():
         search() returns the expected object
         """
         expected_fh = os.path.join(os.path.dirname(__file__),
-                                   'resources/solr/search-expected.json')
+                                   'resources/solr/expected/search.json')
         processed_docs = json.load(open(expected_fh))
         output_docs = self.manager.search()
 
@@ -109,8 +110,9 @@ class TestGolrSearchQuery():
         Given a mock PySolr.search method test that
         autocomplete() returns the expected object
         """
-        expected_fh = os.path.join(os.path.dirname(__file__),
-                                   'resources/solr/autocomplete-expected.json')
+        expected_fh = os.path.join(
+            os.path.dirname(__file__),
+            'resources/solr/expected/autocomplete.json')
         processed_docs = json.load(open(expected_fh))
         output_docs = self.manager.autocomplete()
 
@@ -125,13 +127,12 @@ class TestGolrSearchQuery():
         """
         # Provide a new mock file
         input_fh = os.path.join(os.path.dirname(__file__),
-                                'resources/solr/autocomplete-nocat.json')
+                                'resources/solr/input/autocomplete-nocat.json')
         input_docs = json.load(open(input_fh))
-        self.test_results = pysolr.Results(input_docs)
-        self.manager.solr.search = MagicMock(return_value=self.test_results)
+        self.manager.solr.search = MagicMock(return_value=pysolr.Results(input_docs))
 
         expected_fh = os.path.join(os.path.dirname(__file__),
-                                   'resources/solr/autocomplete-nocat-expect.json')
+                                   'resources/solr/expected/autocomplete-nocat.json')
         processed_docs = json.load(open(expected_fh))
 
         output_docs = self.manager.autocomplete()
@@ -151,10 +152,10 @@ class TestGolrLayPersonSearch():
         # Mock the PySolr search function to
         # return our test docs
         input_fh = os.path.join(os.path.dirname(__file__),
-                                'resources/solr/layperson-docs.json')
+                                'resources/solr/input/layperson-docs.json')
         input_docs = json.load(open(input_fh))
-        self.test_results = pysolr.Results(input_docs)
-        self.manager.solr.search = MagicMock(return_value=self.test_results)
+        self.pysolr_results = pysolr.Results(input_docs)
+        self.manager.solr.search = MagicMock(return_value=self.pysolr_results)
 
     @classmethod
     def teardown_class(self):
@@ -167,9 +168,9 @@ class TestGolrLayPersonSearch():
         expected object
         """
         expected_fh = os.path.join(os.path.dirname(__file__),
-                                  'resources/solr/layperson-expected.json')
+                                  'resources/solr/expected/layperson.json')
         processed_docs = json.load(open(expected_fh))
-        output_docs = self.manager._process_layperson_results(self.test_results)
+        output_docs = self.manager._process_layperson_results(self.pysolr_results)
 
         assert json.dumps(processed_docs, sort_keys=True) == json.dumps(output_docs, sort_keys=True)
 
@@ -179,7 +180,7 @@ class TestGolrLayPersonSearch():
         autocomplete() returns the expected object
         """
         expected_fh = os.path.join(os.path.dirname(__file__),
-                                   'resources/solr/layperson-expected.json')
+                                   'resources/solr/expected/layperson.json')
         processed_docs = json.load(open(expected_fh))
         output_docs = self.manager.autocomplete()
 
@@ -209,9 +210,8 @@ class TestGolrSearchParams():
             'MONDO'
         ]
         expected = [
-            '-prefix:"OMIA"',
-            '-prefix:"Orphanet"',
-            'prefix:"DO" OR prefix:"OMIM" OR prefix:"MONDO"'
+            'prefix:(-OMIA AND -Orphanet)',
+            'prefix:("DO" OR "OMIM" OR "MONDO")'
         ]
         self.manager.prefix = prefix_filter
         params = self.manager.solr_params()

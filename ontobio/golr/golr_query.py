@@ -46,7 +46,8 @@ from collections import OrderedDict
 from ontobio.vocabulary.relations import HomologyTypes
 from ontobio.model.GolrResults import SearchResults, AutocompleteResult, Highlight
 from ontobio.util.user_agent import get_user_agent
-
+from prefixcommons.curie_util import expand_uri
+from ontobio.util.scigraph_util import get_curie_map
 
 INVOLVED_IN="involved_in"
 ACTS_UPSTREAM_OF_OR_WITHIN="acts_upstream_of_or_within"
@@ -114,7 +115,11 @@ class GolrFields:
     ASPECT='aspect'
     RELATION='relation'
     RELATION_LABEL='relation_label'
-
+    FREQUENCY='frequency'
+    FREQUENCY_LABEL='frequency_label'
+    ONSET='onset'
+    ONSET_LABEL='onset_label'
+    
     # This is a temporary fix until
     # https://github.com/biolink/ontobio/issues/126 is resolved.
 
@@ -190,12 +195,12 @@ def flip(d, x, y):
     d[y] = dx
 
 
-def solr_quotify(v):
+def solr_quotify(v, operator="OR"):
     if isinstance(v, list):
         if len(v) == 1:
-            return solr_quotify(v[0])
+            return solr_quotify(v[0], operator)
         else:
-            return '({})'.format(" OR ".join([solr_quotify(x) for x in v]))
+            return '({})'.format(" {} ".format(operator).join([solr_quotify(x) for x in v]))
     else:
         # TODO - escape quotes
         return '"{}"'.format(v)
@@ -420,7 +425,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         params = {
             'q': '{0} "{0}"'.format(self.term),
             "qt": "standard",
-            'fl': ",".join(select_fields),
+            'fl': ",".join(list(filter(None, select_fields))),
             "defType": "edismax",
             "qf": ["{}^{}".format(field, weight) for field, weight in qf.items()],
             'rows': self.rows
@@ -452,14 +457,14 @@ class GolrSearchQuery(GolrAbstractQuery):
                                if p_filt.startswith('-')]
             positive_filter = [p_filt for p_filt in self.prefix
                                if not p_filt.startswith('-')]
-            for pfix_filter in negative_filter:
-                params['fq'].append('-prefix:"{}"'.format(pfix_filter[1:]))
 
-            if len(positive_filter) > 0:
-                or_filter = 'prefix:"{}"'.format(positive_filter[0])
-                for pfix_filter in positive_filter[1:]:
-                    or_filter += ' OR prefix:"{}"'.format(pfix_filter)
-                params['fq'].append(or_filter)
+            if negative_filter:
+                neg_filter = '({})'.format(
+                    " AND ".join([filt for filt in negative_filter]))
+                params['fq'].append('prefix:{}'.format(neg_filter))
+
+            if positive_filter:
+                params['fq'].append('prefix:{}'.format(solr_quotify(positive_filter)))
 
         if self.boost_fx is not None:
             params['bf'] = []
@@ -579,8 +584,16 @@ class GolrSearchQuery(GolrAbstractQuery):
     def _process_highlight(self, results: pysolr.Results, doc) -> Highlight:
         hl = results.highlighting[doc['id']]
         highlights = []
-        for hl_list in hl.values():
+        primary_label_matches = []  # Store all primary label
+        for field, hl_list in hl.items():
+            if field.startswith('label'):
+                primary_label_matches.extend(hl_list)
             highlights.extend(hl_list)
+
+        # If we've matched on the primary label, get the longest
+        # from the list, else use other fields
+        if primary_label_matches:
+            highlights = primary_label_matches
         try:
             highlight = Highlight(
                 highlight=self._get_longest_hl(highlights),
@@ -827,7 +840,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  facet_pivot_fields=None,
                  stats=False,
                  stats_field=None,
-                 facet_on = 'on',
+                 facet=True,
                  pivot_subject_object=False,
                  unselect_evidence=False,
                  rows=10,
@@ -879,7 +892,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.facet_pivot_fields=facet_pivot_fields
         self.stats=stats
         self.stats_field=stats_field
-        self.facet_on=facet_on
+        self.facet=facet
         self.pivot_subject_object=pivot_subject_object
         self.unselect_evidence=unselect_evidence
         self.max_rows=100000
@@ -902,10 +915,20 @@ class GolrAssociationQuery(GolrAbstractQuery):
             self.non_null_fields = []
 
         if self.facet_fields is None:
-            self.facet_fields = [
-                M.SUBJECT_TAXON_LABEL,
-                M.OBJECT_CLOSURE
-            ]
+            if self.facet:
+                self.facet_fields = [
+                    M.SUBJECT_TAXON_LABEL,
+                    M.OBJECT_CLOSURE
+                ]
+
+        if self.solr is None:
+            if self.url is None:
+                endpoint = self.get_config().solr_assocs
+                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+            else:
+                solr_config = {'url': self.url, 'timeout': 5}
+
+            self.update_solr_url(**solr_config)
 
     def update_solr_url(self, url, timeout=2):
         self.url = url
@@ -957,19 +980,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
             logging.info("Inferring Object category: {} from {}".
                          format(object_category, object))
 
-        solr_config = {'url': self.url, 'timeout': 5}
-        if self.solr is None:
-            if self.url is None:
-                endpoint = self.get_config().solr_assocs
-                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
-            else:
-                solr_config = {'url': self.url, 'timeout': 5}
-
         # URL to use for querying solr
         if self._use_amigo_schema(object_category):
-            if self.url is None:
-                endpoint = self.get_config().amigo_solr_assocs
-                solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+            # Override solr config and use go solr
+            endpoint = self.get_config().amigo_solr_assocs
+            solr_config = {'url': endpoint.url, 'timeout': endpoint.timeout}
+            self.update_solr_url(**solr_config)
+
             self.field_mapping=goassoc_fieldmap(self.relationship_type)
 
             # awkward hack: we want to avoid typing on the amigo golr gene field,
@@ -990,8 +1007,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 cc = self.get_config().get_category_class(object_category)
                 if cc is not None and object is None:
                     object = cc
-
-        self.update_solr_url(**solr_config)
 
         ## subject params
         subject_taxon=self.subject_taxon
@@ -1030,13 +1045,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         ## facet fields
         facet_fields=self.facet_fields
-        facet_on=self.facet_on
+        facet=self.facet
         facet_limit=self.facet_limit
         select_fields=self.select_fields
 
         if self.use_compact_associations:
             facet_fields = []
-            facet_on = 'off'
+            facet = False
             facet_limit = 0
             select_fields = [
                 M.SUBJECT,
@@ -1179,13 +1194,21 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 M.OBJECT,
                 M.OBJECT_LABEL,
                 M.OBJECT_TAXON,
-                M.OBJECT_TAXON_LABEL
+                M.OBJECT_TAXON_LABEL,
+                M.FREQUENCY,
+                M.FREQUENCY_LABEL,
+                M.ONSET,
+                M.ONSET_LABEL
             ]
             if not self.unselect_evidence:
                 select_fields += [
                     M.EVIDENCE_OBJECT,
                     M.EVIDENCE_GRAPH
                 ]
+
+        if not self._use_amigo_schema(object_category):
+            select_fields.append(M.SUBJECT_CATEGORY)
+            select_fields.append(M.OBJECT_CATEGORY)
 
         if self.map_identifiers is not None:
             select_fields.append(M.SUBJECT_CLOSURE)
@@ -1201,7 +1224,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 facet_pivot_fields = [ map_field(fn, self.field_mapping) for fn in facet_pivot_fields ]
                 logging.info("APPLIED field mapping to PIV: {}".format(facet_pivot_fields))
 
-        facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
+        if facet_fields:
+            facet_fields = [ map_field(fn, self.field_mapping) for fn in facet_fields ]
 
         if self._use_amigo_schema(object_category):
             select_fields += [x for x in M.AMIGO_SPECIFIC_FIELDS if x not in select_fields]
@@ -1223,11 +1247,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
         params = {
             'q': qstr,
             'fq': filter_queries,
-            'facet': facet_on,
-            'facet.field': facet_fields,
+            'facet': 'on' if facet else 'off',
+            'facet.field': facet_fields if facet_fields else [],
             'facet.limit': facet_limit,
             'facet.mincount': self.facet_mincount,
-            'fl': ",".join(select_fields),
+            'fl': ",".join(list(filter(None, select_fields))),
             'rows': rows
         }
 
@@ -1332,10 +1356,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
             oq_params['rows'] = 0
             oq_params['facet.mincount'] = 1
             oq_results = self.solr.search(**oq_params)
-            ff = oq_results.facets['facet_fields']
-            ofl = ff.get(object_field)
-            # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
-            payload['objects'] = ofl[0::2]
+            if self.facet:
+                ff = oq_results.facets['facet_fields']
+                ofl = ff.get(object_field)
+                # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
+                payload['objects'] = ofl[0::2]
 
         fetch_subjects=self.fetch_subjects
         if fetch_subjects:
@@ -1352,12 +1377,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
             oq_params['rows'] = 0
             oq_params['facet.mincount'] = 1
             oq_results = self.solr.search(**oq_params)
-            ff = oq_results.facets['facet_fields']
-            ofl = ff.get(subject_field)
-            # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
-            payload['subjects'] = ofl[0::2]
-            if len(payload['subjects']) == self.max_rows:
-                payload['is_truncated'] = True
+            if self.facet:
+                ff = oq_results.facets['facet_fields']
+                ofl = ff.get(subject_field)
+                # solr returns facets counts as list, every 2nd element is number, we don't need the numbers here
+                payload['subjects'] = ofl[0::2]
+                if len(payload['subjects']) == self.max_rows:
+                    payload['is_truncated'] = True
 
         if self.slim is not None and len(self.slim)>0:
             if 'objects' in payload:
@@ -1438,23 +1464,29 @@ class GolrAssociationQuery(GolrAbstractQuery):
             return None
 
         lf = M.label_field(fname)
-
         id = d[fname]
         id = self.make_canonical_identifier(id)
         #if id.startswith('MGI:MGI:'):
         #    id = id.replace('MGI:MGI:','MGI:')
         obj = {'id': id}
 
+        if id:
+            if self._use_amigo_schema(self.object_category):
+                iri = expand_uri(id)
+            else:
+                iri = expand_uri(id, [get_curie_map('{}/cypher/curies'.format(self.config.scigraph_data.url))])
+            obj['iri'] = iri
+
         if lf in d:
             obj['label'] = d[lf]
 
-        if 'aspect' in d and id.startswith('GO:'):
-            obj['category'] = ASPECT_MAP[d['aspect']]
-            del d['aspect']
-
         cf = fname + "_category"
         if cf in d:
-            obj['categories'] = [d[cf]]
+            obj['category'] = [d[cf]]
+
+        if 'aspect' in d and id.startswith('GO:'):
+            obj['category'] = [ASPECT_MAP[d['aspect']]]
+            del d['aspect']
 
         return obj
 
@@ -1535,6 +1567,19 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if M.EVIDENCE_OBJECT in d:
             assoc['evidence'] = d[M.EVIDENCE_OBJECT]
             assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
+
+        if M.FREQUENCY in d:
+            assoc[M.FREQUENCY] = {
+                'id': d[M.FREQUENCY]
+            }
+        if M.FREQUENCY_LABEL in d:
+            assoc[M.FREQUENCY]['label'] = d[M.FREQUENCY_LABEL]
+        if M.ONSET in d:
+            assoc[M.ONSET] = {
+                'id': d[M.ONSET]
+            }
+        if M.ONSET_LABEL in d:
+            assoc[M.ONSET]['label'] = d[M.ONSET_LABEL]
 
         if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:

@@ -16,6 +16,9 @@ debug_test:
 t-%:
 	pytest tests/test_$*.py
 
+tv-%:
+	pytest -s tests/test_$*.py
+
 foo:
 	which pytest
 

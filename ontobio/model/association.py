@@ -32,12 +32,12 @@ class Evidence:
     has_supporting_reference: List[Curie]
     with_support_from: List[Curie]
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class ExtensionUnit:
     relation: Curie
     term: Curie
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class ExtensionConjunctions:
     extensions: List[ExtensionUnit]
 

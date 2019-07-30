@@ -214,6 +214,33 @@ def test_go_rule26():
     test_result = qc.GoRule26().test(a, config)
     assert test_result.result_type == qc.ResultType.ERROR
 
+def test_go_rule28():
+
+    config = assocparser.AssocParserConfig(
+        ontology=ontology
+    )
+
+    a = ["blah"] * 16
+    a[4] = "GO:0005975"
+    a[8] = "P"
+
+    test_result = qc.GoRule28().test(a, config)
+
+    assert test_result.result_type == qc.ResultType.PASS
+    assert test_result.result == a
+
+    a = ["blah"] * 16
+    a[4] = "GO:0005975"
+    a[8] = "C"
+
+    test_result = qc.GoRule28().test(a, config)
+
+    assert test_result.result_type == qc.ResultType.WARNING
+    fixed_a = a
+    fixed_a[8] = "P"
+    assert test_result.result == fixed_a
+    assert test_result.message == "Found violation of: `Aspect can only be one of C, P, F` but was repaired"
+
 def test_go_rule29():
     a = ["blah"] * 16
     a[6] = "IEA"
@@ -257,6 +284,66 @@ def test_gorule30():
     test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+def test_gorule36():
+    a = ["blah"] * 16
+    a[6] = "IBA"
+    a[5] = "PMID:21873635"
+    a[14] = "GO_Central"
+
+    test_result = qc.GoRule37().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[6] = "BLA" # Rule doesn't apply
+    test_result = qc.GoRule37().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[6] = "IBA"
+    a[5] = "GO_REF:123"  # IBA, but wrong ref
+    test_result = qc.GoRule37().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    a[5] = "PMID:21873635"
+    a[14] = "Pascale"  # IBA, but wrong assigned_by
+    test_result = qc.GoRule37().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+def test_gorule42():
+    a = ["blah"] * 16
+    a[6] = "IKR"
+    a[3] = "NOT"
+
+    test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[6] = "BLA" # Not IKR so this rule is fine
+    test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[6] = "IKR"
+    a[3] = ""  # No NOT qualifier, so wrong
+    test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+def test_gorule50():
+    a = ["blah"] * 16
+    a[6] = "ISS"
+    a[1] = "HELLO:123"
+    a[7] = "HELLO:123"
+
+    test_result = qc.GoRule50().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    a[1] = "BYE:567"
+    test_result = qc.GoRule50().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[1] = "HELLO:123"
+    a[6] = "BLA"
+    # Not ISS, so fine to have repeated columns
+    test_result = qc.GoRule50().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+
 
 def test_all_rules():
     # pass
@@ -269,10 +356,11 @@ def test_all_rules():
     a[6] = "ANY"
     a[13] = "20180330"
 
-    test_results = qc.test_go_rules(a, config)
-    assert len(test_results.keys()) == 9
-    assert test_results["GORULE:0000026"].result_type == qc.ResultType.PASS
-    assert test_results["GORULE:0000029"].result_type == qc.ResultType.PASS
+    test_results = qc.test_go_rules(a, config).all_results
+    print(test_results)
+    assert len(test_results.keys()) == 14
+    assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
+    assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
 
 if __name__ == "__main__":

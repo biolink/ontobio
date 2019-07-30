@@ -140,7 +140,8 @@ class AssocParserConfig():
                  paint=False,
                  rule_metadata=None,
                  dbxrefs=None,
-                 suppress_rule_reporting_tags=[]):
+                 suppress_rule_reporting_tags=[],
+                 annotation_inferences=None):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -157,7 +158,7 @@ class AssocParserConfig():
         self.paint = paint
         self.rule_metadata = rule_metadata
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
-
+        self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
@@ -175,6 +176,9 @@ class Report():
     """
 
     # Levels
+    """
+    3 warning levels
+    """
     FATAL = 'FATAL'
     ERROR = 'ERROR'
     WARNING = 'WARNING'
@@ -196,10 +200,6 @@ class Report():
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
     VIOLATES_GO_RULE = "Violates GO Rule"
 
-    """
-    3 warning levels
-    """
-    LEVELS = [FATAL, ERROR, WARNING]
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
         self.messages = []
@@ -541,7 +541,7 @@ class AssocParser(object):
             return id
 
         if not ont.has_node(id):
-            self.report.warning(line.line, Report.UNKNOWN_ID, id, "GORULE:0000027",
+            self.report.warning(line.line, Report.UNKNOWN_ID, id, "Class ID {} is not present in the ontology".format(id),
                 taxon=line.taxon, rule=27)
             return id
 
@@ -647,6 +647,23 @@ class AssocParser(object):
                 return None
 
         return sorted(valids)
+
+    def normalize_refs(self, references, line: SplitLine):
+        allowed_prefixes = {"PMID", "PMC", "doi", "GO_REF"}
+
+        found_bad_refs = []
+        okay_ref = []
+        for ref in references:
+            prefix = ref.split(":", maxsplit=1)[0]
+            if prefix not in allowed_prefixes:
+                # then we found a bad ref, so we'll record it
+                found_bad_refs.append(ref)
+
+        if found_bad_refs:
+            self.report.warning(line.line, Report.INVALID_IDSPACE, ", ".join(found_bad_refs), "References should only be from ID prefixes PMID, PMD, doi, or GO_REF", rule=33)
+
+        # We are only reporting, so just pass it through
+        return references
 
     def _normalize_id(self, id):
         toks = id.split(":")

@@ -7,6 +7,9 @@ from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
 from ontobio.io import entityparser
 from ontobio.io import entitywriter
+from ontobio.io import gaference
+
+import click
 
 class GafParser(assocparser.AssocParser):
     """
@@ -119,6 +122,41 @@ class GafParser(assocparser.AssocParser):
                 rule=1)
             return assocparser.ParseResult(line, [], True)
 
+
+        ## check for missing columns
+        ## We use indeces here because we run GO RULES before we split the vals into individual variables
+        DB_INDEX = 0
+        DB_OBJECT_INDEX = 1
+        TAXON_INDEX = 12
+        REFERENCE_INDEX = 5
+        if vals[DB_INDEX] == "":
+            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", taxon=vals[TAXON_INDEX], rule=1)
+            return assocparser.ParseResult(line, [], True)
+        if vals[DB_OBJECT_INDEX] == "":
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=vals[TAXON_INDEX], rule=1)
+            return assocparser.ParseResult(line, [], True)
+        if vals[TAXON_INDEX] == "":
+            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty", taxon=vals[TAXON_INDEX], rule=1)
+            return assocparser.ParseResult(line, [], True)
+        if vals[REFERENCE_INDEX] == "":
+            self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=vals[TAXON_INDEX], rule=1)
+            return assocparser.ParseResult(line, [], True)
+
+
+        ## Run GO Rules, save split values into individual variables
+        go_rule_results = qc.test_go_rules(list(vals), self.config)
+        for rule, result in go_rule_results.all_results.items():
+            if result.result_type == qc.ResultType.WARNING:
+                self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
+                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
+
+            if result.result_type == qc.ResultType.ERROR:
+                self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, "",
+                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
+                # Skip the annotation
+                return assocparser.ParseResult(line, [], True)
+
+        vals = list(go_rule_results.annotation)
         [db,
          db_object_id,
          db_object_symbol,
@@ -136,22 +174,7 @@ class GafParser(assocparser.AssocParser):
          assigned_by,
          annotation_xp,
          gene_product_isoform] = vals
-
         split_line = assocparser.SplitLine(line=line, values=vals, taxon=taxon)
-
-        ## check for missing columns
-        if db == "":
-            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", taxon=taxon, rule=1)
-            return assocparser.ParseResult(line, [], True)
-        if db_object_id == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=taxon, rule=1)
-            return assocparser.ParseResult(line, [], True)
-        if taxon == "":
-            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty", taxon=taxon, rule=1)
-            return assocparser.ParseResult(line, [], True)
-        if reference == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=taxon, rule=1)
-            return assocparser.ParseResult(line, [], True)
 
         if self.config.group_idspace is not None and assigned_by not in self.config.group_idspace:
             self.report.warning(line, Report.INVALID_ID, assigned_by,
@@ -216,6 +239,8 @@ class GafParser(assocparser.AssocParser):
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
 
+        references = self.normalize_refs(references, split_line)
+
         # With/From
         withfroms = self.validate_pipe_separated_ids(withfrom, split_line, empty_allowed=True, extra_delims=",")
         if withfroms == None:
@@ -233,24 +258,6 @@ class GafParser(assocparser.AssocParser):
             db_object_id = toks[1:]
             vals[1] = db_object_id
 
-        if goid.startswith("GO:") and aspect.upper() not in ["C", "F", "P"]:
-            self.report.error(line, assocparser.Report.INVALID_ASPECT, aspect, rule=28)
-            return assocparser.ParseResult(line, [], True)
-
-
-        go_rule_results = qc.test_go_rules(vals, self.config)
-        for rule_id, result in go_rule_results.items():
-            if result.result_type == qc.ResultType.WARNING:
-                self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, goid,
-                                    msg="{id}: {message}".format(id=rule_id, message=result.message), rule=int(rule_id.split(":")[1]))
-                # Skip the annotation
-                return assocparser.ParseResult(line, [], True)
-
-            if result.result_type == qc.ResultType.ERROR:
-                self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, goid,
-                                    msg="{id}: {message}".format(id=rule_id, message=result.message), rule=int(rule_id.split(":")[1]))
-                # Skip the annotation
-                return assocparser.ParseResult(line, [], True)
 
         ## --
         ## end of line re-processing

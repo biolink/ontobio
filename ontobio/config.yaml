@@ -20,7 +20,7 @@ scigraph_ontology:
   url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
   timeout: 15
 scigraph_data:
-  url: "https://scigraph-data.monarchinitiative.org/scigraph/"
+  url: "https://scigraph-data.monarchinitiative.org/scigraph"
   timeout: 15
 owlsim2:
   url: "https://monarchinitiative.org/owlsim/"
