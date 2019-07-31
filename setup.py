@@ -54,8 +54,8 @@ setuptools.setup(
         'prefixcommons',
         'marshmallow==3.0.0b3',
         'scipy',
-        'pandas',
-        'click',
+        'pandas==0.24.2',
+        'click==7.0',
         'yamldown',
         'dataclasses'
     ],
