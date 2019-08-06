@@ -49,10 +49,63 @@ def zipup(file_path):
     path, filename = os.path.split(file_path)
     zipname = "{}.gz".format(filename)
     target = os.path.join(path, zipname)
+    
+    def chunk_gen():
+        with open(file_path, "rb") as source_unzipped:
+            while True:
+                chunk = source_unzipped.read(512 * 1024)
+                if not chunk:
+                    break
+                yield chunk
+                
+    with gzip.open(target, "wb") as tf:
+        with click.progressbar(iterable=chunk_gen()) as chunks:
+            for chunk in chunks:
+                tf.write(chunk)
 
-    with open(file_path, "rb") as p:
-        with gzip.open(target, "wb") as tf:
-            tf.write(p.read())
+    # with open(file_path, "rb") as p:
+    #     with gzip.open(target, "wb") as tf:
+    #         tf.write(p.read())
+            
+def unzip(path, target):
+    click.echo("Unzipping {}".format(path))
+    def chunk_gen():
+        with gzip.open(path, "rb") as p:
+            while True:
+                chunk = p.read(size=512 * 1024)
+                if not chunk:
+                    break
+                yield chunk
+
+    with open(target, "wb") as tf:
+        with click.progressbar(iterable=chunk_gen()) as chunks:
+            for chunk in chunks:
+                tf.write(chunk)
+                
+                
+def download_the_file(url, out_path, dryrun=False) -> str:
+    """
+    Does the download with wget in a subprocess
+    Result is a tuple of (bool, path OR error message). The first element is 
+    a bool indicating succcessful completion of the process with True, and False
+    if not. If successful, the secend element is the path downloaded. Otherwise
+    it's whatever standard error was from wget.
+    """
+    click.echo("Downloading {}".format(url))
+    wget_command = "wget -nv --retry-connrefused --waitretry=10 -t 10 --no-check-certificate {} -O {}".format(url, out_path)
+    
+    # click.echo("wget used: `{}`".format(wget_command))
+    result = (True, out_path)
+    if not dryrun:
+        p = subprocess.Popen(wget_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        exit_code = p.wait() # This is probably redundant, but will return the exit code
+        if exit_code != 0:
+            result = (False, err.decode("utf-8"))
+        else:
+            result = (True, out_path)
+            # Somehow actually verify the the file is correct?
+    return result
 
 def find(l, finder):
     filtered = [n for n in l if finder(n)]
@@ -197,21 +250,6 @@ def mixin_dataset(mixin_metadata, dataset):
         return None # Blah
 
     return mixin_dataset_version
-
-def unzip(path, target):
-    click.echo("Unzipping {}".format(path))
-    def chunk_gen():
-        with gzip.open(path, "rb") as p:
-            while True:
-                chunk = p.read(size=512 * 1024)
-                if not chunk:
-                    break
-                yield chunk
-
-    with open(target, "wb") as tf:
-        with click.progressbar(iterable=chunk_gen()) as chunks:
-            for chunk in chunks:
-                tf.write(chunk)
 
 def database_entities(metadata):
     dbxrefs_path = os.path.join(os.path.abspath(metadata), "db-xrefs.yaml")
