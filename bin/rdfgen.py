@@ -44,7 +44,7 @@ def _association_parser(association_type, config):
 def make_ontology(input_ontology):
     click.echo("Loading ontology...")
     ontology_factory = ontol_factory.OntologyFactory()
-    return ontology_factory.create(input_ontology)
+    return ontology_factory.create(input_ontology, ignore_cache=True)
 
 
 if __name__ == "__main__":
