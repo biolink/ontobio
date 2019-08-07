@@ -203,11 +203,6 @@ access. Currently an *eager* strategy is used, in which large blocks
 are fetched in advance, though in future *lazy* strategies are
 optionally employed.
 
-.. warning ::
-
-    We use the `cachier` library for caching. Currently there is no
-    API control over caching, and caches are by default store in
-    ``~/.cachier``. This may change in future.
 
 To be implemented
 -----------------
