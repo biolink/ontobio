@@ -10,20 +10,17 @@ from ontobio.util.scigraph_util import get_nodes_from_ids, get_id_type_map, get_
 from typing import List, Optional, Dict, Tuple, Union
 from json.decoder import JSONDecodeError
 import logging
-from cachier import cachier
-import datetime
 import requests
 
 """
 Functions that directly access the owlsim rest API are kept
 outside the class to utilize cachier
+TODO: this will have to be revisited.
 """
 
 TIMEOUT = get_config().owlsim2.timeout
-SHELF_LIFE = datetime.timedelta(days=30)
 
 
-@cachier(SHELF_LIFE)
 def search_by_attribute_set(
         url: str,
         profile: Tuple[str],
@@ -49,7 +46,6 @@ def search_by_attribute_set(
     return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
 
 
-@cachier(SHELF_LIFE)
 def compare_attribute_sets(
         url: str,
         profile_a: Tuple[str],
@@ -73,7 +69,6 @@ def compare_attribute_sets(
     return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
 
 
-@cachier(SHELF_LIFE)
 def get_attribute_information_profile(
         url: str,
         profile: Optional[Tuple[str]]=None,
@@ -100,7 +95,6 @@ def get_attribute_information_profile(
     return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
 
 
-@cachier(SHELF_LIFE)
 def get_owlsim_stats(url) -> Tuple[IcStatistic, Dict[str, IcStatistic]]:
     """
     :return Tuple[IcStatistic, Dict[str, IcStatistic]]

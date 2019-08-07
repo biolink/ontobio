@@ -6,7 +6,6 @@ from json.decoder import JSONDecodeError
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.model.similarity import Node, TypedNode
 import requests
-from cachier import cachier
 
 def namespace_to_taxon() -> Dict[str, Node]:
     """
@@ -164,7 +163,6 @@ def typed_node_from_id(id: str) -> TypedNode:
         taxon = get_taxon(id)
     )
 
-@cachier()
 def get_curie_map(url):
     """
     Get CURIE prefix map from SciGraph cypher/curies endpoint
