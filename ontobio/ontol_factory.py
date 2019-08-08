@@ -13,8 +13,10 @@ from ontobio.sparql.sparql_ontology import EagerRemoteSparqlOntology
 import os
 import subprocess
 import hashlib
+import fastobo
 from cachier import cachier
 import datetime
+import tempfile
 
 SHELF_LIFE = datetime.timedelta(days=3)
 
@@ -159,6 +161,13 @@ def translate_file_to_ontology(handle, **args):
         logging.info("RdfMapper: {}".format(args))
         m = RdfMapper(**args)
         return m.convert(handle,'ttl')
+    elif handle.endswith(".obo"):
+        doc = fastobo.load(handle)
+        with tempfile.TemporaryFile() as tmp:
+            fastobo.dump_graph(doc, tmp)
+            tmp.seek(0)
+            g = obograph_util.convert_json_object(json.load(tmp), **args)
+        return Ontology(handle=handle, payload=g)
     else:
         if not (handle.endswith(".obo") or handle.endswith(".owl")):
             logging.info("Attempting to parse non obo or owl file with owltools: "+handle)
