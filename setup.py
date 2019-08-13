@@ -50,7 +50,6 @@ setuptools.setup(
         'pysolr',
         'requests',
         'sparqlwrapper',
-        'cachier',
         'prefixcommons',
         'marshmallow==3.0.0b3',
         'scipy',
