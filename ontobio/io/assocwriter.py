@@ -193,6 +193,7 @@ class GafWriter(AssocWriter):
             self._write(assoc["line"] + "\n")
             return
 
+        # print("Writing assoc {}".format(assoc))
         subj = assoc['subject']
 
         db, db_object_id = self._split_prefix(subj)

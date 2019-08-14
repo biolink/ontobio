@@ -67,7 +67,7 @@ setuptools.setup(
         'dev': ['plotly'],
         'test': ['pytest'],
     },
-    scripts=['bin/ogr.py', 'bin/ontobio-assoc.py', 'bin/ontobio-parse-assocs.py', 'bin/ontobio-lexmap.py', 'bin/rdfgen.py', 'bin/validate.py']
+    scripts=['bin/ogr.py', 'bin/ontobio-assoc.py', 'bin/ontobio-parse-assocs.py', 'bin/ontobio-lexmap.py', 'bin/rdfgen.py', 'bin/validate.py', 'bin/materialize.py']
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
