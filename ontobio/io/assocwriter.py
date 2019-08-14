@@ -204,7 +204,6 @@ class GafWriter(AssocWriter):
             qualifier = "|".join(list(filter(None, ["NOT", qualifier])))
 
         goid = assoc['object']['id']
-        print("goid = {}".format(goid))
 
         ev = assoc['evidence']
         evidence = ev['type']
@@ -241,7 +240,5 @@ class GafWriter(AssocWriter):
                 assigned_by,
                 extension_expression,
                 gene_product_isoform]
-                
-        print("vals = {}".format(vals))
 
         self._write_row(vals)
