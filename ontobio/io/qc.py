@@ -113,6 +113,28 @@ class GoRule06(GoRule):
         evidence = annotation[6]
         fails = evidence in ["IEP", "HEP"] and aspect != "P"
         return self._result(not fails)
+        
+class GoRule07(GoRule):
+    
+    def __init__(self):
+        super().__init__("GORULE:0000007", "IPI should not be used with catalytic activity molecular function terms", FailMode.SOFT)
+        self.children_of_catalytic_activity = None
+        
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        catalytic_activity = "GO:0003824"
+        if config.ontology is not None and self.children_of_catalytic_activity is None:
+            # We'll define children_of_catalytic_activity if we have an ontology *and* if we haven't defined it before already
+            self.children_of_catalytic_activity = config.ontology.descendants(catalytic_activity, relations=["subClassOf"], reflexive=True)
+        
+        goterm = annotation[4]
+        evidence = annotation[6]
+        
+        fails = False
+        if self.children_of_catalytic_activity is not None:
+            # We fail if evidence is IPI and the goterm is a subclass of catalytic activity, else we good
+            fails = evidence == "IPI" and goterm in self.children_of_catalytic_activity
+            
+        return self._result(not fails)
 
 
 class GoRule08(GoRule):
@@ -354,6 +376,7 @@ class GoRule50(GoRule):
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
     "GoRule06": GoRule06(),
+    "GoRule07": GoRule07(),
     "GoRule08": GoRule08(),
     "GoRule11": GoRule11(),
     "GoRule13": GoRule13(),
