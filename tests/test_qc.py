@@ -59,6 +59,15 @@ def test_go_rule_07():
     
     test_result = qc.GoRule07().test(a, assocparser.AssocParserConfig(ontology=ontology))
     assert test_result.result_type == qc.ResultType.WARNING
+    
+    a[4] = "GO:1234567"
+    test_result = qc.GoRule07().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    a[4] = "GO:0003824"
+    a[6] = "BLA"
+    test_result = qc.GoRule07().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
 
 def test_go_rule08():
     a = ["blah"] * 16
