@@ -113,27 +113,27 @@ class GoRule06(GoRule):
         evidence = annotation[6]
         fails = evidence in ["IEP", "HEP"] and aspect != "P"
         return self._result(not fails)
-        
+
 class GoRule07(GoRule):
-    
+
     def __init__(self):
         super().__init__("GORULE:0000007", "IPI should not be used with catalytic activity molecular function terms", FailMode.SOFT)
         self.children_of_catalytic_activity = None
-        
+
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         catalytic_activity = "GO:0003824"
         if config.ontology is not None and self.children_of_catalytic_activity is None:
             # We'll define children_of_catalytic_activity if we have an ontology *and* if we haven't defined it before already
-            self.children_of_catalytic_activity = config.ontology.descendants(catalytic_activity, relations=["subClassOf"], reflexive=True)
-        
+            self.children_of_catalytic_activity = set(config.ontology.descendants(catalytic_activity, relations=["subClassOf"], reflexive=True))
+
         goterm = annotation[4]
         evidence = annotation[6]
-        
+
         fails = False
         if self.children_of_catalytic_activity is not None:
             # We fail if evidence is IPI and the goterm is a subclass of catalytic activity, else we good
             fails = evidence == "IPI" and goterm in self.children_of_catalytic_activity
-            
+
         return self._result(not fails)
 
 
@@ -179,10 +179,10 @@ class GoRule11(GoRule):
         return self._result(not fails)
 
 class GoRule13(GoRule):
-    
+
     def __init__(self):
         super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.SOFT)
-        
+
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         if config.annotation_inferences is None:
             # Auto pass if we don't have inferences
@@ -194,8 +194,34 @@ class GoRule13(GoRule):
             if result.problem == gaference.ProblemType.TAXON:
                 taxon_passing = False
                 break
-        
+
         return self._result(taxon_passing)
+
+class GoRule15(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000015", "Dual species taxon check", FailMode.SOFT)
+        self.allowed_dual_species_terms = None
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+
+        # Cache the allowed terms
+        if self.allowed_dual_species_terms is None and config.ontology is not None:
+            interaction_terms = config.ontology.descendants("GO:0044419", relations=["subClassOf"], reflexive=True)
+            other_organism_terms = config.ontology.descendants("GO:0044215", relations=["subClassOf"], reflexive=True)
+            self.allowed_dual_species_terms = set(interaction_terms + other_organism_terms)
+
+        passes = False
+        if self.allowed_dual_species_terms is not None:
+            dual = len(self._list_terms(annotation[12])) == 2
+            goterm = annotation[4]
+
+            # We fail if we are a dual taxon and then the term is not in this list
+            # This is the same as dual -> goterm in list
+            # Implication rewritten is Not P OR Q
+            passes = not dual or (goterm in self.allowed_dual_species_terms)
+
+        return self._result(passes)
 
 
 class GoRule16(GoRule):
@@ -380,6 +406,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule08": GoRule08(),
     "GoRule11": GoRule11(),
     "GoRule13": GoRule13(),
+    "GoRule15": GoRule15(),
     "GoRule16": GoRule16(),
     "GoRule17": GoRule17(),
     "GoRule18": GoRule18(),
