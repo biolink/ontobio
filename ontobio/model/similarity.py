@@ -5,7 +5,7 @@ class Node:
     """
     Basic node
     """
-    def __init__(self, id: Union[str,int], label: Optional[str]=None):
+    def __init__(self, id: str, label: Optional[str]=None):
         self.id = id
         self.label = label
 
@@ -20,7 +20,7 @@ class ICNode(Node):
 
     def __init__(
             self,
-            id: Union[str, int],
+            id: str,
             IC: float,
             label: Optional[str] = None):
         super().__init__(id,label)
@@ -34,11 +34,11 @@ class TypedNode(Node):
 
     def __init__(
             self,
-            id: Union[str, int],
+            id: str,
             type: str,
             label: Optional[str] = None,
             taxon: Optional[Node] = None):
-        super().__init__(id,label)
+        super().__init__(id, label)
         self.type = type
         self.taxon = taxon
 
