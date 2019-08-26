@@ -1,14 +1,14 @@
 solr_assocs:
-  url: "https://solr-dev.monarchinitiative.org/solr/golr"
+  url: "https://solr.monarchinitiative.org/solr/golr"
   timeout: 60
 amigo_solr_assocs:
   url: "http://golr-aux.geneontology.io/solr"
   timeout: 15
 solr_search:
-  url: "https://solr-dev.monarchinitiative.org/solr/search"
+  url: "https://solr.monarchinitiative.org/solr/search"
   timeout: 15
 lay_person_search:
-  url: "https://solr-dev.monarchinitiative.org/solr/hpo-pl"
+  url: "https://solr.monarchinitiative.org/solr/hpo-pl"
   timeout: 15
 amigo_solr_search:
   url: "http://golr-aux.geneontology.io/solr"
@@ -17,10 +17,10 @@ sparql:
   url: "http://sparql.hegroup.org/sparql"
   timeout: 30
 scigraph_ontology:
-  url: "https://scigraph-ontology-dev.monarchinitiative.org/scigraph/"
+  url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
   timeout: 15
 scigraph_data:
-  url: "https://scigraph-data-dev.monarchinitiative.org/scigraph"
+  url: "https://scigraph-data.monarchinitiative.org/scigraph"
   timeout: 15
 owlsim2:
   url: "https://monarchinitiative.org/owlsim/"
