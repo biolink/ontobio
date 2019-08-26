@@ -1586,6 +1586,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             }
         if M.FREQUENCY_LABEL in d:
             assoc[M.FREQUENCY]['label'] = d[M.FREQUENCY_LABEL]
+
         if M.ONSET in d:
             assoc[M.ONSET] = {
                 'id': d[M.ONSET]
