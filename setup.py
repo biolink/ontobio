@@ -56,7 +56,8 @@ setuptools.setup(
         'pandas==0.24.2',
         'click==7.0',
         'yamldown',
-        'dataclasses'
+        'dataclasses',
+        'fastobo~=0.3.1',
     ],
 
     # List additional groups of dependencies here (e.g. development

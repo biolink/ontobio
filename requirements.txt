@@ -19,4 +19,5 @@ pydotplus>=0.0
 plotly==2.0.7
 pyyaml
 yamldown>=0.1.7
+fastobo~=0.3.1
 click
