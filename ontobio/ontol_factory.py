@@ -14,11 +14,7 @@ import os
 import subprocess
 import hashlib
 import fastobo
-from cachier import cachier
-import datetime
-import tempfile
 
-SHELF_LIFE = datetime.timedelta(days=3)
 
 # TODO
 default_ontology_handle = 'cache/ontologies/pato.json'
@@ -77,7 +73,6 @@ class OntologyFactory():
             return default_ontology
         return create_ontology(handle, **args)
 
-@cachier(stale_after=SHELF_LIFE)
 def create_ontology(handle=None, **args):
     ont = None
     logging.info("Determining strategy to load '{}' into memory...".format(handle))

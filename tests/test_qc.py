@@ -11,7 +11,7 @@ def make_annotation(goid, evidence):
     annotation = ["blah", "blah", "blah", "blah", goid, "blah", evidence]
     return annotation
 
-def test_result():
+def test_qc_result():
     assert qc.result(True, qc.FailMode.HARD) == qc.ResultType.PASS
     assert qc.result(False, qc.FailMode.HARD) == qc.ResultType.ERROR
     assert qc.result(False, qc.FailMode.SOFT) == qc.ResultType.WARNING
@@ -50,6 +50,23 @@ def test_go_rule_06():
     a[6] = "IEA"
     a[8] = "P"
     test_result = qc.GoRule06().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+def test_go_rule_07():
+    a = ["blah"] * 16
+    a[4] = "GO:0003824"
+    a[6] = "IPI"
+
+    test_result = qc.GoRule07().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    a[4] = "GO:1234567"
+    test_result = qc.GoRule07().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[4] = "GO:0003824"
+    a[6] = "BLA"
+    test_result = qc.GoRule07().test(a, assocparser.AssocParserConfig(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
 
 def test_go_rule08():
@@ -102,6 +119,24 @@ def test_go_rule11():
     a[7] = "GO_REF:0000001"
 
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+def test_go_rules_15():
+
+    a = ["blah"] * 16
+    a[4] = "GO:0044419"
+    a[12] = "taxon:123|taxon:456"
+
+    test_result = qc.GoRule15().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+
+    a[4] = "GO:123456"
+    test_result = qc.GoRule15().test(a, assocparser.AssocParserConfig(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    a[4] = "GO:0044215"
+    a[12] = "taxon:123"
+    test_result = qc.GoRule15().test(a, assocparser.AssocParserConfig(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
 
 def test_go_rule_16():
@@ -357,8 +392,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config).all_results
-    print(test_results)
-    assert len(test_results.keys()) == 14
+    assert len(test_results.keys()) == 16
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 

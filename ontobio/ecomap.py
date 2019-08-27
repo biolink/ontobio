@@ -1,14 +1,10 @@
 import requests
 from contextlib import closing
-from cachier import cachier
-import datetime
 import logging
 
 from ontobio.util.user_agent import get_user_agent
 
-SHELF_LIFE = datetime.timedelta(days=1)
 
-@cachier(stale_after=SHELF_LIFE)
 def get_ecomap_str(url):
     logging.info("Fetching ecomap from {}".format(url))
     with closing(requests.get(url, stream=False, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})) as resp:
