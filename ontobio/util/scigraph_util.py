@@ -177,7 +177,7 @@ def get_curie_map(url=None):
     """
     curie_map = {}
     if url is None:
-        url = '{}/cypher/curies'.format(get_config().scigraph_data)
+        url = '{}/cypher/curies'.format(get_config().scigraph_data.url)
     response = requests.get(url)
     if response.status_code == 200:
         curie_map = response.json()
