@@ -1559,10 +1559,18 @@ class GolrAssociationQuery(GolrAbstractQuery):
         evidence_types = []
         if M.EVIDENCE in d:
             evidence_label_map = json.loads(d[M.EVIDENCE_CLOSURE_MAP])
-            for evidence_code in d[M.EVIDENCE]:
+            if self._use_amigo_schema(self.object_category):
+                evidence_codes = [d[M.EVIDENCE]]
+            else:
+                evidence_codes = d[M.EVIDENCE]
+
+            for evidence_code in evidence_codes:
+                evidence_label = None
+                if evidence_code in evidence_label_map:
+                    evidence_label = evidence_label_map[evidence_code]
                 evidence_types.append({
                     'id': evidence_code,
-                    'label': evidence_label_map[evidence_code]
+                    'label': evidence_label
                 })
 
         assoc['evidence_types'] = evidence_types

@@ -6,4 +6,4 @@ from diskcache import Cache
 import tempfile
 
 cache = Cache(tempfile.gettempdir())
-cache.clear()  # Clear on start up
+cache.clear()
