@@ -4,15 +4,13 @@ Factory class for generating ontology objects based on a variety of handle types
 See :ref:`inputs` on readthedocs for more details
 """
 
-import networkx as nx
-import logging
 import ontobio.obograph_util as obograph_util
-import ontobio.sparql.sparql_ontology
 from ontobio.ontol import Ontology
 from ontobio.sparql.sparql_ontology import EagerRemoteSparqlOntology
 import os
 import subprocess
 import hashlib
+import logging
 
 
 # TODO

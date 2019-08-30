@@ -3,9 +3,15 @@ Utility functions for working with monarch identifiers using scigraph
 """
 from typing import List, Dict, Iterator, Iterable, Optional
 from json.decoder import JSONDecodeError
-from ontobio.ontol_factory import OntologyFactory
 from ontobio.model.similarity import Node, TypedNode
+from ontobio.neo.scigraph_ontology import RemoteScigraphOntology
+from ontobio.config import get_config
+from diskcache import Cache
+import tempfile
 import requests
+
+cache = Cache(tempfile.gettempdir())
+
 
 def namespace_to_taxon() -> Dict[str, Node]:
     """
@@ -50,7 +56,7 @@ def get_scigraph_nodes(id_list)-> Iterator[Dict]:
     :return: json decoded result from scigraph_ontology._neighbors_graph
     :raises ValueError: If id is not in scigraph
     """
-    scigraph = OntologyFactory().create('scigraph:data')
+    scigraph = RemoteScigraphOntology('scigraph:data')
 
     chunks = [id_list[i:i + 400] for i in range(0, len(list(id_list)), 400)]
     for chunk in chunks:
@@ -163,11 +169,15 @@ def typed_node_from_id(id: str) -> TypedNode:
         taxon = get_taxon(id)
     )
 
-def get_curie_map(url):
+
+@cache.memoize()
+def get_curie_map(url=None):
     """
     Get CURIE prefix map from SciGraph cypher/curies endpoint
     """
     curie_map = {}
+    if url is None:
+        url = '{}/cypher/curies'.format(get_config().scigraph_data.url)
     response = requests.get(url)
     if response.status_code == 200:
         curie_map = response.json()

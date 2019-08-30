@@ -68,12 +68,10 @@ class GolrFields:
     SUBJECT_TAXON_CLOSURE_LABEL='subject_taxon_closure_label'
     OBJECT_TAXON_CLOSURE_LABEL = 'object_taxon_closure_label'
     SUBJECT_GENE_CLOSURE_MAP='subject_gene_closure_map'
-    EVIDENCE_OBJECT='evidence_object'
     SUBJECT_TAXON_LABEL_SEARCHABLE='subject_taxon_label_searchable'
     OBJECT_TAXON_LABEL_SEARCHABLE = 'object_taxon_label_searchable'
     IS_DEFINED_BY='is_defined_by'
     SUBJECT_GENE_CLOSURE_LABEL='subject_gene_closure_label'
-    EVIDENCE_OBJECT_CLOSURE_LABEL='evidence_object_closure_label'
     SUBJECT_TAXON_CLOSURE='subject_taxon_closure'
     OBJECT_TAXON_CLOSURE = 'object_taxon_closure'
     OBJECT_LABEL='object_label'
@@ -87,9 +85,7 @@ class GolrFields:
     SUBJECT_LABEL='subject_label'
     SUBJECT_CLOSURE_LABEL_SEARCHABLE='subject_closure_label_searchable'
     OBJECT_CLOSURE_LABEL_SEARCHABLE='object_closure_label_searchable'
-    EVIDENCE_OBJECT_CLOSURE='evidence_object_closure'
     OBJECT_CLOSURE_LABEL='object_closure_label'
-    EVIDENCE_CLOSURE_MAP='evidence_closure_map'
     SUBJECT_CLOSURE_LABEL='subject_closure_label'
     SUBJECT_GENE='subject_gene'
     SUBJECT_TAXON='subject_taxon'
@@ -103,13 +99,19 @@ class GolrFields:
     OBJECT_TAXON_LABEL = 'object_taxon_label'
     SUBJECT_CLOSURE_MAP='subject_closure_map'
     SUBJECT_ORTHOLOG_CLOSURE='subject_ortholog_closure'
-    EVIDENCE_GRAPH='evidence_graph'
     SUBJECT_CLOSURE='subject_closure'
     OBJECT='object'
     OBJECT_CLOSURE_MAP='object_closure_map'
     SUBJECT_LABEL_SEARCHABLE='subject_label_searchable'
+    EVIDENCE_OBJECT='evidence_object'
     EVIDENCE_OBJECT_CLOSURE_MAP='evidence_object_closure_map'
     EVIDENCE_OBJECT_LABEL='evidence_object_label'
+    EVIDENCE_OBJECT_CLOSURE='evidence_object_closure'
+    EVIDENCE_OBJECT_CLOSURE_LABEL='evidence_object_closure_label'
+    EVIDENCE='evidence'
+    EVIDENCE_LABEL='evidence_label'
+    EVIDENCE_CLOSURE_MAP = 'evidence_closure_map'
+    EVIDENCE_GRAPH = 'evidence_graph'
     _VERSION_='_version_'
     SUBJECT_GENE_CLOSURE_LABEL_SEARCHABLE='subject_gene_closure_label_searchable'
     ASPECT='aspect'
@@ -1116,12 +1118,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['relation_closure'] = \
             HomologyTypes.LeastDivergedOrtholog.value
 
-
         ## pivots
         facet_pivot_fields=self.facet_pivot_fields
         if self.pivot_subject_object:
             facet_pivot_fields = [M.SUBJECT, M.OBJECT]
-
 
         # Map solr field names for fq. The generic Monarch schema is
         # canonical, GO schema is mapped to this using
@@ -1195,6 +1195,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 M.OBJECT_LABEL,
                 M.OBJECT_TAXON,
                 M.OBJECT_TAXON_LABEL,
+                M.EVIDENCE,
+                M.EVIDENCE_CLOSURE_MAP,
                 M.FREQUENCY,
                 M.FREQUENCY_LABEL,
                 M.ONSET,
@@ -1202,7 +1204,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
             ]
             if not self.unselect_evidence:
                 select_fields += [
-                    M.EVIDENCE_OBJECT,
                     M.EVIDENCE_GRAPH
                 ]
 
@@ -1213,7 +1214,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if self.map_identifiers is not None:
             select_fields.append(M.SUBJECT_CLOSURE)
 
-        if self.slim is not None and len(self.slim)>0:
+        if self.slim is not None and len(self.slim) > 0:
             select_fields.append(M.OBJECT_CLOSURE)
 
         if self.field_mapping is not None:
@@ -1258,11 +1259,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if self.start is not None:
             params['start'] = self.start
 
-        json_facet=self.json_facet
+        json_facet = self.json_facet
         if json_facet:
             params['json.facet'] = json.dumps(json_facet)
 
-        facet_field_limits=self.facet_field_limits
+        facet_field_limits = self.facet_field_limits
         if facet_field_limits is not None:
             for (f,flim) in facet_field_limits.items():
                 params["f."+f+".facet.limit"] = flim
@@ -1319,7 +1320,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             'numFound': results.hits
         }
 
-        include_raw=self.include_raw
+        include_raw = self.include_raw
         if include_raw:
             # note: this is not JSON serializable, do not send via REST
             payload['raw'] = results
@@ -1504,7 +1505,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         return d
 
-
     def translate_doc(self, d, field_mapping=None, map_identifiers=None, **kwargs):
         """
         Translate a solr document (i.e. a single result row)
@@ -1556,6 +1556,25 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if len(qualifiers) > 0:
             assoc['qualifiers'] = qualifiers
 
+        evidence_types = []
+        if M.EVIDENCE in d:
+            evidence_label_map = json.loads(d[M.EVIDENCE_CLOSURE_MAP])
+            if self._use_amigo_schema(self.object_category):
+                evidence_codes = [d[M.EVIDENCE]]
+            else:
+                evidence_codes = d[M.EVIDENCE]
+
+            for evidence_code in evidence_codes:
+                evidence_label = None
+                if evidence_code in evidence_label_map:
+                    evidence_label = evidence_label_map[evidence_code]
+                evidence_types.append({
+                    'id': evidence_code,
+                    'label': evidence_label
+                })
+
+        assoc['evidence_types'] = evidence_types
+
         if M.OBJECT_CLOSURE in d:
             assoc['object_closure'] = d.get(M.OBJECT_CLOSURE)
         if M.IS_DEFINED_BY in d:
@@ -1564,9 +1583,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
             else:
                 # hack for GO Golr instance
                 assoc['provided_by'] = [d[M.IS_DEFINED_BY]]
-        if M.EVIDENCE_OBJECT in d:
-            assoc['evidence'] = d[M.EVIDENCE_OBJECT]
-            assoc['types'] = [t for t in d[M.EVIDENCE_OBJECT] if t.startswith('ECO:')]
+
+        # solr does not allow nested objects, so evidence graph is json-encoded
+        if M.EVIDENCE_GRAPH in d:
+            assoc[M.EVIDENCE_GRAPH] = json.loads(d[M.EVIDENCE_GRAPH])
 
         if M.FREQUENCY in d:
             assoc[M.FREQUENCY] = {
@@ -1574,6 +1594,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             }
         if M.FREQUENCY_LABEL in d:
             assoc[M.FREQUENCY]['label'] = d[M.FREQUENCY_LABEL]
+
         if M.ONSET in d:
             assoc[M.ONSET] = {
                 'id': d[M.ONSET]
@@ -1586,9 +1607,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 if f in d:
                     assoc[f] = d[f]
 
-        # solr does not allow nested objects, so evidence graph is json-encoded
-        if M.EVIDENCE_GRAPH in d:
-            assoc[M.EVIDENCE_GRAPH] = json.loads(d[M.EVIDENCE_GRAPH])
         return assoc
 
     def translate_docs(self, ds, **kwargs):
