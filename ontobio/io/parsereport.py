@@ -35,7 +35,7 @@ class Report(object):
         if rule_id not in self.messages:
             self.messages[rule_id] = []
 
-        if len(self.messages[rule_id]) < self._rule_message_cap:
+        if len(self.messages[rule_id]) < self._rule_message_cap and message["level"] != "INFO":
             self.messages[rule_id].append(message)
 
     def json(self, lines, associations, skipped) -> Dict:

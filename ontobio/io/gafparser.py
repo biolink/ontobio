@@ -7,7 +7,6 @@ from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
 from ontobio.io import entityparser
 from ontobio.io import entitywriter
-from ontobio.io import gaference
 
 import click
 
@@ -155,6 +154,10 @@ class GafParser(assocparser.AssocParser):
                                     msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
                 # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
+                
+            if result.result_type == qc.ResultType.PASS:
+                self.report.message(assocparser.Report.INFO, line, Report.RULE_PASS, "",
+                                    msg="Passing Rule", rule=int(rule.id.split(":")[1]))
 
         vals = list(go_rule_results.annotation)
         [db,
