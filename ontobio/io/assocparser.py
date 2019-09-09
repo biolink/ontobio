@@ -177,11 +177,12 @@ class Report():
 
     # Levels
     """
-    3 warning levels
+    4  message levels
     """
     FATAL = 'FATAL'
     ERROR = 'ERROR'
     WARNING = 'WARNING'
+    INFO = "INFO"
 
     # Warnings: TODO link to gorules
     INVALID_ID = "Invalid identifier"
@@ -199,6 +200,7 @@ class Report():
     WRONG_NUMBER_OF_COLUMNS = "Wrong number of columns in this line"
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
     VIOLATES_GO_RULE = "Violates GO Rule"
+    RULE_PASS = "Passes GO Rule"
 
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
@@ -218,7 +220,7 @@ class Report():
     def warning(self, line, type, obj, msg="", taxon="", rule=None):
         self.message(self.WARNING, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def message(self, level, line, type, obj, msg="", taxon="", rule=None):
+    def message(self, level, line, type, obj, msg="", taxon="", rule=None, dont_record=["INFO"]):
         message = {
             'level': level,
             'line': line,
@@ -228,7 +230,10 @@ class Report():
             'taxon': taxon,
             'rule': rule
         }
-        self.messages.append(message)
+        if not level in dont_record:
+            # Only record a message if we want that 
+            self.messages.append(message)
+            
         self.reporter.message(message, rule)
 
 
