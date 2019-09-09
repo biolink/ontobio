@@ -180,7 +180,8 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
     For each downloaded file, keep track of the path of the file. If the file is zipped, it will unzip it here.
     This function returns a list of tuples of the dataset dictionary mapped to the downloaded source path.
     """
-    gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions ]
+    # Grab all datasets in a group, excluding non-gaf, datasets that are explicitely excluded from an option, and excluding datasets with the `exclude key` set to true
+    gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions and not data.get("exclude", False)]
     # List of dataset metadata to gaf download url
 
     click.echo("Found {}".format(", ".join( [ kv[0]["dataset"] for kv in gaf_urls ] )))
