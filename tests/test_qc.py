@@ -358,6 +358,30 @@ def test_gorule42():
     a[3] = ""  # No NOT qualifier, so wrong
     test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
+    
+def test_gorule46():
+    config = assocparser.AssocParserConfig(ontology=ontology)
+    
+    a = ["blah"] * 16
+    a[1] = "SPAC25B8.17"
+    a[4] = "GO:0051260" # Self-binding, yes
+    a[7] = "SPAC25B8.17"
+    
+    test_result = qc.GoRule46().test(a, config)
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    a[7] = "BLAH123"
+    test_result = qc.GoRule46().test(a, config)
+    assert test_result.result_type == qc.ResultType.WARNING
+    
+    a[7] = "SPAC25B8.17|BLAH123"
+    test_result = qc.GoRule46().test(a, config)
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    a[4] = "GO:0000123"
+    # Not in a self-binding mode
+    test_result = qc.GoRule46().test(a, config)
+    assert test_result.result_type == qc.ResultType.PASS
 
 def test_gorule50():
     a = ["blah"] * 16
@@ -392,7 +416,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config).all_results
-    assert len(test_results.keys()) == 16
+    assert len(test_results.keys()) == 18
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
