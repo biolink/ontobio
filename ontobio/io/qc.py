@@ -381,6 +381,33 @@ class GoRule42(GoRule):
             result = self._result("NOT" in qualifier)
 
         return result
+        
+class GoRule46(GoRule):
+    
+    def __init__(self):
+        super().__init__("GORULE:0000046", "The ‘with’ field (GAF column 8) must be the same as the gene product (GAF colummn 2) when annotating to ‘self-binding’ terms", FailMode.SOFT)
+        self.self_binding_roots = ["GO:0042803", "GO:0051260", "GO:0051289", "GO:0070207", "GO:0043621", "GO:0032840"]
+        self.self_binding_terms = None
+
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        if config.ontology is not None and self.self_binding_terms is None:
+            all_terms = []
+            # Initialize the self_binding terms if we have an ontology and we haven't already initialized the terms
+            for binding_root in self.self_binding_roots:
+                root_descendants = config.ontology.descendants(binding_root, relations=["subClassOf"], reflexive=True)
+                all_terms += root_descendants
+            
+            self.self_binding_terms = set(all_terms)
+        
+        withfroms = self._list_terms(annotation[7])
+        goterm = annotation[4]
+        objectid = annotation[1]
+        
+        if goterm in self.self_binding_terms:
+            # Then we're in the self-binding case, and check if object ID is in withfrom
+            return self._result(objectid in withfroms)
+            
+        return self._result(True)
 
 class GoRule50(GoRule):
 
@@ -415,7 +442,9 @@ GoRules = enum.Enum("GoRules", {
     "GoRule29": GoRule29(),
     "GoRule30": GoRule30(),
     "GoRule37": GoRule37(),
-    "GORule42": GoRule42()
+    "GoRule42": GoRule42(),
+    "GoRule46": GoRule46(),
+    "GoRule50": GoRule50()
 })
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
