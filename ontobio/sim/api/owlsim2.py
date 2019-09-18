@@ -7,26 +7,27 @@ from ontobio.model.similarity import IcStatistic, SimResult, SimMatch,\
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.util.scigraph_util import get_nodes_from_ids, get_id_type_map, get_taxon
 
-from typing import List, Optional, Dict, Tuple, Union
+from typing import List, Optional, Dict, Tuple, Union, FrozenSet
 from json.decoder import JSONDecodeError
+from diskcache import Cache
+import tempfile
 import logging
-from cachier import cachier
-import datetime
 import requests
 
 """
-Functions that directly access the owlsim rest API are kept
-outside the class to utilize cachier
+Functions that directly access the owlsim rest API were kept
+outside the class to utilize caching
+TODO: test if this is still the case with diskcache
 """
 
 TIMEOUT = get_config().owlsim2.timeout
-SHELF_LIFE = datetime.timedelta(days=30)
+cache = Cache(tempfile.gettempdir())
 
 
-@cachier(SHELF_LIFE)
+@cache.memoize()
 def search_by_attribute_set(
         url: str,
-        profile: Tuple[str],
+        profile: FrozenSet[str],
         limit: Optional[int] = 100,
         namespace_filter: Optional[str]=None) -> Dict:
     """
@@ -49,11 +50,11 @@ def search_by_attribute_set(
     return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
 
 
-@cachier(SHELF_LIFE)
+@cache.memoize()
 def compare_attribute_sets(
         url: str,
-        profile_a: Tuple[str],
-        profile_b: Tuple[str]) -> Dict:
+        profile_a: FrozenSet[str],
+        profile_b: FrozenSet[str]) -> Dict:
     """
     Given two phenotype profiles, returns their similarity
     :returns Dict with the structure: {
@@ -70,14 +71,16 @@ def compare_attribute_sets(
         'b': profile_b,
     }
 
+    print(requests.get(owlsim_url, params=params, timeout=TIMEOUT).json())
+
     return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
 
 
-@cachier(SHELF_LIFE)
+@cache.memoize()
 def get_attribute_information_profile(
         url: str,
-        profile: Optional[Tuple[str]]=None,
-        categories: Optional[Tuple[str]]=None) -> Dict:
+        profile: Optional[FrozenSet[str]]=None,
+        categories: Optional[FrozenSet[str]]=None) -> Dict:
     """
     Get the information content for a list of phenotypes
     and the annotation sufficiency simple and
@@ -100,7 +103,7 @@ def get_attribute_information_profile(
     return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
 
 
-@cachier(SHELF_LIFE)
+@cache.memoize()
 def get_owlsim_stats(url) -> Tuple[IcStatistic, Dict[str, IcStatistic]]:
     """
     :return Tuple[IcStatistic, Dict[str, IcStatistic]]
@@ -172,21 +175,21 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
     for owlsim2 which requires namespace for filtering
     """
     TAX_TO_NS = {
-        10090: {
+        '10090': {
             'gene': 'MGI'
         },
-        9606: {
+        '9606': {
             'disease': 'MONDO',
             'case': 'MONARCH',
             'gene': 'HGNC'
         },
-        7227: {
+        '7227': {
             'gene': 'FlyBase'
         },
-        6239: {
+        '6239': {
             'gene': 'WormBase'
         },
-        7955: {
+        '7955': {
             'gene': 'ZFIN'
         }
     }
@@ -251,7 +254,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             id_list: List,
             negated_classes: List,
             limit: Optional[int] = 100,
-            taxon_filter: Optional[int] = None,
+            taxon_filter: Optional[str] = None,
             category_filter: Optional[str] = None,
             method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM) -> SimResult:
         """
@@ -262,7 +265,8 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             logging.warning("Owlsim2 does not support negation, ignoring neg classes")
 
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
-        owlsim_results = search_by_attribute_set(self.url, tuple(id_list), limit, namespace_filter)
+        owlsim_results = search_by_attribute_set(
+            self.url, frozenset(id_list), limit, namespace_filter)
         return self._simsearch_to_simresult(owlsim_results, method)
 
     def compare(self,
@@ -273,7 +277,8 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         Owlsim2 compare, calls compare_attribute_sets, and converts to SimResult object
         :return: SimResult object
         """
-        owlsim_results = compare_attribute_sets(self.url, tuple(reference_classes), tuple(query_classes))
+        owlsim_results = compare_attribute_sets(
+            self.url, frozenset(reference_classes), frozenset(query_classes))
         return self._simcompare_to_simresult(owlsim_results, method)
 
     @staticmethod
@@ -293,7 +298,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         """
         Given a list of individuals, return their information content
         """
-        sim_response = get_attribute_information_profile(self.url, tuple(profile))
+        sim_response = get_attribute_information_profile(self.url, frozenset(profile))
 
         profile_ic = {}
         try:
@@ -440,7 +445,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
     @staticmethod
     def _get_namespace_filter(
-            taxon_filter: Optional[int]=None,
+            taxon_filter: Optional[str]=None,
             category_filter: Optional[str]=None) -> Union[None, str]:
         """
         Given either a taxon and/or category, return the correct namespace
@@ -448,11 +453,11 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         """
         namespace_filter = None
         taxon_category_default = {
-            10090: 'gene',
-            9606:  'disease',
-            7227:  'gene',
-            6239:  'gene',
-            7955:  'gene'
+            '10090': 'gene',
+            '9606':  'disease',
+            '7227':  'gene',
+            '6239':  'gene',
+            '7955':  'gene'
         }
         if category_filter is not None and taxon_filter is None:
             raise ValueError("Must provide taxon filter along with category")
@@ -462,7 +467,6 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             return namespace_filter
 
         return OwlSim2Api.TAX_TO_NS[taxon_filter][category_filter.lower()]
-
 
     def __str__(self):
         return "owlsim2 api: {}".format(self.url)

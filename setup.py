@@ -50,14 +50,14 @@ setuptools.setup(
         'pysolr',
         'requests',
         'sparqlwrapper',
-        'cachier',
         'prefixcommons',
         'marshmallow==3.0.0b3',
         'scipy',
-        'pandas',
-        'click',
+        'pandas==0.24.2',
+        'click==7.0',
         'yamldown',
-        'dataclasses'
+        'dataclasses',
+        'diskcache>=4.0.0'
     ],
 
     # List additional groups of dependencies here (e.g. development
@@ -68,7 +68,16 @@ setuptools.setup(
         'dev': ['plotly'],
         'test': ['pytest'],
     },
-    scripts=['bin/ogr.py', 'bin/ontobio-assoc.py', 'bin/ontobio-parse-assocs.py', 'bin/ontobio-lexmap.py', 'bin/rdfgen.py', 'bin/validate.py']
+    scripts=[
+        'bin/ogr.py',
+        'bin/ontobio-assoc.py',
+        'bin/ontobio-parse-assocs.py',
+        'bin/ontobio-lexmap.py',
+        'bin/rdfgen.py',
+        'bin/validate.py',
+        'bin/materialize.py',
+        'bin/clear-cache.py'
+    ]
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.

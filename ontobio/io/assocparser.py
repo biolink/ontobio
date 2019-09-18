@@ -141,7 +141,8 @@ class AssocParserConfig():
                  rule_metadata=None,
                  gorefs=None,
                  dbxrefs=None,
-                 suppress_rule_reporting_tags=[]):
+                 suppress_rule_reporting_tags=[],
+                 annotation_inferences=None):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -159,7 +160,7 @@ class AssocParserConfig():
         self.rule_metadata = rule_metadata
         self.gorefs = gorefs
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
-
+        self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
@@ -177,9 +178,13 @@ class Report():
     """
 
     # Levels
+    """
+    4  message levels
+    """
     FATAL = 'FATAL'
     ERROR = 'ERROR'
     WARNING = 'WARNING'
+    INFO = "INFO"
 
     # Warnings: TODO link to gorules
     INVALID_ID = "Invalid identifier"
@@ -198,11 +203,8 @@ class Report():
     WRONG_NUMBER_OF_COLUMNS = "Wrong number of columns in this line"
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
     VIOLATES_GO_RULE = "Violates GO Rule"
+    RULE_PASS = "Passes GO Rule"
 
-    """
-    3 warning levels
-    """
-    LEVELS = [FATAL, ERROR, WARNING]
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
         self.messages = []
@@ -221,7 +223,7 @@ class Report():
     def warning(self, line, type, obj, msg="", taxon="", rule=None):
         self.message(self.WARNING, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def message(self, level, line, type, obj, msg="", taxon="", rule=None):
+    def message(self, level, line, type, obj, msg="", taxon="", rule=None, dont_record=["INFO"]):
         message = {
             'level': level,
             'line': line,
@@ -231,7 +233,10 @@ class Report():
             'taxon': taxon,
             'rule': rule
         }
-        self.messages.append(message)
+        if not level in dont_record:
+            # Only record a message if we want that 
+            self.messages.append(message)
+            
         self.reporter.message(message, rule)
 
 
@@ -544,7 +549,7 @@ class AssocParser(object):
             return id
 
         if not ont.has_node(id):
-            self.report.warning(line.line, Report.UNKNOWN_ID, id, "GORULE:0000027",
+            self.report.warning(line.line, Report.UNKNOWN_ID, id, "Class ID {} is not present in the ontology".format(id),
                 taxon=line.taxon, rule=27)
             return id
 
@@ -676,20 +681,15 @@ class AssocParser(object):
         okay_ref = []
         for ref in references:
             prefix = ref.split(":", maxsplit=1)[0]
-            if prefix in allowed_prefixes:
-                # then we found a good ref, so we'll keep it
-                okay_ref.append(ref)
-            else:
+            if prefix not in allowed_prefixes:
+                # then we found a bad ref, so we'll record it
                 found_bad_refs.append(ref)
 
         if found_bad_refs:
             self.report.warning(line.line, Report.INVALID_IDSPACE, ", ".join(found_bad_refs), "References should only be from ID prefixes PMID, PMD, doi, or GO_REF", rule=33)
 
-        # If we only have bad references, just pass it through
-        if len(okay_ref) == 0:
-            return references
-        else:
-            return okay_ref
+        # We are only reporting, so just pass it through
+        return references
 
     def _normalize_id(self, id):
         toks = id.split(":")

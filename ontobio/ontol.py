@@ -357,7 +357,7 @@ class Ontology():
         """
         If stated, either CLASS, PROPERTY or INDIVIDUAL
         """
-        return self.node(id)['type']
+        return self.node(id).get('type', None)
 
     def relations_used(self):
         """
@@ -399,7 +399,16 @@ class Ontology():
 
     def parents(self, node, relations=None):
         """
-        Return all direct parents of specified node.
+        Return all direct 'parents' of specified node.
+        
+        Note that in the context of ontobio, 'parent' means any node that
+        is traversed in a single hop along an edge from a subject to object.
+        For example, if the ontology has an edge "finger part-of some hand", then
+        "hand" is the parent of finger.
+        This can sometimes be counter-intutitive, for example, if the ontology
+        contains has-part axioms. If the ontology has an edge
+        "X receptor activity has-part some X binding", then "X binding" is the 'parent'
+        of "X receptor activity" over a has-part edge.
 
         Wraps networkx by default.
 
@@ -473,20 +482,16 @@ class Ontology():
             ancestor node IDs
 
         """
-        if reflexive:
-            ancs = self.ancestors(node, relations, reflexive=False)
-            ancs.append(node)
-            return ancs
-
-        g = None
-        if relations is None:
-            g = self.get_graph()
-        else:
-            g = self.get_filtered_graph(relations)
-        if node in g:
-            return list(nx.ancestors(g, node))
-        else:
-            return []
+        seen = set()
+        nextnodes = [node]
+        while len(nextnodes) > 0:
+            nn = nextnodes.pop()
+            if not nn in seen:
+                seen.add(nn)
+                nextnodes += self.parents(nn, relations=relations)
+        if not reflexive:
+            seen -= {node}
+        return list(seen)
 
     def descendants(self, node, relations=None, reflexive=False):
         """
@@ -511,19 +516,16 @@ class Ontology():
         list[str]
             descendant node IDs
         """
-        if reflexive:
-            decs = self.descendants(node, relations, reflexive=False)
-            decs.append(node)
-            return decs
-        g = None
-        if relations is None:
-            g = self.get_graph()
-        else:
-            g = self.get_filtered_graph(relations)
-        if node in g:
-            return list(nx.descendants(g, node))
-        else:
-            return []
+        seen = set()
+        nextnodes = [node]
+        while len(nextnodes) > 0:
+            nn = nextnodes.pop()
+            if not nn in seen:
+                seen.add(nn)
+                nextnodes += self.children(nn, relations=relations)
+        if not reflexive:
+            seen -= {node}
+        return list(seen)
 
 
     def equiv_graph(self):
@@ -918,7 +920,7 @@ class Ontology():
             else:
                 return None
 
-    def xrefs(self, nid, bidirectional=False):
+    def xrefs(self, nid, bidirectional=False, prefix=None):
         """
         Fetches xrefs for a node
 
@@ -933,16 +935,19 @@ class Ontology():
         ------
         list[str]
         """
+        xrefs = []
         if self.xref_graph is not None:
             xg = self.xref_graph
             if nid not in xg:
-                return []
-            if bidirectional:
-                return list(xg.neighbors(nid))
+                xrefs = []
             else:
-                return [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
-
-        return []
+                if bidirectional:
+                    xrefs = list(xg.neighbors(nid))
+                else:
+                    xrefs = [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
+                if prefix is not None:
+                    xrefs = [x for x in xrefs if self.prefix(x) == prefix]
+        return xrefs
 
 
     def resolve_names(self, names, synonyms=False, **args):
@@ -1176,7 +1181,7 @@ class Synonym(AbstractPropertyValue):
 class PropertyChainAxiom(object):
     """
     Represents a property chain axiom used to infer the existence of a property from a chain of properties.
-    
+
     See the OWL primer for a description of property chains: https://www.w3.org/TR/owl2-primer/#Property_Chains
     """
 

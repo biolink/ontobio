@@ -4,19 +4,14 @@ Factory class for generating ontology objects based on a variety of handle types
 See :ref:`inputs` on readthedocs for more details
 """
 
-import networkx as nx
-import logging
 import ontobio.obograph_util as obograph_util
-import ontobio.sparql.sparql_ontology
 from ontobio.ontol import Ontology
 from ontobio.sparql.sparql_ontology import EagerRemoteSparqlOntology
 import os
 import subprocess
 import hashlib
-from cachier import cachier
-import datetime
+import logging
 
-SHELF_LIFE = datetime.timedelta(days=3)
 
 # TODO
 default_ontology_handle = 'cache/ontologies/pato.json'
@@ -70,12 +65,11 @@ class OntologyFactory():
             global default_ontology
             if default_ontology is None:
                 logging.info("Creating new instance of default ontology")
-                default_ontology = create_ontology(default_ontology_handle)
+                default_ontology = create_ontology(default_ontology_handle, **args)
             logging.info("Using default_ontology")
             return default_ontology
         return create_ontology(handle, **args)
 
-@cachier(stale_after=SHELF_LIFE)
 def create_ontology(handle=None, **args):
     ont = None
     logging.info("Determining strategy to load '{}' into memory...".format(handle))

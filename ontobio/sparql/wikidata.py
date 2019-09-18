@@ -6,11 +6,8 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from prefixcommons.curie_util import contract_uri, expand_uri
 from functools import lru_cache
 import networkx
-from cachier import cachier
-import datetime
 import logging
 
-SHELF_LIFE = datetime.timedelta(days=7)
 
 # CACHE STRATEGY:
 # by default, the cache is NOT persistent. Only single threaded clients should
@@ -18,7 +15,6 @@ SHELF_LIFE = datetime.timedelta(days=7)
 # Note we are layering the in-memory cache over the persistent cache
 
 cache = lru_cache(maxsize=None)
-#cache = cachier(stale_after=SHELF_LIFE)
 
 LIMIT = 200000
 
@@ -100,7 +96,6 @@ def fetchall_xrefs(prefix):
         m[x].append(c)
     return m
 
-@cachier(stale_after=SHELF_LIFE)
 def fetchall_triples_xrefs(prefix):
     """
     fetch all xrefs for a prefix, e.g. CHEBI

@@ -22,6 +22,7 @@ from ontobio.io.assocwriter import GpadWriter
 from ontobio.io import assocparser
 from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
+from ontobio.io import gaference
 from ontobio.rdfgen import assoc_rdfgen
 
 from typing import Dict, Set
@@ -102,10 +103,34 @@ def source_path(dataset_metadata, target_dir, group):
     path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
     return path
 
-def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None):
+def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None, replace_existing_files=True):
+    """
+    This will download a dataset source given the group name,
+    the metadata stanza for the dataset, and the target directory that all downloads
+    occur in.
+
+    The path will be built from these elements and then the URL will be found
+    from which to download the file.
+
+    `base_download_url` if set will change the URL to a local relative path, rather
+    than a true download. This means the dataset_metadata could have "relative/path/to/gaf"
+    and the absolute on disk path will be constructed by appending the found metadata
+    path to `base_download_url`.
+
+    `replace_existing_files` by default is True. This will overwrite any existing file, always
+    updating. With `replace_existing_files` False the path will be checked if a file already
+    exists there and if so the actual download will not proceed. The found file
+    will be assumed to be the correct file.
+    """
     # Local target download path setup - path and then directories
     file_name = source_url.split("/")[-1]
     path = source_path(dataset_metadata, target_dir, group)
+
+    # Just return the path if we find that it exists already
+    if os.path.exists(path) and not replace_existing_files:
+        click.echo("{} already exists, no need to download - skipping".format(path))
+        return path
+
     os.makedirs(os.path.split(path)[0], exist_ok=True)
 
     click.echo("Downloading source to {}".format(path))
@@ -149,13 +174,14 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
 
     return path
 
-def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None):
+def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None, replace_existing_files=True):
     """
     This looks at a group metadata dictionary and downloads each GAF source that is not in the exclusions list.
     For each downloaded file, keep track of the path of the file. If the file is zipped, it will unzip it here.
     This function returns a list of tuples of the dataset dictionary mapped to the downloaded source path.
     """
-    gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions ]
+    # Grab all datasets in a group, excluding non-gaf, datasets that are explicitely excluded from an option, and excluding datasets with the `exclude key` set to true
+    gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions and not data.get("exclude", False)]
     # List of dataset metadata to gaf download url
 
     click.echo("Found {}".format(", ".join( [ kv[0]["dataset"] for kv in gaf_urls ] )))
@@ -163,7 +189,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
     for dataset_metadata, gaf_url in gaf_urls:
         dataset = dataset_metadata["dataset"]
         # Local target download path setup - path and then directories
-        path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url, base_download_url=base_download_url)
+        path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url, base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
         if dataset_metadata["compression"] == "gzip":
             # Unzip any downloaded file that has gzip, strip of the gzip extension
@@ -179,13 +205,13 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
 
     return downloaded_paths
 
-def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None):
+def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None, replace_existing_files=True):
     mixin_dataset = find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
     if mixin_dataset is None:
         return None
 
     click.echo("Merging mixin dataset {}".format(mixin_dataset["source"]))
-    path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url)
+    path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
     unzipped = os.path.splitext(path)[0] # Strip off the .gz extension, leaving just the unzipped filename
     unzip(path, unzipped)
@@ -253,7 +279,7 @@ Produce validated gaf using the gaf parser/
 """
 @gzips
 def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown",
-                rule_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[]):
+                rule_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -265,7 +291,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         rule_metadata=rule_metadata,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
-        suppress_rule_reporting_tags=suppress_rule_reporting_tags
+        suppress_rule_reporting_tags=suppress_rule_reporting_tags,
+        annotation_inferences=annotation_inferences
     )
     split_source = os.path.split(source_gaf)[0]
     validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
@@ -502,12 +529,12 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     return merged_path
 
-def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None):
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, replace_existing_files=True):
 
     end_gaf = valid_gaf
     mixin_gaf_paths = []
     for mixin_metadata in mixin_metadata_list:
-        mixin_src = check_and_download_mixin_source(mixin_metadata, group_id, dataset, target, base_download_url=base_download_url)
+        mixin_src = check_and_download_mixin_source(mixin_metadata, group_id, dataset, target, base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
         if mixin_src is not None:
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
@@ -539,8 +566,10 @@ def cli():
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 @click.option("--exclude", "-x", multiple=True)
 @click.option("--base-download-url", "-b", default=None)
-@click.option("--suppress-rule-reporting-tag", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
-def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag):
+@click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
+@click.option("--skip-existing-files", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
+@click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
+def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
 
     products = {
         "gaf": True,
@@ -558,9 +587,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
 
-    downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url)
-    # dict of Dataset Metadata --> downloaded source paths (unzipped)
-    # source_gafs = {zip_path: os.path.join(os.path.split(zip_path)[0], "{}-src.gaf".format(dataset["dataset"])) for dataset, zip_path in source_gaf_zips.items()}
+    downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
 
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = {rule_id(rule_path): gorule_metadata(metadata, rule_id(rule_path))
@@ -573,6 +600,10 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     db_entities = database_entities(absolute_metadata)
     group_ids = groups(absolute_metadata)
 
+    gaferences = None
+    if gaferencer_file:
+        gaferences = gaference.load_gaferencer_inferences_from_file(gaferencer_file)
+            
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
         # Set paint to True when the group is "paint".
@@ -583,15 +614,14 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
             rule_metadata=rule_metadata,
             db_entities=db_entities,
             group_idspace=group_ids,
-            suppress_rule_reporting_tags=suppress_rule_reporting_tag)[0]
+            suppress_rule_reporting_tags=suppress_rule_reporting_tag,
+            annotation_inferences=gaferences
+            )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
-        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url)
+        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
-
-
-
 
 
 

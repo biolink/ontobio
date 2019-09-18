@@ -8,6 +8,9 @@ import os
 import json
 
 
+MONDO_0008199 = ['HP:0000751', 'HP:0000738', 'HP:0000726']
+
+
 def mock_resolve_nodes(id_list):
     """
     Mock phenosim_engine _resolve_nodes_to_phenotypes
@@ -16,7 +19,7 @@ def mock_resolve_nodes(id_list):
     if id_list == ['HP:0002367', 'HP:0031466', 'HP:0007123']:
         ret_val = id_list
     elif id_list == ['MONDO:0008199']:
-        ret_val = ['HP:0000751', 'HP:0000738', 'HP:0000726']
+        ret_val = MONDO_0008199
     return ret_val
 
 
@@ -31,6 +34,21 @@ def mock_get_scigraph_nodes(id_list):
     for node in scigraph_res['nodes']:
         if node['id'] in ids:
             yield node
+
+
+def mock_compare(url, set_a, set_b):
+    # Load fake output from owlsim2 and mock compare
+    mock_compare_fh = os.path.join(os.path.dirname(__file__),
+                                  'resources/owlsim2/mock-owlsim-compare.json')
+    mock_compare = json.load(open(mock_compare_fh))
+    individuals_a = frozenset(MONDO_0008199)
+    individuals_b= frozenset(['HP:0002367', 'HP:0031466', 'HP:0007123'])
+    if set_a == individuals_a and set_b == individuals_b:
+        return mock_compare
+    else:
+        return False
+
+
 
 class TestPhenoSimEngine():
     """
@@ -94,12 +112,8 @@ class TestPhenoSimEngine():
         assert expected_sim_results == results
 
     def test_sim_compare(self):
-        # Load fake output from owlsim2 and mock compare
-        mock_search_fh = os.path.join(os.path.dirname(__file__),
-                                      'resources/owlsim2/mock-owlsim-compare.json')
-        mock_compare = json.load(open(mock_search_fh))
         patch('ontobio.sim.api.owlsim2.compare_attribute_sets',
-              return_value=mock_compare).start()
+              side_effect=mock_compare).start()
 
         expected_fh = os.path.join(os.path.dirname(__file__),
                                    'resources/owlsim2/mock-sim-compare.json')
@@ -108,7 +122,8 @@ class TestPhenoSimEngine():
 
         individuals_a = ['MONDO:0008199']
         individuals_b = [['HP:0002367', 'HP:0031466', 'HP:0007123']]
-        compare_results = self.pheno_sim.compare(individuals_a, individuals_b)
+        compare_results = self.pheno_sim.compare(
+            individuals_a, individuals_b, is_feature_set=False)
 
         results = json.loads(
             json.dumps(compare_results,

@@ -1,5 +1,5 @@
 from ontobio.sim.api.interfaces import SimApi
-from typing import Iterable, Dict, Union, Optional, List
+from typing import Iterable, Collection, Union, Optional, List
 from ontobio.model.similarity import SimResult, TypedNode
 from ontobio.vocabulary.similarity import SimAlgorithm
 from ontobio.sim.api.interfaces import FilteredSearchable
@@ -20,16 +20,24 @@ class PhenoSimEngine():
 
     def search(
             self,
-            id_list: List[str],
-            negated_ids: Optional[List] = None,
+            id_list: Iterable[str],
+            negated_ids: Optional[Collection] = None,
             limit: Optional[int] = 100,
-            taxon_filter: Optional[int]= None,
+            taxon_filter: Optional[str]= None,
             category_filter: Optional[str]= None,
-            method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM
+            method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM,
+            is_feature_set: bool = True
     ) -> SimResult:
         """
-        Execute a search using sim_api, resolving non-phenotype ids to
-        phenotype lists then adding them to the profile (eg genes, diseases)
+        Execute a search using sim_api,
+
+        :param taxon_filter: only
+        :param category_filter:
+        :param method: similarity metric
+        :param is_feature_set: if True, treats all identifiers as phenotypic
+                               features, else resolves ids to a list of phenotypes
+                               (eg set to false if some identifiers are
+                                diseases, genes, etc)
 
         :raises NotImplementedError:
             - If sim method or filters are not supported
@@ -41,9 +49,12 @@ class PhenoSimEngine():
             raise NotImplementedError("Sim method not implemented "
                                       "in {}".format(str(self.sim_api)))
 
-        # Determine if entity is a phenotype or individual containing
-        # a pheno profile (gene, disease, case, etc)
-        pheno_list = PhenoSimEngine._resolve_nodes_to_phenotypes(id_list)
+        if not is_feature_set:
+            # Determine if entity is a phenotype or individual containing
+            # a pheno profile (gene, disease, case, etc)
+            pheno_list = PhenoSimEngine._resolve_nodes_to_phenotypes(id_list)
+        else:
+            pheno_list = id_list
 
         if taxon_filter is not None or category_filter is not None:
             if not isinstance(self.sim_api, FilteredSearchable):
@@ -58,16 +69,21 @@ class PhenoSimEngine():
         return search_result
 
     def compare(self,
-                reference_ids: List,
-                query_profiles: List[List],
-                method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM) -> SimResult:
+                reference_ids: Collection,
+                query_profiles: Collection[Collection],
+                method: Optional[SimAlgorithm] = SimAlgorithm.PHENODIGM,
+                is_feature_set: bool = True) -> SimResult:
         """
         Execute one or more comparisons using sim_api
         :param reference_ids: a list of phenotypes or ids that comprise
                               one or more phenotypes
         :param query_profiles: a list of lists of phenotypes or ids
                                    that comprise one or more phenotypes
-        :param method: comparison method
+        :param method: similarity metric
+        :param is_feature_set: if True, treats all identifiers as phenotypic
+                               features, else resolves ids to a list of phenotypes
+                               (eg set to false if some identifiers are
+                                diseases, genes, etc)
         :return: SimResult object
         :raises NotImplementedError: If sim method or filters are not supported
         """
@@ -78,9 +94,16 @@ class PhenoSimEngine():
         is_first_result = True
         comparisons = None
 
-        reference_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(reference_ids)
+        if is_feature_set:
+            reference_phenos = reference_ids
+        else:
+            reference_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(reference_ids)
         for query_profile in query_profiles:
-            query_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(query_profile)
+            if is_feature_set:
+                query_phenos = query_profile
+            else:
+                query_phenos = PhenoSimEngine._resolve_nodes_to_phenotypes(query_profile)
+
             sim_result = self.sim_api.compare(reference_phenos, query_phenos, method)
             if len(query_profile) > 1:
                 id = " + ".join(query_profile)
@@ -88,10 +111,11 @@ class PhenoSimEngine():
                 sim_result.matches[0].label = id
             else:
                 node = typed_node_from_id(query_profile[0])
-                sim_result.matches[0].id = node.id
-                sim_result.matches[0].label = node.label
-                sim_result.matches[0].type = node.type
-                sim_result.matches[0].taxon = node.taxon
+                if sim_result.matches:
+                    sim_result.matches[0].id = node.id
+                    sim_result.matches[0].label = node.label
+                    sim_result.matches[0].type = node.type
+                    sim_result.matches[0].taxon = node.taxon
 
             if is_first_result:
                 comparisons = sim_result
@@ -113,7 +137,7 @@ class PhenoSimEngine():
         return comparisons
 
     @staticmethod
-    def _resolve_nodes_to_phenotypes(id_list: List[str]) -> List[str]:
+    def _resolve_nodes_to_phenotypes(id_list: Iterable[str]) -> Iterable[str]:
         """
         Given a list of ids of unknown type, determine which ids
         are phenotypes, if the id is not a phenotype, check to
@@ -136,7 +160,7 @@ class PhenoSimEngine():
         return pheno_list
 
     @staticmethod
-    def _get_node_info(id_list: List[str]) -> List[str]:
+    def _get_node_info(id_list: Iterable[str]) -> Iterable[str]:
         """
         Given a list of ids of unknown type, determine which ids
         are phenotypes, if the id is not a phenotype, check to

@@ -15,15 +15,12 @@ from prefixcommons.curie_util import contract_uri, expand_uri
 from ontobio.vocabulary.relations import map_legacy_pred
 from functools import lru_cache
 import networkx
-from cachier import cachier
-import datetime
 import logging
 
 from enum import Enum
 
 SEPARATOR = "@|@"
 
-SHELF_LIFE = datetime.timedelta(days=7)
 
 # CACHE STRATEGY:
 # by default, the cache is NOT persistent. Only single threaded clients should
@@ -31,7 +28,6 @@ SHELF_LIFE = datetime.timedelta(days=7)
 # Note we are layering the in-memory cache over the persistent cache
 
 cache = lru_cache(maxsize=None)
-#cache = cachier(stale_after=SHELF_LIFE)
 
 
 SUBCLASS_OF = 'subClassOf'
@@ -87,7 +83,6 @@ def get_xref_graph(ont):
     return g
 
 
-@cachier(stale_after=SHELF_LIFE)
 def get_edges(ont):
     """
     Fetches all basic edges from a remote ontology
@@ -116,7 +111,6 @@ def search(ont, searchterm):
     bindings = run_sparql(query)
     return [(r['c']['value'],r['l']['value']) for r in bindings]
 
-@cachier(stale_after=SHELF_LIFE)
 def get_terms_in_subset(ont, subset):
     """
     Find all nodes in a subset.
@@ -227,7 +221,6 @@ def fetchall_svf(ont):
     bindings = run_sparql(query)
     return [(r['c']['value'], r['p']['value'], r['d']['value']) for r in bindings]
 
-@cachier(stale_after=SHELF_LIFE)
 def fetchall_labels(ont):
     """
     fetch all rdfs:label assertions for an ontology
@@ -244,7 +237,6 @@ def fetchall_labels(ont):
     rows = [(r['c']['value'], r['l']['value']) for r in bindings]
     return rows
 
-@cachier(stale_after=SHELF_LIFE)
 def fetchall_syns(ont):
     """
     fetch all synonyms for an ontology
@@ -262,7 +254,6 @@ def fetchall_syns(ont):
     rows = [(r['c']['value'], r['r']['value'], r['l']['value']) for r in bindings]
     return rows
 
-@cachier(stale_after=SHELF_LIFE)
 def fetchall_textdefs(ont):
     """
     fetch all text defs for an ontology
@@ -282,7 +273,6 @@ def fetchall_textdefs(ont):
     rows = [(r['c']['value'], r['d']['value']) for r in bindings]
     return rows
 
-@cachier(stale_after=SHELF_LIFE)
 def fetchall_xrefs(ont):
     """
     fetch all xrefs for an ontology
@@ -300,7 +290,6 @@ def fetchall_xrefs(ont):
     rows = [(r['c']['value'], r['x']['value']) for r in bindings]
     return rows
 
-@cachier(stale_after=SHELF_LIFE)
 def fetchall_obs(ont):
     """
     fetch all obsoletes for an ontology
