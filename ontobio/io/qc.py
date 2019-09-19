@@ -366,6 +366,20 @@ class GoRule37(GoRule):
             result = self._result(assigned_by == "GO_Central" and "PMID:21873635" in references)
 
         return result
+        
+class GoRule39(GoRule):
+    
+    def __init__(self):
+        super().__init__("GORULE:0000039", "Protein complexes can not be annotated to GO:0032991 (protein-containing complex) or its descendants", FailMode.HARD)
+    
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        # An implementation note: This is done by testing if the DB (column 1) is ComplexPortal. 
+        # This will grab a subset of all actual Protein Complexes. This is noted in the rule description
+        db = annotation[0]
+        goterm = annotation[4]
+        
+        fails = (db == "ComplexPortal" and goterm == "GO:0032991")
+        return self._result(not fails)
 
 class GoRule42(GoRule):
 
@@ -442,6 +456,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule29": GoRule29(),
     "GoRule30": GoRule30(),
     "GoRule37": GoRule37(),
+    "GoRule39": GoRule39(),
     "GoRule42": GoRule42(),
     "GoRule46": GoRule46(),
     "GoRule50": GoRule50()
