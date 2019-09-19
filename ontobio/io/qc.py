@@ -341,14 +341,21 @@ class GoRule30(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000030", "Deprecated GO_REFs are not allowed", FailMode.HARD)
+        
+    def _ref_curi_to_id(self, goref) -> str:
+        """
+        Changes reference IDs in the form of GO_REF:nnnnnnn to goref-nnnnnnn
+        """
+        return goref.lower().replace("_", "").replace(":", "-")
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         references = self._list_terms(annotation[5])
-        # Not allowed is GO_REF:0000033 and GO_PAINT:x
-        has_goref_33 = "GO_REF:0000033" in references
-        has_go_paint = any([r.startswith("GO_PAINT") for r in references])
-        # don't accept either of has_goref_33 or has_go_paint
-        return self._result(not (has_goref_33 or has_go_paint))
+        for ref in references:
+            # Not allowed is obsolete and GO_PAINT:x
+            if ref.startswith("GO_PAINT") or (config.goref_metadata is not None and config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("is_obsolete", False)):
+                return self._result(False)
+            
+        return self._result(True)
 
 class GoRule37(GoRule):
 

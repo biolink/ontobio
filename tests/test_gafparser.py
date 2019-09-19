@@ -209,7 +209,7 @@ def test_errors_gaf():
         print("MESSAGE: {}".format(m))
         if m['type'] == assocparser.Report.INVALID_IDSPACE:
             n_invalid_idspace += 1
-    assert len(msgs) == 17
+    assert len(msgs) == 16
     assert n_invalid_idspace == 1
     assert len(assocs) == 6
 
