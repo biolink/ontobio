@@ -5,6 +5,7 @@ import datetime
 
 from typing import List, Dict, Any, Tuple
 from ontobio import ontol
+from ontobio import ecomap
 from ontobio.io import assocparser
 from ontobio.io import gaference
 
@@ -402,7 +403,37 @@ class GoRule42(GoRule):
             result = self._result("NOT" in qualifier)
 
         return result
+
+class GoRule43(GoRule):
+    
+    def __init__(self):
+        super().__init__("GORULE:0000043", "Check for valid combination of evidence code and GO_REF", FailMode.SOFT)
+        self.ecomapping = ecomap.EcoMap()
         
+    def _ref_curi_to_id(self, goref) -> str:
+        """
+        Changes reference IDs in the form of GO_REF:nnnnnnn to goref-nnnnnnn
+        """
+        return goref.lower().replace("_", "").replace(":", "-")
+        
+    def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
+        if config.goref_metadata is None:
+            return self._result(True)
+        
+        references = self._list_terms(annotation[5])
+        evidence = annotation[6]
+        
+        for ref in references:
+            allowed_eco = config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("evidence_codes", None)
+            # allowed_eco will only not be none if the ref was GO_REF:nnnnnnn, that's the only time we care here
+            if allowed_eco:
+                allowed_evidence = [self.ecomapping.ecoclass_to_coderef(eco)[0] for eco in allowed_eco]
+                if evidence not in allowed_evidence:
+                    return self._result(False)
+                    
+        return self._result(True)
+
+
 class GoRule46(GoRule):
     
     def __init__(self):
@@ -465,6 +496,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule37": GoRule37(),
     "GoRule39": GoRule39(),
     "GoRule42": GoRule42(),
+    "GoRule43": GoRule43(),
     "GoRule46": GoRule46(),
     "GoRule50": GoRule50()
 })

@@ -386,6 +386,33 @@ def test_gorule42():
     test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
     
+def test_gorule43():
+    a = ["blah"] * 16
+    a[5] = "GO_REF:0000024"
+    a[6] = "ISO"
+    
+    config = assocparser.AssocParserConfig(
+        goref_metadata={
+            "goref-0000024": {
+                "authors": "Pascale Gaudet, Michael Livstone, Paul Thomas, The Reference Genome Project",
+                "id": "GO_REF:0000024",
+                "evidence_codes": ["ECO:0000266"]
+            }
+        }
+    )
+    
+    test_result = qc.GoRule43().test(a, config)
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    a[6] = "FOO"
+    test_result = qc.GoRule43().test(a, config)
+    assert test_result.result_type == qc.ResultType.WARNING
+    
+    a[6] = "ISO"
+    a[5] = "FOO:123"
+    test_result = qc.GoRule43().test(a, config)
+    assert test_result.result_type == qc.ResultType.PASS
+    
 def test_gorule46():
     config = assocparser.AssocParserConfig(ontology=ontology)
     
@@ -443,7 +470,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config).all_results
-    assert len(test_results.keys()) == 19
+    assert len(test_results.keys()) == 20
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
