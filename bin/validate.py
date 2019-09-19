@@ -91,6 +91,14 @@ def gorule_metadata(metadata, rule_id) -> str:
             return yamldown.load(gorule_data)[0]
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(gorule_yamldown, str(e)))
+        
+def goref_metadata(metadata, goref_id) -> str:
+    goref_yamldown = os.path.join(metadata, "gorefs", "{}.md".format(goref_id))
+    try:
+        with open(goref_yamldown, "r") as goref_data:
+            return yamldown.load(goref_data)[0]
+        except Exception as e:
+            raise click.ClickException("Could not find or read {}: {}".format(goref_yamldown, str(e)))
 
 def rule_id(rule_path) -> str:
     return os.path.splitext(os.path.basename(rule_path))[0]
@@ -277,7 +285,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -287,6 +295,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         gpi_authority_path=gpipath,
         paint=paint,
         rule_metadata=rule_metadata,
+        goref_metadata=goref_metadata,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
@@ -590,6 +599,9 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = {rule_id(rule_path): gorule_metadata(metadata, rule_id(rule_path))
         for rule_path in glob.glob("{}/*.md".format(os.path.join(metadata, "rules"))) if rule_id(rule_path) not in ["ABOUT", "README", "SOP"]}
+        
+    goref_metadata = {rule_id(goref_path): goref_metadata(metadata, rule_id(goref_path))
+        for goref_path in glob.glob("{}/*.md".format(os.path.join(metadata, "gorefs"))) if rule_id(goref_path) not in ["README", "README-editors"]}
 
     paint_metadata = metadata_file(absolute_metadata, "paint")
     noctua_metadata = metadata_file(absolute_metadata, "noctua")
@@ -610,6 +622,7 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
             paint=(group=="paint"),
             group=group,
             rule_metadata=rule_metadata,
+            goref_metadata=goref_metadata,
             db_entities=db_entities,
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,

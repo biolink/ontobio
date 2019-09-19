@@ -303,20 +303,30 @@ def test_go_rule29():
 def test_gorule30():
     a = ["blah"] * 16
     a[5] = "GO_REF:0000033"
+    
+    config = assocparser.AssocParserConfig(
+        goref_metadata={
+            "goref-0000033": {
+                "authors": "Pascale Gaudet, Michael Livstone, Paul Thomas, The Reference Genome Project",
+                "id": "GO_REF:0000033",
+                "is_obsolete": True
+            }
+        }
+    )
 
-    test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
+    test_result = qc.GoRule30().test(a, config)
     assert test_result.result_type == qc.ResultType.ERROR
 
     a[5] = "GO_PAINT:0000000"
-    test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
+    test_result = qc.GoRule30().test(a, config)
     assert test_result.result_type == qc.ResultType.ERROR
 
     a[5] = "FOO:123|GO_REF:0000033"
-    test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
+    test_result = qc.GoRule30().test(a, config)
     assert test_result.result_type == qc.ResultType.ERROR
 
     a[5] = "FOO:123"
-    test_result = qc.GoRule30().test(a, assocparser.AssocParserConfig())
+    test_result = qc.GoRule30().test(a, config)
     assert test_result.result_type == qc.ResultType.PASS
 
 def test_gorule36():

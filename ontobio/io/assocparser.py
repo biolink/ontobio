@@ -139,6 +139,7 @@ class AssocParserConfig():
                  gpi_authority_path=None,
                  paint=False,
                  rule_metadata=None,
+                 goref_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None):
@@ -157,6 +158,7 @@ class AssocParserConfig():
         self.gpi_authority_path = gpi_authority_path
         self.paint = paint
         self.rule_metadata = rule_metadata
+        self.goref_metadata = goref_metadata
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
