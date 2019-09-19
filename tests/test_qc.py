@@ -351,6 +351,23 @@ def test_gorule36():
     a[14] = "Pascale"  # IBA, but wrong assigned_by
     test_result = qc.GoRule37().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
+    
+def test_gorule39():
+    a = ["blah"] * 16
+    a[0] = "ComplexPortal"
+    a[4] = "GO:0032991"
+    
+    test_result = qc.GoRule39().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+    
+    a[0] = "FB"
+    test_result = qc.GoRule39().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    a[0] = "ComplexPortal"
+    a[4] = "GO:0000023"
+    test_result = qc.GoRule39().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
 
 def test_gorule42():
     a = ["blah"] * 16
@@ -426,7 +443,7 @@ def test_all_rules():
     a[13] = "20180330"
 
     test_results = qc.test_go_rules(a, config).all_results
-    assert len(test_results.keys()) == 18
+    assert len(test_results.keys()) == 19
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
