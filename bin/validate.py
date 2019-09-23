@@ -99,8 +99,8 @@ def goref_metadata(metadata, goref_id) -> str:
     try:
         with open(goref_yamldown, "r") as goref_data:
             return yamldown.load(goref_data)[0]
-        except Exception as e:
-            raise click.ClickException("Could not find or read {}: {}".format(goref_yamldown, str(e)))
+    except Exception as e:
+        raise click.ClickException("Could not find or read {}: {}".format(goref_yamldown, str(e)))
 
 def rule_id(rule_path) -> str:
     return os.path.splitext(os.path.basename(rule_path))[0]
