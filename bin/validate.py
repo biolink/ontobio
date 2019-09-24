@@ -94,7 +94,7 @@ def gorule_metadata(metadata, rule_id) -> str:
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(gorule_yamldown, str(e)))
         
-def goref_metadata(metadata, goref_id) -> str:
+def parse_goref_metadata(metadata, goref_id) -> str:
     goref_yamldown = os.path.join(metadata, "gorefs", "{}.md".format(goref_id))
     try:
         with open(goref_yamldown, "r") as goref_data:
@@ -602,8 +602,9 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     rule_metadata = {rule_id(rule_path): gorule_metadata(metadata, rule_id(rule_path))
         for rule_path in glob.glob("{}/*.md".format(os.path.join(metadata, "rules"))) if rule_id(rule_path) not in ["ABOUT", "README", "SOP"]}
         
-    goref_metadata = {rule_id(goref_path): goref_metadata(metadata, rule_id(goref_path))
+    goref_metadata = {rule_id(goref_path): parse_goref_metadata(metadata, rule_id(goref_path))
         for goref_path in glob.glob("{}/*.md".format(os.path.join(metadata, "gorefs"))) if rule_id(goref_path) not in ["README", "README-editors"]}
+    click.echo("Found {} GO_REFs".format(len(goref_metadata.keys())))
 
     paint_metadata = metadata_file(absolute_metadata, "paint")
     noctua_metadata = metadata_file(absolute_metadata, "noctua")
