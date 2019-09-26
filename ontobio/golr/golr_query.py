@@ -39,7 +39,7 @@ TODO
 import json
 import logging
 import pysolr
-import requests
+import re
 from typing import Dict, List
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
@@ -339,6 +339,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                  boost_q=None,
                  highlight_class=None,
                  taxon=None,
+                 min_match=None,
+                 minimal_tokenizer=False,
                  user_agent=None):
         self.term = term
         self.category = category
@@ -360,6 +362,8 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.boost_q = boost_q
         self.highlight_class = highlight_class
         self.taxon = taxon
+        self.min_match = min_match
+        self.minimal_tokenizer = minimal_tokenizer
 
         self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
         if user_agent is not None:
@@ -367,15 +371,13 @@ class GolrSearchQuery(GolrAbstractQuery):
 
         if self.search_fields is None:
             self.search_fields = dict(id=3,
-                                      iri=3,
                                       label=2,
                                       synonym=1,
                                       definition=1,
                                       taxon_label=1,
-                                      equivalent_iri=1,
+                                      taxon_label_synonym=1,
                                       equivalent_curie=1)
 
-        solr_config = {'url': self.url, 'timeout': 2}
         if self.is_go:
             if self.url is None:
                 endpoint = self.get_config().amigo_solr_search
@@ -423,9 +425,21 @@ class GolrSearchQuery(GolrAbstractQuery):
             qf["id_kw"] = 20
             qf["equivalent_curie_kw"] = 20
 
+        if self.minimal_tokenizer:
+            # Split text using a minimal set of word boundaries
+            # useful for variants and genotypes where typical
+            # word boundaries are part of the nomenclature
+            tokens = re.split(r'[\s|\'\",]+', self.term)
+            if tokens[-1] == '':
+                del tokens[-1]
+            tokenized = "".join(['"{}"'.format(token) for token in tokens])
+        else:
+            # Solr will run through the Standard Tokenizer
+            tokenized = self.term
+
         select_fields = ["*", "score"]
         params = {
-            'q': '{0} "{0}"'.format(self.term),
+            'q': '{0} "{1}"'.format(tokenized, self.term),
             "qt": "standard",
             'fl': ",".join(list(filter(None, select_fields))),
             "defType": "edismax",
@@ -481,6 +495,9 @@ class GolrSearchQuery(GolrAbstractQuery):
         if self.taxon is not None:
             for tax in self.taxon:
                 params['fq'].append('taxon:"{}"'.format(tax))
+
+        if self.min_match is not None:
+            params['mm'] = self.min_match
 
         if self.highlight_class is not None:
             params['hl.simple.pre'] = \
