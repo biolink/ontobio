@@ -401,7 +401,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self._set_solr(**solr_config)
         self._set_user_agent(self.user_agent)
 
-    def solr_params(self):
+    def solr_params(self, mode=None):
 
         if self.facet_fields is None and self.facet:
             self.facet_fields = ['category', 'taxon_label']
@@ -420,6 +420,14 @@ class GolrSearchQuery(GolrAbstractQuery):
             self.fq['document_category'] = "general"
 
         qf = self._format_query_filter(self.search_fields, suffixes)
+
+        if mode == 'search':
+            # Decrease ngram weight and increase keyword and standard tokenizer
+            for field, weight in qf.items():
+                if '_kw' in field:
+                    qf[field] += 2
+                elif '_std' in field:
+                    qf[field] += 1
 
         if self.term is not None and ":" in self.term:
             qf["id_kw"] = 20
@@ -509,7 +517,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         """
         Execute solr search query
         """
-        params = self.solr_params()
+        params = self.solr_params(mode='search')
         logging.info("PARAMS=" + str(params))
         results = self.solr.search(**params)
         logging.info("Docs found: {}".format(results.hits))
@@ -633,8 +641,8 @@ class GolrSearchQuery(GolrAbstractQuery):
         for (field, relevancy) in search_fields.items():
             for suffix in suffixes:
                 field_filter = "{}_{}".format(field, suffix)
-                weight = "{}".format(relevancy)
-                qf[field_filter] = weight
+                qf[field_filter] = relevancy
+
         return qf
 
     def _get_longest_hl(self, highlights):
