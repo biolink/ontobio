@@ -25,7 +25,7 @@ foo:
 # only run local tests
 travis_test:
 	pytest tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
-	       tests/test_rdfgen.py tests/test_phenosim_engine.py tests/unit/
+	       tests/test_rdfgen.py tests/test_phenosim_engine.py tests/unit/ tests/test_ontol.py
 
 cleandist:
 	rm dist/* || true
