@@ -334,11 +334,13 @@ class Ontology():
 
     def node(self, id):
         """
-        Return a node with a given ID
+        Return a node with a given ID. If the node with the ID exists the
+        Node object is returned, otherwise None is returned.
 
         Wraps networkx by default
         """
-        return self.get_graph().node[id]
+        print("woo")
+        return self.get_graph().node.get(id, None)
 
     def has_node(self, id):
         """
