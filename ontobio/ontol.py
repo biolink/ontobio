@@ -339,7 +339,6 @@ class Ontology():
 
         Wraps networkx by default
         """
-        print("woo")
         return self.get_graph().node.get(id, None)
 
     def has_node(self, id):
