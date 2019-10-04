@@ -70,11 +70,12 @@ class AssociationSetFactory():
         amap = {}
         subject_label_map = {}
         for a in assocs:
-            rel = a['relation']
             subj = a['subject']
             subject_label_map[subj] = a['subject_label']
-            amap[subj] = a['objects']
-
+            if subj in amap:
+                amap[subj].extend(a['objects'])
+            else:
+                amap[subj] = a['objects']
 
         aset = AssociationSet(ontology=ontology,
                               meta=meta,
