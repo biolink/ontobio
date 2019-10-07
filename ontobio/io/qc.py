@@ -176,8 +176,9 @@ class GoRule11(GoRule):
         evidence = annotation[6]
 
         # If we see a bad evidence, and we're not in a paint file then fail.
-        fails = (evidence == "ND" and goclass not in self.root_go_classes)
-        return self._result(not fails)
+        # We're good if both predicates are true, or neither are true
+        success = (evidence == "ND" and goclass in self.root_go_classes) or (evidence != "ND" and goclass not in self.root_go_classes)
+        return self._result(success)
 
 class GoRule13(GoRule):
 

@@ -102,6 +102,7 @@ def test_go_rule11():
     a[6] = "ND"
 
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
+    print("first test, we have {}".format(test_result))
     assert test_result.result_type == qc.ResultType.PASS
 
     # Bad GO ID
@@ -112,14 +113,20 @@ def test_go_rule11():
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
 
-    # Not ND
+    # Not ND and not Root
     a = ["blah"] * 16
     a[4] = "GO:1234567"
     a[6] = "FOO"
-    a[7] = "GO_REF:0000001"
 
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
+    
+    # Root, but not ND
+    a = ["blah"] * 16
+    a[4] = "GO:0003674"
+    a[6] = "FOO"
+    test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
 
 def test_go_rules_15():
 
