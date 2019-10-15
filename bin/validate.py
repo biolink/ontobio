@@ -26,92 +26,14 @@ from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
 from ontobio.io import gaference
 from ontobio.rdfgen import assoc_rdfgen
+from ontobio.validation import metadata
+from ontobio.validation import tools
 
 from typing import Dict, Set
 
 def thispath():
     os.path.normpath(os.path.abspath(__file__))
 
-def gzips(file_function):
-
-    @wraps(file_function)
-    def wrapper(*args, **kwargs):
-        output_file = file_function(*args, **kwargs)
-        if isinstance(output_file, list):
-            for o in output_file:
-                zipup(o)
-        else:
-            zipup(output_file)
-
-        return output_file
-
-    return wrapper
-
-def zipup(file_path):
-    click.echo("Zipping {}".format(file_path))
-    path, filename = os.path.split(file_path)
-    zipname = "{}.gz".format(filename)
-    target = os.path.join(path, zipname)
-
-    with open(file_path, "rb") as p:
-        with gzip.open(target, "wb") as tf:
-            tf.write(p.read())
-
-def find(l, finder):
-    filtered = [n for n in l if finder(n)]
-    if len(filtered) == 0:
-        return None
-    else:
-        return filtered[0]
-
-def metadata_file(metadata, group, empty_ok=False) -> Dict:
-    metadata_yaml = os.path.join(metadata, "datasets", "{}.yaml".format(group))
-    try:
-        with open(metadata_yaml, "r") as group_data:
-            click.echo("Found {group} metadata at {path}".format(group=group, path=metadata_yaml))
-            return yaml.load(group_data, Loader=yaml.FullLoader)
-    except Exception as e:
-        if not empty_ok:
-            raise click.ClickException("Could not find or read {}: {}".format(metadata_yaml, str(e)))
-        else:
-            return None
-
-def gorule_title(metadata, rule_id) -> str:
-    gorule_yamldown = os.path.join(metadata, "rules", "{}.md".format(rule_id))
-    try:
-        with open(gorule_yamldown, "r") as gorule_data:
-            click.echo("Found {rule} at {path}".format(rule=rule_id, path=gorule_yamldown))
-            return yamldown.load(gorule_data)[0]["title"]
-    except Exception as e:
-        raise click.ClickException("Could not find or read {}: {}".format(gorule_yamldown, str(e)))
-
-def gorule_metadata(metadata, rule_id) -> str:
-    gorule_yamldown = os.path.join(metadata, "rules", "{}.md".format(rule_id))
-    try:
-        with open(gorule_yamldown, "r") as gorule_data:
-            click.echo("Found {rule} at {path}".format(rule=rule_id, path=gorule_yamldown))
-            return yamldown.load(gorule_data)[0]
-    except Exception as e:
-        raise click.ClickException("Could not find or read {}: {}".format(gorule_yamldown, str(e)))
-        
-def parse_goref_metadata(metadata, goref_id) -> str:
-    goref_yamldown = os.path.join(metadata, "gorefs", "{}.md".format(goref_id))
-    try:
-        with open(goref_yamldown, "r") as goref_data:
-            return yamldown.load(goref_data)[0]
-    except Exception as e:
-        raise click.ClickException("Could not find or read {}: {}".format(goref_yamldown, str(e)))
-
-def rule_id(rule_path) -> str:
-    return os.path.splitext(os.path.basename(rule_path))[0]
-
-def source_path(dataset_metadata, target_dir, group):
-    extension = dataset_metadata["type"]
-    if dataset_metadata["compression"]:
-        extension = "{ext}.gz".format(ext=extension)
-
-    path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
-    return path
 
 def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None, replace_existing_files=True):
     """
@@ -134,7 +56,7 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
     """
     # Local target download path setup - path and then directories
     file_name = source_url.split("/")[-1]
-    path = source_path(dataset_metadata, target_dir, group)
+    path = metadata.source_path(dataset_metadata, target_dir, group)
 
     # Just return the path if we find that it exists already
     if os.path.exists(path) and not replace_existing_files:
@@ -209,14 +131,14 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
         else:
             # otherwise file is coming in uncompressed. But we want to make sure
             # to zip up the original source also
-            zipup(path)
+            tools.zipup(path)
 
         downloaded_paths.append((dataset_metadata, path))
 
     return downloaded_paths
 
 def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None, replace_existing_files=True):
-    mixin_dataset = find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
+    mixin_dataset = tools.find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
     if mixin_dataset is None:
         return None
 
@@ -228,7 +150,7 @@ def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_di
     return unzipped
 
 def mixin_dataset(mixin_metadata, dataset):
-    mixin_dataset_version = find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
+    mixin_dataset_version = tools.find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
     if mixin_dataset_version is None:
         return None # Blah
 
@@ -249,31 +171,6 @@ def unzip(path, target):
             for chunk in chunks:
                 tf.write(chunk)
 
-def database_entities(metadata):
-    dbxrefs_path = os.path.join(os.path.abspath(metadata), "db-xrefs.yaml")
-    try:
-        with open(dbxrefs_path, "r") as db_xrefs_file:
-            click.echo("Found db-xrefs at {path}".format(path=dbxrefs_path))
-            dbxrefs = yaml.load(db_xrefs_file, Loader=yaml.FullLoader)
-    except Exception as e:
-        raise click.ClickException("Could not find or read {}: {}".format(dbxrefs_path, str(e)))
-
-    d = assocparser.BiDiMultiMap()
-    for entity in dbxrefs:
-        d[entity["database"]] = set(entity.get("synonyms", []))
-
-    return d
-
-def groups(metadata) -> Set[str]:
-    groups_path = os.path.join(os.path.abspath(metadata), "groups.yaml")
-    try:
-        with open(groups_path, "r") as groups_file:
-            click.echo("Found groups at {path}".format(path=groups_path))
-            groups_list = yaml.load(groups_file, Loader=yaml.FullLoader)
-    except Exception as e:
-        raise click.ClickException("Could not find or read {}: {}".format(groups_path, str(e)))
-
-    return set([group["shorthand"] for group in groups_list])
 
 def create_parser(config, group, dataset, format="gaf"):
     if format == "gpad":
@@ -286,7 +183,7 @@ def create_parser(config, group, dataset, format="gaf"):
 """
 Produce validated gaf using the gaf parser/
 """
-@gzips
+@tools.gzips
 def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
@@ -330,7 +227,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
     return [validated_gaf_path, filtered_associations.name]
 
 
-@gzips
+@tools.gzips
 def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
     gafparser = GafParser()
     gafparser.config = assocparser.AssocParserConfig(
@@ -382,7 +279,7 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
 
     return [product_files[prod].name for prod in sorted(product_files.keys()) if products[prod]]
 
-@gzips
+@tools.gzips
 def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
     gafparser = GafParser()
     gafparser.config = assocparser.AssocParserConfig(
@@ -409,7 +306,7 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
     return gpi_path
 
 
-@gzips
+@tools.gzips
 def produce_ttl(dataset, target_dir, gaf_path, ontology_graph):
     gafparser = GafParser()
     gafparser.config = assocparser.AssocParserConfig(
@@ -438,7 +335,7 @@ def produce_ttl(dataset, target_dir, gaf_path, ontology_graph):
 
     return ttl_path
 
-@gzips
+@tools.gzips
 def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
 
     def header_and_annotations(gaf_file):
@@ -481,7 +378,7 @@ def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
 
     return merged_path
 
-@gzips
+@tools.gzips
 def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
     def header_and_annotations(gaf_file):
         headers = []
@@ -568,7 +465,7 @@ def cli():
 
 @cli.command()
 @click.argument("group")
-@click.option("--metadata", "-m", type=click.Path(), required=True)
+@click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
 @click.option("--gpad", default=False, is_flag=True)
 @click.option("--ttl", default=False, is_flag=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
@@ -578,7 +475,7 @@ def cli():
 @click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
 @click.option("--skip-existing-files", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
-def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
+def produce(group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
 
     products = {
         "gaf": True,
@@ -590,28 +487,27 @@ def produce(group, metadata, gpad, ttl, target, ontology, exclude, base_download
     absolute_target = os.path.abspath(target)
     os.makedirs(os.path.join(absolute_target, "groups"), exist_ok=True)
     click.echo("Products will go in {}".format(absolute_target))
-    absolute_metadata = os.path.abspath(metadata)
+    absolute_metadata = os.path.abspath(metadata_dir)
 
-    group_metadata = metadata_file(absolute_metadata, group)
+    group_metadata = metadata.dataset_metadata_file(absolute_metadata, group)
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
 
     downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
 
     # extract the titles for the go rules, this is a dictionary comprehension
-    rule_metadata = {rule_id(rule_path): gorule_metadata(metadata, rule_id(rule_path))
-        for rule_path in glob.glob("{}/*.md".format(os.path.join(metadata, "rules"))) if rule_id(rule_path) not in ["ABOUT", "README", "SOP"]}
-        
-    goref_metadata = {rule_id(goref_path): parse_goref_metadata(metadata, rule_id(goref_path))
-        for goref_path in glob.glob("{}/*.md".format(os.path.join(metadata, "gorefs"))) if rule_id(goref_path) not in ["README", "README-editors"]}
+    rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
+    goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
+    
+    click.echo("Found {} GO Rules".format(len(rule_metadata.keys())))
     click.echo("Found {} GO_REFs".format(len(goref_metadata.keys())))
 
-    paint_metadata = metadata_file(absolute_metadata, "paint")
-    noctua_metadata = metadata_file(absolute_metadata, "noctua")
+    paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
+    noctua_metadata = metadata.dataset_metadata_file(absolute_metadata, "noctua")
     mixin_metadata_list = list(filter(lambda m: m != None, [paint_metadata, noctua_metadata]))
 
-    db_entities = database_entities(absolute_metadata)
-    group_ids = groups(absolute_metadata)
+    db_entities = metadata.database_entities(absolute_metadata)
+    group_ids = metadata.groups(absolute_metadata)
 
     gaferences = None
     if gaferencer_file:
@@ -649,7 +545,7 @@ def paint(group, dataset, metadata, target, ontology):
     absolute_metadata = os.path.abspath(metadata)
     absolute_target = os.path.abspath(target)
     os.makedirs(os.path.join(absolute_target, "groups"), exist_ok=True)
-    paint_metadata = metadata_file(absolute_metadata, "paint")
+    paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
     paint_src_gaf = check_and_download_mixin_source(paint_metadata, dataset, absolute_target)
 
     click.echo("Loading ontology: {}...".format(ontology))
