@@ -876,6 +876,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  non_null_fields=None,
                  user_agent=None,
                  association_type=None,
+                 sort=None,
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -932,6 +933,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.is_explicit_url = url is not None
         self.non_null_fields=non_null_fields
         self.association_type=association_type
+        self.sort=sort
 
         self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
         if user_agent is not None:
@@ -1299,7 +1301,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
             for (f,flim) in facet_field_limits.items():
                 params["f."+f+".facet.limit"] = flim
 
-
         if len(facet_pivot_fields) > 0:
             params['facet.pivot'] = ",".join(facet_pivot_fields)
             params['facet.pivot.mincount'] = 1
@@ -1308,6 +1309,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
             self.stats = True
             params['stats.field'] = self.stats_field
         params['stats'] = json.dumps(self.stats)
+
+        if self.sort is not None:
+            params['sort'] = self.sort
 
         return params
 
