@@ -875,6 +875,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  homology_type=None,
                  non_null_fields=None,
                  user_agent=None,
+                 association_type=None,
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -930,6 +931,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
         self.non_null_fields=non_null_fields
+        self.association_type=association_type
 
         self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
         if user_agent is not None:
@@ -1142,6 +1144,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
             elif self.homology_type == 'LDO':
                 fq['relation_closure'] = \
             HomologyTypes.LeastDivergedOrtholog.value
+
+        ## Association type, monarch only
+        if self.association_type is not None:
+            fq['association_type'] = self.association_type
 
         ## pivots
         facet_pivot_fields=self.facet_pivot_fields
@@ -1458,14 +1464,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     return id.replace(s,k+':')
         return id
 
-
-    def translate_objs(self,d,fname):
+    def translate_objs(self, d, fname, default=None):
         """
         Translate a field whose value is expected to be a list
         """
         if fname not in d:
             # TODO: consider adding arg for failure on null
-            return None
+            return default
 
         #lf = M.label_field(fname)
 
@@ -1572,7 +1577,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  'object': obj,
                  'negated': negated,
                  'relation': self.translate_obj(d,M.RELATION),
-                 'publications': self.translate_objs(d,M.SOURCE),  # note 'source' is used in the golr schema
+                 'publications': self.translate_objs(d, M.SOURCE, []),  # note 'source' is used in the golr schema
         }
 
         if self.invert_subject_object and assoc['relation'] is not None:
