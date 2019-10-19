@@ -4,8 +4,7 @@ Mapping between obograph-JSON format and networkx
 
 from ontobio.ontol import LogicalDefinition, PropertyChainAxiom
 from ontobio.vocabulary.relations import map_legacy_pred
-from prefixcommons.curie_util import expand_uri, contract_uri,\
-    read_remote_jsonld_context
+from prefixcommons.curie_util import expand_uri, contract_uri
 from ontobio.util.scigraph_util import get_curie_map
 from ontobio.config import get_config
 
@@ -204,21 +203,17 @@ def _triple_to_association(digraph, subject, predicate, obj):
     """
     Convert triple to association object
     """
-    scigraph = get_config().scigraph_data
-    scigraph_curie = scigraph.url + '/cypher/curies'
-    monarch_context = [read_remote_jsonld_context(scigraph_curie)]
-
     object_eq = []
     subject_eq = []
     if 'equivalentOriginalNodeTarget' in predicate:
         for eq in predicate['equivalentOriginalNodeTarget']:
-            curies = contract_uri(eq, cmaps=monarch_context, shortest=True)
+            curies = contract_uri(eq, [get_curie_map()], shortest=True)
             if len(curies) != 0:
                 object_eq.append(curies[0])
 
     if 'equivalentOriginalNodeSource' in predicate:
         for eq in predicate['equivalentOriginalNodeSource']:
-            curies = contract_uri(eq, cmaps=monarch_context, shortest=True)
+            curies = contract_uri(eq, [get_curie_map()], shortest=True)
             if len(curies) != 0:
                 subject_eq.append(curies[0])
 
