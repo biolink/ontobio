@@ -451,6 +451,9 @@ class GoRule46(GoRule):
                 all_terms += root_descendants
             
             self.self_binding_terms = set(all_terms)
+        elif config.ontology is None:
+            # Make sure if we don't have an ontology we still use the set roots
+            self.self_binding_terms = self.self_binding_roots
         
         withfroms = self._list_terms(annotation[7])
         goterm = annotation[4]

@@ -443,6 +443,11 @@ def test_gorule46():
     # Not in a self-binding mode
     test_result = qc.GoRule46().test(a, config)
     assert test_result.result_type == qc.ResultType.PASS
+    
+    # Test no ontology should just pass
+    a[4] = "GO:0051260"
+    test_result = qc.GoRule46().test(a, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
 
 def test_gorule50():
     a = ["blah"] * 16
