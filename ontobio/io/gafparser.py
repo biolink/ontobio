@@ -105,7 +105,7 @@ class GafParser(assocparser.AssocParser):
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
         if 17 > len(vals) >= 15:
-            vals += [""] * (17 - len(vals))
+            vals = self.normalize_columns(17, vals)
 
         if len(vals) > 17:
             # If we see more than 17 columns, we will just cut off the columns after column 17

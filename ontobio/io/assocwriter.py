@@ -6,6 +6,8 @@ import re
 import datetime
 import json
 
+from typing import List
+
 from ontobio import ecomap
 
 external_taxon = re.compile("taxon:([0-9]+)")
@@ -33,11 +35,14 @@ class AssocWriter():
         return prefix, local_id
 
     def _write_row(self, vals):
-        line = "\t".join([_str(v) for v in vals])
+        line = tsv_as_string(vals)
         if self.file:
             self.file.write(line+"\n")
         else:
             print(line)
+            
+    def tsv_as_string(self, vals) -> str:
+        return "\t".join([_str(v) for v in vals])
 
     def _write(self, line):
         if self.file:
@@ -81,12 +86,19 @@ class AssocWriter():
             return "taxon:{num}".format(num=taxon_id)
 
         return taxon
+        
+    def as_tsv(self, assoc) -> List[str]:
+        """
+        Transform a single association to a string line.
+        """
+        pass
 
     def write_assoc(self, assoc):
         """
         Write a single association to a line in the output file
         """
-        pass  ## Implemented in subclasses
+        vals = self.as_tsv(assoc)
+        self._write_row(vals)
 
     def write(self, assocs, meta=None):
         """
@@ -112,7 +124,7 @@ class GpadWriter(AssocWriter):
         self._write("!gpa-version: 1.1\n")
         self.ecomap = ecomap.EcoMap()
 
-    def write_assoc(self, assoc):
+    def as_tsv(self, assoc):
         """
         Write a single association to a line in the output file
         """
@@ -154,7 +166,7 @@ class GpadWriter(AssocWriter):
                 self._extension_expression(assoc['object_extensions']),
                 annotation_properties]
 
-        self._write_row(vals)
+        return vals
 
 class GafWriter(AssocWriter):
     """
@@ -179,7 +191,7 @@ class GafWriter(AssocWriter):
 
         return full_taxon
 
-    def write_assoc(self, assoc):
+    def as_tsv(self, assoc):
         """
         Write a single association to a line in the output file
         """
@@ -241,4 +253,4 @@ class GafWriter(AssocWriter):
                 extension_expression,
                 gene_product_isoform]
 
-        self._write_row(vals)
+        return vals
