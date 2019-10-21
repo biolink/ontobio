@@ -4,13 +4,18 @@ Mapping between obograph-JSON format and networkx
 
 from ontobio.ontol import LogicalDefinition, PropertyChainAxiom
 from ontobio.vocabulary.relations import map_legacy_pred
-from prefixcommons.curie_util import expand_uri, contract_uri
 from ontobio.util.scigraph_util import get_curie_map
-from ontobio.config import get_config
+from ontobio.golr.golr_associations import search_associations
 
 import json
 import networkx
 import logging
+from prefixcommons.curie_util import expand_uri, contract_uri
+from diskcache import Cache
+import tempfile
+
+
+cache = Cache(tempfile.gettempdir())
 
 
 class OboJsonMapper(object):
@@ -305,3 +310,23 @@ def obograph_to_assoc_results(digraph):
                     digraph, sub, edge_attr, obj))
 
     return association_results
+
+
+@cache.memoize()
+def get_evidence_tables(id, user_agent):
+
+    results = search_associations(
+            fq={'id': id},
+            facet=False,
+            select_fields=['evidence_graph'],
+            user_agent=user_agent)
+    assoc_results = {}
+    assoc = results['associations'][0] if len(results['associations']) > 0 else {}
+    if assoc:
+        eg = {'graphs': [assoc.get('evidence_graph')]}
+        digraph = convert_json_object(eg, reverse_edges=False)['graph']
+        assoc_results = {
+            'associations': obograph_to_assoc_results(digraph),
+            'numFound': len(obograph_to_assoc_results(digraph))
+        }
+    return assoc_results
