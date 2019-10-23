@@ -2,9 +2,10 @@ import typing
 import enum
 import io
 import collections
+import click
 
 from dataclasses import dataclass
-from typing import List, TypeVar, Union, Generic, Optional
+from typing import List, Dict, TypeVar, Union, Generic, Optional
 
 from ontobio.validation import metadata
 from ontobio.io import assocparser
@@ -37,7 +38,7 @@ Relavent schema:
                 type: str
                 required: true
                 enum: ["rdf", "gaf", "gpad"]
-              "instance":
+              "input":
                 type: str
                 required: true
       "fail":
@@ -53,7 +54,7 @@ Relavent schema:
                 type: str
                 required: true
                 enum: ["rdf", "gaf", "gpad"]
-              "instance":
+              "input":
                 type: str
                 required: true
       "repair":
@@ -79,7 +80,19 @@ Relavent schema:
 
 """
 FormatType = enum.Enum("FormatType", ["RDF", "GAF", "GPAD"])
-ExampleType = enum.Enum("ExampleType", ["REPAIR", "FAIL", "PASS"])
+ExampleType = enum.Enum("ExampleType", {"REPAIR": "repair", "FAIL": "fail", "PASS": "fail"})
+
+def format_from_string(format: str) -> Optional[FormatType]:
+    if format == "rdf":
+        return FormatType.RDF
+        
+    if format == "gaf":
+        return FormatType.GAF
+        
+    if format == "gpad":
+        return FormatType.GPAD
+    
+    return None
 
 @dataclass
 class RuleExample:
@@ -89,6 +102,39 @@ class RuleExample:
     format: FormatType
     expected: Union[str, bool]
     
+    @classmethod
+    def example_from_json(RuleExample, rule_json: Dict) -> List:
+        """
+        This constructs the set of examples to be run from a single GO rule.
+        """
+        # Returns List of RuleExample
+        if "examples" not in rule_json:
+            # Bail if we don't have any examples
+            return []
+            
+        fail_examples = rule_json["examples"].get("fail", [])
+        pass_examples = rule_json["examples"].get("pass", [])
+        repair_examples = rule_json["examples"].get("repair", [])
+        
+        built_examples = [] # type: List[RuleExample]
+        ruleid = rule_json["id"].lower().replace(":", "-")
+        for ex in fail_examples:
+            f = format_from_string(ex["format"]) # type: Optional[FormatType]
+            # Expected is False since these are "fail" examples
+            built_examples.append(RuleExample(ruleid, ExampleType.FAIL, ex["input"], f, False))
+            
+        for ex in pass_examples:
+            f = format_from_string(ex["format"]) # type: Optional[FormatType]
+            # Expected is True since these are "pass" examples
+            built_examples.append(RuleExample(ruleid, ExampleType.PASS, ex["input"], f, True))
+
+        for ex in repair_examples:
+            f = format_from_string(ex["format"]) # type: Optional[FormatType]
+            # Expected will come from the `output` field
+            built_examples.append(RuleExample(ruleid, ExampleType.REPAIR, ex["input"], f, ex["output"]))
+            
+        return built_examples
+    
 @dataclass
 class ValidationResult:
     example: RuleExample
@@ -96,7 +142,21 @@ class ValidationResult:
     success: bool
     reason: str
     
+    def to_json(self) -> Dict:
+        return {
+            "rule": self.example.rule_id,
+            "type": self.example.example_type.value,
+            "format": self.example.format.value,
+            "input": self.example.input,
+            "expected": self.example.expected,
+            "actual": self.actual,
+            "success": self.success,
+            "reason": self.reason
+        }
+    
 Parsed = collections.namedtuple("Parsed", ["report", "output"])
+
+#==============================================================================
 
 def normalize_tsv_row(size: int, tsv: str) -> str:
     columns = tsv.split("\t")
@@ -106,8 +166,18 @@ def normalize_tsv_row(size: int, tsv: str) -> str:
         columns = columns[0:size]
     
     return "\t".join(columns)
+    
 
-def validate_example(example: RuleExample) -> ValidationResult:
+def validate_all_examples(examples: List[RuleExample], config=None) -> List[ValidationResult]:
+    results = []
+    for ex in examples:
+        r = validate_example(ex, config=config)
+        results.append(r)
+    
+    return results
+
+
+def validate_example(example: RuleExample, config=None) -> ValidationResult:
     """
     1. Create parser based on `format`
     2. Run input into parser/validator
@@ -117,11 +187,19 @@ def validate_example(example: RuleExample) -> ValidationResult:
     6. Consolodate and return `ValidationResult`
     """
     parser = create_base_parser(example.format)
-    parsed = validate_input(example.input, parser)
+    parsed = validate_input(example, parser, config=config)
     success = example_success(example, parsed)
     
     actual = len(parsed.report) == 0 if example.example_type in [ExampleType.FAIL, ExampleType.PASS] else parsed.output
-    result = ValidationResult(example, actual, success, parsed.report[0]["message"])
+    reason = "Valid"
+    if not success:
+        if example.example_type in [ ExampleType.PASS or ExampleType.FAIL ]:
+            reason = "Input was expected to {passfail} {ruleid}, but it did not.".format(passfail=example.example_type.value, ruleid=example.rule_id)
+        else:
+            reason = "Repair found `{}`, but expected `{}`".format(actual, example.expected)
+        
+    result = ValidationResult(example, actual, success, reason)
+    return result
     
     
 def create_base_parser(format: FormatType) -> Optional[assocparser.AssocParser]:
@@ -137,18 +215,19 @@ def create_base_parser(format: FormatType) -> Optional[assocparser.AssocParser]:
     return parser
 
 
-def validate_input(input: str, parser: assocparser.AssocParser, config=None) -> Parsed:
+def validate_input(example: RuleExample, parser: assocparser.AssocParser, config=None) -> Parsed:
     if config:
         parser.config = config
     
     out = []
     writer = assocwriter.GafWriter(file=io.StringIO())
     
-    assocs_gen = parser.association_generator(file=io.StringIO(input), skipheader=True)
+    assocs_gen = parser.association_generator(file=io.StringIO(example.input), skipheader=True)
     for assoc in assocs_gen:
         out.append(writer.tsv_as_string(writer.as_tsv(assoc)))
         
-    rules_messages = parser.report.reporter.messages[example.rule_id]
+    rules_messages = parser.report.reporter.messages.get(example.rule_id, [])
+    # We only collect the messages from *our* rule we're in
     return Parsed(report=rules_messages, output=out)
 
 
@@ -157,7 +236,39 @@ def example_success(example: RuleExample, parsed_input: Parsed) -> bool:
     if example.example_type == ExampleType.REPAIR:
         success = parsed_input.output == expected.split("\n")
     elif example.example_type in [ ExampleType.FAIL, ExampleType.PASS ]:
+        # The rule was passed if there were no messages from that rule
         passed_rule = len(parsed_input.report) == 0
+        # We have a successful example if the passing above was what we expected give the example
         success = passed_rule == example.expected
     
     return success
+    
+def validation_report(all_results: List[ValidationResult]) -> Dict:
+    """
+    {
+        "gorule-00000008": {
+            "results": [
+                {
+                    "rule": "gorule-00000008"
+                    "type": "fail|pass|repair",
+                    "format": "gaf|gpad|rdf",
+                    "input": "string",
+                    "expected": "string|bool",
+                    "actual": "string|bool",
+                    "success": "bool",
+                    "reason": "string"
+                }, "..."
+            ]
+        }
+    }
+    """
+    report_dict = dict()
+    for r in all_results:
+        if r.example.rule_id not in report_dict:
+            report_dict[r.example.rule_id] = []
+        
+        r_out = r.to_json()
+        report_dict[r.example.rule_id].append(r_out)
+        
+    return report_dict
+    
