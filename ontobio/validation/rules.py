@@ -3,6 +3,7 @@ import enum
 import io
 import collections
 import click
+import json
 
 from dataclasses import dataclass
 from typing import List, Dict, TypeVar, Union, Generic, Optional
@@ -154,7 +155,7 @@ class ValidationResult:
             "reason": self.reason
         }
     
-Parsed = collections.namedtuple("Parsed", ["report", "output"])
+Parsed = collections.namedtuple("Parsed", ["report", "output", "expected"])
 
 #==============================================================================
 
@@ -188,6 +189,7 @@ def validate_example(example: RuleExample, config=None) -> ValidationResult:
     """
     parser = create_base_parser(example.format)
     parsed = validate_input(example, parser, config=config)
+    # click.echo(parsed)
     success = example_success(example, parsed)
     
     actual = len(parsed.report) == 0 if example.example_type in [ExampleType.FAIL, ExampleType.PASS] else parsed.output
@@ -226,15 +228,25 @@ def validate_input(example: RuleExample, parser: assocparser.AssocParser, config
     for assoc in assocs_gen:
         out.append(writer.tsv_as_string(writer.as_tsv(assoc)))
         
-    rules_messages = parser.report.reporter.messages.get(example.rule_id, [])
+    rule_messages = parser.report.reporter.messages.get(example.rule_id, [])
+    
+    # We have to also parse the expected result if we are in a repair to normalize all the data
+    expected_out = []
+    if example.example_type == ExampleType.REPAIR:
+        expected_parsed_gen = create_base_parser(example.format).association_generator(file=io.StringIO(example.expected), skipheader=True)
+        expected_writer = assocwriter.GafWriter(file=io.StringIO())
+        for assoc in expected_parsed_gen:
+            expected_out.append(expected_writer.tsv_as_string(expected_writer.as_tsv(assoc)))
+    
+    # click.echo(json.dumps(parser.report.reporter.messages, indent=4))
     # We only collect the messages from *our* rule we're in
-    return Parsed(report=rules_messages, output=out)
+    return Parsed(report=rule_messages, output="\n".join(out), expected="\n".join(expected_out))
 
 
 def example_success(example: RuleExample, parsed_input: Parsed) -> bool:
     success = False
     if example.example_type == ExampleType.REPAIR:
-        success = parsed_input.output == expected.split("\n")
+        success = parsed_input.output == parsed_input.expected
     elif example.example_type in [ ExampleType.FAIL, ExampleType.PASS ]:
         # The rule was passed if there were no messages from that rule
         passed_rule = len(parsed_input.report) == 0

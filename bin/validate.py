@@ -601,7 +601,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
         click.echo("Validating {} examples for {}".format(len(examples), rule_id.upper().replace("-", ":")))
         results = rules.validate_all_examples(examples, config=config)
         successes = sum(1 for r in results if r.success)
-        click.echo("\t- {}/{} success".format(successes, len(results)))
+        click.echo("\t* {}/{} success".format(successes, len(results)))
         for r in results:
             if not r.success:
                 click.echo("\tRule example failed: {}".format(r.reason))
