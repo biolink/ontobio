@@ -609,12 +609,13 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
                 all_examples_valid = False
                 
         all_results += results
-        
-    try:
-        with open(out, "w") as outfile:
-            json.dump(rules.validation_report(all_results), outfile, indent=4)
-    except Exception as e:
-        raise click.ClickException("Could not write report to {}: ".format(out, e))
+    
+    if out:
+        try:
+            with open(out, "w") as outfile:
+                json.dump(rules.validation_report(all_results), outfile, indent=4)
+        except Exception as e:
+            raise click.ClickException("Could not write report to {}: ".format(out, e))
     
     if not all_examples_valid:
         raise click.ClickException("At least one rule example was not validated.")
