@@ -35,7 +35,7 @@ class AssocWriter():
         return prefix, local_id
 
     def _write_row(self, vals):
-        line = tsv_as_string(vals)
+        line = self.tsv_as_string(vals)
         if self.file:
             self.file.write(line+"\n")
         else:
