@@ -129,7 +129,7 @@ class GpadWriter(AssocWriter):
         Write a single association to a line in the output file
         """
         if assoc.get("header", False):
-            return
+            return []
 
         subj = assoc['subject']
 
@@ -200,10 +200,10 @@ class GafWriter(AssocWriter):
 
             # Skip incoming gaf-version headers, as we created the version above already
             if re.match("![\s]*gaf.?version", assoc["line"]):
-                return
+                return []
 
             self._write(assoc["line"] + "\n")
-            return
+            return []
 
         # print("Writing assoc {}".format(assoc))
         subj = assoc['subject']
