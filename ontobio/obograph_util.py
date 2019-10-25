@@ -276,7 +276,7 @@ def _triple_to_association(digraph, subject, predicate, obj):
     return association
 
 
-def obograph_to_assoc_results(digraph):
+def obograph_to_assoc_results(digraph, is_publication=False):
     """
     Converts a multidigraph from convert_json_object
     to a list of association objects, which is easier
@@ -292,9 +292,11 @@ def obograph_to_assoc_results(digraph):
         'OBAN:association_has_subject',
         'OBAN:association_has_object',
         'OBAN:association_has_predicate',
-        'dc:source',  # publications, web pages, etc
         'RO:0002558'  # ECO codes, etc
     ]
+    if not is_publication:
+        # publications, web pages, etc
+        filter_edges.append('dc:source')
 
     association_results = []
 
@@ -313,7 +315,7 @@ def obograph_to_assoc_results(digraph):
 
 
 @cache.memoize()
-def get_evidence_tables(id, user_agent):
+def get_evidence_tables(id, is_publication, user_agent):
 
     results = search_associations(
             fq={'id': id},
@@ -326,7 +328,7 @@ def get_evidence_tables(id, user_agent):
         eg = {'graphs': [assoc.get('evidence_graph')]}
         digraph = convert_json_object(eg, reverse_edges=False)['graph']
         assoc_results = {
-            'associations': obograph_to_assoc_results(digraph),
-            'numFound': len(obograph_to_assoc_results(digraph))
+            'associations': obograph_to_assoc_results(digraph, is_publication),
+            'numFound': len(obograph_to_assoc_results(digraph, is_publication))
         }
     return assoc_results
