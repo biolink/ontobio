@@ -28,6 +28,7 @@ from ontobio.io import gaference
 from ontobio.rdfgen import assoc_rdfgen
 from ontobio.validation import metadata
 from ontobio.validation import tools
+from ontobio.validation import rules
 
 from typing import Dict, Set
 
@@ -554,6 +555,70 @@ def paint(group, dataset, metadata, target, ontology):
     gpi_path = os.path.join(absolute_target, "groups", dataset, "{}.gpi".format(dataset))
     click.echo("Using GPI at {}".format(gpi_path))
     paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi_path)
+
+
+@cli.command()
+@click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
+@click.option("--out", type=click.Path(), required=False)
+@click.option("--ontology", type=click.Path(), required=True)
+@click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
+def rule(metadata_dir, out, ontology, gaferencer_file):
+    absolute_metadata = os.path.abspath(metadata_dir)
+    absolute_out = os.path.abspath(out)
+    os.makedirs(os.path.dirname(absolute_out), exist_ok=True)
+    
+    click.echo("Loading ontology: {}...".format(ontology))
+    ontology_graph = OntologyFactory().create(ontology)
+    
+    goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
+    gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
+    
+    click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
+    
+    db_entities = metadata.database_entities(absolute_metadata)
+    group_ids = metadata.groups(absolute_metadata)
+    
+    gaferences = None
+    if gaferencer_file:
+        gaferences = gaference.load_gaferencer_inferences_from_file(gaferencer_file)
+    
+    config = assocparser.AssocParserConfig(
+        ontology=ontology_graph,
+        goref_metadata=goref_metadata,
+        entity_idspaces=db_entities,
+        group_idspace=group_ids,
+        annotation_inferences=gaferences
+    )
+    all_examples_valid = True
+    all_results = []
+    for rule_id, rule_meta in gorule_metadata.items():
+        examples = rules.RuleExample.example_from_json(rule_meta)
+        if len(examples) == 0:
+            # skip if there are no examples
+            continue
+        
+        click.echo("==============================================================================")
+        click.echo("Validating {} examples for {}".format(len(examples), rule_id.upper().replace("-", ":")))
+        results = rules.validate_all_examples(examples, config=config)
+        successes = sum(1 for r in results if r.success)
+        click.echo("\t* {}/{} success".format(successes, len(results)))
+        for r in results:
+            if not r.success:
+                click.echo("\tRule example failed: {}".format(r.reason))
+                click.echo("\tInput: >> `{}`".format(r.example.input))
+                all_examples_valid = False
+                
+        all_results += results
+    
+    if out:
+        try:
+            with open(out, "w") as outfile:
+                json.dump(rules.validation_report(all_results), outfile, indent=4)
+        except Exception as e:
+            raise click.ClickException("Could not write report to {}: ".format(out, e))
+    
+    if not all_examples_valid:
+        raise click.ClickException("At least one rule example was not validated.")
 
 
 if __name__ == "__main__":

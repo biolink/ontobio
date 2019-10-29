@@ -109,6 +109,12 @@ class AssocParserConfig():
             self.include_relations = []
         if self.filter_out_evidence is None:
             self.filter_out_evidence = []
+            
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
 
 
 class Report():
@@ -398,6 +404,10 @@ class AssocParser(object):
         """
         raise NotImplementedError("AssocParser.skim not implemented")
 
+    def normalize_columns(self, number_of_columns, columns):
+        columns += [""] * (number_of_columns - len(columns))
+        return columns
+    
     def parse_line(self, line):
         raise NotImplementedError("AssocParser.parse_line not implemented")
 
