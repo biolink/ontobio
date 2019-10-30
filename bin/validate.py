@@ -564,9 +564,7 @@ def paint(group, dataset, metadata, target, ontology):
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
 def rule(metadata_dir, out, ontology, gaferencer_file):
     absolute_metadata = os.path.abspath(metadata_dir)
-    absolute_out = os.path.abspath(out)
-    os.makedirs(os.path.dirname(absolute_out), exist_ok=True)
-    
+
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
     
@@ -611,8 +609,10 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
         all_results += results
     
     if out:
+        absolute_out = os.path.abspath(out)
+        os.makedirs(os.path.dirname(absolute_out), exist_ok=True)
         try:
-            with open(out, "w") as outfile:
+            with open(absolute_out, "w") as outfile:
                 json.dump(rules.validation_report(all_results), outfile, indent=4)
         except Exception as e:
             raise click.ClickException("Could not write report to {}: ".format(out, e))
