@@ -331,7 +331,7 @@ def get_evidence_tables(id, is_publication, user_agent):
     assoc = results['associations'][0] if len(results['associations']) > 0 else {}
     if assoc:
         eg = {'graphs': [assoc.get('evidence_graph')]}
-        assoc_type = assoc['association_type']
+        assoc_type = assoc['type']
         digraph = convert_json_object(eg, reverse_edges=False)['graph']
         assoc_results = obograph_to_assoc_results(digraph, assoc_type, is_publication)
         assoc_results = {

@@ -62,6 +62,7 @@ class GolrFields:
     """
 
     ID='id'
+    ASSOCIATION_TYPE='association_type'
     SOURCE='source'
     OBJECT_CLOSURE='object_closure'
     SOURCE_CLOSURE_MAP='source_closure_map'
@@ -1635,6 +1636,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
             }
         if M.ONSET_LABEL in d:
             assoc[M.ONSET]['label'] = d[M.ONSET_LABEL]
+
+        if M.ASSOCIATION_TYPE in d:
+            assoc['type'] = d[M.ASSOCIATION_TYPE]
 
         if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:
