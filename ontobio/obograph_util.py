@@ -276,7 +276,7 @@ def _triple_to_association(digraph, subject, predicate, obj):
     return association
 
 
-def obograph_to_assoc_results(digraph, is_publication=False):
+def obograph_to_assoc_results(digraph, assoc_type, is_publication=False):
     """
     Converts a multidigraph from convert_json_object
     to a list of association objects, which is easier
@@ -297,6 +297,11 @@ def obograph_to_assoc_results(digraph, is_publication=False):
     if not is_publication:
         # publications, web pages, etc
         filter_edges.append('dc:source')
+
+    # Filter out has_affected_feature since there can be many variant
+    # to disease and the variant to gene assoc is usually obvious
+    if assoc_type == 'gene_disease':
+        filter_edges.append('GENO:0000418')
 
     association_results = []
 
@@ -320,15 +325,17 @@ def get_evidence_tables(id, is_publication, user_agent):
     results = search_associations(
             fq={'id': id},
             facet=False,
-            select_fields=['evidence_graph'],
+            select_fields=['evidence_graph', 'association_type'],
             user_agent=user_agent)
     assoc_results = {}
     assoc = results['associations'][0] if len(results['associations']) > 0 else {}
     if assoc:
         eg = {'graphs': [assoc.get('evidence_graph')]}
+        assoc_type = assoc['association_type']
         digraph = convert_json_object(eg, reverse_edges=False)['graph']
+        assoc_results = obograph_to_assoc_results(digraph, assoc_type, is_publication)
         assoc_results = {
-            'associations': obograph_to_assoc_results(digraph, is_publication),
-            'numFound': len(obograph_to_assoc_results(digraph, is_publication))
+            'associations': assoc_results,
+            'numFound': len(assoc_results)
         }
     return assoc_results
