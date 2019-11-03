@@ -294,7 +294,7 @@ def obograph_to_assoc_results(digraph, assoc_type, is_publication=False):
         'OBAN:association_has_predicate',
         'RO:0002558'  # ECO codes, etc
     ]
-    if not assoc_type.startsWith('publication'):
+    if not assoc_type.startswith('publication'):
         # publications, web pages, etc
         filter_edges.append('dc:source')
 
