@@ -243,6 +243,10 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
         "gpad": open(os.path.join(os.path.split(gaf_path)[0], "{}.gpad".format(dataset)), "w"),
         "ttl": open(os.path.join(os.path.split(gaf_path)[0], "{}_cam.ttl".format(dataset)), "wb")
     }
+    
+    if not products["gpad"] and not products["ttl"]:
+        # Bail if we have no products
+        return []
 
     # def write_gpi_entity(association, bridge, gpiwriter):
     with open(gaf_path) as gf:
@@ -336,48 +340,6 @@ def produce_ttl(dataset, target_dir, gaf_path, ontology_graph):
 
     return ttl_path
 
-@tools.gzips
-def merge_mod_and_paint(mod_gaf_path, paint_gaf_path):
-
-    def header_and_annotations(gaf_file):
-        headers = []
-        annotations = []
-
-        for line in gaf_file.readlines():
-            line = line.rstrip("\n")
-            if line.startswith("!"):
-                headers.append(line)
-            else:
-                annotations.append(line)
-
-        return (headers, annotations)
-
-    dirs, name = os.path.split(mod_gaf_path)
-    merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
-    click.echo("Merging paint into base annotations at {}".format(merged_path))
-    with open(mod_gaf_path) as mod, open(paint_gaf_path) as paint:
-        mod_header, mod_annotations = header_and_annotations(mod)
-        paint_header, paint_annotations = header_and_annotations(paint)
-
-        the_header = mod_header + \
-            [
-            "!=================================",
-            "!",
-            "!PAINT Header copied from {}".format(os.path.basename(paint_gaf_path)),
-            "!================================="]
-        the_header += paint_header[8:] + \
-            [
-            "!=================================",
-            "!",
-            "!Documentation about this header can be found here: https://github.com/geneontology/go-site/blob/master/docs/gaf_validation.md",
-            "!"]
-
-        all_lines = the_header + mod_annotations + paint_annotations
-
-        with open(merged_path, "w") as merged_file:
-            merged_file.write("\n".join(all_lines))
-
-    return merged_path
 
 @tools.gzips
 def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
