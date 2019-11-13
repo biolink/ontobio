@@ -98,7 +98,9 @@ class AssocWriter():
         Write a single association to a line in the output file
         """
         vals = self.as_tsv(assoc)
-        self._write_row(vals)
+        if vals != []:
+            # Write it if we found content
+            self._write_row(vals)
 
     def write(self, assocs, meta=None):
         """
