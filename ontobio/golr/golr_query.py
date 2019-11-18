@@ -62,6 +62,7 @@ class GolrFields:
     """
 
     ID='id'
+    ASSOCIATION_TYPE='association_type'
     SOURCE='source'
     OBJECT_CLOSURE='object_closure'
     SOURCE_CLOSURE_MAP='source_closure_map'
@@ -875,6 +876,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  homology_type=None,
                  non_null_fields=None,
                  user_agent=None,
+                 association_type=None,
+                 sort=None,
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -930,6 +933,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
         self.non_null_fields=non_null_fields
+        self.association_type=association_type
+        self.sort=sort
 
         self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
         if user_agent is not None:
@@ -1143,6 +1148,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['relation_closure'] = \
             HomologyTypes.LeastDivergedOrtholog.value
 
+        ## Association type, monarch only
+        if self.association_type is not None:
+            fq['association_type'] = self.association_type
+
         ## pivots
         facet_pivot_fields=self.facet_pivot_fields
         if self.pivot_subject_object:
@@ -1293,7 +1302,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
             for (f,flim) in facet_field_limits.items():
                 params["f."+f+".facet.limit"] = flim
 
-
         if len(facet_pivot_fields) > 0:
             params['facet.pivot'] = ",".join(facet_pivot_fields)
             params['facet.pivot.mincount'] = 1
@@ -1302,6 +1310,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
             self.stats = True
             params['stats.field'] = self.stats_field
         params['stats'] = json.dumps(self.stats)
+
+        if self.sort is not None:
+            params['sort'] = self.sort
 
         return params
 
@@ -1458,14 +1469,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     return id.replace(s,k+':')
         return id
 
-
-    def translate_objs(self,d,fname):
+    def translate_objs(self, d, fname, default=None):
         """
         Translate a field whose value is expected to be a list
         """
         if fname not in d:
             # TODO: consider adding arg for failure on null
-            return None
+            return default
 
         #lf = M.label_field(fname)
 
@@ -1572,7 +1582,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  'object': obj,
                  'negated': negated,
                  'relation': self.translate_obj(d,M.RELATION),
-                 'publications': self.translate_objs(d,M.SOURCE),  # note 'source' is used in the golr schema
+                 'publications': self.translate_objs(d, M.SOURCE, []),  # note 'source' is used in the golr schema
         }
 
         if self.invert_subject_object and assoc['relation'] is not None:
@@ -1626,6 +1636,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
             }
         if M.ONSET_LABEL in d:
             assoc[M.ONSET]['label'] = d[M.ONSET_LABEL]
+
+        if M.ASSOCIATION_TYPE in d:
+            assoc['type'] = d[M.ASSOCIATION_TYPE]
 
         if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:

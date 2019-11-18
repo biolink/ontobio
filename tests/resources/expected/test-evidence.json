@@ -15,7 +15,7 @@
 		"label": "Troyer syndrome",
 		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
 	},
-	"object_eq": ["http://omim.org/entry/275900"],
+	"object_eq": ["OMIM:275900"],
 	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
 	"evidence_types": [],
 	"publications": []
@@ -36,7 +36,7 @@
 		"label": "SPART",
 		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
 	},
-	"object_eq": ["https://www.ncbi.nlm.nih.gov/gene/23111"],
+	"object_eq": ["NCBIGene:23111"],
 	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
 	"evidence_types": [],
 	"publications": []
@@ -57,7 +57,7 @@
 		"label": "SPART",
 		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
 	},
-	"object_eq": ["https://www.ncbi.nlm.nih.gov/gene/23111"],
+	"object_eq": ["NCBIGene:23111"],
 	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
 	"evidence_types": [],
 	"publications": []
@@ -78,7 +78,7 @@
 		"label": "Troyer syndrome",
 		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
 	},
-	"object_eq": ["http://omim.org/entry/275900"],
+	"object_eq": ["OMIM:275900"],
 	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
 	"evidence_types": [],
 	"publications": [{
@@ -94,7 +94,7 @@
 		"label": "SPART",
 		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
 	},
-	"subject_eq": ["http://omim.org/entry/607111"],
+	"subject_eq": ["OMIM:607111"],
 	"relation": {
 		"id": "RO:0003303",
 		"label": "causes condition",
@@ -105,7 +105,7 @@
 		"label": "Troyer syndrome",
 		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
 	},
-	"object_eq": ["http://omim.org/entry/275900"],
+	"object_eq": ["OMIM:275900"],
 	"provided_by": ["https://data.monarchinitiative.org/ttl/omim.ttl"],
 	"evidence_types": [{
 		"id": "ECO:0000220",
@@ -129,7 +129,7 @@
 		"label": "Troyer syndrome",
 		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
 	},
-	"object_eq": ["http://www.orpha.net/ORDO/Orphanet_101000"],
+	"object_eq": ["ORPHA:101000"],
 	"provided_by": ["https://data.monarchinitiative.org/ttl/orphanet.ttl"],
 	"evidence_types": [{
 		"id": "ECO:0000322",
@@ -153,7 +153,7 @@
 		"label": "Troyer syndrome",
 		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
 	},
-	"object_eq": ["http://omim.org/entry/275900"],
+	"object_eq": ["OMIM:275900"],
 	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
 	"evidence_types": [],
 	"publications": [{
@@ -180,7 +180,7 @@
 		"label": "SPART",
 		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
 	},
-	"object_eq": ["https://www.ncbi.nlm.nih.gov/gene/23111"],
+	"object_eq": ["NCBIGene:23111"],
 	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
 	"evidence_types": [],
 	"publications": []

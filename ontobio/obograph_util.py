@@ -4,12 +4,18 @@ Mapping between obograph-JSON format and networkx
 
 from ontobio.ontol import LogicalDefinition, PropertyChainAxiom
 from ontobio.vocabulary.relations import map_legacy_pred
-from prefixcommons.curie_util import expand_uri, contract_uri
 from ontobio.util.scigraph_util import get_curie_map
+from ontobio.golr.golr_associations import search_associations
 
 import json
 import networkx
 import logging
+from prefixcommons.curie_util import expand_uri, contract_uri
+from diskcache import Cache
+import tempfile
+
+
+cache = Cache(tempfile.gettempdir())
 
 
 class OboJsonMapper(object):
@@ -205,10 +211,16 @@ def _triple_to_association(digraph, subject, predicate, obj):
     object_eq = []
     subject_eq = []
     if 'equivalentOriginalNodeTarget' in predicate:
-        object_eq = predicate['equivalentOriginalNodeTarget']
+        for eq in predicate['equivalentOriginalNodeTarget']:
+            curies = contract_uri(eq, [get_curie_map()], shortest=True)
+            if len(curies) != 0:
+                object_eq.append(curies[0])
 
     if 'equivalentOriginalNodeSource' in predicate:
-        subject_eq = predicate['equivalentOriginalNodeSource']
+        for eq in predicate['equivalentOriginalNodeSource']:
+            curies = contract_uri(eq, [get_curie_map()], shortest=True)
+            if len(curies) != 0:
+                subject_eq.append(curies[0])
 
     relation_lbl = predicate['lbl'][0] if predicate['lbl'] else None
 
@@ -264,7 +276,7 @@ def _triple_to_association(digraph, subject, predicate, obj):
     return association
 
 
-def obograph_to_assoc_results(digraph):
+def obograph_to_assoc_results(digraph, assoc_type, is_publication=False):
     """
     Converts a multidigraph from convert_json_object
     to a list of association objects, which is easier
@@ -280,9 +292,16 @@ def obograph_to_assoc_results(digraph):
         'OBAN:association_has_subject',
         'OBAN:association_has_object',
         'OBAN:association_has_predicate',
-        'dc:source',  # publications, web pages, etc
         'RO:0002558'  # ECO codes, etc
     ]
+    if not assoc_type.startswith('publication'):
+        # publications, web pages, etc
+        filter_edges.append('dc:source')
+
+    # Filter out has_affected_feature since there can be many variant
+    # to disease and the variant to gene assoc is usually obvious
+    if assoc_type == 'gene_disease':
+        filter_edges.append('GENO:0000418')
 
     association_results = []
 
@@ -298,3 +317,25 @@ def obograph_to_assoc_results(digraph):
                     digraph, sub, edge_attr, obj))
 
     return association_results
+
+
+@cache.memoize()
+def get_evidence_tables(id, is_publication, user_agent):
+
+    results = search_associations(
+            fq={'id': id},
+            facet=False,
+            select_fields=['evidence_graph', 'association_type'],
+            user_agent=user_agent)
+    assoc_results = {}
+    assoc = results['associations'][0] if len(results['associations']) > 0 else {}
+    if assoc:
+        eg = {'graphs': [assoc.get('evidence_graph')]}
+        assoc_type = assoc['type']
+        digraph = convert_json_object(eg, reverse_edges=False)['graph']
+        assoc_results = obograph_to_assoc_results(digraph, assoc_type, is_publication)
+        assoc_results = {
+            'associations': assoc_results,
+            'numFound': len(assoc_results)
+        }
+    return assoc_results
