@@ -840,6 +840,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  object=None,
                  objects=None,
                  subject_direct=False,
+                 object_direct=False,
                  subject_taxon=None,
                  object_taxon=None,
                  invert_subject_object=None,
@@ -884,57 +885,57 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
 
         """
-        self.subject_category=subject_category
-        self.object_category=object_category
-        self.relation=relation
-        self.relationship_type=relationship_type
-        self.subject_or_object_ids=subject_or_object_ids
-        self.subject_or_object_category=subject_or_object_category
-        self.subject=subject
-        self.subjects=subjects
-        self.object=object
-        self.objects=objects
-        self.subject_direct=subject_direct
-        self.subject_taxon=subject_taxon
-        self.object_taxon=object_taxon
-        self.invert_subject_object=invert_subject_object
-        self.evidence=evidence
-        self.exclude_automatic_assertions=exclude_automatic_assertions
-        self.id=id
-        self.q=q
-        self.use_compact_associations=use_compact_associations
-        self.include_raw=include_raw
-        self.field_mapping=field_mapping
-        self.solr=solr
+        self.subject_category = subject_category
+        self.object_category = object_category
+        self.relation = relation
+        self.relationship_type = relationship_type
+        self.subject_or_object_ids = subject_or_object_ids
+        self.subject_or_object_category = subject_or_object_category
+        self.subject = subject
+        self.subjects = subjects
+        self.object = object
+        self.objects = objects
+        self.subject_direct = subject_direct
+        self.subject_taxon = subject_taxon
+        self.object_taxon = object_taxon
+        self.invert_subject_object = invert_subject_object
+        self.evidence = evidence
+        self.exclude_automatic_assertions = exclude_automatic_assertions
+        self.id = id
+        self.q = q
+        self.use_compact_associations = use_compact_associations
+        self.include_raw = include_raw
+        self.field_mapping = field_mapping
+        self.solr = solr
         self.config = config
-        self.select_fields=select_fields
-        self.fetch_objects=fetch_objects
-        self.fetch_subjects=fetch_subjects
-        self.fq=fq if fq is not None else {}
+        self.select_fields = select_fields
+        self.fetch_objects = fetch_objects
+        self.fetch_subjects = fetch_subjects
+        self.fq = fq if fq is not None else {}
         self.slim = slim if slim is not None else []
-        self.json_facet=json_facet
-        self.iterate=iterate
-        self.map_identifiers=map_identifiers
-        self.facet_fields=facet_fields
-        self.facet_field_limits=facet_field_limits
-        self.facet_limit=facet_limit
-        self.facet_mincount=facet_mincount
-        self.facet_pivot_fields=facet_pivot_fields
-        self.stats=stats
-        self.stats_field=stats_field
-        self.facet=facet
-        self.pivot_subject_object=pivot_subject_object
-        self.unselect_evidence=unselect_evidence
-        self.max_rows=100000
-        self.rows=rows
-        self.start=start
+        self.json_facet = json_facet
+        self.iterate = iterate
+        self.map_identifiers = map_identifiers
+        self.facet_fields = facet_fields
+        self.facet_field_limits = facet_field_limits
+        self.facet_limit = facet_limit
+        self.facet_mincount = facet_mincount
+        self.facet_pivot_fields = facet_pivot_fields
+        self.stats = stats
+        self.stats_field = stats_field
+        self.facet = facet
+        self.pivot_subject_object = pivot_subject_object
+        self.unselect_evidence = unselect_evidence
+        self.max_rows = 100000
+        self.rows = rows
+        self.start = start
         self.homology_type = homology_type
         self.url = url
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
-        self.non_null_fields=non_null_fields
-        self.association_type=association_type
-        self.sort=sort
+        self.non_null_fields = non_null_fields
+        self.association_type = association_type
+        self.sort = sort
 
         self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
         if user_agent is not None:
@@ -994,18 +995,19 @@ class GolrAssociationQuery(GolrAbstractQuery):
         #if subject is not None and subject.startswith('MGI:MGI:'):
         #    logging.info('Unhacking MGI ID presumably from GO:'+str(subject))
         #    subject = subject.replace("MGI:MGI:","MGI")
-        subject=self.subject
+        subject = self.subject
         if subject is not None:
             subject = self.make_canonical_identifier(subject)
-        subjects=self.subjects
+        subjects = self.subjects
         if subjects is not None:
             subjects = [self.make_canonical_identifier(s) for s in subjects]
 
         # temporary: for querying go solr, map fields. TODO
-        object_category=self.object_category
+        object_category = self.object_category
         logging.info("Object category: {}".format(object_category))
 
-        object=self.object
+        object = self.object
+        objects = self.objects
         if object_category is None and object is not None and object.startswith('GO:'):
             # Infer category
             object_category = 'function'
@@ -1041,8 +1043,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     object = cc
 
         ## subject params
-        subject_taxon=self.subject_taxon
-        subject_category=self.subject_category
+        subject_taxon = self.subject_taxon
+        subject_category = self.subject_category
 
         # heuristic procedure to guess unspecified subject_category
         if subject_category is None and subject is not None:
@@ -1096,15 +1098,11 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if object_category is not None:
             fq['object_category'] = object_category
 
-
-        if object is not None:
-            # TODO: make configurable whether to use closure
-            fq['object_closure'] = object
         if subject is not None:
             # note: by including subject closure by default,
             # we automaticaly get equivalent nodes
             if self.subject_direct:
-                fq['subject'] = subject
+                fq['subject_eq'] = subject
             else:
                 fq['subject_closure'] = subject
         if subjects is not None:
@@ -1113,6 +1111,18 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['subject'] = subjects
             else:
                 fq['subject_closure'] = subjects
+
+        if object is not None:
+            if self.object_direct:
+                fq['object_eq'] = object
+            else:
+                fq['object_closure'] = object
+        if objects is not None:
+            # lists are assumed to be disjunctive
+            if self.object_direct:
+                fq['object_eq'] = objects
+            else:
+                fq['object_eq'] = objects
 
         objects=self.objects
         if objects is not None:
