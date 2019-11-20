@@ -36,67 +36,6 @@ def write_to_file(optional_file, text):
     if optional_file:
         optional_file.write(text)
 
-###############################################
-
-class BiDiMultiMap(dict):
-
-    def __init__(self, *args):
-        super(BiDiMultiMap, self).__init__(*args)
-        self.__reverse = dict()
-
-    def __setitem__(self, key, val):
-
-        # Turn everything into a set
-        inval = None
-        if isinstance(val, set):
-            inval = val
-        elif isinstance(val, iter):
-            inval = set(val)
-        elif val == None:
-            inval = set()
-        else:
-            inval = set([val])
-
-        olds = self.get(key, [])
-        super(BiDiMultiMap, self).__setitem__(key, inval)
-        # Remove old value mappings from the key
-        for old in olds:
-            if old in self.__reverse:
-                del self.__reverse[old]
-
-        # Add the items
-        for v in inval:
-            self.__reverse[v] = key
-
-    def __delitem__(self, key):
-        vs = self[key]
-        super(BiDiMultiMap, self).__delitem__(key)
-        for v in vs:
-            del self.__reverse[v]
-
-
-    def reverse(self, element):
-        """
-        Returns the key that has element in the set for the mapping of `key`, or
-        None, of there is no such element.
-
-        Example:
-        Given "FB" --> set("fb", "FlyBase")
-
-        reverse("fb") --> "FB"
-        reverse("FlyBase") --> "FB"
-        reverse("Foo") --> None
-        """
-        return self.__reverse.get(element, None)
-
-# d = BiDiMultiMap()
-#
-# d["FB"] = set(["fb", "FlyBase"])
-# d.reverse("fb") # returns "FB"
-# d.reverse("FlyBase") # returns "FB"
-# d.reverse("mgi:mgi") # returns None
-
-###############################################
 
 
 class ParseResult(object):
@@ -139,7 +78,7 @@ class AssocParserConfig():
                  gpi_authority_path=None,
                  paint=False,
                  rule_metadata=None,
-                 gorefs=None,
+                 goref_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None):
@@ -158,7 +97,7 @@ class AssocParserConfig():
         self.gpi_authority_path = gpi_authority_path
         self.paint = paint
         self.rule_metadata = rule_metadata
-        self.gorefs = gorefs
+        self.goref_metadata = goref_metadata
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
@@ -170,6 +109,12 @@ class AssocParserConfig():
             self.include_relations = []
         if self.filter_out_evidence is None:
             self.filter_out_evidence = []
+            
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
 
 
 class Report():
@@ -460,6 +405,10 @@ class AssocParser(object):
         """
         raise NotImplementedError("AssocParser.skim not implemented")
 
+    def normalize_columns(self, number_of_columns, columns):
+        columns += [""] * (number_of_columns - len(columns))
+        return columns
+    
     def parse_line(self, line):
         raise NotImplementedError("AssocParser.parse_line not implemented")
 

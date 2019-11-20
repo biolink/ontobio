@@ -39,7 +39,7 @@ TODO
 import json
 import logging
 import pysolr
-import requests
+import re
 from typing import Dict, List
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
@@ -62,6 +62,7 @@ class GolrFields:
     """
 
     ID='id'
+    ASSOCIATION_TYPE='association_type'
     SOURCE='source'
     OBJECT_CLOSURE='object_closure'
     SOURCE_CLOSURE_MAP='source_closure_map'
@@ -339,6 +340,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                  boost_q=None,
                  highlight_class=None,
                  taxon=None,
+                 min_match=None,
+                 minimal_tokenizer=False,
                  user_agent=None):
         self.term = term
         self.category = category
@@ -360,6 +363,8 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.boost_q = boost_q
         self.highlight_class = highlight_class
         self.taxon = taxon
+        self.min_match = min_match
+        self.minimal_tokenizer = minimal_tokenizer
 
         self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
         if user_agent is not None:
@@ -367,15 +372,13 @@ class GolrSearchQuery(GolrAbstractQuery):
 
         if self.search_fields is None:
             self.search_fields = dict(id=3,
-                                      iri=3,
                                       label=2,
                                       synonym=1,
                                       definition=1,
                                       taxon_label=1,
-                                      equivalent_iri=1,
+                                      taxon_label_synonym=1,
                                       equivalent_curie=1)
 
-        solr_config = {'url': self.url, 'timeout': 2}
         if self.is_go:
             if self.url is None:
                 endpoint = self.get_config().amigo_solr_search
@@ -399,7 +402,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self._set_solr(**solr_config)
         self._set_user_agent(self.user_agent)
 
-    def solr_params(self):
+    def solr_params(self, mode=None):
 
         if self.facet_fields is None and self.facet:
             self.facet_fields = ['category', 'taxon_label']
@@ -419,13 +422,33 @@ class GolrSearchQuery(GolrAbstractQuery):
 
         qf = self._format_query_filter(self.search_fields, suffixes)
 
+        if mode == 'search':
+            # Decrease ngram weight and increase keyword and standard tokenizer
+            for field, weight in qf.items():
+                if '_kw' in field:
+                    qf[field] += 2
+                elif '_std' in field:
+                    qf[field] += 1
+
         if self.term is not None and ":" in self.term:
             qf["id_kw"] = 20
             qf["equivalent_curie_kw"] = 20
 
+        if self.minimal_tokenizer:
+            # Split text using a minimal set of word boundaries
+            # useful for variants and genotypes where typical
+            # word boundaries are part of the nomenclature
+            tokens = re.split(r'[\s|\'\",]+', self.term)
+            if tokens[-1] == '':
+                del tokens[-1]
+            tokenized = "".join(['"{}"'.format(token) for token in tokens])
+        else:
+            # Solr will run through the Standard Tokenizer
+            tokenized = self.term
+
         select_fields = ["*", "score"]
         params = {
-            'q': '{0} "{0}"'.format(self.term),
+            'q': '{0} "{1}"'.format(tokenized, self.term),
             "qt": "standard",
             'fl': ",".join(list(filter(None, select_fields))),
             "defType": "edismax",
@@ -482,6 +505,9 @@ class GolrSearchQuery(GolrAbstractQuery):
             for tax in self.taxon:
                 params['fq'].append('taxon:"{}"'.format(tax))
 
+        if self.min_match is not None:
+            params['mm'] = self.min_match
+
         if self.highlight_class is not None:
             params['hl.simple.pre'] = \
                 '<em class=\"{}\">'.format(self.highlight_class)
@@ -492,7 +518,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         """
         Execute solr search query
         """
-        params = self.solr_params()
+        params = self.solr_params(mode='search')
         logging.info("PARAMS=" + str(params))
         results = self.solr.search(**params)
         logging.info("Docs found: {}".format(results.hits))
@@ -616,8 +642,8 @@ class GolrSearchQuery(GolrAbstractQuery):
         for (field, relevancy) in search_fields.items():
             for suffix in suffixes:
                 field_filter = "{}_{}".format(field, suffix)
-                weight = "{}".format(relevancy)
-                qf[field_filter] = weight
+                qf[field_filter] = relevancy
+
         return qf
 
     def _get_longest_hl(self, highlights):
@@ -850,6 +876,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  homology_type=None,
                  non_null_fields=None,
                  user_agent=None,
+                 association_type=None,
+                 sort=None,
                  **kwargs):
 
         """Fetch a set of association objects based on a query.
@@ -905,6 +933,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
         self.non_null_fields=non_null_fields
+        self.association_type=association_type
+        self.sort=sort
 
         self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
         if user_agent is not None:
@@ -1118,6 +1148,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['relation_closure'] = \
             HomologyTypes.LeastDivergedOrtholog.value
 
+        ## Association type, monarch only
+        if self.association_type is not None:
+            fq['association_type'] = self.association_type
+
         ## pivots
         facet_pivot_fields=self.facet_pivot_fields
         if self.pivot_subject_object:
@@ -1268,7 +1302,6 @@ class GolrAssociationQuery(GolrAbstractQuery):
             for (f,flim) in facet_field_limits.items():
                 params["f."+f+".facet.limit"] = flim
 
-
         if len(facet_pivot_fields) > 0:
             params['facet.pivot'] = ",".join(facet_pivot_fields)
             params['facet.pivot.mincount'] = 1
@@ -1277,6 +1310,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
             self.stats = True
             params['stats.field'] = self.stats_field
         params['stats'] = json.dumps(self.stats)
+
+        if self.sort is not None:
+            params['sort'] = self.sort
 
         return params
 
@@ -1433,14 +1469,13 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     return id.replace(s,k+':')
         return id
 
-
-    def translate_objs(self,d,fname):
+    def translate_objs(self, d, fname, default=None):
         """
         Translate a field whose value is expected to be a list
         """
         if fname not in d:
             # TODO: consider adding arg for failure on null
-            return None
+            return default
 
         #lf = M.label_field(fname)
 
@@ -1547,7 +1582,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  'object': obj,
                  'negated': negated,
                  'relation': self.translate_obj(d,M.RELATION),
-                 'publications': self.translate_objs(d,M.SOURCE),  # note 'source' is used in the golr schema
+                 'publications': self.translate_objs(d, M.SOURCE, []),  # note 'source' is used in the golr schema
         }
 
         if self.invert_subject_object and assoc['relation'] is not None:
@@ -1601,6 +1636,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
             }
         if M.ONSET_LABEL in d:
             assoc[M.ONSET]['label'] = d[M.ONSET_LABEL]
+
+        if M.ASSOCIATION_TYPE in d:
+            assoc['type'] = d[M.ASSOCIATION_TYPE]
 
         if self._use_amigo_schema(self.object_category):
             for f in M.AMIGO_SPECIFIC_FIELDS:

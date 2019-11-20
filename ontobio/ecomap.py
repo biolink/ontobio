@@ -68,7 +68,7 @@ class EcoMap():
             ECO class CURIE/ID
         """
         mcls = None
-        for (this_code,this_ref,cls) in self.mappings():
+        for (this_code, this_ref, cls) in self.mappings():
             if str(this_code) == str(code):
                 if this_ref  == reference:
                     return cls

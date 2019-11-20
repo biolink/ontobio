@@ -105,7 +105,7 @@ class GafParser(assocparser.AssocParser):
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
         if 17 > len(vals) >= 15:
-            vals += [""] * (17 - len(vals))
+            vals = self.normalize_columns(17, vals)
 
         if len(vals) > 17:
             # If we see more than 17 columns, we will just cut off the columns after column 17
@@ -230,12 +230,6 @@ class GafParser(assocparser.AssocParser):
                 self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
                                 msg="Expecting a known ECO GAF code, e.g ISS", rule=1)
                 return assocparser.ParseResult(line, [], True)
-
-        # Throw out the line if it uses GO_REF:0000033, see https://github.com/geneontology/go-site/issues/563#event-1519351033
-        if "GO_REF:0000033" in reference.split("|"):
-            self.report.error(line, assocparser.Report.INVALID_ID, reference,
-                                msg="Disallowing GO_REF:0000033 in reference field as of 03/13/2018", rule=30)
-            return assocparser.ParseResult(line, [], True)
 
         references = self.validate_pipe_separated_ids(reference, split_line)
         if references == None:
