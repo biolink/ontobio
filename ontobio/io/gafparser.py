@@ -237,7 +237,7 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         # From discussion here: https://github.com/biolink/ontobio/pull/326#issuecomment-493359015
-        # For now we will NOT skip lines that have more than one ID space (per gorule 1 and spec for references)
+        # For now we will NOT skip lines that have more than one ID space (per gorule 55 and spec for references)
         # So we call this and drop the result to at least obtain the reports.
         self.validate_references(references, split_line)
             # Reporting occurs in `validate_references`
