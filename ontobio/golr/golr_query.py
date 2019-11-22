@@ -842,7 +842,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
                  subject_direct=False,
                  object_direct=False,
                  subject_taxon=None,
+                 subject_taxon_direct=False,
                  object_taxon=None,
+                 object_taxon_direct=False,
                  invert_subject_object=None,
                  evidence=None,
                  exclude_automatic_assertions=False,
@@ -893,11 +895,14 @@ class GolrAssociationQuery(GolrAbstractQuery):
         self.subject_or_object_category = subject_or_object_category
         self.subject = subject
         self.subjects = subjects
+        self.subject_direct = subject_direct
         self.object = object
         self.objects = objects
-        self.subject_direct = subject_direct
+        self.object_direct = object_direct
         self.subject_taxon = subject_taxon
+        self.subject_taxon_direct = subject_taxon_direct
         self.object_taxon = object_taxon
+        self.object_taxon_direct = object_taxon_direct
         self.invert_subject_object = invert_subject_object
         self.evidence = evidence
         self.exclude_automatic_assertions = exclude_automatic_assertions
@@ -1002,12 +1007,15 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if subjects is not None:
             subjects = [self.make_canonical_identifier(s) for s in subjects]
 
+        subject_direct = self.subject_direct
+
         # temporary: for querying go solr, map fields. TODO
         object_category = self.object_category
         logging.info("Object category: {}".format(object_category))
 
         object = self.object
         objects = self.objects
+        object_direct = self.object_direct
         if object_category is None and object is not None and object.startswith('GO:'):
             # Infer category
             object_category = 'function'
@@ -1044,6 +1052,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         ## subject params
         subject_taxon = self.subject_taxon
+        subject_taxon_direct = self.subject_taxon_direct
         subject_category = self.subject_category
 
         # heuristic procedure to guess unspecified subject_category
@@ -1069,13 +1078,16 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         ## taxon of object of triple
         object_taxon=self.object_taxon
+        object_taxon_direct = self.object_taxon_direct
 
         # typically information is stored one-way, e.g. model-disease;
         # sometimes we want associations from perspective of object
         if self.invert_subject_object:
-            (subject,object) = (object,subject)
-            (subject_category,object_category) = (object_category,subject_category)
-            (subject_taxon,object_taxon) = (object_taxon,subject_taxon)
+            (subject, object) = (object,subject)
+            (subject_category, object_category) = (object_category,subject_category)
+            (subject_taxon, object_taxon) = (object_taxon,subject_taxon)
+            (object_direct, subject_direct) = (subject_direct, object_direct)
+            (object_taxon_direct, subject_taxon_direct) = (subject_taxon_direct, object_taxon_direct)
 
         ## facet fields
         facet_fields=self.facet_fields
@@ -1101,25 +1113,25 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if subject is not None:
             # note: by including subject closure by default,
             # we automaticaly get equivalent nodes
-            if self.subject_direct:
+            if subject_direct:
                 fq['subject_eq'] = subject
             else:
                 fq['subject_closure'] = subject
         if subjects is not None:
             # lists are assumed to be disjunctive
-            if self.subject_direct:
+            if subject_direct:
                 fq['subject'] = subjects
             else:
                 fq['subject_closure'] = subjects
 
         if object is not None:
-            if self.object_direct:
+            if object_direct:
                 fq['object_eq'] = object
             else:
                 fq['object_closure'] = object
         if objects is not None:
             # lists are assumed to be disjunctive
-            if self.object_direct:
+            if object_direct:
                 fq['object_eq'] = objects
             else:
                 fq['object_eq'] = objects
@@ -1132,9 +1144,16 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if relation is not None:
             fq['relation_closure'] = relation
         if subject_taxon is not None:
-            fq['subject_taxon_closure'] = subject_taxon
+            if subject_taxon_direct:
+                fq['subject_taxon'] = subject_taxon
+            else:
+                fq['subject_taxon_closure'] = subject_taxon
         if object_taxon is not None:
-            fq['object_taxon_closure'] = object_taxon
+            if object_taxon_direct:
+                fq['object_taxon'] = object_taxon
+            else:
+                fq['object_taxon_closure'] = object_taxon
+
         if self.id is not None:
             fq['id'] = self.id
         if self.evidence is not None:
