@@ -47,7 +47,7 @@ def search_by_attribute_set(
         'limit': limit,
         'target': namespace_filter
     }
-    return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
+    return requests.post(owlsim_url, data=params, timeout=TIMEOUT).json()
 
 
 @cache.memoize()
@@ -71,9 +71,7 @@ def compare_attribute_sets(
         'b': profile_b,
     }
 
-    print(requests.get(owlsim_url, params=params, timeout=TIMEOUT).json())
-
-    return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
+    return requests.post(owlsim_url, data=params, timeout=TIMEOUT).json()
 
 
 @cache.memoize()
@@ -100,7 +98,7 @@ def get_attribute_information_profile(
         'a': profile,
         'r': categories
     }
-    return requests.get(owlsim_url, params=params, timeout=TIMEOUT).json()
+    return requests.post(owlsim_url, data=params, timeout=TIMEOUT).json()
 
 
 @cache.memoize()
