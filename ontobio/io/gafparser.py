@@ -141,7 +141,6 @@ class GafParser(assocparser.AssocParser):
             self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=vals[TAXON_INDEX], rule=1)
             return assocparser.ParseResult(line, [], True)
 
-
         ## Run GO Rules, save split values into individual variables
         go_rule_results = qc.test_go_rules(list(vals), self.config)
         for rule, result in go_rule_results.all_results.items():
@@ -154,7 +153,7 @@ class GafParser(assocparser.AssocParser):
                                     msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
                 # Skip the annotation
                 return assocparser.ParseResult(line, [], True)
-                
+
             if result.result_type == qc.ResultType.PASS:
                 self.report.message(assocparser.Report.INFO, line, Report.RULE_PASS, "",
                                     msg="Passing Rule", rule=int(rule.id.split(":")[1]))

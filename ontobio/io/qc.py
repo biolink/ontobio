@@ -343,7 +343,7 @@ class GoRule30(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000030", "Deprecated GO_REFs are not allowed", FailMode.HARD)
-        
+
     def _ref_curi_to_id(self, goref) -> str:
         """
         Changes reference IDs in the form of GO_REF:nnnnnnn to goref-nnnnnnn
@@ -356,7 +356,7 @@ class GoRule30(GoRule):
             # Not allowed is obsolete and GO_PAINT:x
             if ref.startswith("GO_PAINT") or (config.goref_metadata is not None and config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("is_obsolete", False)):
                 return self._result(False)
-            
+
         return self._result(True)
 
 class GoRule37(GoRule):
@@ -375,18 +375,18 @@ class GoRule37(GoRule):
             result = self._result(assigned_by == "GO_Central" and "PMID:21873635" in references)
 
         return result
-        
+
 class GoRule39(GoRule):
-    
+
     def __init__(self):
         super().__init__("GORULE:0000039", "Protein complexes can not be annotated to GO:0032991 (protein-containing complex) or its descendants", FailMode.HARD)
-    
+
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
-        # An implementation note: This is done by testing if the DB (column 1) is ComplexPortal. 
+        # An implementation note: This is done by testing if the DB (column 1) is ComplexPortal.
         # This will grab a subset of all actual Protein Complexes. This is noted in the rule description
         db = annotation[0]
         goterm = annotation[4]
-        
+
         fails = (db == "ComplexPortal" and goterm == "GO:0032991")
         return self._result(not fails)
 
@@ -406,24 +406,24 @@ class GoRule42(GoRule):
         return result
 
 class GoRule43(GoRule):
-    
+
     def __init__(self):
         super().__init__("GORULE:0000043", "Check for valid combination of evidence code and GO_REF", FailMode.SOFT)
         self.ecomapping = ecomap.EcoMap()
-        
+
     def _ref_curi_to_id(self, goref) -> str:
         """
         Changes reference IDs in the form of GO_REF:nnnnnnn to goref-nnnnnnn
         """
         return goref.lower().replace("_", "").replace(":", "-")
-        
+
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
         if config.goref_metadata is None:
             return self._result(True)
-        
+
         references = self._list_terms(annotation[5])
         evidence = annotation[6]
-        
+
         for ref in references:
             allowed_eco = config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("evidence_codes", None)
             # allowed_eco will only not be none if the ref was GO_REF:nnnnnnn, that's the only time we care here
@@ -431,12 +431,12 @@ class GoRule43(GoRule):
                 allowed_evidence = [self.ecomapping.ecoclass_to_coderef(eco)[0] for eco in allowed_eco]
                 if evidence not in allowed_evidence:
                     return self._result(False)
-                    
+
         return self._result(True)
 
 
 class GoRule46(GoRule):
-    
+
     def __init__(self):
         super().__init__("GORULE:0000046", "The ‘with’ field (GAF column 8) must be the same as the gene product (GAF colummn 2) when annotating to ‘self-binding’ terms", FailMode.SOFT)
         self.self_binding_roots = ["GO:0042803", "GO:0051260", "GO:0051289", "GO:0070207", "GO:0043621", "GO:0032840"]
@@ -449,20 +449,20 @@ class GoRule46(GoRule):
             for binding_root in self.self_binding_roots:
                 root_descendants = config.ontology.descendants(binding_root, relations=["subClassOf"], reflexive=True)
                 all_terms += root_descendants
-            
+
             self.self_binding_terms = set(all_terms)
         elif config.ontology is None:
             # Make sure if we don't have an ontology we still use the set roots
             self.self_binding_terms = self.self_binding_roots
-        
+
         withfroms = self._list_terms(annotation[7])
         goterm = annotation[4]
         objectid = annotation[1]
-        
+
         if goterm in self.self_binding_terms:
             # Then we're in the self-binding case, and check if object ID is in withfrom
             return self._result(objectid in withfroms)
-            
+
         return self._result(True)
 
 class GoRule50(GoRule):
