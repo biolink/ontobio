@@ -70,6 +70,19 @@ def test_taxon_check_failure():
     assert len(results) == 1
     assert results[0].problem == gaference.ProblemType.TAXON
 
+def test_pombase_taxon_failure():
+    with open("tests/resources/test.inferences.json") as inference_file:
+        gaferences = json.load(inference_file)
+        inferences = gaference.build_annotation_inferences(gaferences)
+
+    gaf_line = "PomBase\tSPBC11B10.09\tcdc2\t\tGO:0007275\tPMID:21873635\tIBA\tPANTHER:PTN000623979|TAIR:locus:2099478\tP\tCyclin-dependent kinase 1\tUniProtKB:P04551|PTN000624043\tprotein\ttaxon:284812\t20170228\tGO_Central"
+    gaf = gaf_line.split("\t")
+
+    results = gaference.produce_inferences(gaf, inferences)
+
+    assert len(results) == 1
+    assert results[0].problem == gaference.ProblemType.TAXON
+
 def test_extension_check_failure():
     with open("tests/resources/test.inferences.json") as inference_file:
         gaferences = json.load(inference_file)

@@ -2,6 +2,7 @@ import pytest
 import datetime
 
 from ontobio.io import qc
+from ontobio.io import gaference
 from ontobio.io import assocparser
 from ontobio import ontol_factory
 
@@ -120,13 +121,20 @@ def test_go_rule11():
 
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
-    
+
     # Root, but not ND
     a = ["blah"] * 16
     a[4] = "GO:0003674"
     a[6] = "FOO"
     test_result = qc.GoRule11().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
+
+def test_go_rules_13():
+
+    a = ["PomBase", "SPBC11B10.09", "cdc2", "", "GO:0007275", "PMID:21873635", "IBA", "PANTHER:PTN000623979|TAIR:locus:2099478", "P", "Cyclin-dependent kinase 1", "UniProtKB:P04551|PTN000624043", "protein", "taxon:284812", "20170228", "GO_Central", "", ""]
+    gaferences = gaference.load_gaferencer_inferences_from_file("tests/resources/test.inferences.json")
+    test_result = qc.GoRule13().test(a, assocparser.AssocParserConfig(annotation_inferences=gaferences))
+    assert test_result.result_type == qc.ResultType.WARNING
 
 def test_go_rules_15():
 
@@ -310,7 +318,7 @@ def test_go_rule29():
 def test_gorule30():
     a = ["blah"] * 16
     a[5] = "GO_REF:0000033"
-    
+
     config = assocparser.AssocParserConfig(
         goref_metadata={
             "goref-0000033": {
@@ -358,19 +366,19 @@ def test_gorule36():
     a[14] = "Pascale"  # IBA, but wrong assigned_by
     test_result = qc.GoRule37().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
-    
+
 def test_gorule39():
     a = ["blah"] * 16
     a[0] = "ComplexPortal"
     a[4] = "GO:0032991"
-    
+
     test_result = qc.GoRule39().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
-    
+
     a[0] = "FB"
     test_result = qc.GoRule39().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
-    
+
     a[0] = "ComplexPortal"
     a[4] = "GO:0000023"
     test_result = qc.GoRule39().test(a, assocparser.AssocParserConfig())
@@ -392,12 +400,12 @@ def test_gorule42():
     a[3] = ""  # No NOT qualifier, so wrong
     test_result = qc.GoRule42().test(a, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
-    
+
 def test_gorule43():
     a = ["blah"] * 16
     a[5] = "GO_REF:0000024"
     a[6] = "ISO"
-    
+
     config = assocparser.AssocParserConfig(
         goref_metadata={
             "goref-0000024": {
@@ -407,43 +415,43 @@ def test_gorule43():
             }
         }
     )
-    
+
     test_result = qc.GoRule43().test(a, config)
     assert test_result.result_type == qc.ResultType.PASS
-    
+
     a[6] = "FOO"
     test_result = qc.GoRule43().test(a, config)
     assert test_result.result_type == qc.ResultType.WARNING
-    
+
     a[6] = "ISO"
     a[5] = "FOO:123"
     test_result = qc.GoRule43().test(a, config)
     assert test_result.result_type == qc.ResultType.PASS
-    
+
 def test_gorule46():
     config = assocparser.AssocParserConfig(ontology=ontology)
-    
+
     a = ["blah"] * 16
     a[1] = "SPAC25B8.17"
     a[4] = "GO:0051260" # Self-binding, yes
     a[7] = "SPAC25B8.17"
-    
+
     test_result = qc.GoRule46().test(a, config)
     assert test_result.result_type == qc.ResultType.PASS
-    
+
     a[7] = "BLAH123"
     test_result = qc.GoRule46().test(a, config)
     assert test_result.result_type == qc.ResultType.WARNING
-    
+
     a[7] = "SPAC25B8.17|BLAH123"
     test_result = qc.GoRule46().test(a, config)
     assert test_result.result_type == qc.ResultType.PASS
-    
+
     a[4] = "GO:0000123"
     # Not in a self-binding mode
     test_result = qc.GoRule46().test(a, config)
     assert test_result.result_type == qc.ResultType.PASS
-    
+
     # Test no ontology should just pass
     a[4] = "GO:0051260"
     test_result = qc.GoRule46().test(a, assocparser.AssocParserConfig())
