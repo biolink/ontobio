@@ -2726,5 +2726,21 @@
     ],
     "satisfiable" : true,
     "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0007275"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_284812",
+      "extension" : [
+      ]
+    },
+    "inferences" : [
+    ],
+    "satisfiable" : false,
+    "taxonProblem" : true
   }
+
 ]
