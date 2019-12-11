@@ -7,6 +7,7 @@ brew or apt-get or yum.
 This section is only relevant for project maintainers.
 To create a new release, do the following:
 
+
 1. Bump the `__version__` in [`ontobio/__init__.py`](ontobio/__init__.py).
 
 3. Run the following commands:
