@@ -206,12 +206,13 @@ class GoRule15(GoRule):
         self.allowed_dual_species_terms = None
 
     def test(self, annotation: List, config: assocparser.AssocParserConfig) -> TestResult:
-
         # Cache the allowed terms
         if self.allowed_dual_species_terms is None and config.ontology is not None:
             interaction_terms = config.ontology.descendants("GO:0044419", relations=["subClassOf"], reflexive=True)
             other_organism_terms = config.ontology.descendants("GO:0044215", relations=["subClassOf"], reflexive=True)
             self.allowed_dual_species_terms = set(interaction_terms + other_organism_terms)
+        elif config.ontology is None:
+            return self._result(True)
 
         passes = False
         if self.allowed_dual_species_terms is not None:
