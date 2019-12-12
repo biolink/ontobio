@@ -129,8 +129,6 @@ class GafParser(assocparser.AssocParser):
                 rule=1)
             return assocparser.ParseResult(line, [], True)
 
-        print("Before Rules: {}".format(vals))
-
 
         ## check for missing columns
         ## We use indeces here because we run GO RULES before we split the vals into individual variables
@@ -173,7 +171,6 @@ class GafParser(assocparser.AssocParser):
                                     msg="Passing Rule", rule=int(rule.id.split(":")[1]))
 
         vals = list(go_rule_results.annotation.to_gaf_tsv())
-        print("After Rules: {}".format(vals))
         [db,
          db_object_id,
          db_object_symbol,

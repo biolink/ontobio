@@ -106,7 +106,6 @@ def build_annotation_inferences(gaferencer_out: List[Dict]) -> Dict[AnnotationKe
 def produce_inferences(gaf: association.GoAssociation, inference_table: Dict[AnnotationKey, InferenceValue]) -> List:
     keys = make_keys_from_gaf(gaf)  # type: List[AnnotationKey]
     results = []  # type: List[InferenceResult]
-    print("Gaferencer KEYS: {}".format(keys))
     for key in keys:
         inferred_value = inference_table.get(key, None)
         if inferred_value != None:

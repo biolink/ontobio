@@ -513,7 +513,6 @@ GoRules = enum.Enum("GoRules", {
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
 def test_go_rules(annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> GoRulesResults:
-    print("Association for Rules: {}".format(annotation))
     all_results = {}
 
     active_annotation = annotation
