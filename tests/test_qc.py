@@ -156,7 +156,6 @@ def test_go_rules_13():
 
     a = ["PomBase", "SPBC11B10.09", "cdc2", "", "GO:0007275", "PMID:21873635", "IBA", "PANTHER:PTN000623979|TAIR:locus:2099478", "P", "Cyclin-dependent kinase 1", "UniProtKB:P04551|PTN000624043", "protein", "taxon:284812", "20170228", "GO_Central", "", ""]
     assoc = gafparser.to_association(a)[0]
-    print(assoc)
     gaferences = gaference.load_gaferencer_inferences_from_file("tests/resources/test.inferences.json")
     test_result = qc.GoRule13().test(assoc, assocparser.AssocParserConfig(annotation_inferences=gaferences))
     assert test_result.result_type == qc.ResultType.WARNING
@@ -249,7 +248,6 @@ def test_go_rule_18():
     a[8] = "P"
     assoc = gafparser.to_association(a)[0]
     assoc.evidence.with_support_from = []
-    print(assoc)
 
     test_result = qc.GoRule18().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.WARNING
