@@ -115,7 +115,7 @@ class GoRule06(GoRule):
 
         go_namespace = [predval for predval in config.ontology.get_graph().node.get(annotation.object.id, {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
         evidence = annotation.evidence.type
-        fails = evidence in [self.iep, self.hep] and "biological_process" not in go_namespace
+        fails = evidence in [self.iep, self.hep] and "biological_process" not in [o["val"] for o in go_namespace]
         return self._result(not fails)
 
 class GoRule07(GoRule):

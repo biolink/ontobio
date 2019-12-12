@@ -25,7 +25,7 @@ def test_go_rule02():
     a[3] = "NOT"
     a[4] = "GO:0005515"
     a[8] = "F"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule02().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.WARNING
@@ -45,7 +45,7 @@ def test_go_rule_06():
     a[4] = "GO:0005575" # Cellular component
     a[6] = "HEP"
     a[8] = "C"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule06().test(assoc, assocparser.AssocParserConfig(ontology=ontology))
     assert test_result.result_type == qc.ResultType.ERROR
@@ -65,7 +65,7 @@ def test_go_rule_07():
     a[4] = "GO:0003824"
     a[6] = "IPI"
     a[8] = "F"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule07().test(assoc, assocparser.AssocParserConfig(ontology=ontology))
     assert test_result.result_type == qc.ResultType.WARNING
@@ -85,7 +85,7 @@ def test_go_rule08():
     a[4] = "GO:0006810" # do not annotate
     a[6] = "IEA"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule08().test(assoc, assocparser.AssocParserConfig(ontology=ontology))
     assert test_result.result_type == qc.ResultType.WARNING
@@ -115,7 +115,7 @@ def test_go_rule11():
     a[4] = "GO:0003674"
     a[6] = "ND"
     a[8] = "F"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule11().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
@@ -126,7 +126,7 @@ def test_go_rule11():
     a[4] = "GO:1234567"
     a[6] = "ND"
     a[8] = "F"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule11().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
@@ -136,7 +136,7 @@ def test_go_rule11():
     a[4] = "GO:1234567"
     a[6] = "IEA"
     a[8] = "F"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule11().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
@@ -147,7 +147,7 @@ def test_go_rule11():
     a[4] = "GO:0003674"
     a[6] = "IEA"
     a[8] = "F"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule11().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
@@ -155,7 +155,8 @@ def test_go_rule11():
 def test_go_rules_13():
 
     a = ["PomBase", "SPBC11B10.09", "cdc2", "", "GO:0007275", "PMID:21873635", "IBA", "PANTHER:PTN000623979|TAIR:locus:2099478", "P", "Cyclin-dependent kinase 1", "UniProtKB:P04551|PTN000624043", "protein", "taxon:284812", "20170228", "GO_Central", "", ""]
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
+    print(assoc)
     gaferences = gaference.load_gaferencer_inferences_from_file("tests/resources/test.inferences.json")
     test_result = qc.GoRule13().test(assoc, assocparser.AssocParserConfig(annotation_inferences=gaferences))
     assert test_result.result_type == qc.ResultType.WARNING
@@ -168,7 +169,7 @@ def test_go_rules_15():
     a[6] = "IEA"
     a[8] = "P"
     a[12] = "taxon:123|taxon:456"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule15().test(assoc, assocparser.AssocParserConfig(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
@@ -191,7 +192,7 @@ def test_go_rule_16():
     a[6] = "IC"
     a[7] = "BLAH:12345"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule16().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
@@ -229,7 +230,7 @@ def test_go_rule_17():
     a[6] = "IDA"
     a[7] = "BLAH:12345"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule17().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.WARNING
@@ -246,7 +247,7 @@ def test_go_rule_18():
     a[6] = "IPI"
     a[7] = ""
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
     assoc.evidence.with_support_from = []
     print(assoc)
 
@@ -267,7 +268,7 @@ def test_go_rule26():
     a = make_annotation("GO:BLAHBLAH", "IBA")
     a[8] = "P"
     a[3] = ""
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
     # Pass due to IBA in paint
     test_result = qc.GoRule26().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
@@ -279,7 +280,7 @@ def test_go_rule26():
     a = make_annotation("GO:BLAHBLAH", "IPI")
     a[8] = "P"
     a[3] = ""
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
     # Pass due to non IBA
     test_result = qc.GoRule26().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
@@ -291,7 +292,7 @@ def test_go_rule26():
     a = make_annotation("GO:BLAHBLAH", "IBA")
     a[8] = "P"
     a[3] = ""
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
     # Pass due to non IBA
     test_result = qc.GoRule26().test(assoc, config)
     assert test_result.result_type == qc.ResultType.ERROR
@@ -306,7 +307,7 @@ def test_go_rule28():
     a[3] = ""
     a[4] = "GO:0005975"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule28().test(assoc, config)
 
@@ -317,7 +318,7 @@ def test_go_rule28():
     a[3] = ""
     a[4] = "GO:0005975"
     a[8] = "C"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule28().test(assoc, config)
 
@@ -333,7 +334,7 @@ def test_go_rule29():
     a[6] = "IEA"
     a[8] = "P"
     a[13] = "19901111" # Nov 11, 1990, more than a year old
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
@@ -356,7 +357,7 @@ def test_gorule30():
     a[3] = ""
     a[5] = "GO_REF:0000033"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     config = assocparser.AssocParserConfig(
         goref_metadata={
@@ -390,7 +391,7 @@ def test_gorule37():
     a[5] = "PMID:21873635"
     a[8] = "P"
     a[14] = "GO_Central"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule37().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
@@ -415,7 +416,7 @@ def test_gorule39():
     a[3] = ""
     a[4] = "GO:0032991"
     a[8] = "C"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule39().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
@@ -434,7 +435,7 @@ def test_gorule42():
     a[3] = "NOT"
     a[6] = "IKR"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule42().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
@@ -454,7 +455,7 @@ def test_gorule43():
     a[5] = "GO_REF:0000024"
     a[6] = "ISO"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     config = assocparser.AssocParserConfig(
         goref_metadata={
@@ -488,7 +489,7 @@ def test_gorule46():
     a[4] = "GO:0051260" # Self-binding, yes
     a[7] = "PomBase:SPAC25B8.17"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule46().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
@@ -519,7 +520,7 @@ def test_gorule50():
     a[6] = "ISS"
     a[7] = "HELLO:123"
     a[8] = "P"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_result = qc.GoRule50().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.WARNING
@@ -547,7 +548,7 @@ def test_all_rules():
     a[6] = "ISS"
     a[8] = "P"
     a[13] = "20180330"
-    assoc = gafparser.to_association(a)
+    assoc = gafparser.to_association(a)[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
     assert len(test_results.keys()) == 20

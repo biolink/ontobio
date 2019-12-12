@@ -2,7 +2,7 @@ import re
 import logging
 import json
 
-from typing import List
+from typing import List, Tuple
 
 from prefixcommons import curie_util
 
@@ -152,7 +152,11 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         ## Run GO Rules, save split values into individual variables
-        go_rule_results = qc.test_go_rules(to_association(list(vals)), self.config)
+        assoc, messages = to_association(list(vals))
+        if messages:
+            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, "", "; ".join(messages), taxon=vals[TAXON_INDEX], rule=1)
+
+        go_rule_results = qc.test_go_rules(assoc, self.config)
         for rule, result in go_rule_results.all_results.items():
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
@@ -376,11 +380,13 @@ class GafParser(assocparser.AssocParser):
 ecomap = EcoMap()
 ecomap.mappings()
 relation_tuple = re.compile(r'(.+)\((.+)\)')
-def to_association(gaf_line: List[str]) -> association.GoAssociation:
+def to_association(gaf_line: List[str]) -> Tuple[association.GoAssociation, List[str]]:
     if len(gaf_line) <= 17 and len(gaf_line) >= 15:
         gaf_line += [""] * (17 - len(gaf_line))
     else:
         return None
+
+    messages = []
 
     taxon = gaf_line[12].split("|")
     taxon_curie = taxon[0].replace("taxon", "NCBITaxon")
@@ -398,18 +404,23 @@ def to_association(gaf_line: List[str]) -> association.GoAssociation:
     subject_extensions = [association.ExtensionUnit("rdfs:subClassOf", gaf_line[16])] if gaf_line[16] else []
 
     conjunctions = []
-    for conjuncts in gaf_line[15].split("|"):
-        extension_units = []
-        for u in conjuncts.split(","):
-            parsed = relation_tuple.findall(u)
-            if len(parsed) >= 1:
-                rel, term = parsed[0]
-                extension_units.append(association.ExtensionUnit(rel, term))
-        conjunction = association.ExtensionConjunctions(extension_units)
-        conjunctions.append(conjunction)
+    if gaf_line[15]:
+        for conjuncts in gaf_line[15].split("|"):
+            extension_units = []
+            for u in conjuncts.split(","):
+                parsed = relation_tuple.findall(u)
+                if len(parsed) == 1:
+                    rel, term = parsed[0]
+                    extension_units.append(association.ExtensionUnit(rel, term))
+                else:
+                    # Otherwise, something went bad with the regex, and it's a bad parse
+                    messages.append("extension expression does not follow REL(ID) syntax")
+
+            conjunction = association.ExtensionConjunctions(extension_units)
+            conjunctions.append(conjunction)
     object_extensions = association.ExtensionExpression(conjunctions)
 
-    return association.GoAssociation(
+    return (association.GoAssociation(
         source_line="\t".join(gaf_line),
         subject=subject,
         relation=curie_util.contract_uri(relations.lookup_label(relation))[0],
@@ -423,4 +434,4 @@ def to_association(gaf_line: List[str]) -> association.GoAssociation:
         object_extensions=object_extensions,
         provided_by=gaf_line[14],
         date=gaf_line[13],
-        properties={})
+        properties={}), messages)

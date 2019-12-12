@@ -90,7 +90,7 @@ class GoAssociation:
 
         taxon = self.object.taxon.replace("NCBITaxon", "taxon")
         if self.interacting_taxon:
-            taxon = "{taxon}|{interacting}".format(taxon, self.interacting_taxon)
+            taxon = "{taxon}|{interacting}".format(taxon=taxon, interacting=self.interacting_taxon)
 
         return [
             db,

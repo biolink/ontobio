@@ -106,6 +106,7 @@ def build_annotation_inferences(gaferencer_out: List[Dict]) -> Dict[AnnotationKe
 def produce_inferences(gaf: association.GoAssociation, inference_table: Dict[AnnotationKey, InferenceValue]) -> List:
     keys = make_keys_from_gaf(gaf)  # type: List[AnnotationKey]
     results = []  # type: List[InferenceResult]
+    print("Gaferencer KEYS: {}".format(keys))
     for key in keys:
         inferred_value = inference_table.get(key, None)
         if inferred_value != None:
@@ -139,11 +140,15 @@ def make_keys_from_gaf(gaf: association.GoAssociation) -> List[AnnotationKey]:
     extensions = gaf.object_extensions
 
     annotation_keys = []  # type: List[AnnotationKey]
-    for conjunction in extensions.conjunctions:
-        # conjunction is foo(bar),hello(world)
-        extension_conjunction = association.ExtensionConjunctions(frozenset(conjunction.extensions))
-        # Build the Key now
-        annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, extension_conjunction))
+
+    if extensions.conjunctions:
+        for conjunction in extensions.conjunctions:
+            # conjunction is foo(bar),hello(world)
+            extension_conjunction = association.ExtensionConjunctions(frozenset(conjunction.extensions))
+            # Build the Key now
+            annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, extension_conjunction))
+    else:
+        annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, association.ExtensionConjunctions(frozenset([]))))
 
     return annotation_keys
 
