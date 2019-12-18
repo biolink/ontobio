@@ -1,7 +1,11 @@
 from ontobio.io import assocparser
 from ontobio.io import entityparser
 from ontobio.io import entitywriter
-from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
+from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
+from ontobio.io import qc
+from ontobio.model import association
+
+from typing import List
 
 import logging
 
@@ -223,3 +227,43 @@ class GpadParser(assocparser.AssocParser):
 
     def is_header(self, line):
         return line.startswith("!")
+
+def to_association(gpad_line: List[str], group="unknown", dataset="unknown") -> assocparser.ParseResult:
+
+    report = Report(group=group, dataset=dataset)
+    source_line = "\t".join(gpad_line)
+
+    if len(gpad_line) > 12:
+        report.warning(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+            msg="There were more than 12 columns in this line. Proceeding by cutting off extra columns.",
+            rule=1)
+
+        gpad_line = gpad_line[:12]
+
+    if 12 > len(gpad_line) >= 10:
+        gpad_line += [""] * (12 - len(gpad_line))
+
+    if len(gpad_line) != 12:
+        report.error(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+            msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)))
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    ## check for missing columns
+    ## We use indeces here because we run GO RULES before we split the vals into individual variables
+    DB_INDEX = 0
+    DB_OBJECT_INDEX = 1
+    QUALIFIER = 2
+    REFERENCE_INDEX = 4
+    EVIDENCE_INDEX = 5
+    if gpad_line[DB_INDEX] == "":
+        report.error(source_line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", taxon=gpad_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    if gpad_line[DB_OBJECT_INDEX] == "":
+        report.error(source_line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=gpad_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    if gpad_line[TAXON_INDEX] == "":
+        report.error(source_line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty", taxon=gpad_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    if gpad_line[REFERENCE_INDEX] == "":
+        report.error(source_line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=gpad_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)

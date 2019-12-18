@@ -21,9 +21,9 @@ Date = typing.NewType("Date", str)
 class Subject:
     id: Curie
     label: str
-    type: str
     fullname: str
     synonyms: List[str]
+    type: str
     taxon: Curie
 
 @dataclass
@@ -111,3 +111,6 @@ class GoAssociation:
             str(self.object_extensions),
             gp_isoforms
         ]
+
+    def to_gpad_tsv(self) -> List:
+        pass
