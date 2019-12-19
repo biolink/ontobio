@@ -1,5 +1,9 @@
 from ontobio.io import assocparser
 
+from ontobio.model import association
+
+from typing import Dict, List
+
 import logging
 import json
 
@@ -176,6 +180,9 @@ class GpiParser(EntityParser):
             }
         }
         return line, [obj]
+
+    def as_entities(self) -> Dict[association.Curie, association.GeneEntity]:
+        pass
 
 class BgiParser(EntityParser):
     """

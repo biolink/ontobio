@@ -5,7 +5,7 @@ from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
 from ontobio.model import association
 
-from typing import List
+from typing import List, Dict
 
 import logging
 
@@ -256,14 +256,16 @@ def to_association(gpad_line: List[str], group="unknown", dataset="unknown") -> 
     REFERENCE_INDEX = 4
     EVIDENCE_INDEX = 5
     if gpad_line[DB_INDEX] == "":
-        report.error(source_line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", taxon=gpad_line[TAXON_INDEX], rule=1)
+        report.error(source_line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
     if gpad_line[DB_OBJECT_INDEX] == "":
-        report.error(source_line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=gpad_line[TAXON_INDEX], rule=1)
+        report.error(source_line, Report.INVALID_ID, "EMPTY", "col2 is empty", rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
-    if gpad_line[TAXON_INDEX] == "":
-        report.error(source_line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty", taxon=gpad_line[TAXON_INDEX], rule=1)
+    if gpad_line[QUALIFIER] == "":
+        report.error(source_line, Report.INVALID_TAXON, "EMPTY", "qualifier column is empty", rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
     if gpad_line[REFERENCE_INDEX] == "":
-        report.error(source_line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=gpad_line[TAXON_INDEX], rule=1)
+        report.error(source_line, Report.INVALID_ID, "EMPTY", "reference column is empty", rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
+    if gpad_line[EVIDENCE_INDEX] == "":
+        report.error(source_line, Report.INVALID_ID, "EMPTY", "Evidence column is empty", rule=1)

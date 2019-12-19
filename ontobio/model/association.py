@@ -9,7 +9,7 @@ ecomap = EcoMap()
 ecomap.mappings()
 
 
-from typing import List, Optional, NamedTuple, Dict
+from typing import List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
 
 Aspect = typing.NewType("Aspect", str)
