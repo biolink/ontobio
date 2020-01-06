@@ -181,7 +181,7 @@ class GpiParser(EntityParser):
         }
         return line, [obj]
 
-    def as_entities(self) -> Dict[association.Curie, association.GeneEntity]:
+    def as_entities(self):
         pass
 
 class BgiParser(EntityParser):

@@ -150,6 +150,9 @@ class GoRule08(GoRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
         # Cache the subsets
+        if config.ontology is None:
+            return self._result(True)
+
         if self.do_not_annotate is None and config.ontology is not None:
             self.do_not_annotate = set(config.ontology.extract_subset("gocheck_do_not_annotate"))
             self.do_not_manually_annotate = set(config.ontology.extract_subset("gocheck_do_not_manually_annotate"))

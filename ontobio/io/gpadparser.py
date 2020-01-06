@@ -5,8 +5,12 @@ from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
 from ontobio.model import association
 
+from ontobio.rdfgen import relations
+from prefixcommons import curie_util
+
 from typing import List, Dict
 
+import re
 import logging
 
 class GpadParser(assocparser.AssocParser):
@@ -94,14 +98,30 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
 
         vals = [el.strip() for el in line.split("\t")]
-        if len(vals) < 10 or len(vals) > 12:
-            self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(vals)))
-            return assocparser.ParseResult(line, [], True)
 
-        if len(vals) < 12:
-            vals += [""] * (12 - len(vals))
+        parsed = to_association(list(vals), report=self.report)
+        if parsed.associations == []:
+            return parsed
 
+        assoc = parsed.associations[0]
+
+        go_rule_results = qc.test_go_rules(assoc, self.config)
+        for rule, result in go_rule_results.all_results.items():
+            if result.result_type == qc.ResultType.WARNING:
+                self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
+                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
+
+            if result.result_type == qc.ResultType.ERROR:
+                self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, "",
+                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
+                # Skip the annotation
+                return assocparser.ParseResult(line, [], True)
+
+            if result.result_type == qc.ResultType.PASS:
+                self.report.message(assocparser.Report.INFO, line, Report.RULE_PASS, "",
+                                    msg="Passing Rule", rule=int(rule.id.split(":")[1]))
+
+        vals = list(go_rule_results.annotation.to_gpad_tsv())
         [db,
          db_object_id,
          qualifier,
@@ -228,9 +248,11 @@ class GpadParser(assocparser.AssocParser):
     def is_header(self, line):
         return line.startswith("!")
 
-def to_association(gpad_line: List[str], group="unknown", dataset="unknown") -> assocparser.ParseResult:
+relation_tuple = re.compile(r'(.+)\((.+)\)')
+def to_association(gpad_line: List[str], report=None, group="unknown", dataset="unknown") -> assocparser.ParseResult:
 
-    report = Report(group=group, dataset=dataset)
+    report = Report(group=group, dataset=dataset) if report is None else report
+
     source_line = "\t".join(gpad_line)
 
     if len(gpad_line) > 12:
@@ -269,3 +291,53 @@ def to_association(gpad_line: List[str], group="unknown", dataset="unknown") -> 
         return assocparser.ParseResult(source_line, [], True, report=report)
     if gpad_line[EVIDENCE_INDEX] == "":
         report.error(source_line, Report.INVALID_ID, "EMPTY", "Evidence column is empty", rule=1)
+
+    taxon = ""
+    subject_curie = "{db}:{id}".format(db=gpad_line[0], id=gpad_line[1])
+    subject = association.Subject(subject_curie, "", "", [], "", "")
+    object = association.Term(gpad_line[3], "")
+    evidence = association.Evidence(gpad_line[5],
+        [e for e in gpad_line[4].split("|") if e],
+        [e for e in gpad_line[6].split("|") if e])
+
+    raw_qs = gpad_line[2].split("|")
+    negated = "NOT" in raw_qs
+    qualifiers = [curie_util.contract_uri(relations.lookup_label(q))[0] for q in raw_qs if q != "NOT"]
+
+    conjunctions = []
+    if gpad_line[11]:
+        for conjuncts in gpad_line[11].split("|"):
+            extension_units = []
+            for u in conjuncts.split(","):
+                parsed = relation_tuple.findall(u)
+                if len(parsed) == 1:
+                    rel, term = parsed[0]
+                    extension_units.append(association.ExtensionUnit(rel, term))
+                else:
+                    # Otherwise, something went bad with the regex, and it's a bad parse
+                    report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, u, "extensions should be relation(curie)", taxon=taxon, rule=1)
+                    return assocparser.ParseResult(source_line, [], True, report=report)
+
+            conjunction = association.ExtensionConjunctions(extension_units)
+            conjunctions.append(conjunction)
+    object_extensions = association.ExtensionExpression(conjunctions)
+
+    properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
+    # print(properties_list)
+    a = association.GoAssociation(
+        source_line="\t".join(gpad_line),
+        subject=subject,
+        relation="",
+        object=object,
+        negated=negated,
+        qualifiers=qualifiers,
+        aspect=None,
+        interacting_taxon=gpad_line[7],
+        evidence=evidence,
+        subject_extensions=[],
+        object_extensions=object_extensions,
+        provided_by=gpad_line[9],
+        date=gpad_line[8],
+        properties={ prop[0]: prop[1] for prop in properties_list if prop })
+
+    return assocparser.ParseResult(source_line, [a], False, report=report)

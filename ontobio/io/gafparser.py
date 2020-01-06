@@ -113,12 +113,12 @@ class GafParser(assocparser.AssocParser):
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
 
-        parsed = to_association(list(vals))
+        parsed = to_association(list(vals), report=self.report)
         if parsed.associations == []:
             return parsed
 
         assoc = parsed.associations[0]
-        self.report = parsed.report
+        # self.report = parsed.report
         ## Run GO Rules, save split values into individual variables
         go_rule_results = qc.test_go_rules(assoc, self.config)
         for rule, result in go_rule_results.all_results.items():
@@ -343,9 +343,13 @@ class GafParser(assocparser.AssocParser):
 ecomap = EcoMap()
 ecomap.mappings()
 relation_tuple = re.compile(r'(.+)\((.+)\)')
-def to_association(gaf_line: List[str], group="unknown", dataset="unknown") -> assocparser.ParseResult:
-    report = Report(group=group, dataset=dataset)
+def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown") -> assocparser.ParseResult:
+    report = Report(group=group, dataset=dataset) if report is None else report
     source_line = "\t".join(gaf_line)
+
+    if source_line == "":
+        report.error(source_line, "Blank Line", "EMPTY", "Blank lines are not allowed", rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
 
     if len(gaf_line) > 17:
         # If we see more than 17 columns, we will just cut off the columns after column 17
@@ -386,7 +390,7 @@ def to_association(gaf_line: List[str], group="unknown", dataset="unknown") -> a
     taxon_curie = taxon[0].replace("taxon", "NCBITaxon")
     interacting_taxon = taxon[1].replace("taxon", "NCBITaxon") if len(taxon) == 2 else None
     subject_curie = "{db}:{id}".format(db=gaf_line[0], id=gaf_line[1])
-    subject = association.Subject(subject_curie, gaf_line[2], gaf_line[11], gaf_line[9], gaf_line[10].split("|"), taxon_curie)
+    subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon_curie)
     aspect = gaf_line[8]
     negated, relation, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
     object = association.Term(gaf_line[4], taxon_curie)
