@@ -49,6 +49,14 @@ def test_skim_gaf_qualifiers():
         assert s.startswith('MGI:') or s.startswith('PomBase')
     assert len(results) == 2 # ensure NOTs and excludes relations skipped
 
+def test_one_line():
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create("tests/resources/goslim_generic.json")))
+
+    parsed = p.parse_line("PomBase	SPBC16D10.09	pcn1		GO:0009536	PMID:8663159	IDA		C	PCNA	pcn	protein	taxon:4896	20150326	PomBase")
+    print(parsed)
+    print(json.dumps(p.report.to_report_json(), indent=4))
+
 def test_skim_gpad():
     p = GpadParser()
     p.config.ecomap = EcoMap()

@@ -285,11 +285,7 @@ class Ontology():
 
     def _meta(self, nid):
         n = self.node(nid)
-        if 'meta' in n:
-            return n['meta']
-        else:
-            return {}
-
+        return n.get("meta", {})
 
     def prefixes(self):
         """
@@ -401,7 +397,7 @@ class Ontology():
     def parents(self, node, relations=None):
         """
         Return all direct 'parents' of specified node.
-        
+
         Note that in the context of ontobio, 'parent' means any node that
         is traversed in a single hop along an edge from a subject to object.
         For example, if the ontology has an edge "finger part-of some hand", then

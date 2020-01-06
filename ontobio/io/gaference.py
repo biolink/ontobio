@@ -11,6 +11,7 @@ from ontobio.model import association
 from ontobio.rdfgen import relations
 
 import logging
+import copy
 
 prefix_context = {key: value for context in curie_util.default_curie_maps + [curie_util.read_biocontext("go_context")] for key, value in context.items()}
 
@@ -68,10 +69,10 @@ ProblemType = enum.Enum("ProblemType", {"TAXON": "taxon", "EXTENSION": "extensio
 class InferenceResult:
     inferred_gafs: List[Gaf]
     problem: ProblemType
-    
+
 
 def load_gaferencer_inferences_from_file(gaferencer_out) -> Dict[AnnotationKey, InferenceValue]:
-    
+
     gaferencer_out_dict = dict()
     try:
         logging.warning("gaferencer_out = {}".format(gaferencer_out))
@@ -80,7 +81,7 @@ def load_gaferencer_inferences_from_file(gaferencer_out) -> Dict[AnnotationKey, 
     except Exception as e:
         logging.warning("Could not load file {}: {}".format(gaferencer_out, str(e)))
         return None
-        
+
     return build_annotation_inferences(gaferencer_out_dict)
 
 
@@ -102,7 +103,7 @@ def build_annotation_inferences(gaferencer_out: List[Dict]) -> Dict[AnnotationKe
         inferences[key] = value
     return inferences
 
-def produce_inferences(gaf: Gaf, inference_table: Dict[AnnotationKey, InferenceValue]) -> List:
+def produce_inferences(gaf: association.GoAssociation, inference_table: Dict[AnnotationKey, InferenceValue]) -> List:
     keys = make_keys_from_gaf(gaf)  # type: List[AnnotationKey]
     results = []  # type: List[InferenceResult]
     for key in keys:
@@ -130,36 +131,28 @@ def make_conjunctions(extension: List) -> association.ExtensionConjunctions:
     return association.ExtensionConjunctions(frozenset(extension_units))
 
 relation_tuple = re.compile(r"(.+)\((.+)\)")
-def make_keys_from_gaf(gaf: List[str]) -> List[AnnotationKey]:
+def make_keys_from_gaf(gaf: association.GoAssociation) -> List[AnnotationKey]:
 
-    term = curie_util.expand_uri(gaf[4], cmaps=[prefix_context])
-    relation = aspect_relation_map[gaf[8]]
-    taxon = "http://purl.obolibrary.org/obo/NCBITaxon_{}".format(gaf[12].split("|")[0].split(":")[1])
-    extension = gaf[15]
+    term = curie_util.expand_uri(gaf.object.id, cmaps=[prefix_context])
+    relation = curie_util.expand_uri(gaf.relation, cmaps=[prefix_context])
+    taxon = curie_util.expand_uri(gaf.object.taxon, cmaps=[prefix_context])
+    extensions = gaf.object_extensions
 
     annotation_keys = []  # type: List[AnnotationKey]
-    for conjunction in extension.split("|"):
-        # conjunction is foo(bar),hello(world)
-        conjunctions = []  # type: List[association.ExtensionUnit]
-        for extension_unit in conjunction.split(","):
-            # extension_unit is foo(bar)
-            found_rel = relation_tuple.match(extension_unit)
-            if found_rel:
-                rel_label, filler = found_rel.groups()
-                ext_relation = lookup_relation(rel_label)  # type: Uri
-                fill_id = curie_util.expand_uri(filler, cmaps=[prefix_context])  # type: Uri
-                extension_unit = association.ExtensionUnit(ext_relation, fill_id)  # type: association.ExtensionUnit
-                # Append the extensions unit to the list of conjunctions
-                conjunctions.append(extension_unit)
 
-        extension_conjunction = association.ExtensionConjunctions(frozenset(conjunctions))
-        # Build the Key now
-        annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, extension_conjunction))
+    if extensions.conjunctions:
+        for conjunction in extensions.conjunctions:
+            # conjunction is foo(bar),hello(world)
+            extension_conjunction = association.ExtensionConjunctions(frozenset(conjunction.extensions))
+            # Build the Key now
+            annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, extension_conjunction))
+    else:
+        annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, association.ExtensionConjunctions(frozenset([]))))
 
     return annotation_keys
 
 
-def gaf_inferences_from_value(original_gaf: Gaf, inferred_value: InferenceValue) -> InferenceResult:
+def gaf_inferences_from_value(original_gaf: association.GoAssociation, inferred_value: InferenceValue) -> InferenceResult:
     # This can be successful, where we materialize more than one inference gafs
     # Or it can go wrong, where it's not satisfiable via taxon problems or wrong extensions
     if not inferred_value.satisfiable:
@@ -168,14 +161,14 @@ def gaf_inferences_from_value(original_gaf: Gaf, inferred_value: InferenceValue)
         return InferenceResult([], problem)
 
     # At this point it has inferences
-    inferred_gafs = []  # type: List[Gaf]
+    inferred_gafs = []  # type: List[association.GoAssociation]
     for inference in inferred_value.inferences:
-        new_gaf = list(original_gaf)
+        new_gaf = copy.deepcopy(original_gaf)
         goterm = inference.term.rsplit("/", maxsplit=1)[1].replace("_", ":")
         aspect = relation_aspect_map[inference.relation]
-        new_gaf[4] = goterm
-        new_gaf[8] = aspect
-        new_gaf[15] = ""
+        new_gaf.object.id = goterm
+        new_gaf.aspect = aspect
+        new_gaf.object_extensions = association.ExtensionExpression([])
         inferred_gafs.append(new_gaf)
 
     return InferenceResult(inferred_gafs, None)

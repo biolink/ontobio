@@ -2,11 +2,19 @@ import re
 import logging
 import json
 
+from typing import List, Tuple
+
+from prefixcommons import curie_util
+
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
 from ontobio.io import entityparser
 from ontobio.io import entitywriter
+from ontobio.model import association
+from ontobio.ecomap import EcoMap
+from ontobio.rdfgen import relations
+
 
 import click
 
@@ -142,7 +150,11 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         ## Run GO Rules, save split values into individual variables
-        go_rule_results = qc.test_go_rules(list(vals), self.config)
+        assoc, messages = to_association(list(vals))
+        if messages:
+            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, "", "; ".join(messages), taxon=vals[TAXON_INDEX], rule=1)
+
+        go_rule_results = qc.test_go_rules(assoc, self.config)
         for rule, result in go_rule_results.all_results.items():
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
@@ -158,7 +170,7 @@ class GafParser(assocparser.AssocParser):
                 self.report.message(assocparser.Report.INFO, line, Report.RULE_PASS, "",
                                     msg="Passing Rule", rule=int(rule.id.split(":")[1]))
 
-        vals = list(go_rule_results.annotation)
+        vals = list(go_rule_results.annotation.to_gaf_tsv())
         [db,
          db_object_id,
          db_object_symbol,
@@ -361,3 +373,62 @@ class GafParser(assocparser.AssocParser):
         }
 
         return assocparser.ParseResult(line, [assoc], False, evidence.upper())
+
+ecomap = EcoMap()
+ecomap.mappings()
+relation_tuple = re.compile(r'(.+)\((.+)\)')
+def to_association(gaf_line: List[str]) -> Tuple[association.GoAssociation, List[str]]:
+    if len(gaf_line) <= 17 and len(gaf_line) >= 15:
+        gaf_line += [""] * (17 - len(gaf_line))
+    else:
+        return None
+
+    messages = []
+
+    taxon = gaf_line[12].split("|")
+    taxon_curie = taxon[0].replace("taxon", "NCBITaxon")
+    interacting_taxon = taxon[1].replace("taxon", "NCBITaxon") if len(taxon) == 2 else None
+    subject_curie = "{db}:{id}".format(db=gaf_line[0], id=gaf_line[1])
+    subject = association.Subject(subject_curie, gaf_line[2], gaf_line[11], gaf_line[9], gaf_line[10].split("|"), taxon_curie)
+    aspect = gaf_line[8]
+    negated, relation, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
+    object = association.Term(gaf_line[4], taxon_curie)
+    evidence = association.Evidence(
+        ecomap.coderef_to_ecoclass(gaf_line[6]),
+        [e for e in gaf_line[5].split("|") if e],
+        [e for e in gaf_line[7].split("|") if e]
+    )
+    subject_extensions = [association.ExtensionUnit("rdfs:subClassOf", gaf_line[16])] if gaf_line[16] else []
+
+    conjunctions = []
+    if gaf_line[15]:
+        for conjuncts in gaf_line[15].split("|"):
+            extension_units = []
+            for u in conjuncts.split(","):
+                parsed = relation_tuple.findall(u)
+                if len(parsed) == 1:
+                    rel, term = parsed[0]
+                    extension_units.append(association.ExtensionUnit(rel, term))
+                else:
+                    # Otherwise, something went bad with the regex, and it's a bad parse
+                    messages.append("extension expression does not follow REL(ID) syntax")
+
+            conjunction = association.ExtensionConjunctions(extension_units)
+            conjunctions.append(conjunction)
+    object_extensions = association.ExtensionExpression(conjunctions)
+
+    return (association.GoAssociation(
+        source_line="\t".join(gaf_line),
+        subject=subject,
+        relation=curie_util.contract_uri(relations.lookup_label(relation))[0],
+        object=object,
+        negated=negated,
+        qualifiers=qualifiers,
+        aspect=aspect,
+        interacting_taxon=interacting_taxon,
+        evidence=evidence,
+        subject_extensions=subject_extensions,
+        object_extensions=object_extensions,
+        provided_by=gaf_line[14],
+        date=gaf_line[13],
+        properties={}), messages)

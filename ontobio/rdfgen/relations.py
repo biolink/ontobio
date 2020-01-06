@@ -28,8 +28,17 @@ __relation_label_lookup = {
     "produced by": "http://purl.obolibrary.org/obo/RO_0003001",
     "has end location": "http://purl.obolibrary.org/obo/RO_0002232",
     "directly positively regulates": "http://purl.obolibrary.org/obo/RO_0002629",
-    "has direct input": "http://purl.obolibrary.org/obo/GOREL_0000752"
+    "has direct input": "http://purl.obolibrary.org/obo/GOREL_0000752",
+    "enables": "http://purl.obolibrary.org/obo/RO_0002327",
+    "enabled by": "http://purl.obolibrary.org/obo/RO_0002333",
+    "involved in": "http://purl.obolibrary.org/obo/RO_0002331",
+    "acts upstream of": "http://purl.obolibrary.org/obo/RO_0002263",
+    "colocalizes with": "http://purl.obolibrary.org/obo/RO_0002325",
+    "contributes to": "http://purl.obolibrary.org/obo/RO_0002326"
 }
+
+def lookup_label(label):
+    return __relation_label_lookup[label.replace("_", " ")]
 
 def label_relation_lookup():
     return __relation_label_lookup

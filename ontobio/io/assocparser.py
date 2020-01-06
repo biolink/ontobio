@@ -109,7 +109,7 @@ class AssocParserConfig():
             self.include_relations = []
         if self.filter_out_evidence is None:
             self.filter_out_evidence = []
-            
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
@@ -178,9 +178,9 @@ class Report():
             'rule': rule
         }
         if not level in dont_record:
-            # Only record a message if we want that 
+            # Only record a message if we want that
             self.messages.append(message)
-            
+
         self.reporter.message(message, rule)
 
 
@@ -407,7 +407,7 @@ class AssocParser(object):
     def normalize_columns(self, number_of_columns, columns):
         columns += [""] * (number_of_columns - len(columns))
         return columns
-    
+
     def parse_line(self, line):
         raise NotImplementedError("AssocParser.parse_line not implemented")
 
@@ -444,27 +444,7 @@ class AssocParser(object):
     ## we generate both qualifier and relation field
     ## Returns: (negated, relation, other_qualifiers)
     def _parse_qualifier(self, qualifier, aspect):
-        relation = None
-        qualifiers = qualifier.split("|")
-        if qualifier == '':
-            qualifiers = []
-        negated =  'NOT' in qualifiers
-        other_qualifiers = [q for q in qualifiers if q != 'NOT']
-        ## In GAFs, relation is overloaded into qualifier.
-        ## If no explicit non-NOT qualifier is specified, use
-        ## a default based on GPI spec
-        if len(other_qualifiers) > 0:
-            relation = other_qualifiers[0]
-        else:
-            if aspect == 'C':
-                relation = 'part_of'
-            elif aspect == 'P':
-                relation = 'involved_in'
-            elif aspect == 'F':
-                relation = 'enables'
-            else:
-                relation = None
-        return (negated, relation, other_qualifiers)
+        return _parse_qualifier(qualifier, aspect)
 
     # split an ID/CURIE into prefix and local parts
     # (not currently used)
@@ -683,7 +663,7 @@ class AssocParser(object):
         return object_or_exprs
 
 
-    relation_tuple = re.compile(r'(.*)\((.*)\)')
+    relation_tuple = re.compile(r'(.+)\((.+)\)')
     def _parse_relationship_expression(self, x, line: SplitLine = None):
         ## Parses an atomic relational expression
         ## E.g. exists_during(GO:0000753)
@@ -692,16 +672,41 @@ class AssocParser(object):
         if len(tuples) != 1:
             self.report.error(line.line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
             return None
-        (p,v) = tuples[0]
+        (p, v) = tuples[0]
 
         if self._validate_id(v, line, context=EXTENSION):
             return {
-                'property':p,
-                'filler':v
+                'property': p,
+                'filler': v
             }
         else:
             self.report.error(line.line, Report.EXTENSION_SYNTAX_ERROR, x, msg="GORULE:0000027: ID not valid", rule=27)
             return None
+
+## we generate both qualifier and relation field
+## Returns: (negated, relation, other_qualifiers)
+def _parse_qualifier(qualifier, aspect):
+    relation = None
+    qualifiers = qualifier.split("|")
+    if qualifier == '':
+        qualifiers = []
+    negated = 'NOT' in qualifiers
+    other_qualifiers = [q for q in qualifiers if q != 'NOT']
+    ## In GAFs, relation is overloaded into qualifier.
+    ## If no explicit non-NOT qualifier is specified, use
+    ## a default based on GPI spec
+    if len(other_qualifiers) > 0:
+        relation = other_qualifiers[0]
+    else:
+        if aspect == 'C':
+            relation = 'part_of'
+        elif aspect == 'P':
+            relation = 'involved_in'
+        elif aspect == 'F':
+            relation = 'enables'
+        else:
+            relation = None
+    return (negated, relation, other_qualifiers)
 
 # TODO consider making an Association its own class too to give it a little more
 # TODO Semantic value?
