@@ -9,7 +9,7 @@ ecomap = EcoMap()
 ecomap.mappings()
 
 
-from typing import List, Optional, NamedTuple, Dict
+from typing import List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
 
 Aspect = typing.NewType("Aspect", str)
@@ -21,9 +21,9 @@ Date = typing.NewType("Date", str)
 class Subject:
     id: Curie
     label: str
-    type: str
     fullname: str
     synonyms: List[str]
+    type: str
     taxon: Curie
 
 @dataclass
@@ -110,4 +110,26 @@ class GoAssociation:
             self.provided_by,
             str(self.object_extensions),
             gp_isoforms
+        ]
+
+    def to_gpad_tsv(self) -> List:
+        db, subid = self.subject.id.split(":", maxsplit=1)
+        qualifiers = "|".join(self.qualifiers)
+        if self.negated:
+            qualifiers = "NOT|{}".format(qualifiers)
+
+        props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties.items()]
+        return [
+            db,
+            subid,
+            qualifiers,
+            self.object.id,
+            "|".join(self.evidence.has_supporting_reference),
+            self.evidence.type,
+            "|".join(self.evidence.with_support_from),
+            self.interacting_taxon if self.interacting_taxon else "",
+            self.date,
+            self.provided_by,
+            str(self.object_extensions),
+            "|".join(props_list)
         ]

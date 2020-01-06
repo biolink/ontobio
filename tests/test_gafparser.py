@@ -54,8 +54,6 @@ def test_one_line():
         ontology=OntologyFactory().create("tests/resources/goslim_generic.json")))
 
     parsed = p.parse_line("PomBase	SPBC16D10.09	pcn1		GO:0009536	PMID:8663159	IDA		C	PCNA	pcn	protein	taxon:4896	20150326	PomBase")
-    print(parsed)
-    print(json.dumps(p.report.to_report_json(), indent=4))
 
 def test_skim_gpad():
     p = GpadParser()
@@ -83,6 +81,8 @@ def parse_with(f, p):
         # only do ontology checking on GAF parse;
         # this is because ontology is made from GAF
         p.config.ontology = ont
+    else:
+        p.config.ontology = None
 
     results = p.parse(open(f, "r"), skipheader=True)
     print(p.report.to_markdown())
@@ -211,7 +211,8 @@ def test_errors_gaf():
     p = GafParser(config=config)
     assocs = p.parse(open("tests/resources/errors.gaf", "r"), skipheader=True)
     msgs = p.report.messages
-    print("MESSAGES: {}".format(len(msgs)))
+    print(json.dumps(p.report.to_report_json(), indent=4))
+    # print("MESSAGES: {}".format(len(msgs)))
     n_invalid_idspace = 0
     for m in msgs:
         print("MESSAGE: {}".format(m))
@@ -219,7 +220,7 @@ def test_errors_gaf():
             n_invalid_idspace += 1
     assert len(msgs) == 16
     assert n_invalid_idspace == 1
-    assert len(assocs) == 6
+    assert len(assocs) == 5
 
     w = GafWriter()
     w.write(assocs)

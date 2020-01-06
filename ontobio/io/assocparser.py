@@ -18,6 +18,8 @@ import gzip
 import datetime
 import dateutil.parser
 
+from dataclasses import dataclass
+
 from collections import namedtuple, defaultdict
 from typing import Optional, List, Dict, Set
 
@@ -25,6 +27,7 @@ from ontobio import ontol
 from ontobio import ecomap
 from ontobio.io import parsereport
 from ontobio.util.user_agent import get_user_agent
+from ontobio.model import association
 
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
@@ -35,16 +38,6 @@ EXTENSION = 'EXTENSION'
 def write_to_file(optional_file, text):
     if optional_file:
         optional_file.write(text)
-
-
-
-class ParseResult(object):
-
-    def __init__(self, parsed_line, associations, skipped, evidence_used=None):
-        self.parsed_line = parsed_line
-        self.associations = associations
-        self.skipped = skipped
-        self.evidence_used = evidence_used
 
 
 SplitLine = namedtuple("SplitLine", ["line", "values", "taxon"])
@@ -117,7 +110,7 @@ class AssocParserConfig():
             return False
 
 
-class Report():
+class Report(object):
     """
     A report object that is generated as a result of a parse
     """
@@ -269,17 +262,15 @@ class Report():
                 obj = " ({})".format(message["obj"]) if message["obj"] else ""
                 s += "* {level} - {type}: {message}{obj} -- `{line}`\n".format(level=message["level"], type=message["type"], message=message["message"], line=message["line"], obj=obj)
 
-        # for g in json['groups']:
-        #     s += " * {}: {}\n".format(g['level'], g['count'])
-        # s += "\n\n"
-        # for g in json['groups']:
-        #     level = g['level']
-        #     msgs = g['messages']
-        #     if len(msgs) > 0:
-        #         s += "### {}\n\n".format(level)
-        #         for m in msgs:
-        #             s += " * {}: obj:'{}' \"{}\" `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
         return s
+
+@dataclass
+class ParseResult:
+    parsed_line: str
+    associations: List[association.GoAssociation]
+    skipped: bool
+    report: Optional[Report] = None
+    evidence_used: List[str] = None
 
 # TODO avoid using names that are builtin python: file, id
 
@@ -408,17 +399,23 @@ class AssocParser(object):
         columns += [""] * (number_of_columns - len(columns))
         return columns
 
-    def parse_line(self, line):
-        raise NotImplementedError("AssocParser.parse_line not implemented")
+    # def parse_line(self, line) -> ParseResult:
+    #     if self.is_header(line):
+    #         # Then do a thing with the header?
+    #         return ParseResult(line, [HeaderLine(line)], False)
+    #
+    #     tsv_line = line.split("\t")
+    #     self.parse_to_association(tsv_line)
+
 
     def _skipping_line(self, associations):
         return associations is None or associations == []
 
     def _is_exclude_relation(self, relation):
-        if self.config.include_relations is not None and len(self.config.include_relations)>0:
+        if self.config.include_relations is not None and len(self.config.include_relations) > 0:
             if relation not in self.config.include_relations:
                 return True
-        if self.config.exclude_relations is not None and len(self.config.exclude_relations)>0:
+        if self.config.exclude_relations is not None and len(self.config.exclude_relations) > 0:
             if relation in self.config.exclude_relations:
                 return True
         return False
@@ -585,7 +582,6 @@ class AssocParser(object):
         return sorted(valids)
 
         # We are only reporting, so just pass it through
-        return references
 
     def _normalize_id(self, id):
         toks = id.split(":")

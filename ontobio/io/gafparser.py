@@ -112,48 +112,14 @@ class GafParser(assocparser.AssocParser):
         # GAF v1 is defined as 15 cols, GAF v2 as 17.
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
-        if 17 > len(vals) >= 15:
-            vals = self.normalize_columns(17, vals)
 
-        if len(vals) > 17:
-            # If we see more than 17 columns, we will just cut off the columns after column 17
-            self.report.warning(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="There were more than 17 columns in this line. Proceeding by cutting off extra columns after column 17.",
-                rule=1)
-            vals = vals[:17]
+        parsed = to_association(list(vals), report=self.report)
+        if parsed.associations == []:
+            return parsed
 
-
-        if len(vals) != 17:
-            self.report.error(line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-                msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(vals)),
-                rule=1)
-            return assocparser.ParseResult(line, [], True)
-
-
-        ## check for missing columns
-        ## We use indeces here because we run GO RULES before we split the vals into individual variables
-        DB_INDEX = 0
-        DB_OBJECT_INDEX = 1
-        TAXON_INDEX = 12
-        REFERENCE_INDEX = 5
-        if vals[DB_INDEX] == "":
-            self.report.error(line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", taxon=vals[TAXON_INDEX], rule=1)
-            return assocparser.ParseResult(line, [], True)
-        if vals[DB_OBJECT_INDEX] == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=vals[TAXON_INDEX], rule=1)
-            return assocparser.ParseResult(line, [], True)
-        if vals[TAXON_INDEX] == "":
-            self.report.error(line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty", taxon=vals[TAXON_INDEX], rule=1)
-            return assocparser.ParseResult(line, [], True)
-        if vals[REFERENCE_INDEX] == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=vals[TAXON_INDEX], rule=1)
-            return assocparser.ParseResult(line, [], True)
-
+        assoc = parsed.associations[0]
+        # self.report = parsed.report
         ## Run GO Rules, save split values into individual variables
-        assoc, messages = to_association(list(vals))
-        if messages:
-            self.report.error(line, Report.EXTENSION_SYNTAX_ERROR, "", "; ".join(messages), taxon=vals[TAXON_INDEX], rule=1)
-
         go_rule_results = qc.test_go_rules(assoc, self.config)
         for rule, result in go_rule_results.all_results.items():
             if result.result_type == qc.ResultType.WARNING:
@@ -377,19 +343,54 @@ class GafParser(assocparser.AssocParser):
 ecomap = EcoMap()
 ecomap.mappings()
 relation_tuple = re.compile(r'(.+)\((.+)\)')
-def to_association(gaf_line: List[str]) -> Tuple[association.GoAssociation, List[str]]:
-    if len(gaf_line) <= 17 and len(gaf_line) >= 15:
-        gaf_line += [""] * (17 - len(gaf_line))
-    else:
-        return None
+def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown") -> assocparser.ParseResult:
+    report = Report(group=group, dataset=dataset) if report is None else report
+    source_line = "\t".join(gaf_line)
 
-    messages = []
+    if source_line == "":
+        report.error(source_line, "Blank Line", "EMPTY", "Blank lines are not allowed", rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    if len(gaf_line) > 17:
+        # If we see more than 17 columns, we will just cut off the columns after column 17
+        report.warning(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+            msg="There were more than 17 columns in this line. Proceeding by cutting off extra columns after column 17.",
+            rule=1)
+        gaf_line = gaf_line[:17]
+
+    if 17 > len(gaf_line) >= 15:
+        gaf_line += [""] * (17 - len(gaf_line))
+
+    if len(gaf_line) != 17:
+        report.error(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+            msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(gaf_line)),
+            rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    ## check for missing columns
+    ## We use indeces here because we run GO RULES before we split the vals into individual variables
+    DB_INDEX = 0
+    DB_OBJECT_INDEX = 1
+    TAXON_INDEX = 12
+    REFERENCE_INDEX = 5
+    if gaf_line[DB_INDEX] == "":
+        report.error(source_line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    if gaf_line[DB_OBJECT_INDEX] == "":
+        report.error(source_line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    if gaf_line[TAXON_INDEX] == "":
+        report.error(source_line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    if gaf_line[REFERENCE_INDEX] == "":
+        report.error(source_line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
 
     taxon = gaf_line[12].split("|")
     taxon_curie = taxon[0].replace("taxon", "NCBITaxon")
     interacting_taxon = taxon[1].replace("taxon", "NCBITaxon") if len(taxon) == 2 else None
     subject_curie = "{db}:{id}".format(db=gaf_line[0], id=gaf_line[1])
-    subject = association.Subject(subject_curie, gaf_line[2], gaf_line[11], gaf_line[9], gaf_line[10].split("|"), taxon_curie)
+    subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon_curie)
     aspect = gaf_line[8]
     negated, relation, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
     object = association.Term(gaf_line[4], taxon_curie)
@@ -411,13 +412,14 @@ def to_association(gaf_line: List[str]) -> Tuple[association.GoAssociation, List
                     extension_units.append(association.ExtensionUnit(rel, term))
                 else:
                     # Otherwise, something went bad with the regex, and it's a bad parse
-                    messages.append("extension expression does not follow REL(ID) syntax")
+                    report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, u, "extensions should be relation(curie)", taxon=taxon, rule=1)
+                    return assocparser.ParseResult(source_line, [], True, report=report)
 
             conjunction = association.ExtensionConjunctions(extension_units)
             conjunctions.append(conjunction)
     object_extensions = association.ExtensionExpression(conjunctions)
 
-    return (association.GoAssociation(
+    a = association.GoAssociation(
         source_line="\t".join(gaf_line),
         subject=subject,
         relation=curie_util.contract_uri(relations.lookup_label(relation))[0],
@@ -431,4 +433,6 @@ def to_association(gaf_line: List[str]) -> Tuple[association.GoAssociation, List
         object_extensions=object_extensions,
         provided_by=gaf_line[14],
         date=gaf_line[13],
-        properties={}), messages)
+        properties={})
+
+    return assocparser.ParseResult(source_line, [a], False, report=report)
