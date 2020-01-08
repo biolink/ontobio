@@ -302,7 +302,13 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
 
     raw_qs = gpad_line[2].split("|")
     negated = "NOT" in raw_qs
-    qualifiers = [curie_util.contract_uri(relations.lookup_label(q))[0] for q in raw_qs if q != "NOT"]
+    looked_up_qualifiers = [relations.lookup_label(q) for q in raw_qs if q != "NOT"]
+    if None in looked_up_qualifiers:
+        report.error(source_line, Report.INVALID_QUALIFIER, raw_qs, "Could not find a URI for qualifier", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+
+    qualifiers = [curie_util.contract_uri(q)[0] for q in looked_up_qualifiers]
 
     conjunctions = []
     if gpad_line[11]:

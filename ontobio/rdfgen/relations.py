@@ -37,8 +37,8 @@ __relation_label_lookup = {
     "contributes to": "http://purl.obolibrary.org/obo/RO_0002326"
 }
 
-def lookup_label(label):
-    return __relation_label_lookup[label.replace("_", " ")]
+def lookup_label(label, default=None):
+    return __relation_label_lookup.get(label.replace("_", " "), default)
 
 def label_relation_lookup():
     return __relation_label_lookup

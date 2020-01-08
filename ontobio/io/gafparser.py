@@ -418,11 +418,15 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
             conjunction = association.ExtensionConjunctions(extension_units)
             conjunctions.append(conjunction)
     object_extensions = association.ExtensionExpression(conjunctions)
+    looked_up_rel = relations.lookup_label(relation)
+    if looked_up_rel is None:
+        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation, "Qualifer must be \"colocalizes_with\" or \"contributes_to\"", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
 
     a = association.GoAssociation(
         source_line="\t".join(gaf_line),
         subject=subject,
-        relation=curie_util.contract_uri(relations.lookup_label(relation))[0],
+        relation=curie_util.contract_uri(looked_up_rel)[0],
         object=object,
         negated=negated,
         qualifiers=qualifiers,
