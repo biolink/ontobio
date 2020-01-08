@@ -129,6 +129,7 @@ class Report(object):
     INVALID_ID_DBXREF = "ID or symbol not present in DB xrefs file"
     UNKNOWN_ID = "Unknown identifier"
     INVALID_IDSPACE = "Invalid identifier prefix"
+    INVALID_QUALIFIER = "Invalid Qualifier"
     INVALID_TAXON = "Invalid taxon"
     INVALID_SYMBOL = "Invalid symbol"
     INVALID_DATE = "Invalid date"

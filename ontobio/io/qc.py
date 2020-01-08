@@ -490,14 +490,12 @@ class GoRule50(GoRule):
 
         return result
 
-
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
     "GoRule06": GoRule06(),
     "GoRule07": GoRule07(),
     "GoRule08": GoRule08(),
     "GoRule11": GoRule11(),
-    "GoRule13": GoRule13(),
     "GoRule15": GoRule15(),
     "GoRule16": GoRule16(),
     "GoRule17": GoRule17(),
@@ -511,7 +509,9 @@ GoRules = enum.Enum("GoRules", {
     "GoRule42": GoRule42(),
     "GoRule43": GoRule43(),
     "GoRule46": GoRule46(),
-    "GoRule50": GoRule50()
+    "GoRule50": GoRule50(),
+    # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
+    "GoRule13": GoRule13()
 })
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
