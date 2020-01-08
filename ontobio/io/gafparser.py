@@ -420,7 +420,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     object_extensions = association.ExtensionExpression(conjunctions)
     looked_up_rel = relations.lookup_label(relation)
     if looked_up_rel is None:
-        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation, "Qualifer must be \"colocalizes_with\" or \"contributes_to\"", taxon=taxon, rule=1)
+        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation, "Qualifer must be \"colocalizes_with\", \"contributes_to\", or \"NOT\"", taxon=taxon, rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     a = association.GoAssociation(
