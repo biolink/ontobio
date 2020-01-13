@@ -58,7 +58,7 @@ def get_scigraph_nodes(id_list)-> Iterator[Dict]:
     """
     scigraph = RemoteScigraphOntology('scigraph:data')
 
-    chunks = [id_list[i:i + 400] for i in range(0, len(list(id_list)), 400)]
+    chunks = [id_list[i:i + 100] for i in range(0, len(list(id_list)), 100)]
     for chunk in chunks:
         params = {
             'id': chunk,
@@ -95,6 +95,8 @@ def get_id_type_map(id_list: Iterable[str]) -> Dict[str, List[str]]:
     for node in get_scigraph_nodes(id_list):
         type_map[node['id']] = [typ.lower() for typ in node['meta']['types']
                                 if typ not in filter_out_types]
+        if not type_map[node['id']]:
+            type_map[node['id']] = ['Node']
 
     return type_map
 
