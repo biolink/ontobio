@@ -72,6 +72,7 @@ class AssocParserConfig():
                  paint=False,
                  rule_metadata=None,
                  goref_metadata=None,
+                 group_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None):
@@ -91,6 +92,7 @@ class AssocParserConfig():
         self.paint = paint
         self.rule_metadata = rule_metadata
         self.goref_metadata = goref_metadata
+        self.group_metadata = group_metadata
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
