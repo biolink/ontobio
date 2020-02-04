@@ -1,6 +1,6 @@
 marshmallow==3.0.0b3
 jsobject>=0.0
-prefixcommons>=0.1.6
+prefixcommons>=0.1.9
 requests>=0.0
 pip>=9.0.1
 wheel>0.25.0
