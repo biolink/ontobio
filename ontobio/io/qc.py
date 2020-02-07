@@ -344,8 +344,12 @@ class GoRule29(GoRule):
 
         now = datetime.datetime.today()
 
+        time_compare_delta = self.one_year
+        if annotation.provided_by in ["EcoCyc" or "EcoliWiki"]:
+            time_compare_delta = datetime.timedelta(days=2*365)
+
         iea = "ECO:0000501"
-        fails = (evidence == iea and now - datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0) > self.one_year)
+        fails = (evidence == iea and now - datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0) > time_compare_delta)
         return self._result(not fails)
 
 
