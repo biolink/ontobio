@@ -518,6 +518,33 @@ class GoRule57(GoRule):
 
         return self._result(True)
 
+class GoRule58(RepairRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000058", "Object extensions should conform to the extensions-patterns.yaml file in metadata", FailMode.HARD)
+        self.primary_terms = dict() # This is a map of Root to List of descendents
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+
+        if config.extensions_constraints is None:
+            return TestResult(ResultType.PASS, self.title, annotation)
+
+        if config.ontology is None:
+            return TestResult(ResultType.PASS, self.title, annotation)
+
+        for con in annotation.object_extensions.conjunctions:
+            bad_conjunctions = []
+            extension_counts = collections.Counter([(unit.relation, unit.term.split(":")[0]) for unit in con.extensions])
+
+            for constraint in config.extensions_constraints:
+                if "cardinality" in config.extensions_constraints:
+                    cardinality_violations = [(ext, num) for ext, num in dict(extension_counts).items() if num > config.extensions_constraints["cardinality"]]
+                    bad_conjunctions.append(con)
+
+
+
+
+
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
     "GoRule06": GoRule06(),

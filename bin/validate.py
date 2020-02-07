@@ -185,8 +185,21 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
+
+    if extensions_constraints:
+        # Precompute subclass closures in the extensions_constraints
+        cache = dict()
+        for constraint in extensions_constraints:
+            terms = set()
+            for term in constraint["primary_root_terms"]:
+                if not term in cache:
+                    cache[term] = ontology_graph.descendants(term, relations=["subClassOf"], reflexive=True)
+
+                terms.update(cache[term])
+
+            constraint["primary_terms"] = list(terms)
 
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -200,7 +213,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
         annotation_inferences=annotation_inferences,
-        group_metadata=group_metadata
+        group_metadata=group_metadata,
+        extensions_constraints=extensions_constraints
     )
     split_source = os.path.split(source_gaf)[0]
     validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
@@ -472,6 +486,7 @@ def produce(group, metadata_dir, gpad, ttl, target, ontology, exclude, base_down
 
     db_entities = metadata.database_entities(absolute_metadata)
     group_ids = metadata.groups(absolute_metadata)
+    extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)
 
     gaferences = None
     if gaferencer_file:
@@ -490,7 +505,8 @@ def produce(group, metadata_dir, gpad, ttl, target, ontology, exclude, base_down
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
             annotation_inferences=gaferences,
-            group_metadata=group_metadata
+            group_metadata=group_metadata,
+            extensions_constraints=extensions_constraints
             )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)

@@ -75,7 +75,8 @@ class AssocParserConfig():
                  group_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],
-                 annotation_inferences=None):
+                 annotation_inferences=None,
+                 extensions_constraints=None):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -96,6 +97,7 @@ class AssocParserConfig():
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
+        self.extensions_constraints = extensions_constraints
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
