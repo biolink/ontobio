@@ -62,12 +62,12 @@ class GoRule(object):
     def _result(self, passes: bool) -> TestResult:
         return TestResult(result(passes, self.fail_mode), self.title, passes)
 
-    def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
-        result = self.test(annotation, config)
+    def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        result = self.test(annotation, config, group=group)
         result.result = annotation
         return result
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         pass
 
 class RepairRule(GoRule):
@@ -84,10 +84,10 @@ class RepairRule(GoRule):
 
         return message
 
-    def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
-        return self.test(annotation, config)
+    def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        return self.test(annotation, config, group=group)
 
-    def repair(self, annotation: association.GoAssociation) -> Tuple[List, RepairState]:
+    def repair(self, annotation: association.GoAssociation, group=None) -> Tuple[List, RepairState]:
         pass
 
 
@@ -97,7 +97,7 @@ class GoRule02(GoRule):
         super().__init__("GORULE:0000002", "No 'NOT' annotations to 'protein binding ; GO:0005515'", FailMode.SOFT)
 
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
 
         fails = (annotation.object.id == "GO:0005515" and annotation.negated)
         return self._result(not fails)
@@ -109,7 +109,7 @@ class GoRule06(GoRule):
         self.iep = "ECO:0000270"
         self.hep = "ECO:0007007"
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.ontology is None:
             return self._result(True)
 
@@ -124,7 +124,7 @@ class GoRule07(GoRule):
         super().__init__("GORULE:0000007", "IPI should not be used with catalytic activity molecular function terms", FailMode.SOFT)
         self.children_of_catalytic_activity = None
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         catalytic_activity = "GO:0003824"
         if config.ontology is not None and self.children_of_catalytic_activity is None:
             # We'll define children_of_catalytic_activity if we have an ontology *and* if we haven't defined it before already
@@ -148,7 +148,7 @@ class GoRule08(GoRule):
         self.do_not_annotate = None
         self.do_not_manually_annotate = None
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # Cache the subsets
         if config.ontology is None:
             return self._result(True)
@@ -178,7 +178,7 @@ class GoRule11(GoRule):
         self.root_go_classes = ["GO:0003674", "GO:0005575", "GO:0008150"]
         self.nd = "ECO:0000307"
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         goclass = annotation.object.id
         evidence = annotation.evidence.type
 
@@ -192,7 +192,7 @@ class GoRule13(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.SOFT)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.annotation_inferences is None:
             # Auto pass if we don't have inferences
             return self._result(True)
@@ -212,7 +212,7 @@ class GoRule15(GoRule):
         super().__init__("GORULE:0000015", "Dual species taxon check", FailMode.SOFT)
         self.allowed_dual_species_terms = None
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
 
         # Cache the allowed terms
         if self.allowed_dual_species_terms is None and config.ontology is not None:
@@ -240,7 +240,7 @@ class GoRule16(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", FailMode.HARD)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = annotation.evidence.type
         withfrom = annotation.evidence.with_support_from
 
@@ -257,7 +257,7 @@ class GoRule17(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000017", "IDA annotations must not have a With/From entry", FailMode.SOFT)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = annotation.evidence.type
         withfrom = annotation.evidence.with_support_from
 
@@ -271,7 +271,7 @@ class GoRule18(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000018", "IPI annotations require a With/From entry", FailMode.SOFT)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = annotation.evidence.type
         withfrom = annotation.evidence.with_support_from
 
@@ -287,7 +287,7 @@ class GoRule26(GoRule):
         super().__init__("GORULE:0000026", "IBA evidence codes should be filtered from main MOD gaf sources", FailMode.HARD)
         self.offending_evidence = ["ECO:0000318"]
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = annotation.evidence.type
         # If we see a bad evidence, and we're not in a paint file then fail.
         fails = (evidence in self.offending_evidence and not config.paint)
@@ -302,7 +302,7 @@ class GoRule28(RepairRule):
             "molecular_function": "F"
         }
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         aspect = annotation.aspect
         goterm = annotation.object.id
 
@@ -338,14 +338,18 @@ class GoRule29(GoRule):
         super().__init__("GORULE:0000029", "All IEAs over a year old are removed", FailMode.HARD)
         self.one_year = datetime.timedelta(days=365)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = annotation.evidence.type
         date = annotation.date
 
         now = datetime.datetime.today()
 
+        time_compare_delta = self.one_year
+        if group is not None and group == "ecocyc":
+            time_compare_delta = datetime.timedelta(days=2*365)
+
         iea = "ECO:0000501"
-        fails = (evidence == iea and now - datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0) > self.one_year)
+        fails = (evidence == iea and now - datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0) > time_compare_delta)
         return self._result(not fails)
 
 
@@ -360,7 +364,7 @@ class GoRule30(GoRule):
         """
         return goref.lower().replace("_", "").replace(":", "-")
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         references = annotation.evidence.has_supporting_reference
         for ref in references:
             # Not allowed is obsolete and GO_PAINT:x
@@ -374,7 +378,7 @@ class GoRule37(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000037", "IBA annotations should ONLY be assigned_by GO_Central and have PMID:21873635 as a reference", FailMode.HARD)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # If the evidence code is IBA, then (1) the assigned_by field must be GO_Central and (2) the reference field must be PMID:21873635
         evidence = annotation.evidence.type
         references = annotation.evidence.has_supporting_reference
@@ -391,7 +395,7 @@ class GoRule39(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000039", "Protein complexes can not be annotated to GO:0032991 (protein-containing complex) or its descendants", FailMode.HARD)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # An implementation note: This is done by testing if the DB (column 1) is ComplexPortal.
         # This will grab a subset of all actual Protein Complexes. This is noted in the rule description
         db = annotation.subject.id.split(":")[0]
@@ -405,7 +409,7 @@ class GoRule42(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000042", "Qualifier: IKR evidence code requires a NOT qualifier", FailMode.HARD)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = annotation.evidence.type
 
         result = self._result(True)
@@ -427,7 +431,7 @@ class GoRule43(GoRule):
         """
         return goref.lower().replace("_", "").replace(":", "-")
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.goref_metadata is None:
             return self._result(True)
 
@@ -452,7 +456,7 @@ class GoRule46(GoRule):
         self.self_binding_roots = ["GO:0042803", "GO:0051260", "GO:0051289", "GO:0070207", "GO:0043621", "GO:0032840"]
         self.self_binding_terms = None
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.ontology is not None and self.self_binding_terms is None:
             all_terms = []
             # Initialize the self_binding terms if we have an ontology and we haven't already initialized the terms
@@ -480,7 +484,7 @@ class GoRule50(GoRule):
         super().__init__("GORULE:0000050", "Annotations to ISS, ISA and ISO should not be self-referential", FailMode.SOFT)
         self.the_evidences = ["ECO:0000250", "ECO:0000247", "ECO:0000266"]
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # should not have the same identifier in the 'gene product column' (column 2) and in the 'with/from' column (column 8)
         evidence = annotation.evidence.type
         result = self._result(True)
@@ -515,12 +519,12 @@ GoRules = enum.Enum("GoRules", {
 })
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
-def test_go_rules(annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> GoRulesResults:
+def test_go_rules(annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> GoRulesResults:
     all_results = {}
 
     active_annotation = annotation
     for rule in list(GoRules):
-        result = rule.value.run_test(active_annotation, config)
+        result = rule.value.run_test(active_annotation, config, group=group)
         # Accumulate all repairs performed  by all tests to the annotation
         active_annotation = result.result
         all_results[rule.value] = result

@@ -33,6 +33,7 @@ class GafParser(assocparser.AssocParser):
         config : a AssocParserConfig object
         """
         self.config = config
+        self.group = group
         if config is None:
             self.config = assocparser.AssocParserConfig()
         self.report = assocparser.Report(group=group, dataset=dataset, config=self.config)
@@ -120,7 +121,7 @@ class GafParser(assocparser.AssocParser):
         assoc = parsed.associations[0]
         # self.report = parsed.report
         ## Run GO Rules, save split values into individual variables
-        go_rule_results = qc.test_go_rules(assoc, self.config)
+        go_rule_results = qc.test_go_rules(assoc, self.config, group=self.group)
         for rule, result in go_rule_results.all_results.items():
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
