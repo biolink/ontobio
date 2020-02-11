@@ -1,16 +1,12 @@
 import requests
 from contextlib import closing
-from cachier import cachier
-import datetime
 import logging
 
 from ontobio.util.user_agent import get_user_agent
 
-SHELF_LIFE = datetime.timedelta(days=1)
 logger = logging.getLogger(__name__)
 
 
-@cachier(stale_after=SHELF_LIFE)
 def get_ecomap_str(url):
     logger.info("Fetching ecomap from {}".format(url))
     with closing(requests.get(url, stream=False, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})) as resp:
@@ -74,7 +70,7 @@ class EcoMap():
             ECO class CURIE/ID
         """
         mcls = None
-        for (this_code,this_ref,cls) in self.mappings():
+        for (this_code, this_ref, cls) in self.mappings():
             if str(this_code) == str(code):
                 if this_ref  == reference:
                     return cls

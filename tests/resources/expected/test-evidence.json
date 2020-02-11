@@ -1,0 +1,187 @@
+[{
+	"subject": {
+		"id": "ClinVarVariant:572922",
+		"label": "NM_015087.4(SPART):c.685C>T (p.Gln229Ter)",
+		"iri": "http://www.ncbi.nlm.nih.gov/clinvar/variation/572922"
+	},
+	"subject_eq": [],
+	"relation": {
+		"id": "GENO:0000840",
+		"label": "pathogenic_for_condition",
+		"iri": "http://purl.obolibrary.org/obo/GENO_0000840"
+	},
+	"object": {
+		"id": "MONDO:0010156",
+		"label": "Troyer syndrome",
+		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
+	},
+	"object_eq": ["OMIM:275900"],
+	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
+	"evidence_types": [],
+	"publications": []
+}, {
+	"subject": {
+		"id": "ClinVarVariant:572922",
+		"label": "NM_015087.4(SPART):c.685C>T (p.Gln229Ter)",
+		"iri": "http://www.ncbi.nlm.nih.gov/clinvar/variation/572922"
+	},
+	"subject_eq": [],
+	"relation": {
+		"id": "GENO:0000418",
+		"label": "has_affected_feature",
+		"iri": "http://purl.obolibrary.org/obo/GENO_0000418"
+	},
+	"object": {
+		"id": "HGNC:18514",
+		"label": "SPART",
+		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
+	},
+	"object_eq": ["NCBIGene:23111"],
+	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
+	"evidence_types": [],
+	"publications": []
+}, {
+	"subject": {
+		"id": "ClinVarVariant:3458",
+		"label": "NM_015087.4(SPART):c.364_365delAT (p.Met122Valfs)",
+		"iri": "http://www.ncbi.nlm.nih.gov/clinvar/variation/3458"
+	},
+	"subject_eq": [],
+	"relation": {
+		"id": "GENO:0000418",
+		"label": "has_affected_feature",
+		"iri": "http://purl.obolibrary.org/obo/GENO_0000418"
+	},
+	"object": {
+		"id": "HGNC:18514",
+		"label": "SPART",
+		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
+	},
+	"object_eq": ["NCBIGene:23111"],
+	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
+	"evidence_types": [],
+	"publications": []
+}, {
+	"subject": {
+		"id": "ClinVarVariant:3458",
+		"label": "NM_015087.4(SPART):c.364_365delAT (p.Met122Valfs)",
+		"iri": "http://www.ncbi.nlm.nih.gov/clinvar/variation/3458"
+	},
+	"subject_eq": [],
+	"relation": {
+		"id": "GENO:0000840",
+		"label": "pathogenic_for_condition",
+		"iri": "http://purl.obolibrary.org/obo/GENO_0000840"
+	},
+	"object": {
+		"id": "MONDO:0010156",
+		"label": "Troyer syndrome",
+		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
+	},
+	"object_eq": ["OMIM:275900"],
+	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
+	"evidence_types": [],
+	"publications": [{
+		"id": "PMID:20437587",
+		"label": null
+	}, {
+		"id": "PMID:27112432",
+		"label": null
+	}]
+}, {
+	"subject": {
+		"id": "HGNC:18514",
+		"label": "SPART",
+		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
+	},
+	"subject_eq": ["OMIM:607111"],
+	"relation": {
+		"id": "RO:0003303",
+		"label": "causes condition",
+		"iri": "http://purl.obolibrary.org/obo/RO_0003303"
+	},
+	"object": {
+		"id": "MONDO:0010156",
+		"label": "Troyer syndrome",
+		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
+	},
+	"object_eq": ["OMIM:275900"],
+	"provided_by": ["https://data.monarchinitiative.org/ttl/omim.ttl"],
+	"evidence_types": [{
+		"id": "ECO:0000220",
+		"label": "sequencing assay evidence"
+	}],
+	"publications": []
+}, {
+	"subject": {
+		"id": "HGNC:18514",
+		"label": "SPART",
+		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
+	},
+	"subject_eq": [],
+	"relation": {
+		"id": "RO:0004013",
+		"label": "is causal germline mutation in",
+		"iri": "http://purl.obolibrary.org/obo/RO_0004013"
+	},
+	"object": {
+		"id": "MONDO:0010156",
+		"label": "Troyer syndrome",
+		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
+	},
+	"object_eq": ["ORPHA:101000"],
+	"provided_by": ["https://data.monarchinitiative.org/ttl/orphanet.ttl"],
+	"evidence_types": [{
+		"id": "ECO:0000322",
+		"label": "imported manually asserted information used in automatic assertion"
+	}],
+	"publications": []
+}, {
+	"subject": {
+		"id": "ClinVarVariant:3457",
+		"label": "NM_001142294.1(SPART):c.1110del (p.Lys370Asnfs)",
+		"iri": "http://www.ncbi.nlm.nih.gov/clinvar/variation/3457"
+	},
+	"subject_eq": [],
+	"relation": {
+		"id": "GENO:0000840",
+		"label": "pathogenic_for_condition",
+		"iri": "http://purl.obolibrary.org/obo/GENO_0000840"
+	},
+	"object": {
+		"id": "MONDO:0010156",
+		"label": "Troyer syndrome",
+		"iri": "http://purl.obolibrary.org/obo/MONDO_0010156"
+	},
+	"object_eq": ["OMIM:275900"],
+	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
+	"evidence_types": [],
+	"publications": [{
+		"id": "PMID:18413476",
+		"label": null
+	}, {
+		"id": "PMID:12134148",
+		"label": null
+	}]
+}, {
+	"subject": {
+		"id": "ClinVarVariant:3457",
+		"label": "NM_001142294.1(SPART):c.1110del (p.Lys370Asnfs)",
+		"iri": "http://www.ncbi.nlm.nih.gov/clinvar/variation/3457"
+	},
+	"subject_eq": [],
+	"relation": {
+		"id": "GENO:0000418",
+		"label": "has_affected_feature",
+		"iri": "http://purl.obolibrary.org/obo/GENO_0000418"
+	},
+	"object": {
+		"id": "HGNC:18514",
+		"label": "SPART",
+		"iri": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=18514"
+	},
+	"object_eq": ["NCBIGene:23111"],
+	"provided_by": ["https://data.monarchinitiative.org/ttl/clinvar.nt"],
+	"evidence_types": [],
+	"publications": []
+}]

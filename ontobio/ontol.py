@@ -64,6 +64,7 @@ class Ontology():
             self.xref_graph = payload.get('xref_graph')
             self.graphdoc = payload.get('graphdoc')
             self.all_logical_definitions = payload.get('logical_definitions')
+            self.all_property_chain_axioms = payload.get('property_chain_axioms')
 
     def __str__(self):
         return '{} handle: {} meta: {}'.format(self.id, self.handle, self.meta)
@@ -284,11 +285,7 @@ class Ontology():
 
     def _meta(self, nid):
         n = self.node(nid)
-        if 'meta' in n:
-            return n['meta']
-        else:
-            return {}
-
+        return n.get("meta", {})
 
     def prefixes(self):
         """
@@ -333,11 +330,12 @@ class Ontology():
 
     def node(self, id):
         """
-        Return a node with a given ID
+        Return a node with a given ID. If the node with the ID exists the
+        Node object is returned, otherwise None is returned.
 
         Wraps networkx by default
         """
-        return self.get_graph().node[id]
+        return self.get_graph().node.get(id, None)
 
     def has_node(self, id):
         """
@@ -356,7 +354,7 @@ class Ontology():
         """
         If stated, either CLASS, PROPERTY or INDIVIDUAL
         """
-        return self.node(id)['type']
+        return self.node(id).get('type', None)
 
     def relations_used(self):
         """
@@ -398,7 +396,16 @@ class Ontology():
 
     def parents(self, node, relations=None):
         """
-        Return all direct parents of specified node.
+        Return all direct 'parents' of specified node.
+
+        Note that in the context of ontobio, 'parent' means any node that
+        is traversed in a single hop along an edge from a subject to object.
+        For example, if the ontology has an edge "finger part-of some hand", then
+        "hand" is the parent of finger.
+        This can sometimes be counter-intutitive, for example, if the ontology
+        contains has-part axioms. If the ontology has an edge
+        "X receptor activity has-part some X binding", then "X binding" is the 'parent'
+        of "X receptor activity" over a has-part edge.
 
         Wraps networkx by default.
 
@@ -472,20 +479,16 @@ class Ontology():
             ancestor node IDs
 
         """
-        if reflexive:
-            ancs = self.ancestors(node, relations, reflexive=False)
-            ancs.append(node)
-            return ancs
-
-        g = None
-        if relations is None:
-            g = self.get_graph()
-        else:
-            g = self.get_filtered_graph(relations)
-        if node in g:
-            return list(nx.ancestors(g, node))
-        else:
-            return []
+        seen = set()
+        nextnodes = [node]
+        while len(nextnodes) > 0:
+            nn = nextnodes.pop()
+            if not nn in seen:
+                seen.add(nn)
+                nextnodes += self.parents(nn, relations=relations)
+        if not reflexive:
+            seen -= {node}
+        return list(seen)
 
     def descendants(self, node, relations=None, reflexive=False):
         """
@@ -510,19 +513,16 @@ class Ontology():
         list[str]
             descendant node IDs
         """
-        if reflexive:
-            decs = self.descendants(node, relations, reflexive=False)
-            decs.append(node)
-            return decs
-        g = None
-        if relations is None:
-            g = self.get_graph()
-        else:
-            g = self.get_filtered_graph(relations)
-        if node in g:
-            return list(nx.descendants(g, node))
-        else:
-            return []
+        seen = set()
+        nextnodes = [node]
+        while len(nextnodes) > 0:
+            nn = nextnodes.pop()
+            if not nn in seen:
+                seen.add(nn)
+                nextnodes += self.children(nn, relations=relations)
+        if not reflexive:
+            seen -= {node}
+        return list(seen)
 
 
     def equiv_graph(self):
@@ -666,6 +666,25 @@ class Ontology():
         if ldefs is not None:
             #print("TESTING: {} AGAINST LD: {}".format(nid, str(ldefs)))
             return [x for x in ldefs if x.class_id == nid]
+        else:
+            return []
+
+    def get_property_chain_axioms(self, nid):
+        """
+        Retrieves property chain axioms for a class id
+
+        Arguments
+        ---------
+        nid : str
+             Node identifier for relation to be queried
+
+        Returns
+        -------
+        PropertyChainAxiom
+        """
+        pcas = self.all_property_chain_axioms
+        if pcas is not None:
+            return [x for x in pcas if x.predicate_id == nid]
         else:
             return []
 
@@ -898,7 +917,7 @@ class Ontology():
             else:
                 return None
 
-    def xrefs(self, nid, bidirectional=False):
+    def xrefs(self, nid, bidirectional=False, prefix=None):
         """
         Fetches xrefs for a node
 
@@ -913,16 +932,19 @@ class Ontology():
         ------
         list[str]
         """
+        xrefs = []
         if self.xref_graph is not None:
             xg = self.xref_graph
             if nid not in xg:
-                return []
-            if bidirectional:
-                return list(xg.neighbors(nid))
+                xrefs = []
             else:
-                return [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
-
-        return []
+                if bidirectional:
+                    xrefs = list(xg.neighbors(nid))
+                else:
+                    xrefs = [x for x in xg.neighbors(nid) if xg[nid][x][0]['source'] == nid]
+                if prefix is not None:
+                    xrefs = [x for x in xrefs if self.prefix(x) == prefix]
+        return xrefs
 
 
     def resolve_names(self, names, synonyms=False, **args):
@@ -1152,3 +1174,35 @@ class Synonym(AbstractPropertyValue):
         if x < y:
             return -1
         return 0
+
+class PropertyChainAxiom(object):
+    """
+    Represents a property chain axiom used to infer the existence of a property from a chain of properties.
+
+    See the OWL primer for a description of property chains: https://www.w3.org/TR/owl2-primer/#Property_Chains
+    """
+
+    def __init__(self, predicate_id, chain_predicate_ids):
+        """
+        Arguments
+        ---------
+         - predicate_id : string
+             the object property
+         - chain_predicate_ids: list
+             ordered list of chained properties
+
+        """
+        self.predicate_id = predicate_id
+        self.chain_predicate_ids = chain_predicate_ids
+
+    def __str__(self):
+        return '{} ({})'.format(self.predicate_id, " o ".join(self.chain_predicate_ids))
+
+    def as_dict(self):
+        """
+        Returns PropertyChainAxiom as obograph dict
+        """
+        return {
+            "predicateId": self.predicate_id,
+            "chainPredicateIds": self.chain_predicate_ids
+        }

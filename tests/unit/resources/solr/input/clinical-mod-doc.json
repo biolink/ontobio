@@ -1,0 +1,20 @@
+{
+  "response": {
+    "numFound": 1,
+    "start": 0,
+    "docs": [
+      {
+        "subject_category": "disease",
+        "subject": "MONDO:0009737",
+        "subject_label": "galactosialidosis",
+        "object": "HP:0000280",
+        "object_label": "Coarse facial features",
+        "onset": "HP:0003593",
+        "onset_label": "Infantile onset",
+        "frequency": "HP:0040281",
+        "frequency_label": "Very frequent",
+        "object_category": "phenotype"
+      }
+    ]
+  }
+}

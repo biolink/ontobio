@@ -1,0 +1,1184 @@
+[
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0036064"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_17168"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0010009"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097458"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005886"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000117"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097458"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0016020"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000540"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097458"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0099061"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0098978"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/UBERON_0000061"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_35405"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0098978"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0014031"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_16098"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/RO_0002296",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000134"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0048864"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0016020"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000019"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097223"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005515"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/GO_0005856"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005622"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005623"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005856"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005634"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_17972"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000018"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0001673"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0002196"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0140018"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0045182"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0140018"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005515"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/GO_0014069"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005623"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0032279"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0014069"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0098794"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005515"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/GO_0016020"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0016020"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0099056"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0098978"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/UBERON_0000061"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_16894"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0098978"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0048058"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+      ]
+    },
+    "inferences" : [
+    ],
+    "satisfiable" : false,
+    "taxonProblem" : true
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0048471"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0002609"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097458"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0072659"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0002495"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/GOREL_0000752",
+          "term" : "http://identifiers.org/uniprot/P58390"
+        }
+      ]
+    },
+    "inferences" : [
+    ],
+    "satisfiable" : false,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005739"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_16525"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000100"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097458"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0047372"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0052651"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/GOREL_0000752",
+          "term" : "http://purl.obolibrary.org/obo/CHEBI_75568"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0052651"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0042030"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/UBERON_0009953"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_17331"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/GO_0042383"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0071944"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0042383"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005623"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0051930"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0050976"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0002544"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0002544"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0050976"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0012506"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0030426"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_17577"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0030426"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005515"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/GO_0030027"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0031252"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005623"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0030027"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005515"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/GO_0005938"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005623"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0071944"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005938"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005622"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0046632"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/RO_0002315",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000808"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_1904157"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005515"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/GO_0032587"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005623"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0071944"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0031252"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0032587"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005886"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0001726"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0045332"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/RO_0002313",
+          "term" : "http://purl.obolibrary.org/obo/CHEBI_64482"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0015697"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0004672"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_17168"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/RO_0002233",
+          "term" : "http://identifiers.org/uniprot/Q8VI36"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0038189"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0007229"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/RO_0002213",
+          "term" : "http://purl.obolibrary.org/obo/GO_0001525"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0004034",
+        "term" : "http://purl.obolibrary.org/obo/GO_0001525"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0038189"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0007229"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0051930"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0050965"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0002544"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0002544"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0050965"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0030659"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0030315"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0042383"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000746"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0098590"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0030315"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0061885"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_2000969"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_2000969"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0099055"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0098978"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/UBERON_0000061"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_35405"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0098978"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005829"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000700"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097458"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0004930"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/RO_0002233",
+          "term" : "http://purl.obolibrary.org/obo/CHEBI_85252"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0004949"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0047372"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/GOREL_0000752",
+          "term" : "http://purl.obolibrary.org/obo/CHEBI_34159"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_1905344"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_1905344"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0061951"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/RO_0002339",
+          "term" : "http://purl.obolibrary.org/obo/GO_0005911"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/RO_0002313",
+          "term" : "http://identifiers.org/uniprot/P09803"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0150105"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005829"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000540"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_16974"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097458"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0090554"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0045332"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0045332"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002327",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005515"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000066",
+          "term" : "http://purl.obolibrary.org/obo/GO_0005911"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002432",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005911"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_1990075"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0010009"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097458"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0001726"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/CL_0000129"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0097386"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0005886"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0030426"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_17577"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0030426"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0045202"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0098978"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/UBERON_0000061"
+        },
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/EMAPA_35405"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0044456"
+      },
+      {
+        "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+        "term" : "http://purl.obolibrary.org/obo/GO_0098978"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0051930"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+      "extension" : [
+        {
+          "relation" : "http://purl.obolibrary.org/obo/BFO_0000050",
+          "term" : "http://purl.obolibrary.org/obo/GO_0050965"
+        }
+      ]
+    },
+    "inferences" : [
+      {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0050965"
+      }
+    ],
+    "satisfiable" : true,
+    "taxonProblem" : false
+  },
+  {
+    "annotation" : {
+      "annotation" : {
+        "relation" : "http://purl.obolibrary.org/obo/RO_0002331",
+        "term" : "http://purl.obolibrary.org/obo/GO_0007275"
+      },
+      "taxon" : "http://purl.obolibrary.org/obo/NCBITaxon_284812",
+      "extension" : [
+      ]
+    },
+    "inferences" : [
+    ],
+    "satisfiable" : false,
+    "taxonProblem" : true
+  }
+
+]

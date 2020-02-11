@@ -3,7 +3,7 @@ from prefixcommons.curie_util import contract_uri, expand_uri, get_prefixes
 from ontobio.vocabulary.relations import OboRO, Evidence
 from ontobio.vocabulary.upper import UpperLevel
 from ontobio.ecomap import EcoMap
-from ontobio.ontol_factory import OntologyFactory
+from ontobio.rdfgen import relations
 from rdflib import Namespace
 from rdflib import BNode
 from rdflib import Literal
@@ -15,6 +15,7 @@ import rdflib
 import logging
 import uuid
 import re
+import json
 
 ro = OboRO()
 evt = Evidence()
@@ -89,9 +90,9 @@ class RdfTransform(object):
         self.ecomap = EcoMap()
         self._emit_header_done = False
         self.uribase = writer.base
-        self.ro = None
         self.ecomap.mappings()
         self.bad_chars_regex = re.compile("[^\.:_\-0-9a-zA-Z]")
+        self.ro_lookup = dict(relations.label_relation_lookup())
 
     def blanknode(self):
         return BNode()
@@ -111,18 +112,14 @@ class RdfTransform(object):
 
         return URIRef(uri)
 
-    def get_relation_ontology(self):
-        if self.ro is None:
-            ofa = OntologyFactory()
-            self.ro = ofa.create('ro')
-        return self.ro
-
     def lookup_relation(self, label):
-        ro = self.get_relation_ontology()
         label = label.replace('_', ' ')
-        results = [self.uri(x) for x in ro.search(label)]
-        if len(results) > 0:
-            return results[0]
+
+        # Return the cached label -> URI or None
+        if label in self.ro_lookup:
+            return self.uri(self.ro_lookup[label])
+        else:
+            return None
 
     def emit(self, s, p, o):
         logger.debug("TRIPLE: {} {} {}".format(s,p,o))

@@ -18,13 +18,16 @@ import gzip
 import datetime
 import dateutil.parser
 
-from collections import namedtuple
+from dataclasses import dataclass
+
+from collections import namedtuple, defaultdict
 from typing import Optional, List, Dict, Set
 
 from ontobio import ontol
 from ontobio import ecomap
 from ontobio.io import parsereport
 from ontobio.util.user_agent import get_user_agent
+from ontobio.model import association
 
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
@@ -39,15 +42,6 @@ def write_to_file(optional_file, text):
         optional_file.write(text)
 
 
-class ParseResult(object):
-
-    def __init__(self, parsed_line, associations, skipped, evidence_used=None):
-        self.parsed_line = parsed_line
-        self.associations = associations
-        self.skipped = skipped
-        self.evidence_used = evidence_used
-
-
 SplitLine = namedtuple("SplitLine", ["line", "values", "taxon"])
 SplitLine.__str__ = lambda self: self.line
 
@@ -59,6 +53,8 @@ as the separated by tab list of values. We also tack on the taxon.
 class AssocParserConfig():
     """
     Configuration for an association parser
+
+    rule_metadata: Dictionary of rule IDs to metadata pulled out by yamldown
     """
     def __init__(self,
                  remove_double_prefixes=False,
@@ -76,8 +72,11 @@ class AssocParserConfig():
                  filtered_evidence_file=None,
                  gpi_authority_path=None,
                  paint=False,
-                 rule_titles=None,
-                 dbxrefs=None):
+                 rule_metadata=None,
+                 goref_metadata=None,
+                 dbxrefs=None,
+                 suppress_rule_reporting_tags=[],
+                 annotation_inferences=None):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -92,9 +91,11 @@ class AssocParserConfig():
         self.filtered_evidence_file = filtered_evidence_file
         self.gpi_authority_path = gpi_authority_path
         self.paint = paint
-        self.rule_titles = rule_titles
-
-        self.entity_idspaces = None if entity_idspaces is None else set(entity_idspaces)
+        self.rule_metadata = rule_metadata
+        self.goref_metadata = goref_metadata
+        self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
+        self.annotation_inferences = annotation_inferences
+        self.entity_idspaces = entity_idspaces
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
@@ -104,22 +105,33 @@ class AssocParserConfig():
         if self.filter_out_evidence is None:
             self.filter_out_evidence = []
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
 
-class Report():
+
+class Report(object):
     """
     A report object that is generated as a result of a parse
     """
 
     # Levels
+    """
+    4  message levels
+    """
     FATAL = 'FATAL'
     ERROR = 'ERROR'
     WARNING = 'WARNING'
+    INFO = "INFO"
 
     # Warnings: TODO link to gorules
     INVALID_ID = "Invalid identifier"
     INVALID_ID_DBXREF = "ID or symbol not present in DB xrefs file"
     UNKNOWN_ID = "Unknown identifier"
     INVALID_IDSPACE = "Invalid identifier prefix"
+    INVALID_QUALIFIER = "Invalid Qualifier"
     INVALID_TAXON = "Invalid taxon"
     INVALID_SYMBOL = "Invalid symbol"
     INVALID_DATE = "Invalid date"
@@ -131,11 +143,8 @@ class Report():
     WRONG_NUMBER_OF_COLUMNS = "Wrong number of columns in this line"
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
     VIOLATES_GO_RULE = "Violates GO Rule"
+    RULE_PASS = "Passes GO Rule"
 
-    """
-    3 warning levels
-    """
-    LEVELS = [FATAL, ERROR, WARNING]
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
         self.messages = []
@@ -143,7 +152,10 @@ class Report():
         self.n_assocs = 0
         self.skipped = 0
         self.reporter = parsereport.Report(group, dataset)
+        if config is None:
+            config = AssocParserConfig()
         self.config = config
+        self.header = []
 
     def error(self, line, type, obj, msg="", taxon="", rule=None):
         self.message(self.ERROR, line, type, obj, msg, taxon=taxon, rule=rule)
@@ -151,16 +163,20 @@ class Report():
     def warning(self, line, type, obj, msg="", taxon="", rule=None):
         self.message(self.WARNING, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def message(self, level, line, type, obj, msg="", taxon="", rule=None):
+    def message(self, level, line, type, obj, msg="", taxon="", rule=None, dont_record=["INFO"]):
         message = {
             'level': level,
             'line': line,
             'type': type,
             'message': msg,
             'obj': obj,
-            'taxon': taxon
+            'taxon': taxon,
+            'rule': rule
         }
-        self.messages.append(message)
+        if not level in dont_record:
+            # Only record a message if we want that
+            self.messages.append(message)
+
         self.reporter.message(message, rule)
 
 
@@ -169,7 +185,10 @@ class Report():
             self.add_association(a)
 
     def add_association(self, association):
-        self.n_assocs += 1
+        if "header" in association and association["header"]:
+            self.header.append(association["line"])
+        else:
+            self.n_assocs += 1
         # self.subjects.add(association['subject']['id'])
         # self.objects.add(association['object']['id'])
         # self.references.update(association['evidence']['has_supporting_reference'])
@@ -210,16 +229,35 @@ class Report():
         s += "  * Associations: {}\n" . format(json["associations"])
         s += "  * Lines in file (incl headers): {}\n" . format(json["lines"])
         s += "  * Lines skipped: {}\n" . format(json["skipped_lines"])
+        # Header from GAF
+        s += "## Header From Original Association File\n\n"
+        s += "\n".join(["> {}  ".format(head) for head in self.header])
         ## Table of Contents
-        s += "\n## Contents\n\n"
+        s += "\n\n## Contents\n\n"
         for rule, messages in sorted(json["messages"].items(), key=lambda t: t[0]):
+            any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_reporting_tags])
+            # For each tag we say to suppress output for, check if it matches any tag in the rule. If any matches
+            if self.config.rule_metadata and any_suppress_tag_in_rule_metadata:
+                print("Skipping {rule_num} because the tag(s) '{tag}' are suppressed".format(rule_num=rule, tag=", ".join(self.config.suppress_rule_reporting_tags)))
+                continue
+
             s += "[{rule}](#{rule})\n\n".format(rule=rule)
 
         s += "\n## MESSAGES\n\n"
         for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
+            any_suppress_tag_in_rule_metadata = any([tag in self.config.rule_metadata.get(rule, {}).get("tags", []) for tag in self.config.suppress_rule_reporting_tags])
+
+            # Skip if the rule metadata has "silent" as a tag
+            if self.config.rule_metadata and any_suppress_tag_in_rule_metadata:
+                # If there is a rule metadata, and the rule ID is in the config,
+                # get the list of tags if present and check for existence of "silent".
+                # If contained, continue to the next rule.
+                continue
+
+
             s += "### {rule}\n\n".format(rule=rule)
-            if rule != "other" and self.config.rule_titles:
-                s += "{title}\n\n".format(title=self.config.rule_titles.get(rule, ""))
+            if rule != "other" and self.config.rule_metadata:
+                s += "{title}\n\n".format(title=self.config.rule_metadata.get(rule, {}).get("title", ""))
             s += "* total: {amount}\n".format(amount=len(messages))
             if len(messages) > 0:
                 s += "#### Messages\n"
@@ -227,17 +265,15 @@ class Report():
                 obj = " ({})".format(message["obj"]) if message["obj"] else ""
                 s += "* {level} - {type}: {message}{obj} -- `{line}`\n".format(level=message["level"], type=message["type"], message=message["message"], line=message["line"], obj=obj)
 
-        # for g in json['groups']:
-        #     s += " * {}: {}\n".format(g['level'], g['count'])
-        # s += "\n\n"
-        # for g in json['groups']:
-        #     level = g['level']
-        #     msgs = g['messages']
-        #     if len(msgs) > 0:
-        #         s += "### {}\n\n".format(level)
-        #         for m in msgs:
-        #             s += " * {}: obj:'{}' \"{}\" `{}`\n".format(m['type'],m['obj'],m['message'],m['line'])
         return s
+
+@dataclass
+class ParseResult:
+    parsed_line: str
+    associations: List[association.GoAssociation]
+    skipped: bool
+    report: Optional[Report] = None
+    evidence_used: List[str] = None
 
 # TODO avoid using names that are builtin python: file, id
 
@@ -245,6 +281,8 @@ class AssocParser(object):
     """
     Abstract superclass of all association parser classes
     """
+    def is_header(self, line):
+        return line.startswith("!")
 
     def parse(self, file, skipheader=False, outfile=None):
         """Parse a line-oriented association file into a list of association dict objects
@@ -360,45 +398,53 @@ class AssocParser(object):
         """
         raise NotImplementedError("AssocParser.skim not implemented")
 
-    def parse_line(self, line):
-        raise NotImplementedError("AssocParser.parse_line not implemented")
+    def normalize_columns(self, number_of_columns, columns):
+        columns += [""] * (number_of_columns - len(columns))
+        return columns
+
+    # def parse_line(self, line) -> ParseResult:
+    #     if self.is_header(line):
+    #         # Then do a thing with the header?
+    #         return ParseResult(line, [HeaderLine(line)], False)
+    #
+    #     tsv_line = line.split("\t")
+    #     self.parse_to_association(tsv_line)
+
 
     def _skipping_line(self, associations):
         return associations is None or associations == []
 
     def _is_exclude_relation(self, relation):
-        if self.config.include_relations is not None and len(self.config.include_relations)>0:
+        if self.config.include_relations is not None and len(self.config.include_relations) > 0:
             if relation not in self.config.include_relations:
                 return True
-        if self.config.exclude_relations is not None and len(self.config.exclude_relations)>0:
+        if self.config.exclude_relations is not None and len(self.config.exclude_relations) > 0:
             if relation in self.config.exclude_relations:
                 return True
         return False
 
+    def compute_aspect(self, term):
+        if self.config.ontology == None:
+            return None
+
+        BP = "GO:0008150"
+        CC = "GO:0005575"
+        MF = "GO:0003674"
+
+        ancestors = self.config.ontology.ancestors(term)
+        if BP in ancestors:
+            return "P"
+        if CC in ancestors:
+            return "C"
+        if MF in ancestors:
+            return "F"
+
+        return None
+
     ## we generate both qualifier and relation field
     ## Returns: (negated, relation, other_qualifiers)
     def _parse_qualifier(self, qualifier, aspect):
-        relation = None
-        qualifiers = qualifier.split("|")
-        if qualifier == '':
-            qualifiers = []
-        negated =  'NOT' in qualifiers
-        other_qualifiers = [q for q in qualifiers if q != 'NOT']
-        ## In GAFs, relation is overloaded into qualifier.
-        ## If no explicit non-NOT qualifier is specified, use
-        ## a default based on GPI spec
-        if len(other_qualifiers) > 0:
-            relation = other_qualifiers[0]
-        else:
-            if aspect == 'C':
-                relation = 'part_of'
-            elif aspect == 'P':
-                relation = 'involved_in'
-            elif aspect == 'F':
-                relation = 'enables'
-            else:
-                relation = None
-        return (negated, relation, other_qualifiers)
+        return _parse_qualifier(qualifier, aspect)
 
     # split an ID/CURIE into prefix and local parts
     # (not currently used)
@@ -431,7 +477,7 @@ class AssocParser(object):
             return id
 
         if not ont.has_node(id):
-            self.report.warning(line.line, Report.UNKNOWN_ID, id, "GORULE:0000027",
+            self.report.warning(line.line, Report.UNKNOWN_ID, id, "Class ID {} is not present in the ontology".format(id),
                 taxon=line.taxon, rule=27)
             return id
 
@@ -538,6 +584,8 @@ class AssocParser(object):
 
         return sorted(valids)
 
+        # We are only reporting, so just pass it through
+
     def _normalize_id(self, id):
         toks = id.split(":")
         if len(toks) > 1:
@@ -614,7 +662,7 @@ class AssocParser(object):
         return object_or_exprs
 
 
-    relation_tuple = re.compile(r'(.*)\((.*)\)')
+    relation_tuple = re.compile(r'(.+)\((.+)\)')
     def _parse_relationship_expression(self, x, line: SplitLine = None):
         ## Parses an atomic relational expression
         ## E.g. exists_during(GO:0000753)
@@ -623,16 +671,41 @@ class AssocParser(object):
         if len(tuples) != 1:
             self.report.error(line.line, Report.EXTENSION_SYNTAX_ERROR, x, msg="does not follow REL(ID) syntax")
             return None
-        (p,v) = tuples[0]
+        (p, v) = tuples[0]
 
         if self._validate_id(v, line, context=EXTENSION):
             return {
-                'property':p,
-                'filler':v
+                'property': p,
+                'filler': v
             }
         else:
             self.report.error(line.line, Report.EXTENSION_SYNTAX_ERROR, x, msg="GORULE:0000027: ID not valid", rule=27)
             return None
+
+## we generate both qualifier and relation field
+## Returns: (negated, relation, other_qualifiers)
+def _parse_qualifier(qualifier, aspect):
+    relation = None
+    qualifiers = qualifier.split("|")
+    if qualifier == '':
+        qualifiers = []
+    negated = 'NOT' in qualifiers
+    other_qualifiers = [q for q in qualifiers if q != 'NOT']
+    ## In GAFs, relation is overloaded into qualifier.
+    ## If no explicit non-NOT qualifier is specified, use
+    ## a default based on GPI spec
+    if len(other_qualifiers) > 0:
+        relation = other_qualifiers[0]
+    else:
+        if aspect == 'C':
+            relation = 'part_of'
+        elif aspect == 'P':
+            relation = 'involved_in'
+        elif aspect == 'F':
+            relation = 'enables'
+        else:
+            relation = None
+    return (negated, relation, other_qualifiers)
 
 # TODO consider making an Association its own class too to give it a little more
 # TODO Semantic value?

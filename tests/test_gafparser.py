@@ -49,6 +49,12 @@ def test_skim_gaf_qualifiers():
         assert s.startswith('MGI:') or s.startswith('PomBase')
     assert len(results) == 2 # ensure NOTs and excludes relations skipped
 
+def test_one_line():
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create("tests/resources/goslim_generic.json")))
+
+    parsed = p.parse_line("PomBase	SPBC16D10.09	pcn1		GO:0009536	PMID:8663159	IDA		C	PCNA	pcn	protein	taxon:4896	20150326	PomBase")
+
 def test_skim_gpad():
     p = GpadParser()
     p.config.ecomap = EcoMap()
@@ -75,8 +81,11 @@ def parse_with(f, p):
         # only do ontology checking on GAF parse;
         # this is because ontology is made from GAF
         p.config.ontology = ont
+    else:
+        p.config.ontology = None
 
     results = p.parse(open(f, "r"), skipheader=True)
+    print(p.report.to_markdown())
     r1 = results[0]
     # TODO: test datafile does not have ECOs yet!!
     assert r1['evidence']['type'] == 'ISO' or r1['evidence']['type'] == 'ECO:0000201'
@@ -114,7 +123,7 @@ def test_no_flag_valid_id():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     p.config.ontology = ont
-    p._validate_ontology_class_id("GO:0016070", "fake", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
+    p._validate_ontology_class_id("GO:0000785", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
     assert len(p.report.messages) == 0
 
 def test_convert_gaf_to_gpad():
@@ -196,19 +205,22 @@ def parse_with2(f, p):
     assert len([a for a in assocs if a['relation']['id'] == 'contributes_to']) == 1
 
 def test_errors_gaf():
-    p = GafParser()
-    p.config.ecomap = EcoMap()
+    config = assocparser.AssocParserConfig(
+        ecomap=EcoMap()
+    )
+    p = GafParser(config=config)
     assocs = p.parse(open("tests/resources/errors.gaf", "r"), skipheader=True)
     msgs = p.report.messages
-    print("MESSAGES: {}".format(len(msgs)))
+    print(json.dumps(p.report.to_report_json(), indent=4))
+    # print("MESSAGES: {}".format(len(msgs)))
     n_invalid_idspace = 0
     for m in msgs:
         print("MESSAGE: {}".format(m))
         if m['type'] == assocparser.Report.INVALID_IDSPACE:
             n_invalid_idspace += 1
-    assert len(msgs) == 17
+    assert len(msgs) == 16
     assert n_invalid_idspace == 1
-    assert len(assocs) == 6
+    assert len(assocs) == 5
 
     w = GafWriter()
     w.write(assocs)
@@ -242,6 +254,18 @@ def test_alt_id_repair():
     # GO:4 is obsolete due to it being merged into GO:3
     assert assocs[0]["object"]["id"] == "GO:3"
 
+def test_gorule_repair():
+    config = assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create("tests/resources/goslim_generic.json")
+    )
+    p = GafParser(config=config)
+    # Here this gaf line has the wrong aspect, and should be picked up by gorule 28
+    gaf = io.StringIO("PomBase\tSPCC962.06c\tbpb1\t\tGO:0005634\tPMID:20970342\tIDA\t\tP\tKH and CC/hC domain splicing factor Bpb1\tsf1|ods3\tprotein\ttaxon:4896\t20110804\tPomBase\texists_during(GO:0007137)")
+    assocs = p.parse(gaf, skipheader=True)
+
+    assert assocs[0]["aspect"] == "C"
+    assert len(p.report.messages) == 1
+    assert p.report.messages[0]["type"] == assocparser.Report.VIOLATES_GO_RULE
 
 def test_bad_date():
     p = GafParser()

@@ -10,8 +10,6 @@ import logging
 import os
 import subprocess
 import hashlib
-from cachier import cachier
-import datetime
 from ontobio.golr.golr_associations import bulk_fetch
 from ontobio.assocmodel import AssociationSet, AssociationSetMetadata
 from ontobio.io.hpoaparser import HpoaParser
@@ -20,7 +18,6 @@ from ontobio.io.gafparser import GafParser
 from ontobio.util.user_agent import get_user_agent
 from collections import defaultdict
 
-SHELF_LIFE = datetime.timedelta(days=3)
 logger = logging.getLogger(__name__)
 
 
@@ -201,7 +198,6 @@ class AssociationSetFactory():
         return self.create_from_tuples(results, **args)
 
 
-@cachier(stale_after=SHELF_LIFE)
 def bulk_fetch_cached(**args):
         logger.info("Fetching assocs from store (will be cached)")
         return bulk_fetch(**args)

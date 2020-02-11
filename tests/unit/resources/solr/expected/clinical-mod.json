@@ -1,0 +1,38 @@
+{
+    "associations": [
+        {
+            "frequency": {
+                "id": "HP:0040281",
+                "label": "Very frequent"
+            },
+            "id": null,
+            "negated": false,
+            "object": {
+                "category": [
+                    "phenotype"
+                ],
+                "id": "HP:0000280",
+                "iri": "http://purl.obolibrary.org/obo/HP_0000280",
+                "label": "Coarse facial features"
+            },
+            "onset": {
+                "id": "HP:0003593",
+                "label": "Infantile onset"
+            },
+            "evidence_types": [],
+            "publications": [],
+            "relation": null,
+            "subject": {
+                "category": [
+                    "disease"
+                ],
+                "id": "MONDO:0009737",
+                "iri": "http://purl.obolibrary.org/obo/MONDO_0009737",
+                "label": "galactosialidosis"
+            }
+        }
+    ],
+    "facet_counts": {},
+    "numFound": 1,
+    "pagination": {}
+}

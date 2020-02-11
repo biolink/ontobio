@@ -4,19 +4,14 @@ Factory class for generating ontology objects based on a variety of handle types
 See :ref:`inputs` on readthedocs for more details
 """
 
-import networkx as nx
-import logging
 import ontobio.obograph_util as obograph_util
-import ontobio.sparql.sparql_ontology
 from ontobio.ontol import Ontology
 from ontobio.sparql.sparql_ontology import EagerRemoteSparqlOntology
 import os
 import subprocess
 import hashlib
-from cachier import cachier
-import datetime
+import logging
 
-SHELF_LIFE = datetime.timedelta(days=3)
 logger = logging.getLogger(__name__)
 
 # TODO
@@ -71,12 +66,11 @@ class OntologyFactory():
             global default_ontology
             if default_ontology is None:
                 logger.info("Creating new instance of default ontology")
-                default_ontology = create_ontology(default_ontology_handle)
+                default_ontology = create_ontology(default_ontology_handle, **args)
             logger.info("Using default_ontology")
             return default_ontology
         return create_ontology(handle, **args)
 
-#@cachier(stale_after=SHELF_LIFE)
 def create_ontology(handle=None, **args):
     ont = None
     logger.info("Determining strategy to load '{}' into memory...".format(handle))
@@ -163,7 +157,7 @@ def translate_file_to_ontology(handle, **args):
     else:
         if not (handle.endswith(".obo") or handle.endswith(".owl")):
             logger.info("Attempting to parse non obo or owl file with owltools: "+handle)
-        encoded = hashlib.sha256(handle.encode()).hexdigest()
+        encoded = get_checksum(handle)
         logger.info(" encoded: "+str(encoded))
         fn = '/tmp/'+encoded
         if not os.path.isfile(fn):
@@ -174,3 +168,11 @@ def translate_file_to_ontology(handle, **args):
             logger.info("using cached file: "+fn)
         g = obograph_util.convert_json_file(fn, **args)
         return Ontology(handle=handle, payload=g)
+
+def get_checksum(file):
+    """
+    Get SHA256 hash from the contents of a given file
+    """
+    with open(file, 'rb') as FH:
+        contents = FH.read()
+    return hashlib.sha256(contents).hexdigest()
