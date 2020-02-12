@@ -18,6 +18,9 @@ import tempfile
 cache = Cache(tempfile.gettempdir())
 
 
+logger = logging.getLogger(__name__)
+
+
 class OboJsonMapper(object):
     def __init__(self,
                  digraph=None,
@@ -40,7 +43,7 @@ class OboJsonMapper(object):
         Converts a single obograph to Digraph edges and adds to an existing networkx DiGraph
         """
         digraph = self.digraph
-        logging.info("NODES: {}".format(len(og['nodes'])))
+        logger.info("NODES: {}".format(len(og['nodes'])))
 
         # if client passes an xref_graph we must parse metadata
         if xref_graph is not None:
@@ -63,7 +66,7 @@ class OboJsonMapper(object):
                 if xref_graph is not None and 'xrefs' in meta:
                     for x in meta['xrefs']:
                         xref_graph.add_edge(self.contract_uri(x['val']), id, source=id)
-        logging.info("EDGES: {}".format(len(og['edges'])))
+        logger.info("EDGES: {}".format(len(og['edges'])))
         for edge in og['edges']:
             sub = self.contract_uri(edge['sub'])
             obj = self.contract_uri(edge['obj'])
@@ -80,7 +83,7 @@ class OboJsonMapper(object):
 
         if 'equivalentNodesSets' in og:
             nslist = og['equivalentNodesSets']
-            logging.info("CLIQUES: {}".format(len(nslist)))
+            logger.info("CLIQUES: {}".format(len(nslist)))
             for ns in nslist:
                 equivNodeIds = ns['nodeIds']
                 for i in ns['nodeIds']:
@@ -145,7 +148,7 @@ def convert_json_object(obographdoc, reverse_edges=True, **args):
     logical_definitions = []
     property_chain_axioms = []
     context = obographdoc.get('@context',{})
-    logging.info("CONTEXT: {}".format(context))
+    logger.info("CONTEXT: {}".format(context))
     mapper = OboJsonMapper(digraph=digraph, context=context)
     ogs = obographdoc['graphs']
     base_og = ogs[0]

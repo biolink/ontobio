@@ -17,6 +17,9 @@ import scipy.stats # TODO - move
 import scipy as sp # TODO - move
 import pandas as pd
 
+logger = logging.getLogger(__name__)
+
+
 class UnknownSubjectException(Exception):
     pass
 
@@ -52,7 +55,7 @@ class AssociationSet():
         if self.association_map is None:
             self.association_map = {}
 
-        logging.info("Created {}".format(self))
+        logger.info("Created {}".format(self))
 
     def __str__(self):
         imap = self.subject_to_inferred_map
@@ -70,7 +73,7 @@ class AssociationSet():
         for (subj,terms) in self.association_map.items():
             self.association_map[subj] = list(set(self.association_map[subj]))
             
-        logging.info("Indexing {} items".format(len(self.subjects)))
+        logger.info("Indexing {} items".format(len(self.subjects)))
         n = 0
         all_objs = set()
         for (subj,terms) in self.association_map.items():
@@ -79,9 +82,9 @@ class AssociationSet():
             self.subject_to_inferred_map[subj] = ancs
             n = n+1
             if n<5:
-                logging.info(" Indexed: {} -> {}".format(subj, ancs))
+                logger.debug(" Indexed: {} -> {}".format(subj, ancs))
             elif n == 6:
-                logging.info("[TRUNCATING>5]....")
+                logger.info("[TRUNCATING>5]....")
         self.objects = all_objs
 
     def inferred_types(self, subj):
@@ -162,9 +165,9 @@ class AssociationSet():
                 if xrefs is not None:
                     xset.update(xrefs)
             mset.update(xset)
-        logging.debug("Matching subjects: {}".format(mset))
+        logger.debug("Matching subjects: {}".format(mset))
         mset = mset.intersection(self.subjects)
-        logging.debug("Matching subjects with anns: {}".format(mset))
+        logger.debug("Matching subjects with anns: {}".format(mset))
         amap = self.association_map
         results = []
         for m in mset:
@@ -289,7 +292,7 @@ class AssociationSet():
         for i in ilist:
             z[ymap[i['y']]][xmap[i['x']]] = i['j']
             
-        logging.debug("Z={}".format(z))
+        logger.debug("Z={}".format(z))
         return (z,xterms,yterms)
     
     def as_dataframe(self, fillna=True, subjects=None):
@@ -309,10 +312,10 @@ class AssociationSet():
             for c in self.inferred_types(s):
                 vmap[c] = 1
             entries.append(vmap)
-        logging.debug("Creating DataFrame")
+        logger.debug("Creating DataFrame")
         df = pd.DataFrame(entries, index=selected_subjects)
         if fillna:
-            logging.debug("Performing fillna...")
+            logger.debug("Performing fillna...")
             df = df.fillna(0)
         return df
 
@@ -396,7 +399,7 @@ class AssociationSet():
             hypotheses = potential_hypotheses
         else:
             hypotheses = potential_hypotheses.intersection(hypotheses)
-        logging.info("Hypotheses: {}".format(hypotheses))
+        logger.info("Hypotheses: {}".format(hypotheses))
         
         # get background counts
         # TODO: consider doing this ahead of time
@@ -423,7 +426,7 @@ class AssociationSet():
                     sample_count[a] = sample_count[a]+1
 
         hypotheses = [x for x in hypotheses if bg_count[x] > 1]
-        logging.info("Filtered hypotheses: {}".format(hypotheses))
+        logger.info("Filtered hypotheses: {}".format(hypotheses))
         num_hypotheses = len(hypotheses)
                 
         results = []
@@ -442,12 +445,12 @@ class AssociationSet():
             b = sample_size - a
             c = bg_count[cls] - a
             d = (bg_size - bg_count[cls]) - b
-            #logging.debug("ABCD="+str((cls,a,b,c,d,sample_size)))
+            #logger.debug("ABCD="+str((cls,a,b,c,d,sample_size)))
             _, p_uncorrected = sp.stats.fisher_exact( [[a, b], [c, d]], direction)
             p = p_uncorrected * num_hypotheses
             if p>1.0:
                 p=1.0
-            #logging.debug("P={} uncorrected={}".format(p,p_uncorrected))
+            #logger.debug("P={} uncorrected={}".format(p,p_uncorrected))
             if p<threshold:
                 res = {'c':cls,'p':p,'p_uncorrected':p_uncorrected}
                 if labels:

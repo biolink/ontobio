@@ -36,6 +36,8 @@ import math
 from marshmallow import Schema, fields, pprint, post_load
 
 LABEL_OR_EXACT = 'label_or_exact'
+logger = logging.getLogger(__name__)
+
 
 def logit(p):
     return math.log2(p/(1-p))
@@ -106,7 +108,7 @@ class LexicalMapEngine():
         self.stats = {}
 
     def index_ontologies(self, onts):
-        logging.info('Indexing: {}'.format(onts))
+        logger.info('Indexing: {}'.format(onts))
         for ont in onts:
             self.index_ontology(ont)
         
@@ -120,7 +122,7 @@ class LexicalMapEngine():
         syns = ont.all_synonyms(include_label=True)
         
         include_id = self._is_meaningful_ids()
-        logging.info("Include IDs as synonyms: {}".format(include_id))
+        logger.info("Include IDs as synonyms: {}".format(include_id))
         if include_id:
             for n in ont.nodes():
                 v = n
@@ -130,8 +132,8 @@ class LexicalMapEngine():
                     v = re.sub('.*#','',v)
                 syns.append(Synonym(n, val=v, pred='label'))
         
-        logging.info("Indexing {} syns in {}".format(len(syns),ont))
-        logging.info("Distinct lexical values: {}".format(len(self.lmap.keys())))
+        logger.info("Indexing {} syns in {}".format(len(syns),ont))
+        logger.info("Distinct lexical values: {}".format(len(self.lmap.keys())))
         for syn in syns:
             self.index_synonym(syn, ont)
         for nid in ont.nodes():
@@ -151,9 +153,9 @@ class LexicalMapEngine():
                 if not self._is_meaningful_ids():
                     if not ont.is_obsolete(syn.class_id):
                         pass
-                        #logging.error('Use meaningful ids if label not present: {}'.format(syn))
+                        #logger.error('Use meaningful ids if label not present: {}'.format(syn))
             else:
-                logging.warning("Incomplete syn: {}".format(syn))
+                logger.warning("Incomplete syn: {}".format(syn))
             return
         if self.exclude_obsolete and ont.is_obsolete(syn.class_id):
             return
@@ -173,7 +175,7 @@ class LexicalMapEngine():
         # https://github.com/ebi-chebi/ChEBI/issues/3294
         if not re.match('.*[a-zA-Z]',v):
             if prefix != 'CHEBI':
-                logging.warning('Ignoring suspicous synonym: {}'.format(syn))
+                logger.warning('Ignoring suspicous synonym: {}'.format(syn))
             return
         
         v = self._standardize_label(v)
@@ -289,7 +291,7 @@ class LexicalMapEngine():
 
         # lmap collects all syns by token
         items = self.lmap.items()
-        logging.info("collecting initial xref graph, items={}".format(len(items)))
+        logger.info("collecting initial xref graph, items={}".format(len(items)))
         i = 0
         sum_nsyns = 0
         n_skipped = 0
@@ -303,12 +305,12 @@ class LexicalMapEngine():
             sum_nsyns += len(syns)
             i += 1
             if i % 1000 == 1:
-                logging.info('{}/{}  lexical items avgSyns={}, skipped={}'.format(i,len(items), sum_nsyns/len(items), n_skipped))
+                logger.info('{}/{}  lexical items avgSyns={}, skipped={}'.format(i,len(items), sum_nsyns/len(items), n_skipped))
             if len(syns) < 2:
                 n_skipped += 1
                 next
             if len(syns) > 10:
-                logging.info('Syns for {} = {}'.format(v,len(syns)))
+                logger.info('Syns for {} = {}'.format(v,len(syns)))
             for s1 in syns:
                 s1oid = s1.ontology.id
                 s1cid = s1.class_id
@@ -321,7 +323,7 @@ class LexicalMapEngine():
                         if self._is_comparable(s1,s2):
                             g.add_edge(s1.class_id, s2.class_id, syns=(s1,s2))
 
-        logging.info("getting best supporting synonym pair for each match")
+        logger.info("getting best supporting synonym pair for each match")
         # graph of best matches
         xg = nx.Graph()
         for i in g.nodes():
@@ -346,8 +348,8 @@ class LexicalMapEngine():
         if self.merged_ontology.xref_graph is not None:
             self.compare_to_xrefs(xg, self.merged_ontology.xref_graph)
         else:
-            logging.error("No xref graph for merged ontology")
-        logging.info("finished xref graph")
+            logger.error("No xref graph for merged ontology")
+        logger.info("finished xref graph")
         return xg
 
     # true if syns s1 and s2 should be compared.
@@ -357,7 +359,7 @@ class LexicalMapEngine():
         if s1.class_id == s2.class_id:
             return False
         if self.ontology_pairs is not None:
-            #logging.debug('TEST: {}{} in {}'.format(s1.ontology.id, s2.ontology.id, self.ontology_pairs))
+            #logger.debug('TEST: {}{} in {}'.format(s1.ontology.id, s2.ontology.id, self.ontology_pairs))
             return (s1.ontology.id, s2.ontology.id) in self.ontology_pairs
         else:
             return s1.class_id < s2.class_id
@@ -374,7 +376,7 @@ class LexicalMapEngine():
         Given an xref graph (see ref:`get_xref_graph`), this will adjust scores based on
         the semantic similarity of matches.
         """
-        logging.info("scoring xrefs by semantic similarity for {} nodes in {}".format(len(xg.nodes()), ont))
+        logger.info("scoring xrefs by semantic similarity for {} nodes in {}".format(len(xg.nodes()), ont))
         for (i,j,d) in xg.edges(data=True):
             pfx1 = self._id_to_ontology(i)
             pfx2 = self._id_to_ontology(j)
@@ -383,7 +385,7 @@ class LexicalMapEngine():
             s1,_,_ = self._sim(xg, ancs1, ancs2, pfx1, pfx2)
             s2,_,_ = self._sim(xg, ancs2, ancs1, pfx2, pfx1)
             s = 1 - ((1-s1) * (1-s2))
-            logging.debug("Score {} x {} = {} x {} = {} // {}".format(i,j,s1,s2,s, d))
+            logger.debug("Score {} x {} = {} x {} = {} // {}".format(i,j,s1,s2,s, d))
             xg[i][j][self.SIMSCORES] = (s1,s2)
             xg[i][j][self.SCORE] *= s
 
@@ -399,7 +401,7 @@ class LexicalMapEngine():
                     pfx = self._id_to_ontology(n)
                     if pfx == pfx2:
                         xancs1.add(n)
-        logging.debug('SIM={}/{} ## {}'.format(len(xancs1.intersection(ancs2)), len(xancs1), xancs1.intersection(ancs2), xancs1))
+        logger.debug('SIM={}/{} ## {}'.format(len(xancs1.intersection(ancs2)), len(xancs1), xancs1.intersection(ancs2), xancs1))
         n_shared = len(xancs1.intersection(ancs2))
         n_total = len(xancs1)
         return (1+n_shared) / (1+n_total), n_shared, n_total
@@ -427,7 +429,7 @@ class LexicalMapEngine():
         return self.merged_ontology.prefix(id)
         #onts = self.id_to_ontology_map[id]
         #if len(onts) > 1:
-        #    logging.warning(">1 ontology for {}".format(id))
+        #    logger.warning(">1 ontology for {}".format(id))
         
     def compare_to_xrefs(self, xg1, xg2):
         """
@@ -472,13 +474,13 @@ class LexicalMapEngine():
         """
         For each node in the xref graph, tag best match edges
         """
-        logging.info("assigning best matches for {} nodes".format(len(xg.nodes())))
+        logger.info("assigning best matches for {} nodes".format(len(xg.nodes())))
         for i in xg.nodes():
             xrefmap = self._neighborscores_by_ontology(xg, i)
             for (ontid,score_node_pairs) in xrefmap.items():
                 score_node_pairs.sort(reverse=True)
                 (best_score,best_node) = score_node_pairs[0]
-                logging.info("BEST for {}: {} in {} from {}".format(i, best_node, ontid, score_node_pairs))
+                logger.info("BEST for {}: {} in {} from {}".format(i, best_node, ontid, score_node_pairs))
                 edge = xg[i][best_node]
                 dirn = self._dirn(edge, i, best_node)
                 best_kwd = 'best_' + dirn
@@ -585,7 +587,7 @@ class LexicalMapEngine():
             WS = np.array((0.0, 0.0, 0.0, 0.0))
         # defaults
         WS += np.array(self.config.get('default_weights', [0.0, 0.0, 1.5, -0.1]))
-        logging.info('WS defaults={}'.format(WS))
+        logger.info('WS defaults={}'.format(WS))
 
         for xw in self.config.get('xref_weights', []):
             left = xw.get('left','')
@@ -593,10 +595,10 @@ class LexicalMapEngine():
             X = np.array(xw['weights'])
             if x == left and y == right:
                 WS += X
-                logging.info('MATCH: {} for {}-{}'.format(X, x, y))
+                logger.info('MATCH: {} for {}-{}'.format(X, x, y))
             elif y == left and x == right:
                 WS += self._flipweights(X)
-                logging.info('IMATCH: {}'.format(X))
+                logger.info('IMATCH: {}'.format(X))
 
         smap = self.smap
         # TODO: symmetrical
@@ -617,13 +619,13 @@ class LexicalMapEngine():
                 n += 1
         # average best match
         if n > 0:
-            logging.info('Adding BESTMAX={}'.format(WBESTMAX))
+            logger.info('Adding BESTMAX={}'.format(WBESTMAX))
             WS += WBESTMAX
                     
         # TODO: xref, many to many
         WS += self._graph_weights(x, y, xg)
         # TODO: include additional defined weights, eg ORDO
-        logging.info('Adding WS, gw={}'.format(WS))
+        logger.info('Adding WS, gw={}'.format(WS))
 
         # jaccard similarity
         (ss1,ss2) = xg[x][y][self.SIMSCORES]
@@ -638,7 +640,7 @@ class LexicalMapEngine():
         
         #P = np.expit(WS)
         P = 1/(1+np.exp(-WS))
-        logging.info('Final WS={}, init P={}'.format(WS, P))
+        logger.info('Final WS={}, init P={}'.format(WS, P))
         # probs should sum to 1.0
         P = P / np.sum(P)
         return P
@@ -672,7 +674,7 @@ class LexicalMapEngine():
                 if y in ont.ancestors(y2):
                     W[0] += pweight
 
-        logging.debug('CARD: {}/{} <-> {}/{} = {} // X={} Y={} // W={}'.format(x,pfx, y,pfy, card, xns, yns, W))
+        logger.debug('CARD: {}/{} <-> {}/{} = {} // X={} Y={} // W={}'.format(x,pfx, y,pfy, card, xns, yns, W))
         invcard = card
         if card == '1m':
             invcard = 'm1'
@@ -762,7 +764,7 @@ class LexicalMapEngine():
         if s1.is_abbreviation() or s2.is_abbreviation():
             s *= self._get_config_val(self._id_to_ontology(s1.class_id), 'abbreviation_confidence', 0.5)
             s *= self._get_config_val(self._id_to_ontology(s1.class_id), 'abbreviation_confidence', 0.5)
-        logging.debug("COMBINED: {} + {} = {}/{}".format(s1,s2,cpred,s))
+        logger.debug("COMBINED: {} + {} = {}/{}".format(s1,s2,cpred,s))
         return round(s)
     
     def _rollup(self, p):

@@ -36,6 +36,8 @@ qmap = dict(
     genetic_association = dict(chain=['genetic_association'], prefix='NCBIGene')
     )
 
+logger = logging.getLogger(__name__)
+
 
 class Properties:
     """
@@ -55,17 +57,17 @@ class Properties:
 
 def run_sparql(q):
     # TODO: select endpoint based on ontology
-    logging.info("Connecting to sparql endpoint...")
+    logger.info("Connecting to sparql endpoint...")
     sparql = SPARQLWrapper("http://query.wikidata.org/sparql")
-    logging.info("Made wrapper: {}".format(sparql))
+    logger.info("Made wrapper: {}".format(sparql))
     # TODO: iterate over large sets?
     full_q = q + ' LIMIT ' + str(LIMIT)
     sparql.setQuery(q)
     sparql.setReturnFormat(JSON)
-    logging.info("Query: {}".format(q))
+    logger.info("Query: {}".format(q))
     results = sparql.query().convert()
     bindings = results['results']['bindings']
-    logging.info("Rows: {}".format(len(bindings)))
+    logger.info("Rows: {}".format(len(bindings)))
     for r in bindings:
         curiefy(r)
     return bindings
@@ -86,7 +88,7 @@ def fetchall_xrefs(prefix):
     m = {}
     pairs = fetchall_triples_xrefs(prefix)
     if len(pairs) == LIMIT:
-        logging.error("Too many: {} {}".format(LIMIT, pairs[:10]))
+        logger.error("Too many: {} {}".format(LIMIT, pairs[:10]))
         return None
     for (c,x) in pairs:
         if not x.startswith(prefix):
@@ -100,7 +102,7 @@ def fetchall_triples_xrefs(prefix):
     """
     fetch all xrefs for a prefix, e.g. CHEBI
     """
-    logging.info("fetching xrefs for: "+prefix)
+    logger.info("fetching xrefs for: "+prefix)
     query = """
     SELECT * WHERE {{
     ?c <{p}> ?x

@@ -18,6 +18,9 @@ from ontobio.rdfgen import relations
 
 import click
 
+logger = logging.getLogger(__name__)
+
+
 class GafParser(assocparser.AssocParser):
     """
     Parser for GO GAF format
@@ -61,7 +64,7 @@ class GafParser(assocparser.AssocParser):
                 continue
             vals = line.split("\t")
             if len(vals) < 15:
-                logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
+                logger.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
             split_line = assocparser.SplitLine(line=line, values=vals, taxon=vals[12])
 
