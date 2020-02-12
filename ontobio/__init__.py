@@ -11,6 +11,8 @@ import logging
 import logging.handlers
 from logging.config import dictConfig
 
+logging.getLogger("ontobio")
+
 DEFAULT_LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -37,14 +39,20 @@ def configure_logging():
     # file_handler = logging.handlers.RotatingFileHandler(logfile_path, maxBytes=10485760,backupCount=300, encoding='utf-8')
     # file_handler.setLevel(logging.INFO)
 
-    console_handler = logging.getLogger().handlers[0]
-    console_handler.setLevel(logging.DEBUG)
-    console_handler.setFormatter(default_formatter)
+    if len(logging.getLogger().handlers) > 0:
+        for h in logging.getLogger().handlers:
+            if isinstance(h, logging.StreamHandler):
+                # Then we found a logger to the terminal
+                h.setLevel(logging.DEBUG)
+                h.setFormatter(default_formatter)
 
-    # file_handler.setFormatter(default_formatter)
+    else:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+        console_handler.setFormatter(default_formatter)
+        logging.root.addHandler(console_handler)
+
 
     logging.root.setLevel(logging.WARNING)
-    # logging.root.addHandler(file_handler)
-    logging.root.addHandler(console_handler)
     
 configure_logging()
