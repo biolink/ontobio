@@ -108,6 +108,11 @@ class AssocParserConfig():
             return self.__dict__ == other.__dict__
         else:
             return False
+            
+    def __str__(self):
+        s = "AssocParserConfig("
+        attribute_values = ["{att}={val}".format(att=att, val=dict([(k, v) for k, v in value.items()][:8]) if isinstance(value, dict) else value) for att, value in vars(self).items()]
+        return "AssocParserConfig({})".format(",".join(attribute_values))
 
 
 class Report(object):
