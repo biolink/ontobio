@@ -208,6 +208,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
         annotation_inferences=annotation_inferences
     )
+    logger.info("Producing {}".format(source_gaf))
     logger.info("AssocParserConfig used: {}".format(config))
     split_source = os.path.split(source_gaf)[0]
     validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
@@ -244,6 +245,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
     
     logger.info("json {} written out".format(report_markdown_path))
+    logger.info("gorule-13 first 10 messages: {}".format(json.dumps(parser.report.to_report_json()["messages"]["gorule-0000013"][:10], indent=4)))
     logger.info("json current Stack:")
     traceback.print_stack()
 

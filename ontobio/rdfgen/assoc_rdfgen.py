@@ -101,7 +101,7 @@ class RdfTransform(object):
         # allow either atoms or objects
         if isinstance(id, dict):
             return self.uri(id['id'])
-        logger.info("Expand: {}".format(id))
+        # logger.info("Expand: {}".format(id))
 
         id = self.bad_chars_regex.sub("_", id)
         uri = curie_util.expand_uri(id, cmaps=[prefix_context])
