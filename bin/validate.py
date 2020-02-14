@@ -192,7 +192,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, mixin=False):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -228,26 +228,27 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
     outfile.close()
     filtered_associations.close()
     
-    report_markdown_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.md".format(dataset))
-    logger.info("About to write markdown report to {}".format(report_markdown_path))
-    with open(report_markdown_path, "w") as report_md:
-        logger.info("Opened for writing {}".format(report_markdown_path))
-        report_md.write(parser.report.to_markdown())
-    
-    logger.info("markdown {} written out".format(report_markdown_path))
-    logger.info("Markdown current stack:")
-    traceback.print_stack()
+    if not mixin: # Only write out a report if we are running a "top" dataset, not a mixin
+        report_markdown_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.md".format(dataset))
+        logger.info("About to write markdown report to {}".format(report_markdown_path))
+        with open(report_markdown_path, "w") as report_md:
+            logger.info("Opened for writing {}".format(report_markdown_path))
+            report_md.write(parser.report.to_markdown())
+        
+        logger.info("markdown {} written out".format(report_markdown_path))
+        logger.info("Markdown current stack:")
+        traceback.print_stack()
 
-    report_json_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.json".format(dataset))
-    logger.info("About to write json report to {}".format(report_json_path))
-    with open(report_json_path, "w") as report_json:
-        logger.info("Opened for writing {}".format(report_json_path))
-        report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
-    
-    logger.info("json {} written out".format(report_markdown_path))
-    logger.info("gorule-13 first 10 messages: {}".format(json.dumps(parser.report.to_report_json()["messages"].get("gorule-0000013", [])[:10], indent=4)))
-    logger.info("json current Stack:")
-    traceback.print_stack()
+        report_json_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.json".format(dataset))
+        logger.info("About to write json report to {}".format(report_json_path))
+        with open(report_json_path, "w") as report_json:
+            logger.info("Opened for writing {}".format(report_json_path))
+            report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
+        
+        logger.info("json {} written out".format(report_markdown_path))
+        logger.info("gorule-13 first 10 messages: {}".format(json.dumps(parser.report.to_report_json()["messages"].get("gorule-0000013", [])[:10], indent=4)))
+        logger.info("json current Stack:")
+        traceback.print_stack()
 
     return [validated_gaf_path, filtered_associations.name]
 
@@ -433,7 +434,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=mixin_metadata["id"]=="paint", group=mixin_metadata["id"], format=format)[0]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], format=format, mixin=True)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
