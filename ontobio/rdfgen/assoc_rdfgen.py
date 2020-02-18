@@ -36,6 +36,9 @@ OCCURS_IN = URIRef(expand_uri(ro.occurs_in))
 COLOCALIZES_WITH = URIRef(expand_uri(ro.colocalizes_with))
 MOLECULAR_FUNCTION = URIRef(expand_uri(upt.molecular_function))
 
+logger = logging.getLogger(__name__)
+
+
 def genid(base=None):
     return URIRef(str(uuid.uuid4()), base=base)
 
@@ -98,7 +101,7 @@ class RdfTransform(object):
         # allow either atoms or objects
         if isinstance(id, dict):
             return self.uri(id['id'])
-        logging.info("Expand: {}".format(id))
+        # logger.info("Expand: {}".format(id))
 
         id = self.bad_chars_regex.sub("_", id)
         uri = curie_util.expand_uri(id, cmaps=[prefix_context])
@@ -119,7 +122,7 @@ class RdfTransform(object):
             return None
 
     def emit(self, s, p, o):
-        logging.debug("TRIPLE: {} {} {}".format(s,p,o))
+        logger.debug("TRIPLE: {} {} {}".format(s,p,o))
         self.writer.add(s,p,o)
         return (s,p,o)
 
@@ -131,8 +134,8 @@ class RdfTransform(object):
 
     def eco_class(self, code, coderef=None):
         eco_cls_id = self.ecomap.coderef_to_ecoclass(code, coderef)
-        logging.debug(self.ecomap._mappings)
-        logging.debug('ECO: {},{}->{}'.format(code, coderef, eco_cls_id))
+        logger.debug(self.ecomap._mappings)
+        logger.debug('ECO: {},{}->{}'.format(code, coderef, eco_cls_id))
         return self.uri(eco_cls_id)
 
     def translate_evidence(self, association, stmt):
@@ -261,7 +264,7 @@ class CamRdfTransform(RdfTransform):
             aspect_triple = self.emit(mf_id, OCCURS_IN, tgt_id)
         else:
             # Skip this association if the aspect makes no sense.
-            logging.log(logging.WARNING, "Aspect field is not F, P, or C, so this association is skipped.")
+            logger.warning("Aspect field is not F, P, or C, so this association is skipped.")
             return
 
         if self.include_subject_info:
@@ -276,7 +279,7 @@ class CamRdfTransform(RdfTransform):
                 if p is None:
                     if ext["property"] not in self.bad_properties_found:
                         self.bad_properties_found.add(ext["property"])
-                        logging.warning("No such property {}".format(ext))
+                        logger.warning("No such property {}".format(ext))
                 else:
                     self.emit(tgt_id, p, filler_inst)
         self.translate_evidence(association, aspect_triple)
@@ -317,7 +320,7 @@ class SimpleAssocRdfTransform(RdfTransform):
         elif rel == 'colocalizes_with':
             rel_uri = COLOCALIZES_WITH
         else:
-            logging.error("Unknown: {}".format(rel))
+            logger.error("Unknown: {}".format(rel))
 
         # TODO: extensions
         stmt = self.emit(sub_uri,rel_uri,obj_uri)

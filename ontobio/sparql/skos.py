@@ -12,6 +12,9 @@ from ontobio.ontol import Ontology, Synonym
 # TODO: make configurable
 GEMET = Namespace('http://www.eionet.europa.eu/gemet/2004/06/gemet-schema.rdf#')
 
+logger = logging.getLogger(__name__)
+
+
 class Skos(object):
     """
     SKOS is an RDF data model for representing thesauri and terminologies.
@@ -66,7 +69,7 @@ class Skos(object):
             ont = Ontology()
             subjs = list(rg.subjects(RDF.type, SKOS.ConceptScheme))
             if len(subjs) == 0:
-                logging.warning("No ConceptScheme")
+                logger.warning("No ConceptScheme")
             else:
                 ont.id = self._uri2id(subjs[0])
             
@@ -78,7 +81,7 @@ class Skos(object):
         for concept in sorted(list(rg.subjects(RDF.type, SKOS.Concept))):
             concept_uri = str(concept)
             id=self._uri2id(concept)
-            logging.info("ADDING: {}".format(id))
+            logger.info("ADDING: {}".format(id))
             ont.add_node(id, self._get_label(rg,concept))
                     
             for defn in rg.objects(concept, SKOS.definition):
@@ -114,7 +117,7 @@ class Skos(object):
         if len(labels) == 0:
             return None
         if len(labels) > 1:
-            logging.warning(">1 label for {} : {}".format(concept, labels))
+            logger.warning(">1 label for {} : {}".format(concept, labels))
         return labels[0][1].value
     
     

@@ -23,6 +23,7 @@ from ontobio.slimmer import get_minimal_subgraph
 import logging
 import sys
 
+
 def main():
     """
     Phenologs
@@ -56,14 +57,16 @@ def main():
         logging.basicConfig(level=logging.DEBUG)
     if args.verbosity == 1:
         logging.basicConfig(level=logging.INFO)
-    logging.info("Welcome!")
+    logger = logging.getLogger(__name__)
+
+    logger.info("Welcome!")
 
     ofactory = OntologyFactory()
     afactory = AssociationSetFactory()
     handle = args.resource1
     ont1 = ofactory.create(args.resource1)
     ont2 = ofactory.create(args.resource2)
-    logging.info("onts: {} {}".format(ont1, ont2))
+    logger.info("onts: {} {}".format(ont1, ont2))
     searchp = args.search
 
     category = 'gene'
@@ -81,13 +84,13 @@ def main():
     if args.background is not None:
         bg_ids = resolve(ont1,[args.background],searchp)
         if len(bg_ids) == 0:
-            logging.error("Cannnot resolve: '{}' using {} in {}".format(args.background, searchp, ont1))
+            logger.error("Cannnot resolve: '{}' using {} in {}".format(args.background, searchp, ont1))
             sys.exit(1)
         elif len(bg_ids) > 1:
-            logging.error("Multiple matches: '{}' using {} MATCHES={}".format(args.background, searchp,bg_ids))
+            logger.error("Multiple matches: '{}' using {} MATCHES={}".format(args.background, searchp,bg_ids))
             sys.exit(1)
         else:
-            logging.info("Background: {}".format(bg_cls))
+            logger.info("Background: {}".format(bg_cls))
             [bg_cls] = bg_ids
     
     for id in resolve(ont1,args.ids,searchp):

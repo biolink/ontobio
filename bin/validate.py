@@ -10,6 +10,9 @@ import urllib
 import shutil
 import re
 import glob
+import logging
+import sys
+import traceback
 
 import yamldown
 
@@ -31,6 +34,10 @@ from ontobio.validation import tools
 from ontobio.validation import rules
 
 from typing import Dict, Set
+
+# logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s: %(message)s", level=logging.WARNING)
+
+logger = logging.getLogger("ontobio")
 
 def thispath():
     os.path.normpath(os.path.abspath(__file__))
@@ -185,7 +192,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, mixin=False):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -202,6 +209,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         annotation_inferences=annotation_inferences,
         group_metadata=group_metadata
     )
+    logger.info("Producing {}".format(source_gaf))
+    logger.info("AssocParserConfig used: {}".format(config))
     split_source = os.path.split(source_gaf)[0]
     validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
@@ -219,12 +228,28 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
 
     outfile.close()
     filtered_associations.close()
+    
+    if not mixin: # Only write out a report if we are running a "top" dataset, not a mixin
+        report_markdown_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.md".format(dataset))
+        logger.info("About to write markdown report to {}".format(report_markdown_path))
+        with open(report_markdown_path, "w") as report_md:
+            logger.info("Opened for writing {}".format(report_markdown_path))
+            report_md.write(parser.report.to_markdown())
+        
+        logger.info("markdown {} written out".format(report_markdown_path))
+        logger.info("Markdown current stack:")
+        traceback.print_stack()
 
-    with open(os.path.join(os.path.split(source_gaf)[0], "{}.report.md".format(dataset)), "w") as report_md:
-        report_md.write(parser.report.to_markdown())
-
-    with open(os.path.join(os.path.split(source_gaf)[0], "{}.report.json".format(dataset)), "w") as report_json:
-        report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
+        report_json_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.json".format(dataset))
+        logger.info("About to write json report to {}".format(report_json_path))
+        with open(report_json_path, "w") as report_json:
+            logger.info("Opened for writing {}".format(report_json_path))
+            report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
+        
+        logger.info("json {} written out".format(report_markdown_path))
+        logger.info("gorule-13 first 10 messages: {}".format(json.dumps(parser.report.to_report_json()["messages"].get("gorule-0000013", [])[:10], indent=4)))
+        logger.info("json current Stack:")
+        traceback.print_stack()
 
     return [validated_gaf_path, filtered_associations.name]
 
@@ -410,7 +435,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=mixin_metadata["id"]=="paint", group=mixin_metadata["id"], format=format)[0]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], format=format, mixin=True)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
@@ -424,10 +449,14 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
 
 
 @click.group()
-def cli():
-    pass
+@click.option("--verbose", "-v", is_flag=True, default=False)
+@click.pass_context
+def cli(ctx, verbose):    
+    if verbose:
+        logger.setLevel(logging.INFO)
 
 @cli.command()
+@click.pass_context
 @click.argument("group")
 @click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
 @click.option("--gpad", default=False, is_flag=True)
@@ -439,8 +468,9 @@ def cli():
 @click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
 @click.option("--skip-existing-files", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
-def produce(group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
 
+    logger.info("Logging is verbose")
     products = {
         "gaf": True,
         "gpi": True,
@@ -586,4 +616,4 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
 
 
 if __name__ == "__main__":
-    cli()
+    cli(obj={})

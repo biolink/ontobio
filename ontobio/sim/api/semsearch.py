@@ -20,6 +20,8 @@ SimScore = float
 ICValue = float
 InformationContent = float
 
+logger = logging.getLogger(__name__)
+
 
 class SemSearchEngine(SimApi):
     """
@@ -88,13 +90,13 @@ class SemSearchEngine(SimApi):
         Series
             a pandas Series indexed by class id and with IC as value
         """
-        logging.info("Calculating all class ICs")
+        logger.info("Calculating all class ICs")
         df = self.assoc_df
         freqs = df.sum(axis=0)
         n_subjects, _ = df.shape
         ics = freqs.apply(lambda x: -math.log(x / n_subjects)/math.log(2))
         self.ics = ics
-        logging.info("DONE calculating all class ICs")
+        logger.info("DONE calculating all class ICs")
         return ics
 
     def _information_content_frame(self) -> pd.Series:
@@ -135,10 +137,10 @@ class SemSearchEngine(SimApi):
         ncs = len(classes)
         ic_grid = np.empty([ncs,ncs])
         mica_arrs = []
-        logging.info('Calculating ICs for {} x {} classes'.format(ncs, ncs))
+        logger.info('Calculating ICs for {} x {} classes'.format(ncs, ncs))
         for c1i in range(0,ncs):
             c1 = classes[c1i]
-            logging.debug('Calculating ICs for {}'.format(c1))
+            logger.debug('Calculating ICs for {}'.format(c1))
             ancs1r = self._ancestors(c1) | {c1}
             c2i = 0
             mica_arr = []            
@@ -165,7 +167,7 @@ class SemSearchEngine(SimApi):
                     #ic_grid[c2i, c1i] = 0
                     # TODO: consider optimization step; blank out all anc pairs
             mica_arrs.append(mica_arr)
-        logging.info('DONE Calculating ICs for {} x {} classes'.format(ncs, ncs))
+        logger.info('DONE Calculating ICs for {} x {} classes'.format(ncs, ncs))
         #self.mica_df = pd.DataFrame(mica_grid, index=classes, columns=classes)
         self.mica_df = pd.DataFrame(mica_arrs, index=classes, columns=classes)
         self.mica_ic_df = pd.DataFrame(ic_grid, index=classes, columns=classes)

@@ -1,6 +1,8 @@
 import networkx as nx
 import logging
 
+logger = logging.getLogger(__name__)
+
 
 def get_minimal_subgraph(g, nodes):
     """
@@ -9,7 +11,7 @@ def get_minimal_subgraph(g, nodes):
     
     Note: no property chain reasoning is performed. As a result, edge labels are lost.
     """
-    logging.info("Slimming {} to {}".format(g,nodes))
+    logger.info("Slimming {} to {}".format(g,nodes))
     # maps ancestor nodes to members of the focus node set they subsume
     mm = {}
     subnodes = set()
@@ -29,11 +31,11 @@ def get_minimal_subgraph(g, nodes):
     # TODO: ensure edge labels are preserved
     for a, aset in mm.items():
         for p in g.predecessors(a):
-            logging.info(" cmp {} -> {} // {} {}".format(len(aset),len(mm[p]), a, p))
+            logger.info(" cmp {} -> {} // {} {}".format(len(aset),len(mm[p]), a, p))
             if p in mm and len(aset) == len(mm[p]):
                 egraph.add_edge(p, a)
                 egraph.add_edge(a, p)
-                logging.info("will merge {} <-> {} (members identical)".format(p,a))
+                logger.info("will merge {} <-> {} (members identical)".format(p,a))
 
     nmap = {}
     leafmap = {}
@@ -44,7 +46,7 @@ def get_minimal_subgraph(g, nodes):
         for n in cliq:
             is_src = False
             if n in nodes:
-                logging.info("Preserving: {} in {}".format(n,cliq))
+                logger.info("Preserving: {} in {}".format(n,cliq))
                 leaders.add(n)
                 is_src = True
                 
@@ -57,13 +59,13 @@ def get_minimal_subgraph(g, nodes):
                 disposable.add(n)
                 
             if is_leaf:
-                logging.info("Clique leaf: {} in {}".format(n,cliq))
+                logger.info("Clique leaf: {} in {}".format(n,cliq))
                 leafs.add(n)
 
                 
         leader = None
         if len(leaders) > 1:
-            logging.info("UHOH: {}".format(leaders))
+            logger.info("UHOH: {}".format(leaders))
         if len(leaders) > 0:
             leader = list(leaders)[0]
         else:
@@ -75,7 +77,7 @@ def get_minimal_subgraph(g, nodes):
     return fg
 
 def remove_nodes(g, rmnodes):
-    logging.info("Removing {} from {}".format(rmnodes,g))
+    logger.info("Removing {} from {}".format(rmnodes,g))
     newg = nx.MultiDiGraph()
     for (n,nd) in g.nodes(data=True):
         if n not in rmnodes:

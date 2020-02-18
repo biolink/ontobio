@@ -10,6 +10,9 @@ import subprocess
 import json
 import logging
 
+logger = logging.getLogger(__name__)
+
+
 class GraphRendererConfig():
     """
     configuration parameters
@@ -200,7 +203,7 @@ class DotGraphRenderer(GraphRenderer):
             cmdtoks.append(self.outfile)
         cmdtoks.append(fn)
         cp = subprocess.run(cmdtoks, check=True)
-        logging.info(cp)
+        logger.info(cp)
         os.remove(fn)
         
     def write(self, ontol, **args):
@@ -236,9 +239,9 @@ class AsciiTreeGraphRenderer(GraphRenderer):
         #ts = nx.topological_sort(g)
         #roots = [n for n in ts if len(g.predecessors(n))==0]
         roots = ontol.get_roots()
-        logging.info("Drawing ascii tree, using roots: {}".format(roots))
+        logger.info("Drawing ascii tree, using roots: {}".format(roots))
         if len(roots) == 0:
-            logging.error("No roots in {}".format(ontol))
+            logger.error("No roots in {}".format(ontol))
         s=""
         for n in roots:
             s += self._show_tree_node(None, n, ontol, 0, path=[], **args) + "\n"
@@ -250,7 +253,7 @@ class AsciiTreeGraphRenderer(GraphRenderer):
         g = ontol.get_graph() # TODO - use ontol methods directly
         s = " " * depth + self.render_relation(rel) + " " +self.render_noderef(ontol, n, **args)
         if n in path:
-            logging.warn("CYCLE: {} already visited in {}".format(n, path))
+            logger.warning("CYCLE: {} already visited in {}".format(n, path))
             return s + " <-- CYCLE\n"
         s += "\n"
         for c in ontol.children(n):
@@ -313,9 +316,9 @@ class OboFormatGraphRenderer(GraphRenderer):
                 x = ", ".join(td.xrefs)
             s += 'def: "{}" [{}]\n'.format(self._escape_quotes(td.val),x)
         else:
-            logging.debug("No text def for: {}".format(nid))    
+            logger.debug("No text def for: {}".format(nid))
 
-        logging.info("Looking up xrefs for {}".format(nid))
+        logger.info("Looking up xrefs for {}".format(nid))
         for xref in ontol.xrefs(nid):
             s += "xref: {}\n".format(xref)
 

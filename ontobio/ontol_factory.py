@@ -12,6 +12,7 @@ import subprocess
 import hashlib
 import logging
 
+logger = logging.getLogger(__name__)
 
 # TODO
 default_ontology_handle = 'cache/ontologies/pato.json'
@@ -61,18 +62,18 @@ class OntologyFactory():
         """
         if handle is None:
             self.test = self.test+1
-            logging.info("T: "+str(self.test))
+            logger.info("T: "+str(self.test))
             global default_ontology
             if default_ontology is None:
-                logging.info("Creating new instance of default ontology")
+                logger.info("Creating new instance of default ontology")
                 default_ontology = create_ontology(default_ontology_handle, **args)
-            logging.info("Using default_ontology")
+            logger.info("Using default_ontology")
             return default_ontology
         return create_ontology(handle, **args)
 
 def create_ontology(handle=None, **args):
     ont = None
-    logging.info("Determining strategy to load '{}' into memory...".format(handle))
+    logger.info("Determining strategy to load '{}' into memory...".format(handle))
 
     if handle.find("+") > -1:
         handles = handle.split("+")
@@ -83,14 +84,14 @@ def create_ontology(handle=None, **args):
 
     # TODO: consider replacing with plugin architecture
     if handle.find(".") > 0 and os.path.isfile(handle):
-        logging.info("Fetching obograph-json file from filesystem")
+        logger.info("Fetching obograph-json file from filesystem")
         ont = translate_file_to_ontology(handle, **args)
     elif handle.startswith("obo:"):
-        logging.info("Fetching from OBO PURL")
+        logger.info("Fetching from OBO PURL")
         if handle.find(".") == -1:
             if handle == 'chebi' or handle == 'ncbitaxon' or handle == 'pr':
                 handle += '.obo'
-                logging.info("using obo for large ontology: {}".format(handle))
+                logger.info("using obo for large ontology: {}".format(handle))
             else:
                 handle += '.owl'
         fn = '/tmp/'+handle
@@ -98,42 +99,42 @@ def create_ontology(handle=None, **args):
             url = handle.replace("obo:","http://purl.obolibrary.org/obo/")
             cmd = ['owltools',url,'-o','-f','json',fn]
             cp = subprocess.run(cmd, check=True)
-            logging.info(cp)
+            logger.info(cp)
         else:
-            logging.info("using cached file: "+fn)
+            logger.info("using cached file: "+fn)
         g = obograph_util.convert_json_file(fn)
         ont = Ontology(handle=handle, payload=g)
     elif handle.startswith("wdq:"):
         from ontobio.sparql.wikidata_ontology import EagerWikidataOntology
-        logging.info("Fetching from Wikidata")
+        logger.info("Fetching from Wikidata")
         ont = EagerWikidataOntology(handle=handle)
     elif handle.startswith("skos:"):
         fn = handle.replace('skos:','')
         from ontobio.sparql.skos import Skos
-        logging.info("Fetching from Skos file")
+        logger.info("Fetching from Skos file")
         skos = Skos()
         ont = skos.process_file(fn)
     elif handle.startswith("scigraph:"):
         from ontobio.neo.scigraph_ontology import RemoteScigraphOntology
-        logging.info("Fetching from SciGraph")
+        logger.info("Fetching from SciGraph")
         ont = RemoteScigraphOntology(handle=handle)
     elif handle.startswith("http:"):
-        logging.info("Fetching from Web PURL: "+handle)
+        logger.info("Fetching from Web PURL: "+handle)
         encoded = hashlib.sha256(handle.encode()).hexdigest()
         #encoded = binascii.hexlify(bytes(handle, 'utf-8'))
         #base64.b64encode(bytes(handle, 'utf-8'))
-        logging.info(" encoded: "+str(encoded))
+        logger.info(" encoded: "+str(encoded))
         fn = '/tmp/'+encoded
         if not os.path.isfile(fn):
             cmd = ['owltools',handle,'-o','-f','json',fn]
             cp = subprocess.run(cmd, check=True)
-            logging.info(cp)
+            logger.info(cp)
         else:
-            logging.info("using cached file: "+fn)
+            logger.info("using cached file: "+fn)
         g = obograph_util.convert_json_file(fn)
         ont = Ontology(handle=handle, payload=g)
     else:
-        logging.info("Fetching from SPARQL")
+        logger.info("Fetching from SPARQL")
         ont = EagerRemoteSparqlOntology(handle=handle)
         #g = get_digraph(handle, None, True)
     return ont
@@ -150,21 +151,21 @@ def translate_file_to_ontology(handle, **args):
         return Ontology(handle=handle, payload=g)
     elif handle.endswith(".ttl"):
         from ontobio.sparql.rdf2nx import RdfMapper
-        logging.info("RdfMapper: {}".format(args))
+        logger.info("RdfMapper: {}".format(args))
         m = RdfMapper(**args)
         return m.convert(handle,'ttl')
     else:
         if not (handle.endswith(".obo") or handle.endswith(".owl")):
-            logging.info("Attempting to parse non obo or owl file with owltools: "+handle)
+            logger.info("Attempting to parse non obo or owl file with owltools: "+handle)
         encoded = get_checksum(handle)
-        logging.info(" encoded: "+str(encoded))
+        logger.info(" encoded: "+str(encoded))
         fn = '/tmp/'+encoded
         if not os.path.isfile(fn):
             cmd = ['owltools',handle,'-o','-f','json',fn]
             cp = subprocess.run(cmd, check=True)
-            logging.info(cp)
+            logger.info(cp)
         else:
-            logging.info("using cached file: "+fn)
+            logger.info("using cached file: "+fn)
         g = obograph_util.convert_json_file(fn, **args)
         return Ontology(handle=handle, payload=g)
 
