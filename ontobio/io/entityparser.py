@@ -7,6 +7,9 @@ from typing import Dict, List
 import logging
 import json
 
+logger = logging.getLogger(__name__)
+
+
 # TODO - use abstract parent for both entity and assoc
 class EntityParser(assocparser.AssocParser):
 
@@ -41,12 +44,12 @@ class EntityParser(assocparser.AssocParser):
                 continue
             line = line.strip("\n")
             if line == "":
-                logging.warning("EMPTY LINE")
+                logger.warning("EMPTY LINE")
                 continue
 
             parsed_line, new_ents  = self.parse_line(line)
             if self._skipping_line(new_ents): # Skip if there were no ents
-                logging.warning("SKIPPING: {}".format(line))
+                logger.warning("SKIPPING: {}".format(line))
                 skipped.append(line)
             else:
                 ents += new_ents
@@ -56,7 +59,7 @@ class EntityParser(assocparser.AssocParser):
         self.report.skipped += len(skipped)
         self.report.n_lines += n_lines
         #self.report.n_associations += len(ents)
-        logging.info("Parsed {} ents from {} lines. Skipped: {}".
+        logger.info("Parsed {} ents from {} lines. Skipped: {}".
                      format(len(ents),
                             n_lines,
                             len(skipped)))

@@ -18,6 +18,9 @@ from ontobio.rdfgen import relations
 
 import click
 
+logger = logging.getLogger(__name__)
+
+
 class GafParser(assocparser.AssocParser):
     """
     Parser for GO GAF format
@@ -33,6 +36,7 @@ class GafParser(assocparser.AssocParser):
         config : a AssocParserConfig object
         """
         self.config = config
+        self.group = group
         if config is None:
             self.config = assocparser.AssocParserConfig()
         self.report = assocparser.Report(group=group, dataset=dataset, config=self.config)
@@ -60,7 +64,7 @@ class GafParser(assocparser.AssocParser):
                 continue
             vals = line.split("\t")
             if len(vals) < 15:
-                logging.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
+                logger.error("Unexpected number of vals: {}. GAFv1 has 15, GAFv2 has 17.".format(vals))
 
             split_line = assocparser.SplitLine(line=line, values=vals, taxon=vals[12])
 
@@ -120,7 +124,7 @@ class GafParser(assocparser.AssocParser):
         assoc = parsed.associations[0]
         # self.report = parsed.report
         ## Run GO Rules, save split values into individual variables
-        go_rule_results = qc.test_go_rules(assoc, self.config)
+        go_rule_results = qc.test_go_rules(assoc, self.config, group=self.group)
         for rule, result in go_rule_results.all_results.items():
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",

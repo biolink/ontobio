@@ -33,6 +33,9 @@ cache = lru_cache(maxsize=None)
 SUBCLASS_OF = 'subClassOf'
 SUBPROPERTY_OF = 'subPropertyOf'
 
+logger = logging.getLogger(__name__)
+
+
 class EOntology(Enum):
     GO = "http://rdf.geneontology.org/sparql"
     HEGROUP = "http://sparql.hegroup.org/sparql"
@@ -63,12 +66,12 @@ def get_digraph(ont, relations=None, writecache=False):
     Creates a basic graph object corresponding to a remote ontology
     """
     digraph = networkx.MultiDiGraph()
-    logging.info("Getting edges (may be cached)")
+    logger.info("Getting edges (may be cached)")
     for (s,p,o) in get_edges(ont):
         p = map_legacy_pred(p)
         if relations is None or p in relations:
             digraph.add_edge(o,s,pred=p)
-    logging.info("Getting labels (may be cached)")
+    logger.info("Getting labels (may be cached)")
     for (n,label) in fetchall_labels(ont):
         digraph.add_node(n, **{'label':label})
     return digraph
@@ -87,12 +90,12 @@ def get_edges(ont):
     """
     Fetches all basic edges from a remote ontology
     """
-    logging.info("QUERYING:"+ont)
+    logger.info("QUERYING:"+ont)
     edges = [(c,SUBCLASS_OF, d) for (c,d) in fetchall_isa(ont)]
     edges += fetchall_svf(ont)
     edges += [(c,SUBPROPERTY_OF, d) for (c,d) in fetchall_subPropertyOf(ont)]
     if len(edges) == 0:
-        logging.warn("No edges for {}".format(ont))
+        logger.warning("No edges for {}".format(ont))
     return edges
 
 def search(ont, searchterm):
@@ -137,17 +140,17 @@ def get_terms_in_subset(ont, subset):
 def run_sparql(q):
     # TODO: select endpoint based on ontology
     #sparql = SPARQLWrapper("http://rdf.geneontology.org/sparql")
-    logging.info("Connecting to sparql endpoint...")
+    logger.info("Connecting to sparql endpoint...")
     sparql = SPARQLWrapper("http://sparql.hegroup.org/sparql")
-    logging.info("Made wrapper: {}".format(sparql))
+    logger.info("Made wrapper: {}".format(sparql))
     # TODO: iterate over large sets?
     full_q = q + ' LIMIT 250000'
     sparql.setQuery(q)
     sparql.setReturnFormat(JSON)
-    logging.info("Query: {}".format(q))
+    logger.info("Query: {}".format(q))
     results = sparql.query().convert()
     bindings = results['results']['bindings']
-    logging.info("Rows: {}".format(len(bindings)))
+    logger.info("Rows: {}".format(len(bindings)))
     for r in bindings:
         curiefy(r)
     return bindings
@@ -157,15 +160,15 @@ def run_sparql_on(q, ontology):
     """
     Run a SPARQL query (q) on a given Ontology (Enum EOntology)
     """
-    logging.info("Connecting to " + ontology.value + " SPARQL endpoint...")
+    logger.info("Connecting to " + ontology.value + " SPARQL endpoint...")
     sparql = SPARQLWrapper(ontology.value)
-    logging.info("Made wrapper: {}".format(sparql))
+    logger.info("Made wrapper: {}".format(sparql))
     sparql.setQuery(q)
     sparql.setReturnFormat(JSON)
-    logging.info("Query: {}".format(q))
+    logger.info("Query: {}".format(q))
     results = sparql.query().convert()
     bindings = results['results']['bindings']
-    logging.info("Rows: {}".format(len(bindings)))
+    logger.info("Rows: {}".format(len(bindings)))
     for r in bindings:
         curiefy(r)
     return bindings
@@ -225,7 +228,7 @@ def fetchall_labels(ont):
     """
     fetch all rdfs:label assertions for an ontology
     """
-    logging.info("fetching rdfs:labels for: "+ont)
+    logger.info("fetching rdfs:labels for: "+ont)
     namedGraph = get_named_graph(ont)
     queryBody = querybody_label()
     query = """
@@ -241,7 +244,7 @@ def fetchall_syns(ont):
     """
     fetch all synonyms for an ontology
     """
-    logging.info("fetching syns for: "+ont)
+    logger.info("fetching syns for: "+ont)
     namedGraph = get_named_graph(ont)
     queryBody = querybody_syns()
     query = """
@@ -258,7 +261,7 @@ def fetchall_textdefs(ont):
     """
     fetch all text defs for an ontology
     """
-    logging.info("fetching text defs for: "+ont)
+    logger.info("fetching text defs for: "+ont)
     namedGraph = get_named_graph(ont)
     query = """
     prefix IAO: <http://purl.obolibrary.org/obo/IAO_>
@@ -277,7 +280,7 @@ def fetchall_xrefs(ont):
     """
     fetch all xrefs for an ontology
     """
-    logging.info("fetching xrefs for: "+ont)
+    logger.info("fetching xrefs for: "+ont)
     namedGraph = get_named_graph(ont)
     query = """
     prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
@@ -294,7 +297,7 @@ def fetchall_obs(ont):
     """
     fetch all obsoletes for an ontology
     """
-    logging.info("fetching obsoletes for: "+ont)
+    logger.info("fetching obsoletes for: "+ont)
     namedGraph = get_named_graph(ont)
     query = """
     SELECT ?c WHERE {{

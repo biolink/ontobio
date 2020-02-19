@@ -11,6 +11,9 @@ from SPARQLWrapper import SPARQLWrapper, JSON, RDF
 from ontobio.sparql.rdflib_bridge import rdfgraph_to_ontol
 from ontobio.sparql.sparql_ontol_utils import OIO_SYNS, get_named_graph, run_sparql
 
+logger = logging.getLogger(__name__)
+
+
 class WikidataOntology(Ontology):
     """
     An ontology backed by a remote Wikidata SPARQL service.
@@ -30,7 +33,7 @@ class WikidataOntology(Ontology):
                 if synonyms:
                     for pred in OIO_SYNS.values():
                         results.update( self._search(name, pred, **args) )
-            logging.info("REMOTE RESULTS="+str(results))
+            logger.info("REMOTE RESULTS="+str(results))
             return list(results)
 
     # TODO
@@ -125,7 +128,7 @@ class EagerWikidataOntology(WikidataOntology):
         """
         handle = handle.replace('wdq:','')
         self.handle = handle
-        logging.info("Creating eager-wikidata-ont from "+str(handle))
+        logger.info("Creating eager-wikidata-ont from "+str(handle))
         self.create_from_hub(handle)
 
     def __str__(self):
@@ -154,12 +157,12 @@ class EagerWikidataOntology(WikidataOntology):
         }}
         }}
         """.format(hub_id=hub_id)
-        logging.info("QUER={}".format(q))
+        logger.info("QUER={}".format(q))
         sparql = SPARQLWrapper("http://query.wikidata.org/sparql")
         sparql.setQuery(q)
         sparql.setReturnFormat(RDF)
         rg = sparql.query().convert()
-        logging.info("RG={}".format(rg))
+        logger.info("RG={}".format(rg))
         ont = rdfgraph_to_ontol(rg)
         self.graph = ont.graph
         

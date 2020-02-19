@@ -12,6 +12,9 @@ from rdflib.namespace import OWL
 import networkx
 import logging
 
+logger = logging.getLogger(__name__)
+
+
 def rdfgraph_to_ontol(rg):
     """
     Return an Ontology object from an rdflib graph object
@@ -23,7 +26,7 @@ def rdfgraph_to_ontol(rg):
     label_map = {}
     for c in rg.subjects(RDF.type, OWL.Class):
         cid = contract_uri_wrap(c)
-        logging.info("C={}".format(cid))
+        logger.info("C={}".format(cid))
         for lit in rg.objects(c, RDFS.label):
             label_map[cid] = lit.value
             digraph.add_node(cid, label=lit.value)
@@ -32,7 +35,7 @@ def rdfgraph_to_ontol(rg):
             sid = contract_uri_wrap(s)
             digraph.add_edge(sid, cid, pred='subClassOf')
 
-    logging.info("G={}".format(digraph))
+    logger.info("G={}".format(digraph))
     payload = {
         'graph': digraph,
         #'xref_graph': xref_graph,

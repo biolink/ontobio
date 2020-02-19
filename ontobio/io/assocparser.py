@@ -34,6 +34,8 @@ ENTITY = 'ENTITY'
 ANNOTATION = 'ANNOTATION'
 EXTENSION = 'EXTENSION'
 
+logger = logging.getLogger(__name__)
+
 
 def write_to_file(optional_file, text):
     if optional_file:
@@ -112,6 +114,11 @@ class AssocParserConfig():
             return self.__dict__ == other.__dict__
         else:
             return False
+            
+    def __str__(self):
+        s = "AssocParserConfig("
+        attribute_values = ["{att}={val}".format(att=att, val=dict([(k, v) for k, v in value.items()][:8]) if isinstance(value, dict) else value) for att, value in vars(self).items()]
+        return "AssocParserConfig({})".format(",".join(attribute_values))
 
 
 class Report(object):
@@ -201,7 +208,7 @@ class Report(object):
 
         self.n_lines += 1
         if result.skipped:
-            logging.info("SKIPPING (assocparser): {}".format(result.parsed_line))
+            logger.debug("SKIPPING (assocparser): {}".format(result.parsed_line))
             self.skipped += 1
         else:
             self.add_associations(result.associations)
@@ -326,7 +333,7 @@ class AssocParser(object):
                 if not skipheader or "header" not in association:
                     yield association
 
-        logging.info(self.report.short_summary())
+        logger.info(self.report.short_summary())
         file.close()
 
     def generate_associations(self, line, outfile=None):
@@ -361,7 +368,7 @@ class AssocParser(object):
 
         """
         if subset is not None:
-            logging.info("Creating mapping for subset: {}".format(subset))
+            logger.info("Creating mapping for subset: {}".format(subset))
             class_map = ontology.create_slim_mapping(subset=subset, relations=relations)
 
         if class_map is None:
@@ -373,7 +380,7 @@ class AssocParser(object):
             if line.startswith("!"):
                 continue
             vals = line.split("\t")
-            logging.info("LINE: {} VALS: {}".format(line, vals))
+            logger.debug("LINE: {} VALS: {}".format(line, vals))
             if len(vals) < col:
                 raise ValueError("Line: {} has too few cols, expect class id in col {}".format(line, col))
             cid = vals[col]
@@ -611,7 +618,7 @@ class AssocParser(object):
             return None
 
     def _ensure_file(self, file):
-        logging.info("Ensure file: {}".format(file))
+        logger.info("Ensure file: {}".format(file))
         if isinstance(file,str):
             # TODO Let's fix this if/elseif chain.
             if file.startswith("ftp"):
@@ -623,10 +630,10 @@ class AssocParser(object):
             elif file.startswith("http"):
                 url = file
                 with closing(requests.get(url, stream=False, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})) as resp:
-                    logging.info("URL: {} STATUS: {} ".format(url, resp.status_code))
+                    logger.info("URL: {} STATUS: {} ".format(url, resp.status_code))
                     ok = resp.status_code == 200
                     if ok:
-                        logging.debug("HEADER: {}".format(resp.headers))
+                        logger.debug("HEADER: {}".format(resp.headers))
                         if file.endswith(".gz"):
                             return io.StringIO(str(gzip.decompress(resp.content),'utf-8'))
                         else:
@@ -635,7 +642,7 @@ class AssocParser(object):
                     else:
                         return None
             else:
-                logging.info("Testing suffix of {}".format(file))
+                logger.info("Testing suffix of {}".format(file))
                 if file.endswith(".gz"):
                     return gzip.open(file, "rt")
                 else:

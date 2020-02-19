@@ -17,6 +17,8 @@ import math ### required for IC calculation
 
 MAX_ROWS = 100000
 
+logger = logging.getLogger(__name__)
+
 def get_association(id, **kwargs):
     """
     Fetch an association object by ID
@@ -31,7 +33,7 @@ def search_associations(**kwargs):
     Fetch a set of association objects based on a query.
     :rtype:
     """
-    logging.info("CREATING_GOLR_QUERY {}".format(kwargs))
+    logger.info("CREATING_GOLR_QUERY {}".format(kwargs))
     q = GolrAssociationQuery(**kwargs)
     return q.exec()
 
@@ -88,7 +90,7 @@ def map2slim(subjects, slim, **kwargs):
     Result is a list of unique subject-class pairs, with
     a list of source assocations
     """
-    logging.info("SLIM SUBJECTS:{} SLIM:{} CAT:{}".format(subjects,slim,kwargs.get('category')))
+    logger.info("SLIM SUBJECTS:{} SLIM:{} CAT:{}".format(subjects,slim,kwargs.get('category')))
     searchresult = search_associations(subjects=subjects,
                                        slim=slim,
                                        facet_fields=[],
@@ -98,7 +100,7 @@ def map2slim(subjects, slim, **kwargs):
     for a in searchresult['associations']:
         subj = a['subject']['id']
         slimmed_terms = a['slim']
-        #logging.info('SLIM: {} {}'.format(subj,slimmed_terms))
+        #logger.info('SLIM: {} {}'.format(subj,slimmed_terms))
         for t in slimmed_terms:
             k = (subj,t)
             if k not in pmap:
@@ -114,7 +116,7 @@ def top_species(**kwargs):
                                   rows=0,
                                   **kwargs)
     fcs = results['facet_counts']
-    logging.info("FCs={}".format(fcs))
+    logger.info("FCs={}".format(fcs))
     ## TODO:
     if 'taxon' in fcs:
         d = fcs['taxon']
@@ -140,16 +142,16 @@ def bulk_fetch(subject_category, object_category, taxon, rows=MAX_ROWS, **kwargs
     assert subject_category is not None
     assert object_category is not None
     time.sleep(1)
-    logging.info("Bulk query: {} {} {}".format(subject_category, object_category, taxon))
+    logger.info("Bulk query: {} {} {}".format(subject_category, object_category, taxon))
     assocs = search_associations_compact(subject_category=subject_category,
                                          object_category=object_category,
                                          subject_taxon=taxon,
                                          rows=rows,
                                          iterate=True,
                                          **kwargs)
-    logging.info("Rows retrieved: {}".format(len(assocs)))
+    logger.info("Rows retrieved: {}".format(len(assocs)))
     if len(assocs) == 0:
-        logging.error("No associations returned for query: {} {} {}".format(subject_category, object_category, taxon))
+        logger.error("No associations returned for query: {} {} {}".format(subject_category, object_category, taxon))
     return assocs
 
 def pivot_query(facet=None, facet_pivot_fields=None, **kwargs):
@@ -171,7 +173,7 @@ def pivot_query_as_matrix(facet=None, facet_pivot_fields=None, **kwargs):
     """
     if facet_pivot_fields is None:
         facet_pivot_fields = []
-    logging.info("Additional args: {}".format(kwargs))
+    logger.info("Additional args: {}".format(kwargs))
     fp = search_associations(rows=0,
                              facet_fields=[facet],
                              facet_pivot_fields=facet_pivot_fields,
@@ -187,7 +189,7 @@ def pivot_query_as_matrix(facet=None, facet_pivot_fields=None, **kwargs):
 
     
     for r in results:
-        logging.info("R={}".format(r))
+        logger.info("R={}".format(r))
         xtype=r['field']
         rv = r['value']
         xlabels.add(rv)

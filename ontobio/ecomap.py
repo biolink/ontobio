@@ -4,9 +4,11 @@ import logging
 
 from ontobio.util.user_agent import get_user_agent
 
+logger = logging.getLogger(__name__)
+
 
 def get_ecomap_str(url):
-    logging.info("Fetching ecomap from {}".format(url))
+    logger.info("Fetching ecomap from {}".format(url))
     with closing(requests.get(url, stream=False, headers={'User-Agent': get_user_agent(modules=[requests], caller_name=__name__)})) as resp:
         # TODO: redirects
         if resp.status_code == 200:
@@ -43,7 +45,7 @@ class EcoMap():
                 continue
             if line == "":
                 continue
-            logging.info("LINE={}".format(line))
+            logger.debug("LINE={}".format(line))
             [code, ref, cls] = line.split("\t")
             if ref == 'Default':
                 ref = None
