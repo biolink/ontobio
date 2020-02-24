@@ -10,6 +10,7 @@ from ontobio import ecomap
 from ontobio.io import assocparser
 from ontobio.io import gaference
 from ontobio.model import association
+from ontobio.rdfgen import relations
 
 FailMode = enum.Enum("FailMode", {"SOFT": "soft", "HARD": "hard"})
 ResultType = enum.Enum("Result", {"PASS": "Pass", "WARNING": "Warning", "ERROR": "Error"})
@@ -535,17 +536,50 @@ class GoRule58(RepairRule):
 
         if config.ontology is None:
             return TestResult(ResultType.PASS, self.title, annotation)
+            
+        repair_state = RepairState.OKAY
 
+        bad_conjunctions = []
         for con in annotation.object_extensions.conjunctions:
-            bad_conjunctions = []
+            # Count each extension unit, represented by tuple (Relation, Namespace)
             extension_counts = collections.Counter([(unit.relation, unit.term.split(":")[0]) for unit in con.extensions])
+            
+            matches = self._do_conjunctions_match_constraint(con, annotation.object.id, annotation.relation, config.extensions_constraints, extension_counts)
+            # If there is a match in the constraints, then we're all good and we can exit with a pass!
+            if not matches:
+                bad_conjunctions.append(con)
+                repair_state = RepairState.REPAIRED
 
-            for constraint in config.extensions_constraints:
-                if "cardinality" in config.extensions_constraints:
-                    cardinality_violations = [(ext, num) for ext, num in dict(extension_counts).items() if num > config.extensions_constraints["cardinality"]]
-                    bad_conjunctions.append(con)
+        repaired_annotation = copy.deepcopy(annotation)
+        for con in bad_conjunctions:
+            # Remove the bad conjunctions as the "repair"
+            repaired_annotation.object_extensions.conjunctions.remove(con)
+            
+        return TestResult(repair_result(repair_state, self.fail_mode), self.message(repair_state), repaired_annotation)
 
 
+    def _do_conjunctions_match_constraint(self, conjunction, term, relation, constraints, conjunction_counts):
+        for constraint in constraints:
+            if relation == relations.lookup_label(constraint["relation"]) and term in constraint["primary_terms"] and self._match_namespaces(conjunction, constraint["namespaces"]):
+                # We matched a constraint! So we're okay, and we must check cardinality
+                if "cardinality" in constraint:
+                    cardinality_violations = [(ext, num) for ext, num in dict(conjunction_counts).items() if num > constraint["cardinality"]]
+                    # Matched successfully if there are no cardinality violations
+                    return len(cardinality_violations) == 0
+                else:
+                    # We don't have to check cardinality if there isn't that constraint, and so otherwise we matched
+                    # the constraint, so we good!
+                    return True
+        
+        return False
+            
+    def _match_namespaces(self, conjunction, namespaces) -> bool:
+        for unit in conjunction.extensions:
+            if not unit.term.split(":")[1] in namespaces:
+                # We fail if a conjunction unit namespace is not in the allowed namespaces
+                return False
+        
+        return True
 
 
 
@@ -570,6 +604,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule46": GoRule46(),
     "GoRule50": GoRule50(),
     "GoRule57": GoRule57(),
+    "GoRule58": GoRule58(),
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
     "GoRule13": GoRule13()
 })
