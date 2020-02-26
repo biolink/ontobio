@@ -195,19 +195,6 @@ Produce validated gaf using the gaf parser/
 def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, mixin=False):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
-    if extensions_constraints:
-        # Precompute subclass closures in the extensions_constraints
-        cache = dict()
-        for constraint in extensions_constraints:
-            terms = set()
-            for term in constraint["primary_root_terms"]:
-                if not term in cache:
-                    cache[term] = ontology_graph.descendants(term, relations=["subClassOf"], reflexive=True)
-
-                terms.update(cache[term])
-
-            constraint["primary_terms"] = list(terms)
-
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
         filter_out_evidence=["IEA"],

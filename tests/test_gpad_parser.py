@@ -12,7 +12,7 @@ def test_skim():
 
 
 def test_parse():
-    p = GpadParser(config=assocparser.AssocParserConfig(group_metadata=yaml.load(open("tests/resources/mgi.dataset.yaml"))))
+    p = GpadParser(config=assocparser.AssocParserConfig(group_metadata=yaml.load(open("tests/resources/mgi.dataset.yaml"), Loader=yaml.FullLoader)))
     test_gpad_file = "tests/resources/mgi.test.gpad"
     results = p.parse(open(test_gpad_file, "r"))
     print(p.report.to_markdown())

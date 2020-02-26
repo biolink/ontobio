@@ -500,7 +500,7 @@ class GoRule57(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000057", "Group specific filter rules should be applied to annotations", FailMode.HARD)
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # Check group_metadata is present
         if config.group_metadata is None:
             return self._result(True)
@@ -527,24 +527,23 @@ class GoRule58(RepairRule):
 
     def __init__(self):
         super().__init__("GORULE:0000058", "Object extensions should conform to the extensions-patterns.yaml file in metadata", FailMode.HARD)
-        self.primary_terms = dict() # This is a map of Root to List of descendents
 
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig) -> TestResult:
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
 
         if config.extensions_constraints is None:
             return TestResult(ResultType.PASS, self.title, annotation)
 
         if config.ontology is None:
             return TestResult(ResultType.PASS, self.title, annotation)
-            
+
         repair_state = RepairState.OKAY
 
         bad_conjunctions = []
         for con in annotation.object_extensions.conjunctions:
             # Count each extension unit, represented by tuple (Relation, Namespace)
             extension_counts = collections.Counter([(unit.relation, unit.term.split(":")[0]) for unit in con.extensions])
-            
-            matches = self._do_conjunctions_match_constraint(con, annotation.object.id, annotation.relation, config.extensions_constraints, extension_counts)
+
+            matches = self._do_conjunctions_match_constraint(con, annotation.object.id, config.extensions_constraints, extension_counts)
             # If there is a match in the constraints, then we're all good and we can exit with a pass!
             if not matches:
                 bad_conjunctions.append(con)
@@ -554,33 +553,50 @@ class GoRule58(RepairRule):
         for con in bad_conjunctions:
             # Remove the bad conjunctions as the "repair"
             repaired_annotation.object_extensions.conjunctions.remove(con)
-            
+
         return TestResult(repair_result(repair_state, self.fail_mode), self.message(repair_state), repaired_annotation)
 
+    """
+    This matches a conjunction against the extension constraints passed in through `extensions-constraints.yaml` in go-site.
+    The extensions constraints acts as a white list, and as such each extension unit in the conjunction must
+    find a match in the constraints list: the extension relation must match a constraint, and if it does, the
+    namespace of the extension filler must much an allowed namespace in the constraint, the annotation GO term
+    must match one of the classes in 'primary_terms', and possibly a cardinality of (Relation, Namespace) must
+    not be violated.
 
-    def _do_conjunctions_match_constraint(self, conjunction, term, relation, constraints, conjunction_counts):
-        for constraint in constraints:
-            if relation == relations.lookup_label(constraint["relation"]) and term in constraint["primary_terms"] and self._match_namespaces(conjunction, constraint["namespaces"]):
-                # We matched a constraint! So we're okay, and we must check cardinality
-                if "cardinality" in constraint:
-                    cardinality_violations = [(ext, num) for ext, num in dict(conjunction_counts).items() if num > constraint["cardinality"]]
-                    # Matched successfully if there are no cardinality violations
-                    return len(cardinality_violations) == 0
-                else:
-                    # We don't have to check cardinality if there isn't that constraint, and so otherwise we matched
-                    # the constraint, so we good!
-                    return True
-        
-        return False
-            
-    def _match_namespaces(self, conjunction, namespaces) -> bool:
-        for unit in conjunction.extensions:
-            if not unit.term.split(":")[1] in namespaces:
-                # We fail if a conjunction unit namespace is not in the allowed namespaces
+    If such a match is found, then we can move to the next extension unit in the conjunction list. If each extension has
+    a match in the constraints then the conjunction passes the test.
+
+    Any extension unit that fails means the entire conjunction fails.
+    """
+    def _do_conjunctions_match_constraint(self, conjunction, term, constraints, conjunction_counts):
+        # Check each extension in the conjunctions
+        for ext in conjunction.extensions:
+
+            extension_good = False
+            for constraint in constraints:
+
+                if ext.relation == constraint["relation"]:
+
+                    if (ext.term.split(":")[0] in constraint["namespaces"] and term in constraint["primary_terms"]):
+                        # If we match namespace and go term, then if we there is a cardinality constraint, check that.
+                        if "cardinality" in constraint:
+                            cardinality_violations = [(ext, num) for ext, num in dict(conjunction_counts).items() if num > constraint["cardinality"]]
+                            extension_good = len(cardinality_violations) == 0
+                        else:
+                            extension_good = True
+
+                        if extension_good:
+                            # If things are good for this extension, break and go to the next one
+                            break
+
+            # if we get through all constraints and we found no constraint match for `ext`
+            # Then we know that `ext` is wrong, making the whole conjunction wrong, and we can bail here.
+            if not extension_good:
                 return False
-        
-        return True
 
+        # If we get to the end of all extensions without failing early, then the conjunction is good!
+        return True
 
 
 GoRules = enum.Enum("GoRules", {

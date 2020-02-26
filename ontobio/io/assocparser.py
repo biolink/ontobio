@@ -99,7 +99,7 @@ class AssocParserConfig():
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
-        self.extensions_constraints = extensions_constraints
+        self.extensions_constraints = AssocParserConfig._compute_constraint_subclasses(extensions_constraints, ontology)
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
@@ -109,12 +109,32 @@ class AssocParserConfig():
         if self.filter_out_evidence is None:
             self.filter_out_evidence = []
 
+
+    def _compute_constraint_subclasses(extensions_constraints, ontology):
+        if extensions_constraints is None:
+            return None
+        # Precompute subclass closures in the extensions_constraints
+        cache = dict()  # term -> [children]
+        for constraint in extensions_constraints:
+            terms = set()
+            for term in constraint["primary_root_terms"]:
+                if not term in cache and ontology is not None:
+                    cache[term] = ontology.descendants(term, relations=["subClassOf"], reflexive=True)
+                elif ontology is None:
+                    cache[term] = [term]
+
+                terms.update(cache[term])
+
+            constraint["primary_terms"] = sorted(list(terms))
+
+        return extensions_constraints
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         else:
             return False
-            
+
     def __str__(self):
         s = "AssocParserConfig("
         attribute_values = ["{att}={val}".format(att=att, val=dict([(k, v) for k, v in value.items()][:8]) if isinstance(value, dict) else value) for att, value in vars(self).items()]
