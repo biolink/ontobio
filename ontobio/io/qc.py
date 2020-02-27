@@ -190,21 +190,34 @@ class GoRule11(GoRule):
 class GoRule13(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.SOFT)
+        super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.HARD)
+        self.non_experimental_evidence = ["ECO:0000318", "ECO:0000320", "ECO:0000321", "ECO:0000305", "ECO:0000247", "ECO:0000255", "ECO:0000266", "ECO:0000250", "ECO:0000303", "ECO:0000245", "ECO:0000304", "ECO:0000307"]
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.annotation_inferences is None:
             # Auto pass if we don't have inferences
             return self._result(True)
 
-        inference_results = gaference.produce_inferences(annotation, config.annotation_inferences) #type: List[gaference.InferenceResult]
+        if annotation.negated:
+            # The rule is passed if the annotation is negated
+            return self._result(True)
+
+        inference_results = gaference.produce_inferences(annotation, config.annotation_inferences)  # type: List[gaference.InferenceResult]
         taxon_passing = True
         for result in inference_results:
             if result.problem == gaference.ProblemType.TAXON:
                 taxon_passing = False
                 break
 
-        return self._result(taxon_passing)
+        if taxon_passing:
+            return self._result(True)
+        else:
+            # Filter non experimental evidence
+            if annotation.evidence.type in self.non_experimental_evidence:
+                return self._result(False)
+            else:
+                # Only submit a warning/report if we are an experimental evidence
+                return TestResult(ResultType.WARNING, self.title, False)
 
 class GoRule15(GoRule):
 
