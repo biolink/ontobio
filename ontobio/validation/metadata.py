@@ -105,7 +105,7 @@ def dataset_metadata_file(metadata, group, empty_ok=False) -> Dict:
             return None
 
 def extensions_constraints_file(metadata):
-    constraints_path = os.path.join(metadata, "extensions_constraints.yaml")
+    constraints_path = os.path.join(metadata, "extensions-constraints.yaml")
     try:
         with open(constraints_path, "r") as constraints_file:
             click.echo("Found groups at {path}".format(path=constraints_path))
