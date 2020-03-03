@@ -76,7 +76,8 @@ class AssocParserConfig():
                  goref_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],
-                 annotation_inferences=None):
+                 annotation_inferences=None,
+                 rule_contexts=[]):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -97,6 +98,7 @@ class AssocParserConfig():
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
         self.group_idspace = None if group_idspace is None else set(group_idspace)
+        self.rule_contexts = rule_contexts
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
             self.exclude_relations = []
@@ -110,7 +112,7 @@ class AssocParserConfig():
             return self.__dict__ == other.__dict__
         else:
             return False
-            
+
     def __str__(self):
         s = "AssocParserConfig("
         attribute_values = ["{att}={val}".format(att=att, val=dict([(k, v) for k, v in value.items()][:8]) if isinstance(value, dict) else value) for att, value in vars(self).items()]

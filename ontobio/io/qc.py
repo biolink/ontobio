@@ -531,6 +531,20 @@ GoRules = enum.Enum("GoRules", {
     "GoRule13": GoRule13()
 })
 
+def _construct_rules_run(rule_metadata, rule_contexts) -> List[GoRule]:
+    rule_tags_to_match = set([ "context-{}".format(c) for c in rule_contexts ]) # context-import, context-foo
+    # additional rules from normal are context-* rules where any context-* matches a tag in rule_tags_to_match
+    additional_contextual_rules = [ r["id"] for r in rule_metadata if any(set(filter(lambda t: t.startswith("context-"), r.get("tags", []))).intersection(rule_tags_to_match)) ]
+    standard_rule_set = [ r["id"] for r in rule_metadata if r.get("tags", []) == [] or any(filter(lambda t: not t.startswith("context-"), r.get("tags", []))) ]
+
+    return standard_rule_set + additional_contextual_rules
+
+def _additional_context_rules(rule_metadata, rule_contexts):
+    rule_tags_to_match = set([ "context-{}".format(c) for c in rule_contexts ]) # context-import, context-foo
+    additional_contextual_rules = [ r["id"] for r in rule_metadata if any(set(filter(lambda t: t.startswith("context-"), r.get("tags", []))).intersection(rule_tags_to_match)) ]
+    return additional_contextual_rules
+
+
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
 def test_go_rules(annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> GoRulesResults:
     all_results = {}

@@ -192,7 +192,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, mixin=False):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, mixin=False, rule_contexts=[]):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -206,7 +206,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
-        annotation_inferences=annotation_inferences
+        annotation_inferences=annotation_inferences,
+        rule_contexts=rule_contexts
     )
     logger.info("Producing {}".format(source_gaf))
     logger.info("AssocParserConfig used: {}".format(config))
@@ -227,14 +228,14 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
 
     outfile.close()
     filtered_associations.close()
-    
+
     if not mixin: # Only write out a report if we are running a "top" dataset, not a mixin
         report_markdown_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.md".format(dataset))
         logger.info("About to write markdown report to {}".format(report_markdown_path))
         with open(report_markdown_path, "w") as report_md:
             logger.info("Opened for writing {}".format(report_markdown_path))
             report_md.write(parser.report.to_markdown())
-        
+
         logger.info("markdown {} written out".format(report_markdown_path))
         logger.info("Markdown current stack:")
         traceback.print_stack()
@@ -244,7 +245,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         with open(report_json_path, "w") as report_json:
             logger.info("Opened for writing {}".format(report_json_path))
             report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
-        
+
         logger.info("json {} written out".format(report_markdown_path))
         logger.info("gorule-13 first 10 messages: {}".format(json.dumps(parser.report.to_report_json()["messages"].get("gorule-0000013", [])[:10], indent=4)))
         logger.info("json current Stack:")
@@ -268,7 +269,7 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
         "gpad": open(os.path.join(os.path.split(gaf_path)[0], "{}.gpad".format(dataset)), "w"),
         "ttl": open(os.path.join(os.path.split(gaf_path)[0], "{}_cam.ttl".format(dataset)), "wb")
     }
-    
+
     if not products["gpad"] and not products["ttl"]:
         # Bail if we have no products
         return []
@@ -423,7 +424,7 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     return merged_path
 
-def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, replace_existing_files=True):
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, replace_existing_files=True, rule_contexts=[]):
 
     end_gaf = valid_gaf
     mixin_gaf_paths = []
@@ -434,7 +435,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], format=format, mixin=True)[0]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], format=format, mixin=True, rule_contexts=rule_contexts)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
@@ -450,7 +451,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
 @click.group()
 @click.option("--verbose", "-v", is_flag=True, default=False)
 @click.pass_context
-def cli(ctx, verbose):    
+def cli(ctx, verbose):
     if verbose:
         logger.setLevel(logging.INFO)
 
@@ -465,9 +466,10 @@ def cli(ctx, verbose):
 @click.option("--exclude", "-x", multiple=True)
 @click.option("--base-download-url", "-b", default=None)
 @click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
-@click.option("--skip-existing-files", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
+@click.option("--skip-existing-files", "-K", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
+@click.option("--rule-context", "T", "rule_contexts", default=[], multiple=True, required=False, help="Context that the rules should be run under. This adds rules that have a tag that matches `context-[value]`")
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, rule_contexts):
 
     logger.info("Logging is verbose")
     products = {
@@ -491,7 +493,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
-    
+
     click.echo("Found {} GO Rules".format(len(rule_metadata.keys())))
     click.echo("Found {} GO_REFs".format(len(goref_metadata.keys())))
 
@@ -505,7 +507,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     gaferences = None
     if gaferencer_file:
         gaferences = gaference.load_gaferencer_inferences_from_file(gaferencer_file)
-            
+
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
         # Set paint to True when the group is "paint".
@@ -518,7 +520,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             db_entities=db_entities,
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
-            annotation_inferences=gaferences
+            annotation_inferences=gaferences,
+            rule_context=rule_contexts
             )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
@@ -559,19 +562,19 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
 
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
-    
+
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
     gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
-    
+
     click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
-    
+
     db_entities = metadata.database_entities(absolute_metadata)
     group_ids = metadata.groups(absolute_metadata)
-    
+
     gaferences = None
     if gaferencer_file:
         gaferences = gaference.load_gaferencer_inferences_from_file(gaferencer_file)
-    
+
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
         goref_metadata=goref_metadata,
@@ -586,7 +589,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
         if len(examples) == 0:
             # skip if there are no examples
             continue
-        
+
         click.echo("==============================================================================")
         click.echo("Validating {} examples for {}".format(len(examples), rule_id.upper().replace("-", ":")))
         results = rules.validate_all_examples(examples, config=config)
@@ -597,9 +600,9 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
                 click.echo("\tRule example failed: {}".format(r.reason))
                 click.echo("\tInput: >> `{}`".format(r.example.input))
                 all_examples_valid = False
-                
+
         all_results += results
-    
+
     if out:
         absolute_out = os.path.abspath(out)
         os.makedirs(os.path.dirname(absolute_out), exist_ok=True)
@@ -608,7 +611,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
                 json.dump(rules.validation_report(all_results), outfile, indent=4)
         except Exception as e:
             raise click.ClickException("Could not write report to {}: ".format(out, e))
-    
+
     if not all_examples_valid:
         raise click.ClickException("At least one rule example was not validated.")
 

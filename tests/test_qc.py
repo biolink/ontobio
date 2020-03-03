@@ -1,5 +1,6 @@
 import pytest
 import datetime
+import json
 
 from ontobio.io import qc
 from ontobio.io import gaference
@@ -564,6 +565,23 @@ def test_all_rules():
     assert len(test_results.keys()) == 20
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
+
+def test_construct_rules_run():
+    with open("tests/resources/rules_metadata.json") as metadata_file:
+        rules_metadata = json.load(metadata_file)
+
+    # Test with an "import" context
+    constructed = set(qc._construct_rules_run(rules_metadata.values(), ["import"]))
+    assert constructed == set(['GORULE:0000051', 'GORULE:0000053', 'GORULE:0000054', 'GORULE:0000055', 'GORULE:0000056', 'GORULE:0000057', 'GORULE:0000058'])
+
+    # Test with no context
+    constructed = set(qc._construct_rules_run(rules_metadata.values(), []))
+    assert constructed == set(['GORULE:0000051', 'GORULE:0000053', 'GORULE:0000054', 'GORULE:0000055', 'GORULE:0000056'])
+
+    # Fake context
+    constructed = set(qc._construct_rules_run(rules_metadata.values(), ["blah"]))
+    assert constructed == set(['GORULE:0000051', 'GORULE:0000053', 'GORULE:0000054', 'GORULE:0000055', 'GORULE:0000056'])
+
 
 
 if __name__ == "__main__":
