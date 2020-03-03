@@ -539,10 +539,6 @@ def _construct_rules_run(rule_metadata, rule_contexts) -> List[GoRule]:
 
     return standard_rule_set + additional_contextual_rules
 
-def _additional_context_rules(rule_metadata, rule_contexts):
-    rule_tags_to_match = set([ "context-{}".format(c) for c in rule_contexts ]) # context-import, context-foo
-    additional_contextual_rules = [ r["id"] for r in rule_metadata if any(set(filter(lambda t: t.startswith("context-"), r.get("tags", []))).intersection(rule_tags_to_match)) ]
-    return additional_contextual_rules
 
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
