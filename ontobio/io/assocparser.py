@@ -72,7 +72,7 @@ class AssocParserConfig():
                  filtered_evidence_file=None,
                  gpi_authority_path=None,
                  paint=False,
-                 rule_metadata=None,
+                 rule_metadata=dict(),
                  goref_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],

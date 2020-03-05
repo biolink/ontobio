@@ -4,6 +4,8 @@ import collections
 import datetime
 import copy
 
+from dataclasses import dataclass
+
 from typing import List, Dict, Any, Tuple, Union
 from ontobio import ontol
 from ontobio import ecomap
@@ -49,10 +51,11 @@ def repair_result(repair_state: RepairState, fail_mode: FailMode) -> ResultType:
 
 class GoRule(object):
 
-    def __init__(self, id, title, fail_mode: FailMode):
+    def __init__(self, id, title, fail_mode: FailMode, tags=[]):
         self.id = id
         self.title = title
         self.fail_mode = fail_mode
+        self.run_context_tags = set(tags)
 
     def _list_terms(self, pipe_separated):
         terms = pipe_separated.split("|")
@@ -62,18 +65,28 @@ class GoRule(object):
     def _result(self, passes: bool) -> TestResult:
         return TestResult(result(passes, self.fail_mode), self.title, passes)
 
+    def _is_run_from_context(self, config: assocparser.AssocParserConfig) -> bool:
+        rule_tags_to_match = set([ "context-{}".format(c) for c in config.rule_contexts ])
+        # If there is no context, then run
+        # Or, if any run_context_tags is in rule_tags_to_match, then run
+        return self.run_context_tags is set() or any(self.run_context_tags & rule_tags_to_match)
+
     def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        result = self.test(annotation, config, group=group)
+        result = TestResult(ResultType.PASS, "", True)  # Initial
+        if self._is_run_from_context(config):
+            result = self.test(annotation, config, group=group)
+
         result.result = annotation
         return result
+
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         pass
 
 class RepairRule(GoRule):
 
-    def __init__(self, id, title, fail_mode):
-        super().__init__(id, title, fail_mode)
+    def __init__(self, id, title, fail_mode, tags=[]):
+        super().__init__(id, title, fail_mode, tags)
 
     def message(self, state: RepairState) -> str:
         message = ""
@@ -530,15 +543,6 @@ GoRules = enum.Enum("GoRules", {
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
     "GoRule13": GoRule13()
 })
-
-def _construct_rules_run(rule_metadata, rule_contexts) -> List[GoRule]:
-    rule_tags_to_match = set([ "context-{}".format(c) for c in rule_contexts ]) # context-import, context-foo
-    # additional rules from normal are context-* rules where any context-* matches a tag in rule_tags_to_match
-    additional_contextual_rules = [ r["id"] for r in rule_metadata if any(set(filter(lambda t: t.startswith("context-"), r.get("tags", []))).intersection(rule_tags_to_match)) ]
-    standard_rule_set = [ r["id"] for r in rule_metadata if r.get("tags", []) == [] or any(filter(lambda t: not t.startswith("context-"), r.get("tags", []))) ]
-
-    return standard_rule_set + additional_contextual_rules
-
 
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])

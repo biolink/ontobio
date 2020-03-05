@@ -425,7 +425,7 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     return merged_path
 
-def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, replace_existing_files=True, rule_contexts=[]):
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[]):
 
     end_gaf = valid_gaf
     mixin_gaf_paths = []
@@ -436,7 +436,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], format=format, rule_contexts=rule_contexts)[0]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=rule_contexts)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
@@ -469,7 +469,7 @@ def cli(ctx, verbose):
 @click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
 @click.option("--skip-existing-files", "-K", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
-@click.option("--rule-context", "T", "rule_contexts", default=[], multiple=True, required=False, help="Context that the rules should be run under. This adds rules that have a tag that matches `context-[value]`")
+@click.option("--rule-context", "-T", "rule_contexts", default=[], multiple=True, required=False, help="Context that the rules should be run under. This adds rules that have a tag that matches `context-[value]`")
 def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, rule_contexts):
 
     logger.info("Logging is verbose")
@@ -522,12 +522,12 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
             annotation_inferences=gaferences,
-            rule_context=rule_contexts
+            rule_contexts=rule_contexts
             )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
-        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
+        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
 
 
