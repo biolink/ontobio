@@ -209,7 +209,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         annotation_inferences=annotation_inferences,
         group_metadata=group_metadata,
         extensions_constraints=extensions_constraints,
-		rule_contexts=rule_contexts
+        rule_contexts=rule_contexts
     )
     logger.info("Producing {}".format(source_gaf))
     logger.info("AssocParserConfig used: {}".format(config))
@@ -525,9 +525,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
             annotation_inferences=gaferences,
-<<<<<<< HEAD
             group_metadata=group_metadata,
-            extensions_constraints=extensions_constraints
+            extensions_constraints=extensions_constraints,
             rule_contexts=rule_contexts
             )[0]
 
