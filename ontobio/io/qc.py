@@ -524,7 +524,7 @@ class GoRule50(GoRule):
 class GoRule57(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000057", "Group specific filter rules should be applied to annotations", FailMode.HARD)
+        super().__init__("GORULE:0000057", "Group specific filter rules should be applied to annotations", FailMode.HARD, tags=["context-import"])
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # Check group_metadata is present
@@ -552,7 +552,7 @@ class GoRule57(GoRule):
 class GoRule58(RepairRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000058", "Object extensions should conform to the extensions-patterns.yaml file in metadata", FailMode.HARD)
+        super().__init__("GORULE:0000058", "Object extensions should conform to the extensions-patterns.yaml file in metadata", FailMode.HARD, tags=["context-import"])
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
 
