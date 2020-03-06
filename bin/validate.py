@@ -192,7 +192,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, rule_contexts=[]):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -206,7 +206,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
-        annotation_inferences=annotation_inferences
+        annotation_inferences=annotation_inferences,
+        rule_contexts=rule_contexts
     )
     logger.info("Producing {}".format(source_gaf))
     logger.info("AssocParserConfig used: {}".format(config))
@@ -424,7 +425,7 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     return merged_path
 
-def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, replace_existing_files=True):
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[]):
 
     end_gaf = valid_gaf
     mixin_gaf_paths = []
@@ -435,7 +436,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], format=format)[0]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=rule_contexts)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
@@ -466,9 +467,10 @@ def cli(ctx, verbose):
 @click.option("--exclude", "-x", multiple=True)
 @click.option("--base-download-url", "-b", default=None)
 @click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
-@click.option("--skip-existing-files", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
+@click.option("--skip-existing-files", "-K", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
+@click.option("--rule-context", "-T", "rule_contexts", default=[], multiple=True, required=False, help="Context that the rules should be run under. This adds rules that have a tag that matches `context-[value]`")
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, rule_contexts):
 
     logger.info("Logging is verbose")
     products = {
@@ -519,12 +521,13 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             db_entities=db_entities,
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
-            annotation_inferences=gaferences
+            annotation_inferences=gaferences,
+            rule_contexts=rule_contexts
             )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
-        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, replace_existing_files=not skip_existing_files)
+        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
 
 
