@@ -1,6 +1,7 @@
 import pytest
 import datetime
 import yaml
+import json
 
 from ontobio.io import qc
 from ontobio.io import gaference
@@ -160,7 +161,19 @@ def test_go_rules_13():
     assoc = gafparser.to_association(a).associations[0]
     gaferences = gaference.load_gaferencer_inferences_from_file("tests/resources/test.inferences.json")
     test_result = qc.GoRule13().test(assoc, assocparser.AssocParserConfig(annotation_inferences=gaferences))
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    a = ["PomBase", "SPBC11B10.09", "cdc2", "", "GO:0007275", "PMID:21873635", "EXP", "PANTHER:PTN000623979|TAIR:locus:2099478", "P", "Cyclin-dependent kinase 1", "UniProtKB:P04551|PTN000624043", "protein", "taxon:284812", "20170228", "GO_Central", "", ""]
+    assoc = gafparser.to_association(a).associations[0]
+    gaferences = gaference.load_gaferencer_inferences_from_file("tests/resources/test.inferences.json")
+    test_result = qc.GoRule13().test(assoc, assocparser.AssocParserConfig(annotation_inferences=gaferences))
     assert test_result.result_type == qc.ResultType.WARNING
+
+    a = ["PomBase", "SPBC11B10.09", "cdc2", "NOT", "GO:0007275", "PMID:21873635", "EXP", "PANTHER:PTN000623979|TAIR:locus:2099478", "P", "Cyclin-dependent kinase 1", "UniProtKB:P04551|PTN000624043", "protein", "taxon:284812", "20170228", "GO_Central", "", ""]
+    assoc = gafparser.to_association(a).associations[0]
+    gaferences = gaference.load_gaferencer_inferences_from_file("tests/resources/test.inferences.json")
+    test_result = qc.GoRule13().test(assoc, assocparser.AssocParserConfig(annotation_inferences=gaferences))
+    assert test_result.result_type == qc.ResultType.PASS
 
 def test_go_rules_15():
 

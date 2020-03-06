@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-__version__ = '1.15.7'
+__version__ = '1.15.8'
 
 from .ontol_factory import OntologyFactory
 from .ontol import Ontology, Synonym, TextDefinition
@@ -54,5 +54,5 @@ def configure_logging():
 
 
     logging.root.setLevel(logging.WARNING)
-    
+
 configure_logging()

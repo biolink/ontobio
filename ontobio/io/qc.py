@@ -4,6 +4,8 @@ import collections
 import datetime
 import copy
 
+from dataclasses import dataclass
+
 from typing import List, Dict, Any, Tuple, Union
 from ontobio import ontol
 from ontobio import ecomap
@@ -50,10 +52,11 @@ def repair_result(repair_state: RepairState, fail_mode: FailMode) -> ResultType:
 
 class GoRule(object):
 
-    def __init__(self, id, title, fail_mode: FailMode):
+    def __init__(self, id, title, fail_mode: FailMode, tags=[]):
         self.id = id
         self.title = title
         self.fail_mode = fail_mode
+        self.run_context_tags = set(tags)
 
     def _list_terms(self, pipe_separated):
         terms = pipe_separated.split("|")
@@ -63,18 +66,28 @@ class GoRule(object):
     def _result(self, passes: bool) -> TestResult:
         return TestResult(result(passes, self.fail_mode), self.title, passes)
 
+    def _is_run_from_context(self, config: assocparser.AssocParserConfig) -> bool:
+        rule_tags_to_match = set([ "context-{}".format(c) for c in config.rule_contexts ])
+        # If there is no context, then run
+        # Or, if any run_context_tags is in rule_tags_to_match, then run
+        return self.run_context_tags is set() or any(self.run_context_tags & rule_tags_to_match)
+
     def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        result = self.test(annotation, config, group=group)
+        result = TestResult(ResultType.PASS, "", True)  # Initial
+        if self._is_run_from_context(config):
+            result = self.test(annotation, config, group=group)
+
         result.result = annotation
         return result
+
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         pass
 
 class RepairRule(GoRule):
 
-    def __init__(self, id, title, fail_mode):
-        super().__init__(id, title, fail_mode)
+    def __init__(self, id, title, fail_mode, tags=[]):
+        super().__init__(id, title, fail_mode, tags)
 
     def message(self, state: RepairState) -> str:
         message = ""
@@ -191,21 +204,34 @@ class GoRule11(GoRule):
 class GoRule13(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.SOFT)
+        super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.HARD)
+        self.non_experimental_evidence = ["ECO:0000318", "ECO:0000320", "ECO:0000321", "ECO:0000305", "ECO:0000247", "ECO:0000255", "ECO:0000266", "ECO:0000250", "ECO:0000303", "ECO:0000245", "ECO:0000304", "ECO:0000307"]
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.annotation_inferences is None:
             # Auto pass if we don't have inferences
             return self._result(True)
 
-        inference_results = gaference.produce_inferences(annotation, config.annotation_inferences) #type: List[gaference.InferenceResult]
+        if annotation.negated:
+            # The rule is passed if the annotation is negated
+            return self._result(True)
+
+        inference_results = gaference.produce_inferences(annotation, config.annotation_inferences)  # type: List[gaference.InferenceResult]
         taxon_passing = True
         for result in inference_results:
             if result.problem == gaference.ProblemType.TAXON:
                 taxon_passing = False
                 break
 
-        return self._result(taxon_passing)
+        if taxon_passing:
+            return self._result(True)
+        else:
+            # Filter non experimental evidence
+            if annotation.evidence.type in self.non_experimental_evidence:
+                return self._result(False)
+            else:
+                # Only submit a warning/report if we are an experimental evidence
+                return TestResult(ResultType.WARNING, self.title, False)
 
 class GoRule15(GoRule):
 
@@ -624,6 +650,7 @@ GoRules = enum.Enum("GoRules", {
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
     "GoRule13": GoRule13()
 })
+
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
 def test_go_rules(annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> GoRulesResults:

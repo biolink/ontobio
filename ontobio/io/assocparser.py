@@ -72,13 +72,14 @@ class AssocParserConfig():
                  filtered_evidence_file=None,
                  gpi_authority_path=None,
                  paint=False,
-                 rule_metadata=None,
+                 rule_metadata=dict(),
                  goref_metadata=None,
                  group_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None,
-                 extensions_constraints=None):
+                 extensions_constraints=None,
+                 rule_contexts=[]):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -101,6 +102,7 @@ class AssocParserConfig():
         self.entity_idspaces = entity_idspaces
         self.extensions_constraints = AssocParserConfig._compute_constraint_subclasses(extensions_constraints, ontology)
         self.group_idspace = None if group_idspace is None else set(group_idspace)
+        self.rule_contexts = rule_contexts
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
             self.exclude_relations = []
