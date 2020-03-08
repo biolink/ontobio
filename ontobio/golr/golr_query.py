@@ -332,6 +332,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                  solr=None,
                  config=None,
                  fq=None,
+                 fq_string=None,
                  hl=True,
                  facet_fields=None,
                  facet=True,
@@ -360,6 +361,10 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.start = start
         # test if client explicitly passes a URL; do not override
         self.is_explicit_url = url is not None
+        # Raw fq param string
+        self.fq_string = fq_string if fq_string is not None else []
+        # fq as dictionary where key:values get converted
+        # to fq="(key1:value1 OR key2:value2)"
         self.fq = fq if fq is not None else {}
         self.prefix = prefix
         self.boost_fx = boost_fx
@@ -479,6 +484,9 @@ class GolrSearchQuery(GolrAbstractQuery):
             params['fq'] = filter_queries
         else:
             params['fq'] = []
+
+        for fq in self.fq_string:
+            params['fq'].append(fq)
 
         if self.prefix is not None:
             negative_filter = [p_filt for p_filt in self.prefix
