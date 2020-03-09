@@ -3,6 +3,7 @@ import enum
 import collections
 import datetime
 import copy
+import logging
 
 from dataclasses import dataclass
 
@@ -13,6 +14,8 @@ from ontobio.io import assocparser
 from ontobio.io import gaference
 from ontobio.model import association
 from ontobio.rdfgen import relations
+
+logger = logging.getLogger(__name__)
 
 FailMode = enum.Enum("FailMode", {"SOFT": "soft", "HARD": "hard"})
 ResultType = enum.Enum("Result", {"PASS": "Pass", "WARNING": "Warning", "ERROR": "Error"})
@@ -70,7 +73,7 @@ class GoRule(object):
         rule_tags_to_match = set([ "context-{}".format(c) for c in config.rule_contexts ])
         # If there is no context, then run
         # Or, if any run_context_tags is in rule_tags_to_match, then run
-        return self.run_context_tags is set() or any(self.run_context_tags & rule_tags_to_match)
+        return len(self.run_context_tags) == 0 or any(self.run_context_tags & rule_tags_to_match)
 
     def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         result = TestResult(ResultType.PASS, "", True)  # Initial
