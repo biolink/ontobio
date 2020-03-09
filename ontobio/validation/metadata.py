@@ -75,7 +75,7 @@ class BiDiMultiMap(dict):
 # d.reverse("mgi:mgi") # returns None
 
 ###############################################
-# 
+#
 # @dataclass
 # class YamldownMetadata:
 #     id: str
@@ -89,7 +89,7 @@ def yamldown_lookup(yamldown_dir):
         metayaml_id(meta_path): get_yamldown_metadata(yamldown_dir, metayaml_id(meta_path))
         for meta_path in glob.glob("{}/*.md".format(os.path.join(yamldown_dir))) if metayaml_id(meta_path) not in ["ABOUT", "README", "SOP", "README-editors"]
     }
-    
+
     return d
 
 def dataset_metadata_file(metadata, group, empty_ok=False) -> Dict:
@@ -104,13 +104,25 @@ def dataset_metadata_file(metadata, group, empty_ok=False) -> Dict:
         else:
             return None
 
+def extensions_constraints_file(metadata):
+    constraints_path = os.path.join(metadata, "extensions-constraints.yaml")
+    try:
+        with open(constraints_path, "r") as constraints_file:
+            click.echo("Found groups at {path}".format(path=constraints_path))
+            constraints_list = yaml.load(constraints_file, Loader=yaml.FullLoader)
+    except Exception as e:
+        raise click.ClickException("Could not find or read {}: {}".format(constraints_path, str(e)))
+
+    return constraints_list
+
+
 def gorule_title(metadata, rule_id) -> str:
     return gorule_metadata(metadata, rule_id)["title"]
 
 def gorule_metadata(metadata, rule_id) -> dict:
     gorule_yamldown = os.path.join(metadata, "rules")
     return get_yamldown_metadata(gorule_yamldown, rule_id)
-        
+
 def parse_goref_metadata(metadata, goref_id) -> dict:
     goref_yamldown = os.path.join(metadata, "gorefs")
     return get_yamldown_metadata(goref_yamldown, goref_id)
@@ -133,7 +145,7 @@ def source_path(dataset_metadata, target_dir, group):
 
     path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
     return path
-    
+
 def database_entities(metadata):
     dbxrefs_path = os.path.join(os.path.abspath(metadata), "db-xrefs.yaml")
     try:
@@ -159,4 +171,3 @@ def groups(metadata) -> Set[str]:
         raise click.ClickException("Could not find or read {}: {}".format(groups_path, str(e)))
 
     return set([group["shorthand"] for group in groups_list])
-    

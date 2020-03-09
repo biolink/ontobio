@@ -74,9 +74,11 @@ class AssocParserConfig():
                  paint=False,
                  rule_metadata=dict(),
                  goref_metadata=None,
+                 group_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None,
+                 extensions_constraints=None,
                  rule_contexts=[]):
 
         self.remove_double_prefixes=remove_double_prefixes
@@ -94,9 +96,11 @@ class AssocParserConfig():
         self.paint = paint
         self.rule_metadata = rule_metadata
         self.goref_metadata = goref_metadata
+        self.group_metadata = group_metadata
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
+        self.extensions_constraints = AssocParserConfig._compute_constraint_subclasses(extensions_constraints, ontology)
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         self.rule_contexts = rule_contexts
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
@@ -106,6 +110,26 @@ class AssocParserConfig():
             self.include_relations = []
         if self.filter_out_evidence is None:
             self.filter_out_evidence = []
+
+
+    def _compute_constraint_subclasses(extensions_constraints, ontology):
+        if extensions_constraints is None:
+            return None
+        # Precompute subclass closures in the extensions_constraints
+        cache = dict()  # term -> [children]
+        for constraint in extensions_constraints:
+            terms = set()
+            for term in constraint["primary_root_terms"]:
+                if not term in cache and ontology is not None:
+                    cache[term] = ontology.descendants(term, relations=["subClassOf"], reflexive=True)
+                elif ontology is None:
+                    cache[term] = [term]
+
+                terms.update(cache[term])
+
+            constraint["primary_terms"] = sorted(list(terms))
+
+        return extensions_constraints
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

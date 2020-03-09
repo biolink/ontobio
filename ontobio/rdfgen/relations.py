@@ -34,7 +34,8 @@ __relation_label_lookup = {
     "involved in": "http://purl.obolibrary.org/obo/RO_0002331",
     "acts upstream of": "http://purl.obolibrary.org/obo/RO_0002263",
     "colocalizes with": "http://purl.obolibrary.org/obo/RO_0002325",
-    "contributes to": "http://purl.obolibrary.org/obo/RO_0002326"
+    "contributes to": "http://purl.obolibrary.org/obo/RO_0002326",
+    "acts upstream of or within": "http://purl.obolibrary.org/obo/RO_0002264"
 }
 
 def lookup_label(label, default=None):

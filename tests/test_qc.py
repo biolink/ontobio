@@ -1,11 +1,13 @@
 import pytest
 import datetime
+import yaml
 import json
 
 from ontobio.io import qc
 from ontobio.io import gaference
 from ontobio.io import assocparser
 from ontobio.io import gafparser
+from ontobio.io import gpadparser
 from ontobio import ontol_factory
 
 import copy
@@ -546,6 +548,108 @@ def test_gorule50():
     test_result = qc.GoRule50().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+def test_gorule57():
+    a = ["blah"] * 12
+    a[0] = "HELLO"
+    a[1] = "123"
+    a[2] = "enables"
+    a[3] = "GO:0003674"
+    a[4] = "PMID:12345"
+    a[5] = "ECO:0000501"
+    a[7] = "taxon:2"
+    # a[8] = "P"
+    a[9] = "MGI"
+    a[10] = ""
+    a[11] = ""
+
+    assoc = gpadparser.to_association(a).associations[0]
+
+    # Look at evidence_code, reference, annotation_properties
+    config = assocparser.AssocParserConfig(group_metadata={
+        "id": "mgi",
+        "label": "Mouse Genome Informatics",
+        "filter_out": {
+            "evidence": ["ECO:0000501"],
+            "evidence_reference": [
+                {
+                    "evidence": "ECO:0000320",
+                    "reference": "PMID:21873635"
+                }
+            ],
+            "annotation_properties": ["noctua-model-id"]
+        }
+    })
+    test_result = qc.GoRule57().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    assoc.evidence.type = "ECO:0000320"
+    assoc.evidence.has_supporting_reference = "PMID:21873635"
+    test_result = qc.GoRule57().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    assoc.evidence.type = "ECO:some_garbage"
+    assoc.evidence.has_supporting_reference = "PMID:some_garbage"
+    assoc.properties = {"noctua-model-id": "some_garbage"}
+    test_result = qc.GoRule57().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    assoc.properties = {}
+    test_result = qc.GoRule57().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS
+
+def test_gorule58():
+    a = ["blah"] * 16
+
+    a[0] = "HELLO"
+    a[1] = "123"
+    a[3] = ""
+    a[4] = "GO:0003674"
+    a[6] = "IBA"
+    a[5] = "PMID:21873635"
+    a[8] = "P"
+    a[9] = "MGI"
+    a[10] = ""
+    a[11] = ""
+    a[14] = "GO_Central"
+    a[15] = "has_input(GO:0003674),occurs_in(CL:123456)"
+
+    with open("tests/resources/extensions-constraints.yaml") as exs_cons:
+        config = assocparser.AssocParserConfig(ontology=ontology, extensions_constraints=yaml.load(exs_cons, Loader=yaml.FullLoader))
+
+    assoc = gafparser.to_association(a).associations[0]
+
+    test_result = qc.GoRule58().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS
+
+    # Fails because `not_relation` is not an allowed relation
+    a[15] = "not_relation(GO:987),occurs_in(CL:1234567)|occurs_in(CL:12345)"
+    assoc = gafparser.to_association(a).associations[0]
+    test_result = qc.GoRule58().test(assoc, config)
+    a[15] = "occurs_in(CL:12345)"
+    expected_repair = gafparser.to_association(a).associations[0]
+    expected_repair.source_line = assoc.source_line # Make sure original line is the same as test case
+    assert test_result.result_type == qc.ResultType.WARNING
+    assert test_result.result == expected_repair
+
+    # Fails because `FOO` is not a real namespace for any `has_input` constraint
+    a[15] = "has_input(FOO:1234566),occurs_in(CL:1234567)"
+    assoc = gafparser.to_association(a).associations[0]
+    test_result = qc.GoRule58().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    # Fails because this GO term is not in the constraint term children
+    a[4] = "GO:0005575"
+    a[15] = "occurs_in(EMAPA:123),has_input(CL:1234567)"
+    assoc = gafparser.to_association(a).associations[0]
+    test_result = qc.GoRule58().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    # Fails because of a cardinality check
+    a[4] = "GO:0003674"
+    a[15] = "occurs_in(EMAPA:123),occurs_in(EMAPA:1987654)"
+    assoc = gafparser.to_association(a).associations[0]
+    test_result = qc.GoRule58().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.WARNING
 
 
 def test_all_rules():
@@ -562,7 +666,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 20
+    assert len(test_results.keys()) == 22
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 

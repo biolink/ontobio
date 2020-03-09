@@ -192,7 +192,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, rule_contexts=[]):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[]):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
 
     config = assocparser.AssocParserConfig(
@@ -207,6 +207,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
         annotation_inferences=annotation_inferences,
+        group_metadata=group_metadata,
+        extensions_constraints=extensions_constraints,
         rule_contexts=rule_contexts
     )
     logger.info("Producing {}".format(source_gaf))
@@ -504,6 +506,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 
     db_entities = metadata.database_entities(absolute_metadata)
     group_ids = metadata.groups(absolute_metadata)
+    extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)
 
     gaferences = None
     if gaferencer_file:
@@ -522,6 +525,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
             annotation_inferences=gaferences,
+            group_metadata=group_metadata,
+            extensions_constraints=extensions_constraints,
             rule_contexts=rule_contexts
             )[0]
 

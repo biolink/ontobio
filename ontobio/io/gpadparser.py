@@ -314,8 +314,8 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     qualifiers = [curie_util.contract_uri(q)[0] for q in looked_up_qualifiers]
 
     conjunctions = []
-    if gpad_line[11]:
-        for conjuncts in gpad_line[11].split("|"):
+    if gpad_line[10]:
+        for conjuncts in gpad_line[10].split("|"):
             extension_units = []
             for u in conjuncts.split(","):
                 parsed = relation_tuple.findall(u)
