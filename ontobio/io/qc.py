@@ -75,16 +75,21 @@ class GoRule(object):
         # Or, if any run_context_tags is in rule_tags_to_match, then run
         return len(self.run_context_tags) == 0 or any(self.run_context_tags & rule_tags_to_match)
 
-    def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        result = TestResult(ResultType.PASS, "", True)  # Initial
+    def _run_if_context(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        result = TestResult(ResultType.PASS, "", annotation)
         if self._is_run_from_context(config):
             result = self.test(annotation, config, group=group)
 
+        return result
+
+    def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        result = self._run_if_context(annotation, config, group=group)
         result.result = annotation
         return result
 
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        # run_test() -> _run_if_context() -> test()
         pass
 
 class RepairRule(GoRule):
@@ -102,7 +107,8 @@ class RepairRule(GoRule):
         return message
 
     def run_test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        return self.test(annotation, config, group=group)
+        result = self._run_if_context(annotation, config, group=group)
+        return result
 
     def repair(self, annotation: association.GoAssociation, group=None) -> Tuple[List, RepairState]:
         pass
