@@ -194,7 +194,6 @@ Produce validated gaf using the gaf parser/
 @tools.gzips
 def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[]):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
-
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
         filter_out_evidence=["IEA"],
@@ -438,7 +437,8 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=rule_contexts)[0]
+            context = ["import"] if mixin_metadata.get("import", False) else []
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=context)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
@@ -471,7 +471,6 @@ def cli(ctx, verbose):
 @click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
 @click.option("--skip-existing-files", "-K", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
-@click.option("--rule-context", "-T", "rule_contexts", default=[], multiple=True, required=False, help="Context that the rules should be run under. This adds rules that have a tag that matches `context-[value]`")
 def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, rule_contexts):
 
     logger.info("Logging is verbose")
@@ -527,7 +526,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             annotation_inferences=gaferences,
             group_metadata=group_metadata,
             extensions_constraints=extensions_constraints,
-            rule_contexts=rule_contexts
+            rule_contexts=["import"] if dataset_metadata.get("import", False) else []
             )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
