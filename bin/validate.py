@@ -471,7 +471,7 @@ def cli(ctx, verbose):
 @click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
 @click.option("--skip-existing-files", "-K", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, rule_contexts):
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file):
 
     logger.info("Logging is verbose")
     products = {
