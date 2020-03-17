@@ -392,7 +392,7 @@ class GoRule29(GoRule):
 class GoRule30(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000030", "Deprecated GO_REFs are not allowed", FailMode.HARD)
+        super().__init__("GORULE:0000030", "Deprecated GO_REFs are not allowed", FailMode.SOFT)
 
     def _ref_curi_to_id(self, goref) -> str:
         """
