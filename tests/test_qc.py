@@ -383,15 +383,15 @@ def test_gorule30():
     )
 
     test_result = qc.GoRule30().test(assoc, config)
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
     assoc.evidence.has_supporting_reference = ["GO_PAINT:0000000"]
     test_result = qc.GoRule30().test(assoc, config)
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
     assoc.evidence.has_supporting_reference = ["FOO:123", "GO_REF:0000033"]
     test_result = qc.GoRule30().test(assoc, config)
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
     assoc.evidence.has_supporting_reference = ["FOO:123"]
     test_result = qc.GoRule30().test(assoc, config)
