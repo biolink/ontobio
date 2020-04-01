@@ -397,6 +397,18 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon_curie)
     aspect = gaf_line[8]
     negated, relation, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
+
+    # For allowed, see http://geneontology.org/docs/go-annotations/#annotation-qualifiers
+    allowed_qualifiers = ["contributes_to", "colocalizes_with"]
+    for q in qualifiers:
+        if " " in q:
+            report.warning(source_line, Report.INVALID_ID, q, "Qualifiers must only use underscores instead of spaces, but was repaired", taxon=gaf_line[TAXON_INDEX], rule=1)
+            q.replace(" ", "_")
+
+        if q not in allowed_qualifiers:
+            report.error(source_line, Report.INVALID_QUALIFIER, q, "Qualifiers must be `contributes_to`, `colocalizes_with`, or `NOT`", taxon=gaf_line[TAXON_INDEX], rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
     object = association.Term(gaf_line[4], taxon_curie)
     evidence = association.Evidence(
         ecomap.coderef_to_ecoclass(gaf_line[6]),
