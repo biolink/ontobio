@@ -175,6 +175,12 @@ def test_go_rules_13():
     test_result = qc.GoRule13().test(assoc, assocparser.AssocParserConfig(annotation_inferences=gaferences))
     assert test_result.result_type == qc.ResultType.PASS
 
+    a = ["AspGD", "ASPL0000059928", "AN0127", "", "GO:0032258", "AspGD_REF:ASPL0000000005", "IEA", "SGD:S000001917", "P", "", "AN0127|ANID_00127|ANIA_00127", "gene_product", "taxon:227321", "20200201", "AspGD", "", ""]
+    assoc = gafparser.to_association(a).associations[0]
+    gaferences = gaference.load_gaferencer_inferences_from_file("tests/resources/test.inferences.json")
+    test_result = qc.GoRule13().test(assoc, assocparser.AssocParserConfig(annotation_inferences=gaferences))
+    assert test_result.result_type == qc.ResultType.ERROR
+
 def test_go_rules_15():
 
     a = ["blah"] * 15
