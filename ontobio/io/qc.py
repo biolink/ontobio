@@ -214,7 +214,7 @@ class GoRule13(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.HARD)
-        self.non_experimental_evidence = ["ECO:0000318", "ECO:0000320", "ECO:0000321", "ECO:0000305", "ECO:0000247", "ECO:0000255", "ECO:0000266", "ECO:0000250", "ECO:0000303", "ECO:0000245", "ECO:0000304", "ECO:0000307"]
+        self.non_experimental_evidence = set(["ECO:0000318", "ECO:0000320", "ECO:0000321", "ECO:0000305", "ECO:0000247", "ECO:0000255", "ECO:0000266", "ECO:0000250", "ECO:0000303", "ECO:0000245", "ECO:0000304", "ECO:0000307", "ECO:0000501"])
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.annotation_inferences is None:
