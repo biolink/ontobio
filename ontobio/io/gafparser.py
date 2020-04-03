@@ -347,6 +347,7 @@ class GafParser(assocparser.AssocParser):
 ecomap = EcoMap()
 ecomap.mappings()
 relation_tuple = re.compile(r'(.+)\((.+)\)')
+allowed_qualifiers = set(["contributes_to", "colocalizes_with"])
 def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown") -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report
     source_line = "\t".join(gaf_line)
@@ -399,11 +400,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     negated, relation, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
 
     # For allowed, see http://geneontology.org/docs/go-annotations/#annotation-qualifiers
-    allowed_qualifiers = ["contributes_to", "colocalizes_with"]
     for q in qualifiers:
-        if " " in q:
-            report.warning(source_line, Report.INVALID_ID, q, "Qualifiers must only use underscores instead of spaces, but was repaired", taxon=gaf_line[TAXON_INDEX], rule=1)
-            q.replace(" ", "_")
 
         if q not in allowed_qualifiers:
             report.error(source_line, Report.INVALID_QUALIFIER, q, "Qualifiers must be `contributes_to`, `colocalizes_with`, or `NOT`", taxon=gaf_line[TAXON_INDEX], rule=1)

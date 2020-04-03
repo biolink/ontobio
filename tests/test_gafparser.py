@@ -192,7 +192,7 @@ def test_qualifiers_gaf():
     assert len([a for a in assocs if a['relation']['id'] == 'contributes_to']) == 1
 
     # For the space in `colocalizes with`
-    assert len(list(filter(lambda e: e["level"] == "WARNING", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
+    assert len(list(filter(lambda e: e["obj"] == "colocalizes with", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
     assert len(list(filter(lambda e: e["obj"] == "involved_in", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
 
 
