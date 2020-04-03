@@ -39,7 +39,7 @@ def test_skim_gaf_qualifiers():
         (s, sn, o) = r
         assert o.startswith('GO:')
         assert s.startswith('MGI:') or s.startswith('PomBase')
-    assert len(results) == 4  # ensure NOTs are skipped
+    assert len(results) == 5  # ensure NOTs are skipped
 
     p.config.exclude_relations = ['contributes_to', 'colocalizes_with']
     results = p.skim(open(QGAF, "r"))
@@ -47,7 +47,7 @@ def test_skim_gaf_qualifiers():
         (s, sn, o) = r
         assert o.startswith('GO:')
         assert s.startswith('MGI:') or s.startswith('PomBase')
-    assert len(results) == 2 # ensure NOTs and excludes relations skipped
+    assert len(results) == 3 # ensure NOTs and excludes relations skipped
 
 def test_one_line():
     p = GafParser(config=assocparser.AssocParserConfig(
@@ -179,17 +179,21 @@ def test_validate_go_idspaces():
 #POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
 
 def test_qualifiers_gaf():
-    ont = OntologyFactory().create(ONT)
+    # ont = OntologyFactory().create(ONT)
 
     p = GafParser()
-    p.config.ontology = ont
+    # p.config.ontology = ont
     assocs = p.parse(open(QGAF, "r"), skipheader=True)
     neg_assocs = [a for a in assocs if a['negated'] == True]
     assert len(neg_assocs) == 3
     for a in assocs:
         print('REL: {}'.format(a['relation']))
-    assert len([a for a in assocs if a['relation']['id'] == 'involved_in']) == 1
+
     assert len([a for a in assocs if a['relation']['id'] == 'contributes_to']) == 1
+
+    # For the space in `colocalizes with`
+    assert len(list(filter(lambda e: e["obj"] == "colocalizes with", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
+    assert len(list(filter(lambda e: e["obj"] == "involved_in", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
 
 
 def parse_with2(f, p):
