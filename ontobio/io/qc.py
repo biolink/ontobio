@@ -391,9 +391,9 @@ class GoRule29(GoRule):
 
         iea = "ECO:0000501"
         if evidence == iea:
-            if time_diff > time_compare_delta_long):
+            if time_diff > time_compare_delta_long:
                 return self._result(False)
-            elif time_diff > time_compare_delta_short):
+            elif time_diff > time_compare_delta_short:
                 return TestResult(ResultType.WARNING, self.title, annotation)
 
         ## Default results we we get here.
