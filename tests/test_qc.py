@@ -373,21 +373,28 @@ def test_go_rule29():
     a[13] = "19901111" # Nov 11, 1990, more than a year old
     assoc = gafparser.to_association(a).associations[0]
 
+    ## Base test: old IEA.
     test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
 
+    ## Pass if not IEA
     assoc.evidence.type = "ECO:0000305" #Not IEA
-
     test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+    ## Pass if only a half year old.
     now = datetime.datetime.now()
     six_months_ago = now - datetime.timedelta(days=180)
     assoc.date = six_months_ago.strftime("%Y%m%d")
     assoc.evidence.type = "ECO:0000501"
-
     test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
+
+    ## Warning if a year and a half year old.
+    eighteen_months_ago = now - datetime.timedelta(days=(30*18))
+    assoc.date = eighteen_months_ago.strftime("%Y%m%d")
+    test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
 
 def test_gorule30():
     a = ["blah"] * 15
