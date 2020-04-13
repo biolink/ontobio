@@ -152,8 +152,6 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
         goid = valid_goid
 
-        date = self._normalize_gaf_date(date, split_line)
-
         if reference == "":
             self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty")
             return assocparser.ParseResult(line, [], True)
@@ -308,6 +306,10 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     looked_up_qualifiers = [relations.lookup_label(q) for q in raw_qs if q != "NOT"]
     if None in looked_up_qualifiers:
         report.error(source_line, Report.INVALID_QUALIFIER, raw_qs, "Could not find a URI for qualifier", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    date = assocparser._normalize_gaf_date(gpad_line[8], report, "", source_line)
+    if date is None:
         return assocparser.ParseResult(source_line, [], True, report=report)
 
 

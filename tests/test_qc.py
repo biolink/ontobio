@@ -28,6 +28,7 @@ def test_go_rule02():
     a[3] = "NOT"
     a[4] = "GO:0005515"
     a[8] = "F"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule02().test(assoc, assocparser.AssocParserConfig())
@@ -48,6 +49,8 @@ def test_go_rule_06():
     a[4] = "GO:0005575" # Cellular component
     a[6] = "HEP"
     a[8] = "C"
+    a[13] = "20200303"
+
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule06().test(assoc, assocparser.AssocParserConfig(ontology=ontology))
@@ -68,6 +71,7 @@ def test_go_rule_07():
     a[4] = "GO:0003824"
     a[6] = "IPI"
     a[8] = "F"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule07().test(assoc, assocparser.AssocParserConfig(ontology=ontology))
@@ -88,6 +92,7 @@ def test_go_rule08():
     a[4] = "GO:0006810" # do not annotate
     a[6] = "IEA"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule08().test(assoc, assocparser.AssocParserConfig(ontology=ontology))
@@ -118,6 +123,7 @@ def test_go_rule11():
     a[4] = "GO:0003674"
     a[6] = "ND"
     a[8] = "F"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule11().test(assoc, assocparser.AssocParserConfig())
@@ -129,6 +135,7 @@ def test_go_rule11():
     a[4] = "GO:1234567"
     a[6] = "ND"
     a[8] = "F"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule11().test(assoc, assocparser.AssocParserConfig())
@@ -139,6 +146,7 @@ def test_go_rule11():
     a[4] = "GO:1234567"
     a[6] = "IEA"
     a[8] = "F"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule11().test(assoc, assocparser.AssocParserConfig())
@@ -150,6 +158,7 @@ def test_go_rule11():
     a[4] = "GO:0003674"
     a[6] = "IEA"
     a[8] = "F"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule11().test(assoc, assocparser.AssocParserConfig())
@@ -189,6 +198,7 @@ def test_go_rules_15():
     a[6] = "IEA"
     a[8] = "P"
     a[12] = "taxon:123|taxon:456"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule15().test(assoc, assocparser.AssocParserConfig(ontology=ontology))
@@ -212,6 +222,7 @@ def test_go_rule_16():
     a[6] = "IC"
     a[7] = "BLAH:12345"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule16().test(assoc, assocparser.AssocParserConfig())
@@ -250,6 +261,7 @@ def test_go_rule_17():
     a[6] = "IDA"
     a[7] = "BLAH:12345"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule17().test(assoc, assocparser.AssocParserConfig())
@@ -267,6 +279,7 @@ def test_go_rule_18():
     a[6] = "IPI"
     a[7] = ""
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
     assoc.evidence.with_support_from = []
 
@@ -287,6 +300,7 @@ def test_go_rule26():
     a = make_annotation("GO:BLAHBLAH", "IBA")
     a[8] = "P"
     a[3] = ""
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
     # Pass due to IBA in paint
     test_result = qc.GoRule26().test(assoc, config)
@@ -299,6 +313,7 @@ def test_go_rule26():
     a = make_annotation("GO:BLAHBLAH", "IPI")
     a[8] = "P"
     a[3] = ""
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
     # Pass due to non IBA
     test_result = qc.GoRule26().test(assoc, config)
@@ -311,6 +326,7 @@ def test_go_rule26():
     a = make_annotation("GO:BLAHBLAH", "IBA")
     a[8] = "P"
     a[3] = ""
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
     # Pass due to non IBA
     test_result = qc.GoRule26().test(assoc, config)
@@ -326,6 +342,7 @@ def test_go_rule28():
     a[3] = ""
     a[4] = "GO:0005975"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule28().test(assoc, config)
@@ -337,6 +354,7 @@ def test_go_rule28():
     a[3] = ""
     a[4] = "GO:0005975"
     a[8] = "C"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule28().test(assoc, config)
@@ -376,6 +394,7 @@ def test_gorule30():
     a[3] = ""
     a[5] = "GO_REF:0000033"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     config = assocparser.AssocParserConfig(
@@ -409,6 +428,7 @@ def test_gorule37():
     a[6] = "IBA"
     a[5] = "PMID:21873635"
     a[8] = "P"
+    a[13] = "20200303"
     a[14] = "GO_Central"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -435,6 +455,7 @@ def test_gorule39():
     a[3] = ""
     a[4] = "GO:0032991"
     a[8] = "C"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule39().test(assoc, assocparser.AssocParserConfig())
@@ -454,6 +475,7 @@ def test_gorule42():
     a[3] = "NOT"
     a[6] = "IKR"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule42().test(assoc, assocparser.AssocParserConfig())
@@ -474,6 +496,7 @@ def test_gorule43():
     a[5] = "GO_REF:0000024"
     a[6] = "ISO"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     config = assocparser.AssocParserConfig(
@@ -508,6 +531,7 @@ def test_gorule46():
     a[4] = "GO:0051260" # Self-binding, yes
     a[7] = "PomBase:SPAC25B8.17"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule46().test(assoc, config)
@@ -539,6 +563,7 @@ def test_gorule50():
     a[6] = "ISS"
     a[7] = "HELLO:123"
     a[8] = "P"
+    a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
     test_result = qc.GoRule50().test(assoc, assocparser.AssocParserConfig())
@@ -555,20 +580,23 @@ def test_gorule50():
     assert test_result.result_type == qc.ResultType.PASS
 
 def test_gorule57():
-    a = ["blah"] * 12
+    a = ["blah"] * 13
     a[0] = "HELLO"
     a[1] = "123"
-    a[2] = "enables"
+    a[2] = "contributes_to"
     a[3] = "GO:0003674"
     a[4] = "PMID:12345"
     a[5] = "ECO:0000501"
     a[7] = "taxon:2"
-    # a[8] = "P"
+    a[8] = "20200303"
     a[9] = "MGI"
     a[10] = ""
     a[11] = ""
 
+    res = gpadparser.to_association(a)
+    print(json.dumps(res.report.to_report_json(), indent=4))
     assoc = gpadparser.to_association(a).associations[0]
+
 
     # Look at evidence_code, reference, annotation_properties
     config = assocparser.AssocParserConfig(group_metadata={
@@ -616,6 +644,7 @@ def test_gorule58():
     a[9] = "MGI"
     a[10] = ""
     a[11] = ""
+    a[13] = "20200303"
     a[14] = "GO_Central"
     a[15] = "has_input(GO:0003674),occurs_in(CL:123456)"
 
