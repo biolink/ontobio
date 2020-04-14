@@ -199,12 +199,6 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
         goid = valid_goid
 
-        date = self._normalize_gaf_date(date, split_line)
-        if date == None:
-            return assocparser.ParseResult(line, [], True)
-
-        vals[13] = date
-
         ecomap = self.config.ecomap
         if ecomap is not None:
             if ecomap.coderef_to_ecoclass(evidence, reference) is None:
@@ -393,6 +387,10 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
 
     taxon = gaf_line[12].split("|")
     taxon_curie = taxon[0].replace("taxon", "NCBITaxon")
+    date = assocparser._normalize_gaf_date(gaf_line[13], report, taxon_curie, source_line)
+    if date is None:
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
     interacting_taxon = taxon[1].replace("taxon", "NCBITaxon") if len(taxon) == 2 else None
     subject_curie = "{db}:{id}".format(db=gaf_line[0], id=gaf_line[1])
     subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon_curie)
@@ -449,7 +447,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         subject_extensions=subject_extensions,
         object_extensions=object_extensions,
         provided_by=gaf_line[14],
-        date=gaf_line[13],
+        date=date,
         properties={})
 
     return assocparser.ParseResult(source_line, [a], False, report=report)

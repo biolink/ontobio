@@ -372,8 +372,9 @@ class GoRule28(RepairRule):
 class GoRule29(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000029", "All IEAs over a year old are removed", FailMode.HARD)
+        super().__init__("GORULE:0000029", "All IEAs over a year are warned, all IEAs over two are removed", FailMode.HARD)
         self.one_year = datetime.timedelta(days=365)
+        self.two_years = datetime.timedelta(days=730)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = annotation.evidence.type
@@ -381,14 +382,22 @@ class GoRule29(GoRule):
 
         now = datetime.datetime.today()
 
-        time_compare_delta = self.one_year
-        if group is not None and group == "ecocyc":
-            time_compare_delta = datetime.timedelta(days=2*365)
+        time_compare_delta_short = self.one_year
+        time_compare_delta_long = self.two_years
+        time_diff = now - datetime.datetime(int(date[0:4]),
+                                            int(date[4:6]),
+                                            int(date[6:8]),
+                                            0, 0, 0, 0)
 
         iea = "ECO:0000501"
-        fails = (evidence == iea and now - datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0) > time_compare_delta)
-        return self._result(not fails)
+        if evidence == iea:
+            if time_diff > time_compare_delta_long:
+                return self._result(False)
+            elif time_diff > time_compare_delta_short:
+                return TestResult(ResultType.WARNING, self.title, annotation)
 
+        ## Default results we we get here.
+        return self._result(True)
 
 class GoRule30(GoRule):
 
