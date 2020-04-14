@@ -84,10 +84,12 @@ class GoAssociation:
     def to_gaf_tsv(self) -> List:
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
         db, subid = self.subject.id.split(":", maxsplit=1)
-        qualifier = "|".join(self.qualifiers)
+        qualifiers = []
+        qualifiers.extend(self.qualifiers)
         if self.negated:
-            qualifier = "NOT|{}".format(qualifier)
+            qualifiers.append("NOT")
 
+        qualifier = "|".join(qualifiers)
         taxon = self.object.taxon.replace("NCBITaxon", "taxon")
         if self.interacting_taxon:
             taxon = "{taxon}|{interacting}".format(taxon=taxon, interacting=self.interacting_taxon)
@@ -114,15 +116,18 @@ class GoAssociation:
 
     def to_gpad_tsv(self) -> List:
         db, subid = self.subject.id.split(":", maxsplit=1)
-        qualifiers = "|".join(self.qualifiers)
+        qualifiers = []
+        qualifiers.extend(self.qualifiers)
         if self.negated:
-            qualifiers = "NOT|{}".format(qualifiers)
+            qualifiers.append("NOT")
+
+        qualifier = "|".join(qualifiers)
 
         props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties.items()]
         return [
             db,
             subid,
-            qualifiers,
+            qualifier,
             self.object.id,
             "|".join(self.evidence.has_supporting_reference),
             self.evidence.type,

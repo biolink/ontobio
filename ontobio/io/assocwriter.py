@@ -40,7 +40,7 @@ class AssocWriter():
             self.file.write(line+"\n")
         else:
             print(line)
-            
+
     def tsv_as_string(self, vals) -> str:
         return "\t".join([_str(v) for v in vals])
 
@@ -86,7 +86,7 @@ class AssocWriter():
             return "taxon:{num}".format(num=taxon_id)
 
         return taxon
-        
+
     def as_tsv(self, assoc) -> List[str]:
         """
         Transform a single association to a string line.
