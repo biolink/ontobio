@@ -1,0 +1,11 @@
+!gaf-version: 2.2
+!Project_name: Fake
+MGI	MGI:88276	Ctnnb1	acts_upstream_of	GO:1904948	MGI:MGI:3836885|PMID:19122665	IMP		P	catenin (cadherin associated protein), beta 1	beta catenin|beta-catenin|Catnb	protein	taxon:10090	20160209	ParkinsonsUK-UCL	occurs_in(EMAPA:16975)
+MGI	SPCC736.14	dis1	colocalizes_with	GO:0035371	PAINT_REF:12609	IMP	PANTHER:PTN000288762	C	TOG/XMAP14 microtubule-associated protein Dis1	UniProtKB:Q09933|PTN000288823	protein	NCBITaxon:4896	20161005	GO_Central
+PomBase	SPAC1296.02	cox4	contributes_to	GO:0004129	PAINT_REF:10122	ISO	PANTHER:PTN000012880	F	cytochrome c oxidase subunit IV (predicted)	UniProtKB:P79010|PTN000012940	protein	NCBITaxon:4896	20160819	GO_Central
+PomBase	SPAC25B8.17	ypf1	involved_in	GO:1990578	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase
+PomBase	SPBC1711.04	mtd1	NOT	GO:0004488	PAINT_REF:10025	ISO	PANTHER:PTN000002254	F	methylenetetrahydrofolate reductase Mtd1 (predicted)	UniProtKB:Q9P786|PTN000002263	protein	NCBITaxon:4896	20120921	GO_Central
+PomBase	SPBC1711.04	mtd1	NOT|involved_in	GO:0004477	PAINT_REF:10025	IMP	PANTHER:PTN000002254	F	methylenetetrahydrofolate reductase Mtd1 (predicted)	UniProtKB:Q9P786|PTN000002263	protein	NCBITaxon:4896	20120921	GO_Central
+PomBase	SPBC1703.04	mlh1	acts_upstream_of_negative_effect	GO:0000795	PAINT_REF:10073	IC	GO:1234567|PANTHER:PTN000008207	C	MutL family protein Mlh1 (predicted)	UniProtKB:Q9P7W6|PTN000008215	protein	NCBITaxon:4896	20120921	GO_Central
+PomBase	SPCC736.14	dis1	colocalizes with	GO:0035371	PAINT_REF:12609	IMP	PANTHER:PTN000288762	C	TOG/XMAP14 microtubule-associated protein Dis1	UniProtKB:Q09933|PTN000288823	protein	NCBITaxon:4896	20161005	GO_Central
+PomBase	SPAC1296.02	cox4	contributes_to|enables	GO:0004129	PAINT_REF:10122	ISO	PANTHER:PTN000012880	F	cytochrome c oxidase subunit IV (predicted)	UniProtKB:P79010|PTN000012940	protein	NCBITaxon:4896	20160819	GO_Central

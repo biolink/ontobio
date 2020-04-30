@@ -308,6 +308,8 @@ class ParseResult:
 
 # TODO avoid using names that are builtin python: file, id
 
+parser_version_regex = re.compile(r"!([\w]+)-version:[\s]*([\d]+\.[\d]+(\.[\d]+)?)")
+
 class AssocParser(object):
     """
     Abstract superclass of all association parser classes
