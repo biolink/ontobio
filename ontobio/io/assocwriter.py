@@ -176,7 +176,27 @@ class GpadWriter(AssocWriter):
 
 class GafWriter(AssocWriter):
     """
-    Writes Associations in GAF format. Not yet implemented
+    Writes Associations in GAF format.
+
+    This converts an association dictionary object as produced in GafParser or
+    GpadParser into a GAF line.
+
+    The GAF Writer now assumes that it is writing out GAF version 2.1 style
+    annotations. The version can be set when creating a new GafWriter to 2.2
+    with `version=2.2`. If any version other than 2.1 or 2.2, GafWriter will
+    default to 2.1.
+
+    The only difference in 2.1 and 2.2 are how qualifiers (column 4) are handled.
+    GAF 2.1 allows empty or only `NOT` qualifier values, and only allows
+    `colocalizes_with` and `contributes_to` as qualifer values. However in 2.2
+    qualifier must *not* be empty and cannot have only `NOT` as it's a modifier
+    on existing qualifers. The set of allowed qualifiers in 2.2 is also expanded.
+
+    So if there's a mismatch between converting from an annotation and a GAF
+    version then that annotation is just skipped and not written out with an
+    error message displayed. Mismatch occurances of this kind would appear if
+    the incoming annotation has a qualifier in the 2.2 set, but 2.1 is being
+    written out, or if the qualifier is empty and 2.2 is being written.
     """
     def __init__(self, file=None, source=None, version="2.1"):
         self.file = file
