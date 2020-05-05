@@ -196,6 +196,26 @@ def test_qualifiers_gaf():
     assert len(list(filter(lambda e: e["obj"] == "involved_in", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
 
 
+def test_qualifiers_gaf_2_2():
+
+    p = GafParser()
+
+    assocs = p.parse(open("tests/resources/test-qualifiers-2.2.gaf"), skipheader=True)
+    # NOT by itself is not allowed
+    assert len(list(filter(lambda e: e["obj"] == "NOT", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
+    assert len(list(filter(lambda e: e["obj"] == "contributes_to|enables", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
+
+
+    assert len([a for a in assocs if "acts_upstream_of_negative_effect" in a["qualifiers"]]) == 1
+
+def test_default_gaf_version():
+    p = GafParser()
+
+    assocs = p.parse(open("tests/resources/test-qualifiers-no-version.gaf"), skipheader=True)
+
+    assert p.version == "2.1"
+
+
 def parse_with2(f, p):
     ont = OntologyFactory().create(ONT)
 
