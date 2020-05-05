@@ -443,7 +443,7 @@ class GafParser(assocparser.AssocParser):
             'subject': subject,
             'object': object,
             'negated': negated,
-            'qualifiers': other_qualifiers,
+            'qualifiers': other_qualifiers, # should be either 0 or 1 item
             'aspect': aspect,
             'relation': {
                 'id': relation

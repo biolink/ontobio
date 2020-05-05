@@ -306,9 +306,11 @@ class ParseResult:
     report: Optional[Report] = None
     evidence_used: List[str] = None
 
+
 # TODO avoid using names that are builtin python: file, id
 
 parser_version_regex = re.compile(r"!([\w]+)-version:[\s]*([\d]+\.[\d]+(\.[\d]+)?)")
+
 
 class AssocParser(object):
     """
