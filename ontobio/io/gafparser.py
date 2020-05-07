@@ -2,7 +2,8 @@ import re
 import logging
 import json
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional
+from dataclasses import dataclass
 
 from prefixcommons import curie_util
 
@@ -15,10 +16,96 @@ from ontobio.model import association
 from ontobio.ecomap import EcoMap
 from ontobio.rdfgen import relations
 
-
 import click
 
 logger = logging.getLogger(__name__)
+
+@dataclass
+class ValidateResult:
+    valid: bool
+    original: str
+    parsed: Optional
+    message: str
+
+@dataclass
+class ColumnValidator:
+
+    def cardinality(self, field: str, entity: str, minimum: int, maximum: Optional[int]) -> ValidateResult:
+        items = [i for i in entity.split("|") if i != ""]
+        if len(items) < minimum:
+            return ValidateResult(False, entity, None, "{} must have at least {} items".format(field, minimum))
+        elif maximum is not None and len(items) > maximum:
+            return ValidateResult(False, entity, None, "{} cannot have more than {} items".format(field, maximum))
+
+        return ValidateResult(True, entity, items, "")
+
+    def validate(self, entity) -> ValidateResult:
+        return NotImplemented
+
+@dataclass
+class Qualifier2_1(ColumnValidator):
+    valid_qualifiers = {
+        "contributes_to",
+        "colocalizes_with",
+    }
+
+    def validate(self, entity) -> ValidateResult:
+        result = self.cardinality("Qualifier", entity, 0, 2)
+        if not result.valid:
+            return result
+
+        invalid_non_not = [q for q in result.parsed if q not in self.valid_qualifiers and q != "NOT"]
+        if invalid_non_not:
+            result.valid = False
+            result.parsed = None
+            result.message = "Invalid Qualifiers: {}".format(", ".join(invalid_non_not))
+
+        return result
+
+@dataclass
+class Qualifier2_2(ColumnValidator):
+    valid_qualifiers = {
+        "enables",
+        "contributes_to",
+        "involved_in",
+        "acts_upstream_of",
+        "acts_upstream_of_positive_effect",
+        "acts_upstream_of_negative_effect",
+        "acts_upstream_of_or_within",
+        "acts_upstream_of_or_within_positive_effect",
+        "acts_upstream_of_or_within_negative_effect",
+        "located_in",
+        "part_of",
+        "is_active_in",
+        "colocalizes_with"
+    }
+
+    def validate(self, entity) -> ValidateResult:
+        result = self.cardinality("Qualifier", entity, 1, 2)
+        if not result.valid:
+            return result
+
+        invalid_non_not = [q for q in result.parsed if q not in self.valid_qualifiers and q != "NOT"]
+        if invalid_non_not:
+            result.valid = False
+            result.parsed = None
+            result.message = "Invalid Qualifiers: {}".format(", ".join(invalid_non_not))
+            return result
+
+        if "NOT" in result.parsed and len(result.parsed) == 1:
+            # If not is the only elemnent, then it's wrong
+            result.valid = False
+            result.parsed = None
+            result.message = "`NOT` is not a Qualifier and so cannot exist by itself"
+            return result
+
+        if len(result.parsed) == 2 and "NOT" not in result.parsed:
+            result.valid = False
+            result.parsed = None
+            result.message = "There can be only one relation entry for the Qualifier field"
+            return result
+
+        return result
 
 
 class GafParser(assocparser.AssocParser):
@@ -37,6 +124,9 @@ class GafParser(assocparser.AssocParser):
         """
         self.config = config
         self.group = group
+        self.version = None
+        self.default_version = "2.1"
+
         if config is None:
             self.config = assocparser.AssocParserConfig()
         self.report = assocparser.Report(group=group, dataset=dataset, config=self.config)
@@ -55,6 +145,18 @@ class GafParser(assocparser.AssocParser):
                     }
 
                 print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
+
+    def gaf_version(self) -> str:
+        if self.version:
+            return self.version
+        else:
+            self.default_version
+
+    def qualifier_parser(self) -> ColumnValidator:
+        if self.gaf_version() == "2.2":
+            return Qualifier2_2()
+
+        return Qualifier2_1()
 
     def skim(self, file):
         file = self._ensure_file(file)
@@ -109,7 +211,25 @@ class GafParser(assocparser.AssocParser):
             return parsed
 
         if self.is_header(line):
+            # Save off version info here
+            if self.version is None:
+                # We are still looking
+                parsed = assocparser.parser_version_regex.findall(line)
+                if len(parsed) == 1:
+                    filetype, version, _ = parsed[0]
+                    if version == "2.2":
+                        logger.info("Detected GAF version 2.2")
+                        self.version = version
+                    else:
+                        logger.info("Detected GAF version {}, so using 2.1".format(version))
+                        self.version = self.default_version
+
             return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
+
+        # At this point, we should have gone through all the header, and a version number should be established
+        if self.version is None:
+            logger.warning("No version number found for this file so we will assum GAF version: {}".format(self.default_version))
+            self.version = self.default_version
 
         vals = [el.strip() for el in line.split("\t")]
 
@@ -117,7 +237,7 @@ class GafParser(assocparser.AssocParser):
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
 
-        parsed = to_association(list(vals), report=self.report)
+        parsed = to_association(list(vals), report=self.report, qualifier_parser=self.qualifier_parser())
         if parsed.associations == []:
             return parsed
 
@@ -174,7 +294,7 @@ class GafParser(assocparser.AssocParser):
 
         ## --
         ## db + db_object_id. CARD=1
-        ## --
+        ## --assigned_by
         id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(id, split_line, allowed_ids=self.config.entity_idspaces):
 
@@ -198,12 +318,6 @@ class GafParser(assocparser.AssocParser):
         if valid_goid == None:
             return assocparser.ParseResult(line, [], True)
         goid = valid_goid
-
-        date = self._normalize_gaf_date(date, split_line)
-        if date == None:
-            return assocparser.ParseResult(line, [], True)
-
-        vals[13] = date
 
         ecomap = self.config.ecomap
         if ecomap is not None:
@@ -329,7 +443,7 @@ class GafParser(assocparser.AssocParser):
             'subject': subject,
             'object': object,
             'negated': negated,
-            'qualifiers': other_qualifiers,
+            'qualifiers': other_qualifiers, # should be either 0 or 1 item
             'aspect': aspect,
             'relation': {
                 'id': relation
@@ -347,8 +461,8 @@ class GafParser(assocparser.AssocParser):
 ecomap = EcoMap()
 ecomap.mappings()
 relation_tuple = re.compile(r'(.+)\((.+)\)')
-allowed_qualifiers = set(["contributes_to", "colocalizes_with"])
-def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown") -> assocparser.ParseResult:
+
+def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown", qualifier_parser=Qualifier2_1()) -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report
     source_line = "\t".join(gaf_line)
 
@@ -393,18 +507,22 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
 
     taxon = gaf_line[12].split("|")
     taxon_curie = taxon[0].replace("taxon", "NCBITaxon")
+    date = assocparser._normalize_gaf_date(gaf_line[13], report, taxon_curie, source_line)
+    if date is None:
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
     interacting_taxon = taxon[1].replace("taxon", "NCBITaxon") if len(taxon) == 2 else None
     subject_curie = "{db}:{id}".format(db=gaf_line[0], id=gaf_line[1])
     subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon_curie)
     aspect = gaf_line[8]
     negated, relation, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
 
+    # column 4 is qualifiers -> index 3
     # For allowed, see http://geneontology.org/docs/go-annotations/#annotation-qualifiers
-    for q in qualifiers:
-
-        if q not in allowed_qualifiers:
-            report.error(source_line, Report.INVALID_QUALIFIER, q, "Qualifiers must be `contributes_to`, `colocalizes_with`, or `NOT`", taxon=gaf_line[TAXON_INDEX], rule=1)
-            return assocparser.ParseResult(source_line, [], True, report=report)
+    parsed_qualifiers = qualifier_parser.validate(gaf_line[3])
+    if not parsed_qualifiers.valid:
+        report.error(source_line, Report.INVALID_QUALIFIER, parsed_qualifiers.original, parsed_qualifiers.message, taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
 
     object = association.Term(gaf_line[4], taxon_curie)
     evidence = association.Evidence(
@@ -433,7 +551,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     object_extensions = association.ExtensionExpression(conjunctions)
     looked_up_rel = relations.lookup_label(relation)
     if looked_up_rel is None:
-        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation, "Qualifer must be \"colocalizes_with\", \"contributes_to\", or \"NOT\"", taxon=taxon, rule=1)
+        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation, "Could not find CURIE for relation `{}`".format(relation), taxon=taxon, rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     a = association.GoAssociation(
@@ -449,7 +567,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         subject_extensions=subject_extensions,
         object_extensions=object_extensions,
         provided_by=gaf_line[14],
-        date=gaf_line[13],
+        date=date,
         properties={})
 
     return assocparser.ParseResult(source_line, [a], False, report=report)

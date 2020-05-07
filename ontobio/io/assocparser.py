@@ -306,7 +306,11 @@ class ParseResult:
     report: Optional[Report] = None
     evidence_used: List[str] = None
 
+
 # TODO avoid using names that are builtin python: file, id
+
+parser_version_regex = re.compile(r"!([\w]+)-version:[\s]*([\d]+\.[\d]+(\.[\d]+)?)")
+
 
 class AssocParser(object):
     """
@@ -533,27 +537,6 @@ class AssocParser(object):
 
         return id
 
-    def _normalize_gaf_date(self, date, line: SplitLine):
-        if date is None or date == "":
-            self.report.warning(line.line, Report.INVALID_DATE, date, "GORULE:0000001: empty",
-                taxon=line.taxon, rule=1)
-            return date
-
-        # We check int(date)
-        if len(date) == 8 and date.isdigit():
-            d = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0)
-        else:
-            self.report.warning(line.line, Report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYYMMDD, got: {}".format(date),
-                taxon=line.taxon, rule=1)
-            try:
-                d = dateutil.parser.parse(date)
-            except:
-                self.report.error(line.line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date),
-                    taxon=line.taxon, rule=1)
-                return None
-
-        return d.strftime("%Y%m%d")
-
     def _validate_symbol(self, symbol, line: SplitLine):
         if symbol is None or symbol == "":
             self.report.warning(line.line, Report.INVALID_SYMBOL, symbol, "GORULE:0000027: symbol is empty",
@@ -712,6 +695,29 @@ class AssocParser(object):
         else:
             self.report.error(line.line, Report.EXTENSION_SYNTAX_ERROR, x, msg="GORULE:0000027: ID not valid", rule=27)
             return None
+
+
+
+def _normalize_gaf_date(date, report, taxon, line):
+    if date is None or date == "":
+        report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: empty",
+            taxon=taxon, rule=1)
+        return date
+
+    # We check int(date)
+    if len(date) == 8 and date.isdigit():
+        d = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0)
+    else:
+        report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYYMMDD, got: {}".format(date),
+            taxon=taxon, rule=1)
+        try:
+            d = dateutil.parser.parse(date)
+        except:
+            report.error(line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date),
+                taxon=taxon, rule=1)
+            return None
+
+    return d.strftime("%Y%m%d")
 
 ## we generate both qualifier and relation field
 ## Returns: (negated, relation, other_qualifiers)

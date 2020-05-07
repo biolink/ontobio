@@ -174,6 +174,20 @@ def test_full_taxon_empty_string_interacting_taxon():
     taxon_field = writer._full_taxon_field("taxon:12345", "")
     assert "taxon:12345" == taxon_field
 
+def test_negated_qualifers():
+    gaf = ["PomBase", "SPBC11B10.09", "cdc2", "NOT", "GO:0007275", "PMID:21873635", "ISO", "PANTHER:PTN000623979|TAIR:locus:2099478", "P", "Cyclin-dependent kinase 1", "UniProtKB:P04551|PTN000624043", "protein", "taxon:284812", "20170228", "GO_Central", "", ""]
+    parser = gafparser.GafParser()
+    result = parser.parse_line("\t".join(gaf))
+    writer = assocwriter.GafWriter()
+    parsed = writer.as_tsv(result.associations[0])
+    print(parsed)
+    assert parsed[3] == "NOT"
+
+    writer = assocwriter.GpadWriter()
+    parsed = writer.as_tsv(result.associations[0])
+    print(parsed)
+    assert parsed[2] == "NOT|involved_in"
+
 def test_roundtrip():
     """
     Start with a line, parse it, then write it. The beginning line should be the same as what was written.
