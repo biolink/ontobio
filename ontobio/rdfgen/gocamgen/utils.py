@@ -1,6 +1,7 @@
 from os import path
 import json
 import logging
+import requests
 from ontobio.rdfgen.assoc_rdfgen import prefix_context
 from ontobio.rdfgen.gocamgen.errors import ShexException
 from prefixcommons.curie_util import expand_uri, contract_uri
@@ -37,34 +38,35 @@ class ShexHelper:
         self.shapes = {}
         shapes_to_load = ["ProteinContainingComplex", "MolecularFunction", "CellularComponent", "BiologicalProcess",
                           "AnatomicalEntity", "InformationBiomacromolecule"]
-        # https://raw.githubusercontent.com/geneontology/go-shapes/master/shapes/go-cam-shapes.shex
-        shex_file = "resources/go-cam-shapes.shex"
-        with open(shex_file) as sf:
-            shex_json_str = generate_shexj.parse(sf.read())._as_json_dumps()
-            full_shex_ds = json.loads(shex_json_str)
-            for shape in full_shex_ds["shapes"]:
-                shape_name = path.basename(shape["id"])
-                if shape_name in shapes_to_load:
-                    self.shapes[shape_name] = {}
-                    shexps = shape.get('shapeExprs')
-                    if shexps is None:
-                        shexps = [shape]
-                    for shexp in shexps:
-                        if isinstance(shexp, dict) and 'expression' in shexp:
-                            for exp in shexp['expression']['expressions']:
-                                if exp['type'] == 'TripleConstraint':
-                                    predicate = contract_uri_wrapper(exp['predicate'])[0]
-                                    self.shapes[shape_name][predicate] = []
-                                    values = exp['valueExpr']
-                                    if isinstance(values, dict):
-                                        values = values['shapeExprs']
-                                    else:
-                                        values = [values]
-                                    for v in values:
-                                        # path.basename(v) - Gets the Shape name minus the URL prefix
-                                        # E.g. -
-                                        self.shapes[shape_name][predicate].append(path.basename(v))
-                    del self.shapes[shape_name]["rdf:type"]
+        
+        shex_url = "https://raw.githubusercontent.com/geneontology/go-shapes/master/shapes/go-cam-shapes.shex"
+        shex_response = requests.get(shex_url)
+        shex_raw = shex_response.text
+        shex_json_str = generate_shexj.parse(shex_raw)._as_json_dumps()
+        full_shex_ds = json.loads(shex_json_str)
+        for shape in full_shex_ds["shapes"]:
+            shape_name = path.basename(shape["id"])
+            if shape_name in shapes_to_load:
+                self.shapes[shape_name] = {}
+                shexps = shape.get('shapeExprs')
+                if shexps is None:
+                    shexps = [shape]
+                for shexp in shexps:
+                    if isinstance(shexp, dict) and 'expression' in shexp:
+                        for exp in shexp['expression']['expressions']:
+                            if exp['type'] == 'TripleConstraint':
+                                predicate = contract_uri_wrapper(exp['predicate'])[0]
+                                self.shapes[shape_name][predicate] = []
+                                values = exp['valueExpr']
+                                if isinstance(values, dict):
+                                    values = values['shapeExprs']
+                                else:
+                                    values = [values]
+                                for v in values:
+                                    # path.basename(v) - Gets the Shape name minus the URL prefix
+                                    # E.g. -
+                                    self.shapes[shape_name][predicate].append(path.basename(v))
+                del self.shapes[shape_name]["rdf:type"]
         # TODO: Get this into ShEx spec or delete this when we decide against it
         self.shapes["CellularComponent"]["BFO:0000050"].append("CellularComponent")  # CC-part_of->CC
 
