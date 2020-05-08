@@ -82,6 +82,10 @@ HAS_REGULATION_TARGET_RELATIONS = {
     # WB:WBGene00013591 involved_in GO:0042594
     "has_regulation_target": ""
 }
+REGULATES_CHAIN_RELATIONS = [
+    "regulates_o_occurs_in",
+    "regulates_o_acts_on_population_of"
+]
 
 
 SHEX_HELPER = ShexHelper()
@@ -177,8 +181,8 @@ class GoCamModel():
         "located_in": "RO:0001025",
     }
 
-    def __init__(self, modeltitle, connection_relations=None):
-        cam_writer = CamTurtleRdfWriter(modeltitle)
+    def __init__(self, modeltitle, connection_relations=None, store=None):
+        cam_writer = CamTurtleRdfWriter(modeltitle, store=store)
         self.writer = AnnotonCamRdfTransform(cam_writer)
         self.modeltitle = modeltitle
         self.classes = []
@@ -191,11 +195,11 @@ class GoCamModel():
             self.connection_relations = connection_relations
         self.declare_properties()
 
-    def write(self, filename):
+    def write(self, filename, format='ttl'):
         if path.splitext(filename)[1] != ".ttl":
             filename += ".ttl"
         with open(filename, 'wb') as f:
-            self.writer.writer.serialize(destination=f)
+            self.writer.writer.serialize(destination=f, format=format)
 
     def declare_properties(self):
         # AnnotionProperty
@@ -397,8 +401,8 @@ class GoCamModel():
 class AssocGoCamModel(GoCamModel):
     ENABLES_O_RELATION_LOOKUP = {}
 
-    def __init__(self, modeltitle, assocs, connection_relations=None):
-        GoCamModel.__init__(self, modeltitle, connection_relations)
+    def __init__(self, modeltitle, assocs, connection_relations=None, store=None):
+        GoCamModel.__init__(self, modeltitle, connection_relations, store)
         self.associations = CollapsedAssociationSet(assocs)
         self.ontology = None
         self.ro_ontology = None
@@ -428,6 +432,8 @@ class AssocGoCamModel(GoCamModel):
                 # For annots w/o extensions, this is where we write subgraph to model
                 annot_subgraph.write_to_model(self, evidences)
             else:
+                aspect = self.go_aspector.go_aspect(term)
+
                 # TODO: Handle deduping in collapsed_assoc - need access to extensions_mapper.dedupe_extensions
                 annotation_extensions = dedupe_extensions(annotation_extensions)
 
@@ -521,56 +527,74 @@ class AssocGoCamModel(GoCamModel):
                                 # Need to find what mf we're talking about
                                 anchor_n = annot_subgraph.get_anchor()
                                 annot_subgraph.add_edge(anchor_n, INPUT_RELATIONS[ext_relation], ext_target_n)
+                            elif ext_relation in REGULATES_CHAIN_RELATIONS:
+                                # Get target MF from primary term (BP) e.g. GO:0007346 regulates some mitotic cell cycle
+                                regulates_rel, regulated_term = self.get_rel_and_term_in_logical_definitions(term)
+                                if regulates_rel:
+                                    regulated_term_n = annot_subgraph.add_instance_of_class(regulated_term)
+                                    anchor_n = annot_subgraph.get_anchor()
+                                    annot_subgraph.add_edge(anchor_n, regulates_rel, regulated_term_n)
+                                    ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
+                                    # Need to derive chained relation (e.g. "occurs_in") from this ext rel. Just replace("regulates_o_", "")?
+                                    chained_rel_label = ext_relation.replace("regulates_o_", "")
+                                    chained_rel = INPUT_RELATIONS.get(chained_rel_label)
+                                    if chained_rel is None:
+                                        chained_rel = self.translate_relation_to_ro(chained_rel_label)
+                                    annot_subgraph.add_edge(regulated_term_n, chained_rel, ext_target_n)
+                                else:
+                                    logger.warning("Couldn't get regulates relation from LD of: {}".format(term))
                             elif ext_relation in HAS_REGULATION_TARGET_RELATIONS:
-                                buckets = has_regulation_target_bucket(self.ontology, term)
-                                if len(buckets) > 0:
-                                    bucket = buckets[0]  # Or express all buckets?
-                                    # Four buckets
-                                    if bucket in ["a", "d"]:
-                                        regulates_rel, regulated_mf = self.get_rel_and_term_in_logical_definitions(term)
-                                        if regulates_rel and regulated_mf:
-                                            # [GP-A]<-enabled_by-[root MF]-regulates->[molecular function Z]-enabled_by->[GP-B]
-                                            ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
-                                            regulated_mf_n = annot_subgraph.add_instance_of_class(regulated_mf)
-                                            annot_subgraph.add_edge(regulated_mf_n, ro.enabled_by, ext_target_n)
-                                            anchor_n = annot_subgraph.get_anchor()
-                                            annot_subgraph.add_edge(anchor_n, regulates_rel, regulated_mf_n)
-                                            # TODO: Suppress/delete (GP-A)<-enabled_by-(root MF)-part_of->(term) aka involved_in_translated
-                                            # Remove (anchor_uri, None, term)
-                                            # Is this anchor_uri always going to the root_mf?
-                                            # Will the term individual be used for anything else?
-                                            #   Other comma-delimited extensions on same annotation?
-                                            # has_during? occurs_in?
-                                            # WB:WBGene00001173 GO:0051343 ['has_regulation_target', 'occurs_in'] ['a']
-                                            # WB:WBGene00006652 GO:0045944 ['has_regulation_target', 'occurs_in'] ['b']
-                                            # WB:WBGene00003639 GO:0036003 ['happens_during', 'has_regulation_target'] ['b']
-                                            # Other comma-delimited extensions (e.g. happens_during, has_input) need this triple?
-                                            # WB:WBGene00002335 GO:1902685 ['has_regulation_target', 'occurs_in'] ['d']
-                                        else:
-                                            logger.warning("Couldn't get regulates relation and/or regulated term from LD of: {}".format(term))
-                                    elif bucket in ["b", "c"]:
-                                        regulates_rel, regulated_term = self.get_rel_and_term_in_logical_definitions(term)
-                                        if regulates_rel:
-                                            # find 'Y subPropertyOf regulates_rel' in RO where Y will be `causally
-                                            # upstream of` relation
-                                            # Ex. GO:0045944 -> RO:0002213 -> RO:0002304
-                                            # edges(RO:0002213) only returns subProperties. Need superProperties
-                                            # Gettin super properties
-                                            causally_upstream_relation = self.get_causally_upstream_relation(regulates_rel)
-                                            # GP-A<-enabled_by-[root MF]-part_of->[regulation of Z]-has_input->GP-B,-causally upstream of (positive/negative effect)->[root MF]-enabled_by->GP-B
-                                            ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
-                                            anchor_n = annot_subgraph.get_anchor()  # TODO: Gotta find MF. MF no longer anchor if primary term is BP
-                                            annot_subgraph.add_edge(anchor_n, INPUT_RELATIONS["has input"], ext_target_n)
-                                            root_mf_b_n = annot_subgraph.add_instance_of_class(upt.molecular_function)
-                                            annot_subgraph.add_edge(anchor_n, causally_upstream_relation, root_mf_b_n)
-                                            annot_subgraph.add_edge(root_mf_b_n, ro.enabled_by, ext_target_n)
-                                            # WB:WBGene00001574 GO:1903363 ['happens_during', 'has_regulation_target'] ['c', 'd']
-                                        else:
-                                            logger.warning("Couldn't get regulates relation from LD of: {}".format(term))
-                            # else:
-                            #     # No RO term yet. Try looking up in RO
-                            #     relation_term = self.translate_relation_to_ro(ext_relation)
-                            #     INPUT_RELATIONS[ext_relation] = relation_term
+                                if aspect == 'P':
+                                    # For BP annotations, translate 'has regulation target' to 'has input'.
+                                    ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
+                                    anchor_n = annot_subgraph.get_anchor()
+                                    annot_subgraph.add_edge(anchor_n, INPUT_RELATIONS['has_input'], ext_target_n)
+                                else:
+                                    buckets = has_regulation_target_bucket(self.ontology, term)
+                                    if len(buckets) > 0:
+                                        bucket = buckets[0]  # Or express all buckets?
+                                        # Four buckets
+                                        if bucket in ["a", "d"]:
+                                            regulates_rel, regulated_mf = self.get_rel_and_term_in_logical_definitions(term)
+                                            if regulates_rel and regulated_mf:
+                                                # [GP-A]<-enabled_by-[root MF]-regulates->[molecular function Z]-enabled_by->[GP-B]
+                                                ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
+                                                regulated_mf_n = annot_subgraph.add_instance_of_class(regulated_mf)
+                                                annot_subgraph.add_edge(regulated_mf_n, ro.enabled_by, ext_target_n)
+                                                anchor_n = annot_subgraph.get_anchor()
+                                                annot_subgraph.add_edge(anchor_n, regulates_rel, regulated_mf_n)
+                                                # TODO: Suppress/delete (GP-A)<-enabled_by-(root MF)-part_of->(term) aka involved_in_translated
+                                                # Remove (anchor_uri, None, term)
+                                                # Is this anchor_uri always going to the root_mf?
+                                                # Will the term individual be used for anything else?
+                                                #   Other comma-delimited extensions on same annotation?
+                                                # has_during? occurs_in?
+                                                # WB:WBGene00001173 GO:0051343 ['has_regulation_target', 'occurs_in'] ['a']
+                                                # WB:WBGene00006652 GO:0045944 ['has_regulation_target', 'occurs_in'] ['b']
+                                                # WB:WBGene00003639 GO:0036003 ['happens_during', 'has_regulation_target'] ['b']
+                                                # Other comma-delimited extensions (e.g. happens_during, has_input) need this triple?
+                                                # WB:WBGene00002335 GO:1902685 ['has_regulation_target', 'occurs_in'] ['d']
+                                            else:
+                                                logger.warning("Couldn't get regulates relation and/or regulated term from LD of: {}".format(term))
+                                        elif bucket in ["b", "c"]:
+                                            regulates_rel, regulated_term = self.get_rel_and_term_in_logical_definitions(term)
+                                            if regulates_rel:
+                                                # find 'Y subPropertyOf regulates_rel' in RO where Y will be `causally
+                                                # upstream of` relation
+                                                # Ex. GO:0045944 -> RO:0002213 -> RO:0002304
+                                                # edges(RO:0002213) only returns subProperties. Need superProperties
+                                                # Gettin super properties
+                                                causally_upstream_relation = self.get_causally_upstream_relation(regulates_rel)
+                                                # GP-A<-enabled_by-[root MF]-part_of->[regulation of Z]-has_input->GP-B,-causally upstream of (positive/negative effect)->[root MF]-enabled_by->GP-B
+                                                ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
+                                                anchor_n = annot_subgraph.get_anchor()  # TODO: Gotta find MF. MF no longer anchor if primary term is BP
+                                                annot_subgraph.add_edge(anchor_n, INPUT_RELATIONS["has input"], ext_target_n)
+                                                root_mf_b_n = annot_subgraph.add_instance_of_class(upt.molecular_function)
+                                                annot_subgraph.add_edge(anchor_n, causally_upstream_relation, root_mf_b_n)
+                                                annot_subgraph.add_edge(root_mf_b_n, ro.enabled_by, ext_target_n)
+                                                # WB:WBGene00001574 GO:1903363 ['happens_during', 'has_regulation_target'] ['c', 'd']
+                                            else:
+                                                logger.warning("Couldn't get regulates relation from LD of: {}".format(term))
 
                     else:
                         logger.debug("BAD: {}".format(ext_str))
@@ -719,9 +743,13 @@ class ReferencePreference:
 
 
 class CamTurtleRdfWriter(TurtleRdfWriter):
-    def __init__(self, modeltitle):
+    def __init__(self, modeltitle, store=None):
         self.base = genid(base="http://model.geneontology.org")
-        self.graph = rdflib.Graph(identifier=self.base)
+        if store is not None:
+            graph = rdflib.Graph(identifier=self.base, store=store)
+        else:
+            graph = rdflib.Graph(identifier=self.base)
+        self.graph = graph
         self.graph.bind("owl", OWL)
         self.graph.bind("obo", "http://purl.obolibrary.org/obo/")
         self.graph.bind("dc", DC)
