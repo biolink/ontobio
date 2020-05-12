@@ -22,7 +22,7 @@ class EndpointSchema(Schema):
     """
     Configuration for a REST or RESTish endpoint
     """
-    url = fields.Url()
+    url = fields.Url(require_tld=False)
     timeout = fields.Int()
 
     @post_load
