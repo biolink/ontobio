@@ -232,10 +232,11 @@ def load_config(path):
     f = open(path,'r')
     obj = yaml.load(f, Loader=yaml.FullLoader)
     schema = ConfigSchema()
-    config = schema.load(obj).data
-    errs = schema.validate(obj)
-    if len(errs) > 0:
-        logger.error("CONFIG ERRS: {}".format(errs))
-        raise ValueError('Error loading '+path)
-    #config = Config()
+    try:
+        config = schema.load(obj)
+    except ValidationError as err:
+        errors = err.messages
+        logger.error("CONFIG ERRS: {}".format(errors))
+        raise ValueError('Error loading ' + path)
+        
     return config
