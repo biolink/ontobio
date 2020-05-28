@@ -31,6 +31,7 @@ from ontobio.io import entitywriter
 from ontobio.io import gaference
 from ontobio.rdfgen import assoc_rdfgen
 from ontobio.rdfgen.gocamgen import gocamgen
+from ontobio.rdfgen.gocamgen.gocam_builder import GoCamBuilder, AssocExtractor
 from ontobio.util.go_utils import GoAspector
 from ontobio.validation import metadata
 from ontobio.validation import tools
@@ -545,70 +546,35 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 
 @cli.command()
 @click.pass_context
-@click.argument("group")
-@click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
+@click.option("--gpad_path", "-g", type=click.Path(), required=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 # Eventually will need access to GPI as well for getting taxon ID - should exist by now - get path from metadata
-def gocam(ctx, group, metadata_dir, target, ontology):
-
-    # Do we have all needed files on disk? If not die.
-    # Expect filtered, pristine GPAD to already exist in {target}/groups/{group}/{group}.gpad
-    absolute_target = os.path.abspath(target)
-    absolute_metadata = os.path.abspath(metadata_dir)
-    group_metadata = metadata.dataset_metadata_file(absolute_metadata, group)
-
-    gpad_path = metadata.target_path_by_type(group_metadata, absolute_target, group, type="gpad")
+def gpad2gocams(ctx, gpad_path, target, ontology):
     if gpad_path.endswith(".gz"):
-        # TODO: Find someplace other than target/ to store unzipped gpad
         unzipped = os.path.splitext(gpad_path)[0]
         unzip(gpad_path, unzipped)
         gpad_path = unzipped
+    # NOTE: Validation on GPAD not included here since it's currently baked into produce() above.
+    extractor = AssocExtractor(gpad_path)
+    assocs_by_gene = extractor.group_assocs()
 
-    assocs_by_gene = {}
+    absolute_target = os.path.abspath(target)
+    gpad_basename = os.path.basename(gpad_path)
+    gpad_basename_root, gpad_ext = os.path.splitext(gpad_basename)
+    if gpad_ext in ["gpad", "gpa"]:
+        output_basename = gpad_basename_root + ".nq"
+    else:
+        output_basename = gpad_basename + ".nq"
+    output_path = os.path.join(absolute_target, output_basename)
 
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
-    # TODO: This is probably all wrong - trying to reconstruct RO from broader ontology_graph
-    # According to Ontobee RO top-level terms are RO:0002410 (causally related to)
-    #  and RO:0002222 (temporally related to) - try reconstructing RO with these
-    ro_terms = []
-    for t in [
-        "RO:0002410",  # causally related to
-        "RO:0002222",  # temporally related to
-        "RO:0002323",  # mereotopologically related to - for BFO:0000050
-    ]:
-        ro_terms = ro_terms + ontology_graph.descendants(t, reflexive=True)
-    ro_ontology_graph = ontology_graph.subontology(nodes=ro_terms)
-    aspector = GoAspector(ontology_graph)
-    gpadparser = GpadParser()
-    gpadparser.config = assocparser.AssocParserConfig(
-        ontology=ontology_graph
-    )
-
-    with open(gpad_path) as sg:
-        lines = sum(1 for line in sg)
-
-    with open(gpad_path) as gf:
-        click.echo("Making products...")
-        with click.progressbar(iterable=gpadparser.association_generator(file=gf, skipheader=True), length=lines) as associations:
-            for association in associations:
-
-                # Group associations by gene - gocamgen
-                subject_id = association["subject"]["id"]
-                if subject_id not in assocs_by_gene:
-                    assocs_by_gene[subject_id] = []
-                assocs_by_gene[subject_id].append(association)
+    builder = GoCamBuilder(ontology_graph)
 
     for gene, associations in assocs_by_gene.items():
-        model = gocamgen.AssocGoCamModel(gene, associations)
-        model.go_aspector = aspector
-        model.ontology = ontology_graph
-        model.ro_ontology = ro_ontology_graph
-        model.gorel_ontology = Ontology()  # Null placeholder - probably don't need this
-        model.translate()
-        ttl_filename = "{}.ttl".format(gene.replace(":", "_"))
-        ttl_target_path = os.path.join(absolute_target, "groups", group, ttl_filename)
-        model.write(ttl_target_path)
+        builder.make_model_and_add_to_store(gene, annotations=associations)
+
+    builder.write_out_store_to_nquads(filepath=output_path)
 
 
 @cli.command()

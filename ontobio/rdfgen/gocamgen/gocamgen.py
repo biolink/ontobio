@@ -406,8 +406,6 @@ class AssocGoCamModel(GoCamModel):
         self.associations = CollapsedAssociationSet(assocs)
         self.ontology = None
         self.ro_ontology = None
-        self.gorel_ontology = None
-        # self.extensions_mapper = None
         self.go_aspector = None
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
         self.graph.bind("GOREL", GOREL)  # Because GOREL isn't in context.jsonld's
@@ -663,10 +661,10 @@ class AssocGoCamModel(GoCamModel):
             if node_label == relation_label.replace("_", " "):
                 return n
         # Is GOREL in go-lego?
-        for n in self.gorel_ontology.nodes():
-            node_label = self.gorel_ontology.label(n)
+        for n in self.ontology.nodes():
+            node_label = self.ontology.label(n)
             if node_label == relation_label:
-                gorel_node = self.gorel_ontology.node(n)
+                gorel_node = self.ontology.node(n)
                 # What we want will likely be in xref:
                 xrefs = gorel_node['meta'].get('xrefs')
                 if xrefs and len(xrefs) > 0:
