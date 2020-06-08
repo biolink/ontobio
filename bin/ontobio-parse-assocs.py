@@ -27,6 +27,7 @@ from ontobio.io.gpadparser import GpadParser
 from ontobio.io.hpoaparser import HpoaParser
 from ontobio.io.assocwriter import GafWriter, GpadWriter
 from ontobio.io import assocparser
+from ontobio.io import gaference
 from ontobio.slimmer import get_minimal_subgraph
 import json
 import logging
@@ -65,6 +66,8 @@ def main():
                         help='E.g PomBase - validate against this')
     parser.add_argument('--object_prefix', nargs='*', required=False,
                         help='E.g GO - validate against this')
+    parser.add_argument("-I", "--gaferencer-file", type=argparse.FileType('r'), required=False,
+                        help="Output from Gaferencer run on a set of GAF annotations")
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
 
@@ -100,18 +103,23 @@ def main():
 
     logging.info("Welcome!")
 
-    handle = args.resource
-
     # Ontology Factory
-    ofactory = OntologyFactory()
-    logging.info("Creating ont object from: {} {}".format(handle, ofactory))
-    ont = ofactory.create(handle)
-    logging.info("ont: {}".format(ont))
+    ont = None
+    if args.resource is not None:
+        ofactory = OntologyFactory()
+        logging.info("Creating ont object from: {} {}".format(args.resource, ofactory))
+        ont = ofactory.create(args.resource)
+        logging.info("ont: {}".format(ont))
+
 
     func = args.function
 
     # Upper case all evidence codes
     args.filter_out = [code.upper() for code in args.filter_out]
+
+    gaferences = None
+    if args.gaferencer_file:
+        gaferences = gaference.build_annotation_inferences(json.load(args.gaferencer_file))
 
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
@@ -121,7 +129,8 @@ def main():
         class_idspaces=args.object_prefix,
         entity_idspaces=args.subject_prefix,
         filter_out_evidence=args.filter_out,
-        filtered_evidence_file=filtered_evidence_file
+        filtered_evidence_file=filtered_evidence_file,
+        annotation_inferences=gaferences
     )
     p = None
     fmt = None
