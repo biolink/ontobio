@@ -51,7 +51,7 @@ setuptools.setup(
         'requests',
         'sparqlwrapper',
         'prefixcommons',
-        'marshmallow==3.0.0b3',
+        'marshmallow==3.0.0b11',
         'scipy',
         'pandas==0.24.2',
         'click==7.0',
