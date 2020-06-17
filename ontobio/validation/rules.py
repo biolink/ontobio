@@ -81,7 +81,7 @@ Relavent schema:
 
 """
 FormatType = enum.Enum("FormatType", ["RDF", "GAF", "GPAD"])
-ExampleType = enum.Enum("ExampleType", {"REPAIR": "repair", "FAIL": "fail", "PASS": "fail"})
+ExampleType = enum.Enum("ExampleType", {"REPAIR": "repair", "FAIL": "fail", "PASS": "pass"})
 
 def format_from_string(format: str) -> Optional[FormatType]:
     if format == "rdf":
