@@ -6,6 +6,7 @@ from ontobio.rdfgen.gocamgen.errors import GocamgenException, GeneErrorSet
 from ontobio.rdfgen.gocamgen.utils import ShexException
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.assocparser import AssocParserConfig
+from ontobio.io.entityparser import GpiParser
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.util.go_utils import GoAspector
 import argparse
@@ -16,6 +17,7 @@ import gzip
 import time
 import click
 from os import path
+from typing import List
 # from abc import ABC, abstractmethod
 from rdflib.graph import ConjunctiveGraph
 from rdflib.store import Store
@@ -40,24 +42,26 @@ parser.add_argument('-N', '--nquads', help="Filepath to write model file in N-Qu
 
 
 class GoCamBuilder:
-    def __init__(self, ontology_graph=None):
-        # self.ro_ontology = OntologyFactory().create("http://purl.obolibrary.org/obo/ro.owl")
-        # self.gorel_ontology = OntologyFactory().create("http://release.geneontology.org/2019-03-18/ontology/extensions/gorel.obo")
-        # Can't get logical_definitions w/ ont.create("go"), need to load ontology via PURL
-        # self.ontology = OntologyFactory().create("http://purl.obolibrary.org/obo/go.owl")
-        if ontology_graph is None:
+    def __init__(self, ontology=None, gpi_file=None):
+        if ontology is None:
             ontology_graph = OntologyFactory().create("http://purl.obolibrary.org/obo/go/extensions/go-lego.owl")
+        else:
+            ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
         self.ontology = ontology_graph
         self.ro_ontology = self.extract_relations_ontology(self.ontology)
+        # self.ontology = OntologyFactory().create("http://purl.obolibrary.org/obo/go.owl")
+        # self.ro_ontology = OntologyFactory().create("http://purl.obolibrary.org/obo/ro.owl")
         self.aspector = GoAspector(self.ontology)
         self.store = plugin.get('IOMemory', Store)()
         self.errors = GeneErrorSet()  # Errors by gene ID
+        self.gpi_entities = self.parse_gpi(gpi_file)
 
     def translate_to_model(self, gene, assocs):
         model = AssocGoCamModel(gene, assocs, store=self.store)
         model.ontology = self.ontology
         model.ro_ontology = self.ro_ontology
         model.go_aspector = self.aspector
+        model.gpi_entities = self.gpi_entities
         model.translate()
 
         return model
@@ -119,6 +123,38 @@ class GoCamBuilder:
         ]:
             ro_terms = ro_terms + ontology_graph.descendants(t, reflexive=True)
         return ontology_graph.subontology(nodes=ro_terms)
+
+    @staticmethod
+    def parse_gpi(gpi_file):
+        # {
+        #    "id":"MGI:MGI:87853",
+        #    "label":"a",
+        #    "full_name":"nonagouti",
+        #    "synonyms":[
+        #       "agouti",
+        #       "As",
+        #       "agouti signal protein",
+        #       "ASP"
+        #    ],
+        #    "type":"gene",
+        #    "parents":[
+        #
+        #    ],
+        #    "xrefs":[
+        #       "UniProtKB:Q03288"
+        #    ],
+        #    "taxon":{
+        #       "id":"NCBITaxon:10090"
+        #    }
+        # }
+        if gpi_file is None:
+            return None
+        parser = GpiParser()
+        gpi_entities = {}
+        entities = parser.parse(gpi_file)
+        for entity in entities:
+            gpi_entities[entity['id']] = entity
+        return gpi_entities
 
 
 class AssocExtractor:

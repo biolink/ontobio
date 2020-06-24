@@ -13,6 +13,7 @@ import glob
 import logging
 import sys
 import traceback
+import subprocess
 
 import yamldown
 
@@ -547,10 +548,11 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 @cli.command()
 @click.pass_context
 @click.option("--gpad_path", "-g", type=click.Path(), required=True)
+@click.option("--gpi_path", "-i", type=click.Path(), required=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
-# Eventually will need access to GPI as well for getting taxon ID - should exist by now - get path from metadata
-def gpad2gocams(ctx, gpad_path, target, ontology):
+# Eventually will need access to GPI as well for getting taxon ID - should exist by now
+def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology):
     if gpad_path.endswith(".gz"):
         unzipped = os.path.splitext(gpad_path)[0]
         unzip(gpad_path, unzipped)
@@ -562,14 +564,13 @@ def gpad2gocams(ctx, gpad_path, target, ontology):
     absolute_target = os.path.abspath(target)
     gpad_basename = os.path.basename(gpad_path)
     gpad_basename_root, gpad_ext = os.path.splitext(gpad_basename)
-    if gpad_ext in ["gpad", "gpa"]:
+    if gpad_ext in [".gpad", ".gpa"]:
         output_basename = gpad_basename_root + ".nq"
     else:
         output_basename = gpad_basename + ".nq"
     output_path = os.path.join(absolute_target, output_basename)
 
-    ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
-    builder = GoCamBuilder(ontology_graph)
+    builder = GoCamBuilder(ontology, gpi_file=gpi_path)
 
     for gene, associations in assocs_by_gene.items():
         builder.make_model_and_add_to_store(gene, annotations=associations)

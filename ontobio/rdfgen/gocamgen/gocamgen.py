@@ -409,10 +409,12 @@ class AssocGoCamModel(GoCamModel):
         self.go_aspector = None
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
         self.graph.bind("GOREL", GOREL)  # Because GOREL isn't in context.jsonld's
+        self.gpi_entities = None
 
     def translate(self):
 
         self.associations.go_ontology = self.ontology
+        self.associations.gpi_entities = self.gpi_entities
         self.associations.collapse_annotations()
 
         for a in self.associations:
