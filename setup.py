@@ -53,7 +53,7 @@ setuptools.setup(
         'prefixcommons',
         'marshmallow==3.0.0b11',
         'scipy==1.4.1',
-        'numpy==1.14.5'
+        'numpy==1.14.5',
         'pandas==0.24.2',
         'click==7.0',
         'yamldown',
