@@ -283,7 +283,7 @@ class GoRule16(GoRule):
 
         okay = True
         if evidence == "ECO:0000305":
-            only_go = [t for t in withfrom if t.startswith("GO:")] # Filter terms that aren't GO terms
+            only_go = [t for conjunctions in withfrom for t in conjunctions.elements if t.startswith("GO:")] # Filter terms that aren't GO terms
             okay = len(only_go) >= 1
 
         return self._result(okay)
@@ -520,7 +520,11 @@ class GoRule46(GoRule):
 
         if goterm in self.self_binding_terms:
             # Then we're in the self-binding case, and check if object ID is in withfrom
-            return self._result(annotation.subject.id in withfroms)
+            for conj in withfroms:
+                if annotation.subject.id in conj.elements:
+                    return self._result(True)
+
+            return self._result(False)
 
         return self._result(True)
 
@@ -536,7 +540,8 @@ class GoRule50(GoRule):
         result = self._result(True)
         if evidence in self.the_evidences:
             # Ensure the gp ID is not an entry in withfrom
-            result = self._result(annotation.subject.id not in annotation.evidence.with_support_from)
+            for conj in annotation.evidence.with_support_from:
+                result = self._result(annotation.subject.id not in conj.elements)
 
         return result
 
@@ -584,9 +589,9 @@ class GoRule58(RepairRule):
         repair_state = RepairState.OKAY
 
         bad_conjunctions = []
-        for con in annotation.object_extensions.conjunctions:
+        for con in annotation.object_extensions:
             # Count each extension unit, represented by tuple (Relation, Namespace)
-            extension_counts = collections.Counter([(unit.relation, unit.term.split(":")[0]) for unit in con.extensions])
+            extension_counts = collections.Counter([(unit.relation, unit.term.split(":")[0]) for unit in con.elements])
 
             matches = self._do_conjunctions_match_constraint(con, annotation.object.id, config.extensions_constraints, extension_counts)
             # If there is a match in the constraints, then we're all good and we can exit with a pass!
@@ -597,7 +602,7 @@ class GoRule58(RepairRule):
         repaired_annotation = copy.deepcopy(annotation)
         for con in bad_conjunctions:
             # Remove the bad conjunctions as the "repair"
-            repaired_annotation.object_extensions.conjunctions.remove(con)
+            repaired_annotation.object_extensions.remove(con)
 
         return TestResult(repair_result(repair_state, self.fail_mode), self.message(repair_state), repaired_annotation)
 
@@ -616,7 +621,7 @@ class GoRule58(RepairRule):
     """
     def _do_conjunctions_match_constraint(self, conjunction, term, constraints, conjunction_counts):
         # Check each extension in the conjunctions
-        for ext in conjunction.extensions:
+        for ext in conjunction.elements:
 
             extension_good = False
             for constraint in constraints:

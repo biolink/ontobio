@@ -299,7 +299,7 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     object = association.Term(gpad_line[3], "")
     evidence = association.Evidence(gpad_line[5],
         [e for e in gpad_line[4].split("|") if e],
-        [e for e in gpad_line[6].split("|") if e])
+        association.ConjunctiveSet.str_to_conjunctions(gpad_line[6]))
 
     raw_qs = gpad_line[2].split("|")
     negated = "NOT" in raw_qs
@@ -312,26 +312,17 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     if date is None:
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-
     qualifiers = [curie_util.contract_uri(q)[0] for q in looked_up_qualifiers]
 
     conjunctions = []
     if gpad_line[10]:
-        for conjuncts in gpad_line[10].split("|"):
-            extension_units = []
-            for u in conjuncts.split(","):
-                parsed = relation_tuple.findall(u)
-                if len(parsed) == 1:
-                    rel, term = parsed[0]
-                    extension_units.append(association.ExtensionUnit(rel, term))
-                else:
-                    # Otherwise, something went bad with the regex, and it's a bad parse
-                    report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, u, "extensions should be relation(curie)", taxon=taxon, rule=1)
-                    return assocparser.ParseResult(source_line, [], True, report=report)
+        conjunctions = association.ConjunctiveSet.str_to_conjunctions(
+            gpad_line[10],
+            conjunct_element_builder=lambda el: association.ExtensionUnit.from_str(el))
 
-            conjunction = association.ExtensionConjunctions(extension_units)
-            conjunctions.append(conjunction)
-    object_extensions = association.ExtensionExpression(conjunctions)
+        if isinstance(conjunctions, association.Error):
+            report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=taxon, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
 
     properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
     # print(properties_list)
@@ -346,7 +337,7 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
         interacting_taxon=gpad_line[7],
         evidence=evidence,
         subject_extensions=[],
-        object_extensions=object_extensions,
+        object_extensions=conjunctions,
         provided_by=gpad_line[9],
         date=gpad_line[8],
         properties={ prop[0]: prop[1] for prop in properties_list if prop })

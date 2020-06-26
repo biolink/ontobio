@@ -3,6 +3,7 @@ import datetime
 import yaml
 import json
 
+from ontobio.model import association
 from ontobio.io import qc
 from ontobio.io import gaference
 from ontobio.io import assocparser
@@ -229,13 +230,13 @@ def test_go_rule_16():
     assert test_result.result_type == qc.ResultType.ERROR
 
     # withfrom has GO term
-    assoc.evidence.with_support_from = ["GO:0023456"]
+    assoc.evidence.with_support_from = [association.ConjunctiveSet(["GO:0023456"])]
 
     test_result = qc.GoRule16().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
     # Pipe
-    assoc.evidence.with_support_from = ["GO:0012345", "BLAH:54321"]
+    assoc.evidence.with_support_from = [association.ConjunctiveSet(["GO:0012345"]), association.ConjunctiveSet(["BLAH:54321"])]
 
     test_result = qc.GoRule16().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
@@ -248,7 +249,7 @@ def test_go_rule_16():
 
     # Not IC
     assoc.evidence.type = "ECO:0000501"
-    assoc.evidence.with_support_from = ["BLAH:5555555", "FOO:999999"]
+    assoc.evidence.with_support_from =  [association.ConjunctiveSet(["BLAH:5555555"]),  association.ConjunctiveSet(["FOO:999999"])]
 
     test_result = qc.GoRule16().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
@@ -544,11 +545,11 @@ def test_gorule46():
     test_result = qc.GoRule46().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.evidence.with_support_from = ["PomBase:BLAH123"]
+    assoc.evidence.with_support_from = [association.ConjunctiveSet(["PomBase:BLAH123"])]
     test_result = qc.GoRule46().test(assoc, config)
     assert test_result.result_type == qc.ResultType.WARNING
 
-    assoc.evidence.with_support_from = ["PomBase:SPAC25B8.17", "PomBase:BLAH123"]
+    assoc.evidence.with_support_from = [association.ConjunctiveSet(["PomBase:SPAC25B8.17"]), association.ConjunctiveSet(["PomBase:BLAH123"])]
     test_result = qc.GoRule46().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
 
@@ -586,8 +587,9 @@ def test_gorule50():
     test_result = qc.GoRule50().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+
 def test_gorule57():
-    a = ["blah"] * 13
+    a = ["blah"] * 12
     a[0] = "HELLO"
     a[1] = "123"
     a[2] = "contributes_to"
@@ -601,7 +603,6 @@ def test_gorule57():
     a[11] = ""
 
     res = gpadparser.to_association(a)
-    print(json.dumps(res.report.to_report_json(), indent=4))
     assoc = gpadparser.to_association(a).associations[0]
 
 
