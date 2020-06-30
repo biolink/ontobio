@@ -54,7 +54,7 @@ class RelationTo:
 class AnnotationKey:
     relation_to: RelationTo
     taxon: Uri
-    extension: association.ExtensionConjunctions
+    extension: association.ConjunctiveSet
 
 @dataclass(unsafe_hash=True)
 class InferenceValue:
@@ -123,12 +123,12 @@ def lookup_relation(label):
     else:
         return None
 
-def make_conjunctions(extension: List) -> association.ExtensionConjunctions:
+def make_conjunctions(extension: List) -> association.ConjunctiveSet:
     extension_units = []  # type: List[association.ExtensionUnit]
     for unit in extension:
         extension_units.append(association.ExtensionUnit(unit["relation"], unit["term"]))
 
-    return association.ExtensionConjunctions(frozenset(extension_units))
+    return association.ConjunctiveSet(frozenset(extension_units))
 
 relation_tuple = re.compile(r"(.+)\((.+)\)")
 def make_keys_from_gaf(gaf: association.GoAssociation) -> List[AnnotationKey]:
@@ -136,18 +136,20 @@ def make_keys_from_gaf(gaf: association.GoAssociation) -> List[AnnotationKey]:
     term = curie_util.expand_uri(gaf.object.id, cmaps=[prefix_context])
     relation = curie_util.expand_uri(gaf.relation, cmaps=[prefix_context])
     taxon = curie_util.expand_uri(gaf.object.taxon, cmaps=[prefix_context])
-    extensions = gaf.object_extensions
+    extensions = gaf.object_extensions # type: List[association.ConjunctiveSet]
 
     annotation_keys = []  # type: List[AnnotationKey]
 
-    if extensions.conjunctions:
-        for conjunction in extensions.conjunctions:
+    if extensions:
+        for conjunction in extensions:
+            # Each conjunction is a ConjunctiveSet
             # conjunction is foo(bar),hello(world)
-            extension_conjunction = association.ExtensionConjunctions(frozenset(conjunction.extensions))
+            # Create a new ConjunctiveSet using a frozenset of the elements instead of a list
+            frozen_conjunction = association.ConjunctiveSet(frozenset(conjunction.elements))
             # Build the Key now
-            annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, extension_conjunction))
+            annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, frozen_conjunction))
     else:
-        annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, association.ExtensionConjunctions(frozenset([]))))
+        annotation_keys.append(AnnotationKey(RelationTo(relation, term), taxon, association.ConjunctiveSet(frozenset([]))))
 
     return annotation_keys
 
@@ -168,7 +170,7 @@ def gaf_inferences_from_value(original_gaf: association.GoAssociation, inferred_
         aspect = relation_aspect_map[inference.relation]
         new_gaf.object.id = goterm
         new_gaf.aspect = aspect
-        new_gaf.object_extensions = association.ExtensionExpression([])
+        new_gaf.object_extensions = []
         inferred_gafs.append(new_gaf)
 
     return InferenceResult(inferred_gafs, None)

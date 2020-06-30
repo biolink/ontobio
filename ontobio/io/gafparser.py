@@ -528,27 +528,20 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     evidence = association.Evidence(
         ecomap.coderef_to_ecoclass(gaf_line[6]),
         [e for e in gaf_line[5].split("|") if e],
-        [e for e in gaf_line[7].split("|") if e]
-    )
+        association.ConjunctiveSet.str_to_conjunctions(gaf_line[7]))
+
     subject_extensions = [association.ExtensionUnit("rdfs:subClassOf", gaf_line[16])] if gaf_line[16] else []
 
     conjunctions = []
     if gaf_line[15]:
-        for conjuncts in gaf_line[15].split("|"):
-            extension_units = []
-            for u in conjuncts.split(","):
-                parsed = relation_tuple.findall(u)
-                if len(parsed) == 1:
-                    rel, term = parsed[0]
-                    extension_units.append(association.ExtensionUnit(rel, term))
-                else:
-                    # Otherwise, something went bad with the regex, and it's a bad parse
-                    report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, u, "extensions should be relation(curie)", taxon=taxon, rule=1)
-                    return assocparser.ParseResult(source_line, [], True, report=report)
+        conjunctions = association.ConjunctiveSet.str_to_conjunctions(
+            gaf_line[15],
+            conjunct_element_builder=lambda el: association.ExtensionUnit.from_str(el))
 
-            conjunction = association.ExtensionConjunctions(extension_units)
-            conjunctions.append(conjunction)
-    object_extensions = association.ExtensionExpression(conjunctions)
+        if isinstance(conjunctions, association.Error):
+            report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=taxon, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
     looked_up_rel = relations.lookup_label(relation)
     if looked_up_rel is None:
         report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation, "Could not find CURIE for relation `{}`".format(relation), taxon=taxon, rule=1)
@@ -565,7 +558,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         interacting_taxon=interacting_taxon,
         evidence=evidence,
         subject_extensions=subject_extensions,
-        object_extensions=object_extensions,
+        object_extensions=conjunctions,
         provided_by=gaf_line[14],
         date=date,
         properties={})
