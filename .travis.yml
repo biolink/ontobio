@@ -6,11 +6,10 @@ python:
   - "3.6"
 
 # command to install dependencies
+# Install with local setup.py, then install pytest
 install:
-  - pip install --upgrade pip setuptools wheel
-  - pip install --only-binary=numpy,scipy numpy scipy
-  - python setup.py install
-  - python setup.py sdist bdist_wheel
+  - pip install .
+  - pip install pytest
 #  - "pip install -r requirements.txt"
 
 addons:
