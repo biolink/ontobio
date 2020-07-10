@@ -70,6 +70,8 @@ def main():
                         help="Output from Gaferencer run on a set of GAF annotations")
     parser.add_argument('-v', '--verbosity', default=0, action='count',
                         help='Increase output verbosity')
+    parser.add_argument("--allow_paint", required=False, action="store_const", const=True,
+                        help="Allow IBAs in parser")
 
 
     subparsers = parser.add_subparsers(dest='subcommand', help='sub-command help')
@@ -130,7 +132,8 @@ def main():
         entity_idspaces=args.subject_prefix,
         filter_out_evidence=args.filter_out,
         filtered_evidence_file=filtered_evidence_file,
-        annotation_inferences=gaferences
+        annotation_inferences=gaferences,
+        paint=args.allow_paint
     )
     p = None
     fmt = None
