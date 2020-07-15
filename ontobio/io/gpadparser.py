@@ -16,6 +16,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+gpad_line_validators = {
+    "default": assocparser.ColumnValidator(),
+    "qualifier2_1": assocparser.Qualifier2_1(),
+    "qualifier2_2": assocparser.Qualifier2_2(),
+    "curie": assocparser.CurieValidator(),
+    "taxon": assocparser.TaxonValidator(),
+}
+
 class GpadParser(assocparser.AssocParser):
     """
     Parser for GO GPAD Format
@@ -124,6 +132,7 @@ class GpadParser(assocparser.AssocParser):
                 self.report.message(assocparser.Report.INFO, line, Report.RULE_PASS, "",
                                     msg="Passing Rule", rule=int(rule.id.split(":")[1]))
 
+        assoc = go_rule_results.annotation  # type: association.GoAssociation
         vals = list(go_rule_results.annotation.to_gpad_tsv())
         [db,
          db_object_id,
@@ -141,30 +150,25 @@ class GpadParser(assocparser.AssocParser):
         split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
 
         id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, split_line, context=ENTITY):
+        if not self._validate_id(str(assoc.subject.id), split_line, context=ENTITY):
             return assocparser.ParseResult(line, [], True)
 
-        if not self._validate_id(goid, split_line, context=ANNOTATION):
+        if not self._validate_id(str(assoc.object.id), split_line, context=ANNOTATION):
             return assocparser.ParseResult(line, [], True)
 
-        valid_goid = self._validate_ontology_class_id(goid, split_line)
-        if valid_goid == None:
+        valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
+        if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
-        goid = valid_goid
+        assoc.object.id = association.Curie.from_str(valid_goid)
 
-        if reference == "":
-            self.report.error(line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty")
+        if not self._validate_id(str(assoc.evidence.type), split_line):
             return assocparser.ParseResult(line, [], True)
 
-        self._validate_id(evidence, split_line)
-
-        interacting_taxon = None if interacting_taxon_id == "" else interacting_taxon_id
-        if interacting_taxon != None:
-            interacting_taxon = self._taxon_id(interacting_taxon_id, split_line)
-            if interacting_taxon == None:
-                self.report.error(line, assocparser.Report.INVALID_TAXON, interacting_taxon_id,
-                                    msg="Taxon ID is invalid")
+        if assoc.interacting_taxon:
+            if not self._validate_taxon(str(assoc.interacting_taxon), split_line):
+                self.report.error(line, assocparser.Report.INVALID_TAXON, str(assoc.interacting_taxon), "Taxon ID is invalid", rule=27)
                 return assocparser.ParseResult(line, [], True)
+
 
         #TODO: ecomap is currently one-way only
         #ecomap = self.config.ecomap
@@ -173,76 +177,28 @@ class GpadParser(assocparser.AssocParser):
         #        self.report.error(line, Report.UNKNOWN_EVIDENCE_CLASS, evidence,
         #                          msg="Expecting a known ECO class ID")
 
-        ## --
-        ## qualifier
-        ## --
-        negated, relation, other_qualifiers = self._parse_qualifier(qualifier, None)
-
 
         # Reference Column
-        references = self.validate_pipe_separated_ids(reference, split_line)
-        if references == None:
-            # Reporting occurs in above function call
+        references = self.validate_curie_ids(assoc.evidence.has_supporting_reference, split_line)
+        if references is None:
             return assocparser.ParseResult(line, [], True)
 
         # With/From
-        withfroms = self.validate_pipe_separated_ids(withfrom, split_line, empty_allowed=True, extra_delims=",")
-        if withfroms == None:
-            # Reporting occurs in above function call
-            return assocparser.ParseResult(line, [], True)
+        for wf in assoc.evidence.with_support_from:
+            validated = self.validate_curie_ids(wf.elements)
+            if validated is None:
+                return assocparser.ParseResult(line, [], True)
 
-
-        ## --
-        ## parse annotation extension
-        ## See appending in http://doi.org/10.1186/1471-2105-15-155
-        ## --
-        object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=split_line)
-
-        subject_symbol = id
-        subject_fullname = id
-        subject_synonyms = []
         if self.gpi is not None:
-            gp = self.gpi.get(id, {})
+            gp = self.gpi.get(str(assoc.subject.id), {})
             if gp is not {}:
-                subject_symbol = gp["symbol"]
-                subject_fullname = gp["name"]
-                subject_synonyms = gp["synonyms"].split("|")
-
-        assoc = {
-            'source_line': line,
-            'subject': {
-                'id': id,
-                'label': subject_symbol,
-                'fullname': subject_fullname,
-                'synonyms': subject_synonyms,
-                'taxon': {
-                    'id': interacting_taxon
-                },
-            },
-            'object': {
-                'id':goid
-            },
-            'negated': negated,
-            'relation': {
-                'id': relation
-            },
-            'interacting_taxon': interacting_taxon,
-            'evidence': {
-                'type': evidence,
-                'with_support_from': withfroms,
-                'has_supporting_reference': references
-            },
-            'subject_extensions': [],
-            'object_extensions': {},
-            'aspect': self.compute_aspect(goid),
-            'provided_by': assigned_by,
-            'date': date,
-        }
-        if len(other_qualifiers) > 0:
-            assoc['qualifiers'] = other_qualifiers
-        if object_or_exprs is not None and len(object_or_exprs) > 0:
-            assoc['object_extensions'] = {'union_of': object_or_exprs}
-
+                assoc.subject.label = gp["symbol"]
+                assoc.subject.fullname = gp["name"]
+                assoc.subject.synonyms = gp["synonyms"].split("|")
+                assoc.subject.type = gp["type"]
+            else:
+                # ERROR
+                pass
 
         return assocparser.ParseResult(line, [assoc], False)
 
@@ -251,10 +207,12 @@ class GpadParser(assocparser.AssocParser):
 
 relation_tuple = re.compile(r'(.+)\((.+)\)')
 def to_association(gpad_line: List[str], report=None, group="unknown", dataset="unknown") -> assocparser.ParseResult:
-
     report = Report(group=group, dataset=dataset) if report is None else report
-
     source_line = "\t".join(gpad_line)
+
+    if source_line == "":
+        report.error(source_line, "Blank Line", "EMPTY", "Blank lines are not allowed", rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
 
     if len(gpad_line) > 12:
         report.warning(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
@@ -293,26 +251,38 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     if gpad_line[EVIDENCE_INDEX] == "":
         report.error(source_line, Report.INVALID_ID, "EMPTY", "Evidence column is empty", rule=1)
 
-    taxon = ""
-    subject_curie = "{db}:{id}".format(db=gpad_line[0], id=gpad_line[1])
+    taxon = association.Curie("NCBITaxon", "0")
+    subject_curie = association.Curie(gpad_line[0], gpad_line[1])
     subject = association.Subject(subject_curie, "", "", [], "", "")
-    object = association.Term(gpad_line[3], "")
-    evidence = association.Evidence(gpad_line[5],
-        [e for e in gpad_line[4].split("|") if e],
+    object = association.Term(association.Curie.from_str(gpad_line[3]), taxon)
+
+    evidence = association.Evidence(
+        association.Curie.from_str(gpad_line[5]),
+        [association.Curie.from_str(e) for e in gpad_line[4].split("|") if e],
         association.ConjunctiveSet.str_to_conjunctions(gpad_line[6]))
 
     raw_qs = gpad_line[2].split("|")
     negated = "NOT" in raw_qs
+
     looked_up_qualifiers = [relations.lookup_label(q) for q in raw_qs if q != "NOT"]
     if None in looked_up_qualifiers:
         report.error(source_line, Report.INVALID_QUALIFIER, raw_qs, "Could not find a URI for qualifier", taxon=taxon, rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
+    qualifiers = [association.Curie.from_str(curie_util.contract_uri(q)[0]) for q in looked_up_qualifiers]
+
     date = assocparser._normalize_gaf_date(gpad_line[8], report, "", source_line)
     if date is None:
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    qualifiers = [curie_util.contract_uri(q)[0] for q in looked_up_qualifiers]
+    interacting_taxon = None
+    if gpad_line[7]:
+        taxon_result = gpad_line_validators["taxon"].validate(gpad_line[7])
+        if not taxon_result.valid:
+            report.error(source_line, Report.INVALID_TAXON, taxon_result.original, taxon_result.message, taxon=taxon_result.original, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+        else:
+            interacting_taxon = taxon_result.parsed
 
     conjunctions = []
     if gpad_line[10]:
@@ -334,7 +304,7 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
         negated=negated,
         qualifiers=qualifiers,
         aspect=None,
-        interacting_taxon=gpad_line[7],
+        interacting_taxon=interacting_taxon,
         evidence=evidence,
         subject_extensions=[],
         object_extensions=conjunctions,

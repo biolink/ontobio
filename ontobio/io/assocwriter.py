@@ -7,10 +7,11 @@ import datetime
 import json
 import logging
 
-from typing import List
+from typing import List, Union
 
 from ontobio import ecomap
 from ontobio.io import assocparser
+from ontobio.model import association
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +92,7 @@ class AssocWriter():
 
         return taxon
 
-    def as_tsv(self, assoc) -> List[str]:
+    def as_tsv(self, assoc: Union[association.GoAssociation, dict]) -> List[str]:
         """
         Transform a single association to a string line.
         """
@@ -130,49 +131,15 @@ class GpadWriter(AssocWriter):
         self._write("!gpa-version: 1.1\n")
         self.ecomap = ecomap.EcoMap()
 
-    def as_tsv(self, assoc):
+    def as_tsv(self, assoc: Union[association.GoAssociation, dict]):
         """
         Write a single association to a line in the output file
         """
-        if assoc.get("header", False):
+        if isinstance(assoc, dict):
             return []
 
-        subj = assoc['subject']
+        return assoc.to_gpad_tsv()
 
-        db, db_object_id = self._split_prefix(subj)
-
-        rel = assoc['relation']
-        qualifier = rel['id']
-        if assoc['negated']:
-            qualifier = 'NOT|' + qualifier
-
-        goid = assoc['object']['id']
-
-        ev = assoc['evidence']
-
-        evidence = self.ecomap.coderef_to_ecoclass(ev['type'])
-        withfrom = "|".join(ev['with_support_from'])
-        reference = "|".join(ev['has_supporting_reference'])
-
-        date = assoc['date']
-        assigned_by = assoc['provided_by']
-
-        annotation_properties = '' # TODO
-        interacting_taxon_id = assoc['interacting_taxon']
-        vals = [db,
-                db_object_id,
-                qualifier,
-                goid,
-                reference,
-                evidence,
-                withfrom,
-                interacting_taxon_id, # TODO
-                date,
-                assigned_by,
-                self._extension_expression(assoc['object_extensions']),
-                annotation_properties]
-
-        return vals
 
 class GafWriter(AssocWriter):
     """
@@ -198,6 +165,7 @@ class GafWriter(AssocWriter):
     the incoming annotation has a qualifier in the 2.2 set, but 2.1 is being
     written out, or if the qualifier is empty and 2.2 is being written.
     """
+
     def __init__(self, file=None, source=None, version="2.1"):
         self.file = file
         if version not in ["2.1", "2.2"]:

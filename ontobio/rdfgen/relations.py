@@ -42,10 +42,12 @@ __relation_label_lookup = {
     "acts upstream of positive effect": "http://purl.obolibrary.org/obo/RO_0004034",
     "located in": "http://purl.obolibrary.org/obo/RO_0001025",
     "is active in": "http://purl.obolibrary.org/obo/RO_0002432",
-
 }
 
 def lookup_label(label, default=None):
+    if label is None:
+        return default
+
     return __relation_label_lookup.get(label.replace("_", " "), default)
 
 def label_relation_lookup():
