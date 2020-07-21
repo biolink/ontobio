@@ -558,7 +558,7 @@ def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology):
         unzip(gpad_path, unzipped)
         gpad_path = unzipped
     # NOTE: Validation on GPAD not included here since it's currently baked into produce() above.
-    extractor = AssocExtractor(gpad_path)
+    extractor = AssocExtractor(gpad_path, gpi_path)
     assocs_by_gene = extractor.group_assocs()
 
     absolute_target = os.path.abspath(target)

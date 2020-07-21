@@ -158,7 +158,7 @@ class GoCamBuilder:
 
 
 class AssocExtractor:
-    def __init__(self, gpad_file, parser_config: AssocParserConfig = None):
+    def __init__(self, gpad_file, gpi_file, parser_config: AssocParserConfig = None):
         if parser_config:
             gpad_parser = GpadParser(config=parser_config)
         else:
@@ -173,13 +173,15 @@ class AssocExtractor:
                                    length=lines) as associations:
                 self.assocs = self.extract_properties_from_assocs(associations)
 
+        self.entity_parents = self.parse_gpi_parents(gpi_file)
+
     def group_assocs(self):
         assocs_by_gene = {}
         for a in self.assocs:
-            # validation function
-            # if not self.assoc_filter.validate_line(a):
-            #     continue
             subject_id = a["subject"]["id"]
+            # If entity has parent, assign to parent entity model
+            if subject_id in self.entity_parents:
+                subject_id = self.entity_parents[subject_id]
             if subject_id in assocs_by_gene:
                 assocs_by_gene[subject_id].append(a)
             else:
@@ -192,6 +194,19 @@ class AssocExtractor:
         for a in assocs:
             new_assoc_list.append(extract_properties(a))
         return new_assoc_list
+
+    @staticmethod
+    def parse_gpi_parents(gpi_file):
+        if gpi_file is None:
+            return None
+        parser = GpiParser()
+        entity_parents = {}
+        entities = parser.parse(gpi_file)
+        for entity in entities:
+            entity_id = entity['id']
+            if len(entity['parents']) > 0:
+                entity_parents[entity_id] = entity['parents'][0]  # There may only be one
+        return entity_parents
 
 
 def unzip(filepath):
