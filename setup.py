@@ -57,7 +57,8 @@ setuptools.setup(
         'click==7.0',
         'yamldown',
         'dataclasses',
-        'diskcache>=4.0.0'
+        'diskcache>=4.0.0',
+        'bidict==0.19.0'
     ],
 
     # List additional groups of dependencies here (e.g. development

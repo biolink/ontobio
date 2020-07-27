@@ -185,29 +185,11 @@ class GafParser(assocparser.AssocParser):
                                     msg="Passing Rule", rule=int(rule.id.split(":")[1]))
 
         assoc = go_rule_results.annotation  # type: association.GoAssociation
-        vals = list(go_rule_results.annotation.to_gaf_tsv())
-        [db,
-         db_object_id,
-         db_object_symbol,
-         qualifier,
-         goid,
-         reference,
-         evidence,
-         withfrom,
-         aspect,
-         db_object_name,
-         db_object_synonym,
-         db_object_type,
-         taxon,
-         date,
-         assigned_by,
-         annotation_xp,
-         gene_product_isoform] = vals
-        split_line = assocparser.SplitLine(line=line, values=vals, taxon=taxon)
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon=str(assoc.object.taxon))
 
         if self.config.group_idspace is not None and assoc.provided_by not in self.config.group_idspace:
             self.report.warning(line, Report.INVALID_ID, assoc.provided_by,
-                "GORULE:0000027: assigned_by is not present in groups reference", taxon=taxon, rule=27)
+                "GORULE:0000027: assigned_by is not present in groups reference", taxon=str(assoc.object.taxon), rule=27)
 
         db = assoc.subject.id.namespace
         if self.config.entity_idspaces is not None and db not in self.config.entity_idspaces:
@@ -215,7 +197,7 @@ class GafParser(assocparser.AssocParser):
             upgrade = self.config.entity_idspaces.reverse(db)
             if upgrade is not None:
                 # If we found a synonym
-                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "GORULE:0000027: {} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=taxon, rule=27)
+                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "GORULE:0000027: {} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=str(assoc.object.taxon), rule=27)
                 assoc.subject.id.namespace = upgrade
 
         ## --
@@ -249,12 +231,12 @@ class GafParser(assocparser.AssocParser):
 
         # With/From
         for wf in assoc.evidence.with_support_from:
-            validated = self.validate_curie_ids(wf.elements)
+            validated = self.validate_curie_ids(wf.elements, split_line)
             if validated is None:
                 return assocparser.ParseResult(line, [], True)
 
         # validation
-        self._validate_symbol(assoc.subject.symbol, split_line)
+        self._validate_symbol(assoc.subject.label, split_line)
 
 
         ## --
@@ -271,11 +253,11 @@ class GafParser(assocparser.AssocParser):
         if (not valid_taxon) or (not valid_interacting):
             return assocparser.ParseResult(line, [], True)
 
-        return assocparser.ParseResult(line, [assoc], False, evidence.upper())
+        return assocparser.ParseResult(line, [assoc], False, vals[6])
 
 ecomap = EcoMap()
 ecomap.mappings()
-relation_tuple = re.compile(r'(.+)\((.+)\)')
+relation_tuple = re.compile(r'(\w+)\((\w+:\w+)\)')
 
 def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown", qualifier_parser=assocparser.Qualifier2_1()) -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report
@@ -360,10 +342,10 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
 
     if any([isinstance(e, association.Error) for e in evidence.has_supporting_reference]):
         first_error = [e for e in evidence.has_supporting_reference if isinstance(e, association.Error)][0]
-        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[5], first_error.info, taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[5], first_error.info, taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    subject_extensions = [association.ExtensionUnit("rdfs:subClassOf", gaf_line[16])] if gaf_line[16] else []
+    subject_extensions = [association.ExtensionUnit(association.Curie.from_str("rdfs:subClassOf"), association.Curie.from_str(gaf_line[16]))] if gaf_line[16] else []
 
     conjunctions = []
     if gaf_line[15]:
@@ -372,15 +354,15 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
             conjunct_element_builder=lambda el: association.ExtensionUnit.from_str(el))
 
         if isinstance(conjunctions, association.Error):
-            report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=taxon, rule=1)
+            report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie) and relation should have corresponding URI", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
     relation_uri = relations.lookup_label(relation_label)
     if relation_uri is None:
-        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation_label, "Could not find CURIE for relation `{}`".format(relation_label), taxon=taxon, rule=1)
+        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation_label, "Could not find CURIE for relation `{}`".format(relation_label), taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    relation_curie = association.Curie.from_str(curie_util.contract_uri(relation_uri))
+    relation_curie = association.Curie.from_str(curie_util.contract_uri(relation_uri)[0])
 
     a = association.GoAssociation(
         source_line="\t".join(gaf_line),

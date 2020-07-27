@@ -19,7 +19,7 @@ def test_gpad_iba_writing():
 
     expected_lines = [
         "!gpa-version: 1.1",
-        "WB\tWBGene00022144\tpart_of\tGO:0005886\tPMID:21873635\tECO:0000318\tPANTHER:PTN000073732|RGD:3252\t\t20180308\tGO_Central\t\t",
+        "WB\tWBGene00022144\tBFO:0000050\tGO:0005886\tPMID:21873635\tECO:0000318\tPANTHER:PTN000073732|RGD:3252\t\t20180308\tGO_Central\t\t",
         ""
     ]
     assert expected_lines == outlines

@@ -122,7 +122,7 @@ class GoRule02(GoRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
 
-        fails = (annotation.object.id == "GO:0005515" and annotation.negated)
+        fails = (str(annotation.object.id) == "GO:0005515" and annotation.negated)
         return self._result(not fails)
 
 class GoRule06(GoRule):
@@ -136,8 +136,8 @@ class GoRule06(GoRule):
         if config.ontology is None:
             return self._result(True)
 
-        go_namespace = [predval for predval in config.ontology.get_graph().node.get(annotation.object.id, {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
-        evidence = annotation.evidence.type
+        go_namespace = [predval for predval in config.ontology.get_graph().node.get(str(annotation.object.id), {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
+        evidence = str(annotation.evidence.type)
         fails = evidence in [self.iep, self.hep] and "biological_process" not in [o["val"] for o in go_namespace]
         return self._result(not fails)
 
@@ -153,8 +153,8 @@ class GoRule07(GoRule):
             # We'll define children_of_catalytic_activity if we have an ontology *and* if we haven't defined it before already
             self.children_of_catalytic_activity = set(config.ontology.descendants(catalytic_activity, relations=["subClassOf"], reflexive=True))
 
-        goterm = annotation.object.id
-        evidence = annotation.evidence.type
+        goterm = str(annotation.object.id)
+        evidence = str(annotation.evidence.type)
 
         fails = False
         if self.children_of_catalytic_activity is not None:
@@ -183,8 +183,8 @@ class GoRule08(GoRule):
             self.do_not_annotate = []
             self.do_not_manually_annotate = []
 
-        goid = annotation.object.id
-        evidence = annotation.evidence.type
+        goid = str(annotation.object.id)
+        evidence = str(annotation.evidence.type)
 
         auto_annotated = goid in self.do_not_annotate
         manually_annotated = evidence != "ECO:0000501" and goid in self.do_not_manually_annotate
@@ -202,8 +202,8 @@ class GoRule11(GoRule):
         self.nd = "ECO:0000307"
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        goclass = annotation.object.id
-        evidence = annotation.evidence.type
+        goclass = str(annotation.object.id)
+        evidence = str(annotation.evidence.type)
 
         # If we see a bad evidence, and we're not in a paint file then fail.
         # We're good if both predicates are true, or neither are true
@@ -236,7 +236,7 @@ class GoRule13(GoRule):
             return self._result(True)
         else:
             # Filter non experimental evidence
-            if annotation.evidence.type in self.non_experimental_evidence:
+            if str(annotation.evidence.type) in self.non_experimental_evidence:
                 return self._result(False)
             else:
                 # Only submit a warning/report if we are an experimental evidence
@@ -262,7 +262,7 @@ class GoRule15(GoRule):
         passes = False
         if self.allowed_dual_species_terms is not None:
             dual = annotation.interacting_taxon is not None
-            goterm = annotation.object.id
+            goterm = str(annotation.object.id)
 
             # We fail if we are a dual taxon and then the term is not in this list
             # This is the same as dual -> goterm in list
@@ -278,7 +278,7 @@ class GoRule16(GoRule):
         super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", FailMode.HARD)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        evidence = annotation.evidence.type
+        evidence = str(annotation.evidence.type)
         withfrom = annotation.evidence.with_support_from
 
         okay = True
@@ -295,8 +295,8 @@ class GoRule17(GoRule):
         super().__init__("GORULE:0000017", "IDA annotations must not have a With/From entry", FailMode.SOFT)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        evidence = annotation.evidence.type
-        withfrom = annotation.evidence.with_support_from
+        evidence = str(annotation.evidence.type)
+        withfrom = str(annotation.evidence.with_support_from)
 
         if evidence == "ECO:0000314":
             return self._result(not bool(withfrom))
@@ -309,8 +309,8 @@ class GoRule18(GoRule):
         super().__init__("GORULE:0000018", "IPI annotations require a With/From entry", FailMode.SOFT)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        evidence = annotation.evidence.type
-        withfrom = annotation.evidence.with_support_from
+        evidence = str(annotation.evidence.type)
+        withfrom = str(annotation.evidence.with_support_from)
 
         if evidence == "ECO:0000353":
             return self._result(bool(withfrom))
@@ -325,7 +325,7 @@ class GoRule26(GoRule):
         self.offending_evidence = ["ECO:0000318"]
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        evidence = annotation.evidence.type
+        evidence = str(annotation.evidence.type)
         # If we see a bad evidence, and we're not in a paint file then fail.
         fails = (evidence in self.offending_evidence and not config.paint)
         return self._result(not fails)
@@ -341,7 +341,7 @@ class GoRule28(RepairRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         aspect = annotation.aspect
-        goterm = annotation.object.id
+        goterm = str(annotation.object.id)
 
         if config.ontology is None:
             return TestResult(ResultType.PASS, self.title, annotation)
@@ -377,7 +377,7 @@ class GoRule29(GoRule):
         self.two_years = datetime.timedelta(days=730)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        evidence = annotation.evidence.type
+        evidence = str(annotation.evidence.type)
         date = annotation.date
 
         now = datetime.datetime.today()
@@ -411,7 +411,7 @@ class GoRule30(GoRule):
         return goref.lower().replace("_", "").replace(":", "-")
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        references = annotation.evidence.has_supporting_reference
+        references = str(annotation.evidence.has_supporting_reference)
         for ref in references:
             # Not allowed is obsolete and GO_PAINT:x
             if ref.startswith("GO_PAINT") or (config.goref_metadata is not None and config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("is_obsolete", False)):
@@ -426,8 +426,8 @@ class GoRule37(GoRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # If the evidence code is IBA, then (1) the assigned_by field must be GO_Central and (2) the reference field must be PMID:21873635
-        evidence = annotation.evidence.type
-        references = annotation.evidence.has_supporting_reference
+        evidence = str(annotation.evidence.type)
+        references = [str(ref) for ref in annotation.evidence.has_supporting_reference]
         assigned_by = annotation.provided_by
 
         result = self._result(True) # By default we pass
@@ -444,8 +444,8 @@ class GoRule39(GoRule):
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # An implementation note: This is done by testing if the DB (column 1) is ComplexPortal.
         # This will grab a subset of all actual Protein Complexes. This is noted in the rule description
-        db = annotation.subject.id.split(":")[0]
-        goterm = annotation.object.id
+        db = annotation.subject.id.namespace
+        goterm = str(annotation.object.id)
 
         fails = (db == "ComplexPortal" and goterm == "GO:0032991")
         return self._result(not fails)
@@ -456,7 +456,7 @@ class GoRule42(GoRule):
         super().__init__("GORULE:0000042", "Qualifier: IKR evidence code requires a NOT qualifier", FailMode.HARD)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        evidence = annotation.evidence.type
+        evidence = str(annotation.evidence.type)
 
         result = self._result(True)
         ikr = "ECO:0000320"
@@ -481,8 +481,8 @@ class GoRule43(GoRule):
         if config.goref_metadata is None:
             return self._result(True)
 
-        references = annotation.evidence.has_supporting_reference
-        evidence = annotation.evidence.type
+        references = [str(ref) for ref in annotation.evidence.has_supporting_reference]
+        evidence = str(annotation.evidence.type)
 
         for ref in references:
             allowed_eco = config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("evidence_codes", None)
@@ -516,7 +516,7 @@ class GoRule46(GoRule):
             self.self_binding_terms = self.self_binding_roots
 
         withfroms = annotation.evidence.with_support_from
-        goterm = annotation.object.id
+        goterm = str(annotation.object.id)
 
         if goterm in self.self_binding_terms:
             # Then we're in the self-binding case, and check if object ID is in withfrom
@@ -536,7 +536,7 @@ class GoRule50(GoRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # should not have the same identifier in the 'gene product column' (column 2) and in the 'with/from' column (column 8)
-        evidence = annotation.evidence.type
+        evidence = str(annotation.evidence.type)
         result = self._result(True)
         if evidence in self.the_evidences:
             # Ensure the gp ID is not an entry in withfrom
@@ -556,14 +556,14 @@ class GoRule57(GoRule):
             return self._result(True)
 
         evidence_codes = config.group_metadata.get("filter_out", {}).get("evidence", [])
-        if annotation.evidence.type in evidence_codes:
+        if str(annotation.evidence.type) in evidence_codes:
             return self._result(False)
 
         evidences_references = config.group_metadata.get("filter_out", {}).get("evidence_reference", [])
         for er in evidences_references:
             evidence_code = er["evidence"]
             reference = er["reference"]
-            if annotation.evidence.type == evidence_code and annotation.evidence.has_supporting_reference == reference:
+            if str(annotation.evidence.type) == evidence_code and [str(ref) for ref in annotation.evidence.has_supporting_reference] == reference:
                 return self._result(False)
 
         properties = config.group_metadata.get("filter_out", {}).get("annotation_properties", [])
@@ -591,7 +591,7 @@ class GoRule58(RepairRule):
         bad_conjunctions = []
         for con in annotation.object_extensions:
             # Count each extension unit, represented by tuple (Relation, Namespace)
-            extension_counts = collections.Counter([(unit.relation, unit.term.split(":")[0]) for unit in con.elements])
+            extension_counts = collections.Counter([(unit.relation, unit.term.namespace) for unit in con.elements])
 
             matches = self._do_conjunctions_match_constraint(con, annotation.object.id, config.extensions_constraints, extension_counts)
             # If there is a match in the constraints, then we're all good and we can exit with a pass!
@@ -628,7 +628,7 @@ class GoRule58(RepairRule):
 
                 if ext.relation == constraint["relation"]:
 
-                    if (ext.term.split(":")[0] in constraint["namespaces"] and term in constraint["primary_terms"]):
+                    if (ext.term.namespace in constraint["namespaces"] and term in constraint["primary_terms"]):
                         # If we match namespace and go term, then if we there is a cardinality constraint, check that.
                         if "cardinality" in constraint:
                             cardinality_violations = [(ext, num) for ext, num in dict(conjunction_counts).items() if num > constraint["cardinality"]]

@@ -339,7 +339,8 @@ class Report(object):
             self.add_association(a)
 
     def add_association(self, association):
-        if "header" in association and association["header"]:
+        if isinstance(association, dict):
+            # Then we are a header
             self.header.append(association["line"])
         else:
             self.n_assocs += 1
@@ -479,7 +480,7 @@ class AssocParser(object):
             self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
             for association in parsed_result.associations:
                 # yield association if we don't care if it's a header or if it's definitely a real gaf line
-                if not skipheader or "header" not in association:
+                if not skipheader or not isinstance(association, dict):
                     yield association
 
         logger.info(self.report.short_summary())

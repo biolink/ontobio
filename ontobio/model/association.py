@@ -4,14 +4,22 @@ import collections
 import enum
 import datetime
 import re
+import logging
 
+from prefixcommons import curie_util
+
+from ontobio.rdfgen import relations
 from ontobio.ecomap import EcoMap
+
 ecomap = EcoMap()
 ecomap.mappings()
 
 
 from typing import List, Optional, NamedTuple, Dict, Callable, Union, TypeVar
 from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
+
 
 Aspect = typing.NewType("Aspect", str)
 Provider = typing.NewType("Provider", str)
@@ -109,7 +117,7 @@ class Evidence:
     has_supporting_reference: List[Curie]
     with_support_from: List[ConjunctiveSet]
 
-relation_tuple = re.compile(r'(.+)\((.+)\)')
+relation_tuple = re.compile(r'(\w+)\((\w+:\w+)\)')
 
 @dataclass(unsafe_hash=True)
 class ExtensionUnit:
@@ -120,16 +128,38 @@ class ExtensionUnit:
     def from_str(ExtensionUnit, entity: str) -> Union:
         """
         Attempts to parse string entity as an ExtensionUnit
+        If the `relation(term)` is not formatted correctly, an Error is returned.
+        If the `relation` cannot be found in the `relations` dictionary then an error
+        is also returned.
         """
         parsed = relation_tuple.findall(entity)
         if len(parsed) == 1:
             rel, term = parsed[0]
-            return ExtensionUnit(rel, term)
+            rel_uri = relations.lookup_label(rel)
+            if rel_uri is None:
+                return Error(entity)
+
+            rel_curi = Curie.from_str(curie_util.contract_uri(rel_uri, strict=False)[0])
+            term_curie = Curie.from_str(term)
+            if isinstance(term_curie, Error):
+                return Error("`{}`: {}".format(term, term_curie.info))
+            return ExtensionUnit(rel_curi, term_curie)
         else:
             return Error(entity)
 
     def __str__(self) -> str:
         return "{relation}({term})".format(relation=self.relation, term=self.term)
+        
+    def __relation_to_label(self) -> str:
+        # Curie -> expand to URI -> reverse relation lookup Label
+        return relations.lookup_uri(curie_util.expand_uri(str(self.relation), strict=False))
+    
+    def to_hash(self, use_label=False) -> dict:
+        rel = self.__relation_to_label() if use_label else str(self.relation)
+        return {
+            "property": rel,
+            "filler": str(self.term)
+        }
 
 @dataclass(repr=True, unsafe_hash=True)
 class GoAssociation:
@@ -150,17 +180,31 @@ class GoAssociation:
 
     def to_gaf_2_1_tsv(self) -> List:
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
-        qualifiers = []
-        qualifiers.extend([str(q) for q in self.qualifiers])
-        if self.negated:
-            qualifiers.append("NOT")
+        
+        allowed_qualifiers = {"contributes_to", "colocalizes_with"}
+        
+        # Curie Object -> CURIE Str -> URI -> Label
+        qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
+        if len(qual_labels) == 1 and self.qualifiers[0] not in allowed_qualifiers:
+            logger.error("Cannot write qualifier `{}` in GAF version 2.1 since only {} are allowed: skipping".format(self.qualifiers[0]), ", ".join(allowed_qualifiers))
+            return []
 
-        qualifier = "|".join(qualifiers)
+        if self.negated:
+            qual_labels.append("NOT")
+
+        qualifier = "|".join(qual_labels)
+        
         self.object.taxon.namespace = "taxon"
         taxon = str(self.object.taxon)
         if self.interacting_taxon:
             self.interacting_taxon.namespace = "taxon"
             taxon = "{taxon}|{interacting}".format(taxon=taxon, interacting=str(self.interacting_taxon))
+
+        # Convert all relation CURIEs to labels here
+        # object_extensions = ConjunctiveSet.list_to_str(self.object_extensions)
+        # for ext in object_extensions:
+        #     for e in ext.elements:
+        #         e.relatio
 
         return [
             self.subject.id.namespace,
@@ -185,10 +229,12 @@ class GoAssociation:
     def to_gaf_2_2_tsv(self) -> List:
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
 
-        allowed_qualifiers = {"contributes_to", "colocalizes_with"}
-        if len(self.qualifiers) == 1 and self.qualifiers[0]
+        qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifers]
+        if self.negated:
+            qual_labels.append("NOT")
+            
+        qualifier = "|".ajoin(qual_labels)
 
-        qualifier = "|".join(qualifiers)
         self.object.taxon.namespace = "taxon"
         taxon = str(self.object.taxon)
         if self.interacting_taxon:
@@ -216,13 +262,18 @@ class GoAssociation:
         ]
 
     def to_gpad_tsv(self) -> List:
-        db, subid = self.subject.id.split(":", maxsplit=1)
         qualifiers = []
         qualifiers.extend([str(q) for q in self.qualifiers])
+        if qualifiers == []:
+            # If there were no qualifiers, then we'll use the Relation. Gpad requires at least one qualifier (which is the relation)
+            qualifiers.append(str(self.relation))
+            
         if self.negated:
             qualifiers.append("NOT")
 
         qualifier = "|".join(qualifiers)
+        
+        print(self)
 
         props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties.items()]
         return [
@@ -239,6 +290,65 @@ class GoAssociation:
             ConjunctiveSet.list_to_str(self.object_extensions),
             "|".join(props_list)
         ]
+
+    def to_hash_assoc(self) -> dict:
+        subject = {
+            "id": str(self.subject.id),
+            "label": self.subject.label,
+            "type": self.subject.type,
+            "fullname": self.subject.fullname,
+            "synonyms": self.subject.synonyms,
+            "taxon": {
+                "id": str(self.subject.taxon)
+            }
+        }
+
+        obj = {
+            "id": str(self.object.id),
+            "taxon": str(self.object.taxon)
+        }
+
+        subject_extensions = [{"property": str(subj.relation), "filler": str(subj.term)} for subj in self.subject_extensions]
+
+        disjunctions = []
+        for conjset in self.object_extensions:
+            conjunctions = []
+            for extension in conjset.elements:
+                conjunctions.append(extension.to_hash(use_label=True))
+            disjunctions.append({"intersection_of": conjunctions})
+
+        object_extensions = {}
+        if len(disjunctions) > 0:
+            object_extensions["union_of"] = disjunctions
+
+        withfrom_flat = []
+        for withfrom in self.evidence.with_support_from:
+            for curie in withfrom.elements:
+                withfrom_flat.append(str(curie))
+
+        evidence = {
+            "type": ecomap.ecoclass_to_coderef(str(self.evidence.type))[0],
+            "has_supporting_reference": [str(ref) for ref in self.evidence.has_supporting_reference],
+            "with_support_from": withfrom_flat
+        }
+
+        return {
+            "source_line": self.source_line,
+            "subject": subject,
+            "object": obj,
+            "negated": self.negated,
+            "qualifiers": [str(q) for q in self.qualifiers],
+            "aspect": self.aspect,
+            "relation": {
+                "id": str(self.relation)
+            },
+            "interacting_taxon": self.interacting_taxon,
+            "evidence": evidence,
+            "provided_by": self.provided_by,
+            "date": self.date,
+            "subject_extensions": subject_extensions,
+            "object_extensions": object_extensions
+        }
 
 @dataclass
 class Header:

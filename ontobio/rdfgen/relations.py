@@ -1,5 +1,6 @@
+from bidict import bidict
 
-__relation_label_lookup = {
+__relation_label_lookup = bidict({
     "occurs in": "http://purl.obolibrary.org/obo/BFO_0000066",
     "happens during": "http://purl.obolibrary.org/obo/RO_0002092",
     "has input": "http://purl.obolibrary.org/obo/RO_0002233",
@@ -42,7 +43,13 @@ __relation_label_lookup = {
     "acts upstream of positive effect": "http://purl.obolibrary.org/obo/RO_0004034",
     "located in": "http://purl.obolibrary.org/obo/RO_0001025",
     "is active in": "http://purl.obolibrary.org/obo/RO_0002432",
-}
+})
+
+def lookup_uri(uri, default=None):
+    if uri is None:
+        return default
+
+    return __relation_label_lookup.inverse.get(uri, default).replace(" ", "_")
 
 def lookup_label(label, default=None):
     if label is None:

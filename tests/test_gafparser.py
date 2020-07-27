@@ -5,6 +5,7 @@ from ontobio.io import GafWriter
 from ontobio.io.assocwriter import GpadWriter
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
+from ontobio.model import association
 
 from ontobio.ecomap import EcoMap
 import tempfile
@@ -242,22 +243,23 @@ def test_errors_gaf():
         print("MESSAGE: {}".format(m))
         if m['type'] == assocparser.Report.INVALID_IDSPACE:
             n_invalid_idspace += 1
-    assert len(msgs) == 16
+    assert len(msgs) == 14
     assert n_invalid_idspace == 1
-    assert len(assocs) == 5
+    assert len(assocs) == 4
 
     w = GafWriter()
     w.write(assocs)
     for a in assocs:
-        if a['object_extensions'] != {}:
+        if a.object_extensions != []:
             # our test file has no ORs, so in DNF this is always the first
-            xs = a['object_extensions']['union_of'][0]['intersection_of']
+            xs = a.object_extensions[0].elements
+            print(xs)
             for x in xs:
 
                 print('X: {}'.format(x))
                 # ensure that invalid expressions have been eliminated
-                assert x['property'] == 'foo'
-                assert x['filler'] == 'X:1'
+                assert x.relation == association.Curie("BFO", "0000050")
+                assert x.term == association.Curie.from_str('X:1')
             assert len(xs) == 1
 
 ALT_ID_ONT = "tests/resources/obsolete.json"
@@ -271,12 +273,12 @@ def test_alt_id_repair():
     gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:1\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
     assocs = p.parse(gaf, skipheader=True)
     # GO:1 is obsolete, and has replaced by GO:0034622, so we should see that class ID.
-    assert assocs[0]["object"]["id"] == "GO:2"
+    assert assocs[0].object.id == association.Curie.from_str("GO:2")
 
     gaf = io.StringIO("SGD\tS000000819\tAFG3\t\tGO:4\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
     assocs = p.parse(gaf, skipheader=True)
     # GO:4 is obsolete due to it being merged into GO:3
-    assert assocs[0]["object"]["id"] == "GO:3"
+    assert assocs[0].object.id == association.Curie.from_str("GO:3")
 
 def test_gorule_repair():
     config = assocparser.AssocParserConfig(
@@ -284,10 +286,10 @@ def test_gorule_repair():
     )
     p = GafParser(config=config)
     # Here this gaf line has the wrong aspect, and should be picked up by gorule 28
-    gaf = io.StringIO("PomBase\tSPCC962.06c\tbpb1\t\tGO:0005634\tPMID:20970342\tIDA\t\tP\tKH and CC/hC domain splicing factor Bpb1\tsf1|ods3\tprotein\ttaxon:4896\t20110804\tPomBase\texists_during(GO:0007137)")
+    gaf = io.StringIO("PomBase\tSPCC962.06c\tbpb1\t\tGO:0005634\tPMID:20970342\tIPI\t\tP\tKH and CC/hC domain splicing factor Bpb1\tsf1|ods3\tprotein\ttaxon:4896\t20110804\tPomBase\tpart_of(GO:0007137)")
     assocs = p.parse(gaf, skipheader=True)
 
-    assert assocs[0]["aspect"] == "C"
+    assert assocs[0].aspect == "C"
     assert len(p.report.messages) == 1
     assert p.report.messages[0]["type"] == assocparser.Report.VIOLATES_GO_RULE
 
@@ -299,31 +301,29 @@ def test_bad_date():
 
 def test_subject_extensions():
     p = GafParser()
-    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tfoo(X:1)\tUniProtKB:P12345")
-    print(json.dumps(assoc_result.associations[0], indent=4))
-    assert "subject_extensions" in assoc_result.associations[0]
-    subject_extensions = assoc_result.associations[0]['subject_extensions']
-    gene_product_form_id = [extension["filler"] for extension in subject_extensions if extension["property"] == "isoform"][0]
-    assert gene_product_form_id == "UniProtKB:P12345"
+    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tpart_of(X:1)\tUniProtKB:P12345")
+    assert len(assoc_result.associations[0].subject_extensions) == 1
+    
+    subject_extensions = assoc_result.associations[0].subject_extensions
+    gene_product_form_id = subject_extensions[0].term
+    assert gene_product_form_id == association.Curie.from_str("UniProtKB:P12345")
 
 def test_object_extensions():
     p = GafParser()
-    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tfoo(X:1)\tUniProtKB:P12345")
-    assert "object_extensions" in assoc_result.associations[0]
-    object_extensions = {
-        "union_of": [
-            {
-                "intersection_of": [
-                    {
-                        "property": "foo",
-                        "filler": "X:1"
-                    }
-                ]
-            }
-        ]
-    }
-    assert assoc_result.associations[0]['object_extensions'] == object_extensions
-
+    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tpart_of(X:1)\tUniProtKB:P12345")
+    # print(p.report.to_markdown())
+    assert len(assoc_result.associations[0].object_extensions) > 0
+    object_extensions = [
+        association.ConjunctiveSet([
+            association.ExtensionUnit(association.Curie("BFO", "0000050"), association.Curie("X", "1"))
+        ])
+    ]
+    assert assoc_result.associations[0].object_extensions == object_extensions
+    
+def test_object_extensions_error():
+    p = GafParser()
+    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tpart_of(X)\tUniProtKB:P12345")
+    assert len(p.report.to_report_json()["messages"]["gorule-0000001"]) == 1
 
 def test_factory():
     afa = AssociationSetFactory()
