@@ -1,12 +1,11 @@
 from ontobio.rdfgen.gocamgen.gocamgen import AssocGoCamModel
-from ontobio.rdfgen.gocamgen.gpad_extensions_mapper import ExtensionsMapper
 from ontobio.rdfgen.gocamgen.filter_rule import AssocFilter, FilterRule, get_filter_rule
 from ontobio.rdfgen.gocamgen.collapsed_assoc import extract_properties
 from ontobio.rdfgen.gocamgen.errors import GocamgenException, GeneErrorSet
-from ontobio.rdfgen.gocamgen.utils import ShexException
-from ontobio.io.gpadparser import GpadParser
+from ontobio.io import gpadparser
 from ontobio.io.assocparser import AssocParserConfig
 from ontobio.io.entityparser import GpiParser
+from ontobio.model.association import GoAssociation
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.util.go_utils import GoAspector
 import argparse
@@ -56,7 +55,7 @@ class GoCamBuilder:
         self.errors = GeneErrorSet()  # Errors by gene ID
         self.gpi_entities = self.parse_gpi(gpi_file)
 
-    def translate_to_model(self, gene, assocs):
+    def translate_to_model(self, gene, assocs: List[GoAssociation]):
         model = AssocGoCamModel(gene, assocs, store=self.store)
         model.ontology = self.ontology
         model.ro_ontology = self.ro_ontology
@@ -66,7 +65,7 @@ class GoCamBuilder:
 
         return model
 
-    def make_model(self, gene, annotations, output_directory=None, nquads=False):
+    def make_model(self, gene, annotations: List[GoAssociation], output_directory=None, nquads=False):
         # All these retry shenanigans are to prevent mid-run crashes due to an external resource simply blipping
         # out for a second.
         retry_count = 0
@@ -159,10 +158,11 @@ class GoCamBuilder:
 
 class AssocExtractor:
     def __init__(self, gpad_file, gpi_file, parser_config: AssocParserConfig = None):
+        self.assocs = []
         if parser_config:
-            gpad_parser = GpadParser(config=parser_config)
+            gpad_parser = gpadparser.GpadParser(config=parser_config)
         else:
-            gpad_parser = GpadParser()
+            gpad_parser = gpadparser.GpadParser()
             gpad_parser.config.rule_contexts = ["import"]
         with open(gpad_file) as sg:
             lines = sum(1 for line in sg)
@@ -171,14 +171,23 @@ class AssocExtractor:
             click.echo("Making products...")
             with click.progressbar(iterable=gpad_parser.association_generator(file=gf, skipheader=True),
                                    length=lines) as associations:
-                self.assocs = self.extract_properties_from_assocs(associations)
+                for a in associations:
+                    line = a["source_line"]
+                    vals = [el.strip() for el in line.split("\t")]
+
+                    parsed = gpadparser.to_association(list(vals))
+                    if parsed.associations == []:
+                        continue
+
+                    self.assocs.append(parsed.associations[0])
+                # self.assocs = self.extract_properties_from_assocs(associations)
 
         self.entity_parents = self.parse_gpi_parents(gpi_file)
 
     def group_assocs(self):
         assocs_by_gene = {}
         for a in self.assocs:
-            subject_id = a["subject"]["id"]
+            subject_id = a.subject.id
             # If entity has parent, assign to parent entity model
             if subject_id in self.entity_parents:
                 subject_id = self.entity_parents[subject_id]

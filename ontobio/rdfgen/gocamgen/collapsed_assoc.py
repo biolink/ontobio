@@ -2,6 +2,7 @@ from typing import List
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.assocparser import SplitLine
+from ontobio.model.association import GoAssociation
 
 GPAD_PARSER = GpadParser()
 BINDING_ROOT = "GO:0005488"  # binding
@@ -9,7 +10,7 @@ IPI_ECO_CODE = "ECO:0000353"
 
 
 class CollapsedAssociationSet:
-    def __init__(self, associations):
+    def __init__(self, associations: List[GoAssociation]):
         self.associations = associations
         self.collapsed_associations = []
         self.assoc_dict = {}
@@ -41,9 +42,9 @@ class CollapsedAssociationSet:
 
         for a in self.associations:
             # Header
-            subj_id = a["subject"]["id"]
-            qualifiers = a["qualifiers"]
-            term = a["object"]["id"]
+            subj_id = a.subject.id
+            qualifiers = a.qualifiers
+            term = a.object.id
             extensions = get_annot_extensions(a)
             with_froms = self.get_with_froms(a)  # Handle pipe separation according to import requirements
             cas = []
@@ -162,8 +163,8 @@ def dedupe_extensions(extensions):
 
 
 class CollapsedAssociationLine:
-    def __init__(self, assoc, with_from=None):
-        self.source_line = assoc["source_line"]
+    def __init__(self, assoc: GoAssociation, with_from=None):
+        self.source_line = assoc.source_line
         self.references = sorted(assoc["evidence"]["has_supporting_reference"])
         self.evidence_code = assoc["evidence"]["type"]
         self.date = assoc["date"]
@@ -192,10 +193,8 @@ class CollapsedAssociationLine:
 
 
 def get_annot_extensions(annot):
-    if "object_extensions" in annot:
-        return annot["object_extensions"]
-    elif "extensions" in annot["object"]:
-        return annot["object"]["extensions"]
+    if len(annot.object_extensions) > 0:
+        return annot.object_extensions
     return {}
 
 

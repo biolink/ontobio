@@ -1,24 +1,21 @@
 from ontobio.rdfgen.assoc_rdfgen import CamRdfTransform, TurtleRdfWriter, genid, prefix_context
 from ontobio.vocabulary.relations import OboRO, Evidence
 from ontobio.vocabulary.upper import UpperLevel
-# from ontobio.util.go_utils import GoAspector
-# from ontobio.ontol_factory import OntologyFactory
 from prefixcommons.curie_util import expand_uri, contract_uri
 from rdflib.namespace import OWL, RDF
 from rdflib import Literal
 from rdflib.term import URIRef
 from rdflib.namespace import Namespace
 import rdflib
-# import networkx
-# import logging
-# import argparse
 import datetime
 import os.path as path
 import logging
+from typing import List
 from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TriplePatternFinder
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
 from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
+from ontobio.model.association import GoAssociation
 
 
 # logging.basicConfig(level=logging.INFO)
@@ -401,7 +398,7 @@ class GoCamModel():
 class AssocGoCamModel(GoCamModel):
     ENABLES_O_RELATION_LOOKUP = {}
 
-    def __init__(self, modeltitle, assocs, connection_relations=None, store=None):
+    def __init__(self, modeltitle, assocs: List[GoAssociation], connection_relations=None, store=None):
         GoCamModel.__init__(self, modeltitle, connection_relations, store)
         self.associations = CollapsedAssociationSet(assocs)
         self.ontology = None
