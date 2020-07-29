@@ -315,6 +315,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     aspect = gaf_line[8]
     negated, relation_label, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
     # Note: Relation label is grabbed from qualifiers, if any exist in _parse_qualifier
+    qualifiers = [association.Curie.from_str(curie_util.contract_uri(relations.lookup_label(q), strict=False)[0]) for q in qualifiers]
 
     # column 4 is qualifiers -> index 3
     # For allowed, see http://geneontology.org/docs/go-annotations/#annotation-qualifiers

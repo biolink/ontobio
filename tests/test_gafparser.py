@@ -212,7 +212,7 @@ def test_qualifiers_gaf_2_2():
     assert len(list(filter(lambda e: e["obj"] == "contributes_to|enables", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
 
 
-    assert len([a for a in assocs if "acts_upstream_of_negative_effect" in a["qualifiers"]]) == 1
+    assert len([a for a in assocs if association.Curie.from_str("RO:0004035") in a.qualifiers]) == 1
 
 def test_default_gaf_version():
     p = GafParser()
@@ -248,7 +248,7 @@ def test_errors_gaf():
         print("MESSAGE: {}".format(m))
         if m['type'] == assocparser.Report.INVALID_IDSPACE:
             n_invalid_idspace += 1
-    assert len(msgs) == 14
+    assert len(msgs) == 13
     assert n_invalid_idspace == 1
     assert len(assocs) == 2
 
