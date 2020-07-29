@@ -43,6 +43,9 @@ __relation_label_lookup = bidict({
     "acts upstream of positive effect": "http://purl.obolibrary.org/obo/RO_0004034",
     "located in": "http://purl.obolibrary.org/obo/RO_0001025",
     "is active in": "http://purl.obolibrary.org/obo/RO_0002432",
+    "exists during": "http://purl.obolibrary.org/obo/GOREL_0000032",
+    "coincident with": "http://purl.obolibrary.org/obo/RO_0002008",
+    "has regulation target": "http://purl.obolibrary.org/obo/GOREL_0000015"
 })
 
 def lookup_uri(uri, default=None):

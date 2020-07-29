@@ -283,7 +283,7 @@ class GoRule16(GoRule):
 
         okay = True
         if evidence == "ECO:0000305":
-            only_go = [t for conjunctions in withfrom for t in conjunctions.elements if t.startswith("GO:")] # Filter terms that aren't GO terms
+            only_go = [t for conjunctions in withfrom for t in conjunctions.elements if t.namespace == "GO"] # Filter terms that aren't GO terms
             okay = len(only_go) >= 1
 
         return self._result(okay)
@@ -296,7 +296,7 @@ class GoRule17(GoRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
-        withfrom = str(annotation.evidence.with_support_from)
+        withfrom = annotation.evidence.with_support_from
 
         if evidence == "ECO:0000314":
             return self._result(not bool(withfrom))

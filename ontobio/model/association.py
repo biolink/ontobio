@@ -85,7 +85,7 @@ class ConjunctiveSet:
         return "|".join([str(conj) for conj in conjunctions])
 
     @classmethod
-    def str_to_conjunctions(ConjunctiveSet, entity: str, conjunct_element_builder: Union[C, Error]=lambda el: str(el)) -> Union[List[C], Error]:
+    def str_to_conjunctions(ConjunctiveSet, entity: str, conjunct_element_builder: Union[C, Error]=lambda el: Curie.from_str(el)) -> Union[List[C], Error]:
         """
         Takes a field that conforms to the pipe (|) and comma (,) separator type. The parsed version is a list of pipe separated values
         which are themselves a comma separated list.
@@ -117,7 +117,7 @@ class Evidence:
     has_supporting_reference: List[Curie]
     with_support_from: List[ConjunctiveSet]
 
-relation_tuple = re.compile(r'(\w+)\((\w+:\w+)\)')
+relation_tuple = re.compile(r'(\w+)\((\w+:[\w][\w\.]+)\)')
 
 @dataclass(unsafe_hash=True)
 class ExtensionUnit:
@@ -137,14 +137,17 @@ class ExtensionUnit:
             rel, term = parsed[0]
             rel_uri = relations.lookup_label(rel)
             if rel_uri is None:
+                # print("Error because rel_uri isn't in the file: {}".format(rel))
                 return Error(entity)
 
             rel_curi = Curie.from_str(curie_util.contract_uri(rel_uri, strict=False)[0])
             term_curie = Curie.from_str(term)
             if isinstance(term_curie, Error):
+                # print("Error because term is screwed up: {}".format(term))
                 return Error("`{}`: {}".format(term, term_curie.info))
             return ExtensionUnit(rel_curi, term_curie)
         else:
+            # print("Just couldn't even parse it at all: {}".format(entity))
             return Error(entity)
 
     def __str__(self) -> str:

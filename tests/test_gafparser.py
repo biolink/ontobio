@@ -6,8 +6,13 @@ from ontobio.io.assocwriter import GpadWriter
 from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.model import association
+from ontobio.rdfgen import relations
 
 from ontobio.ecomap import EcoMap
+
+ecomap = EcoMap()
+ecomap.mappings()
+
 import tempfile
 import logging
 import pytest
@@ -89,23 +94,23 @@ def parse_with(f, p):
     print(p.report.to_markdown())
     r1 = results[0]
     # TODO: test datafile does not have ECOs yet!!
-    assert r1['evidence']['type'] == 'ISO' or r1['evidence']['type'] == 'ECO:0000201'
-    assert r1['evidence']['with_support_from'] == ['SGD:S000001583']
-    assert r1['evidence']['has_supporting_reference'] == ['GO_REF:0000024']
+    assert ecomap.ecoclass_to_coderef(str(r1.evidence.type))[0] == 'ISO' or str(r1.evidence.type) == 'ECO:0000201'
+    assert r1.evidence.with_support_from == [association.ConjunctiveSet([association.Curie.from_str('SGD:S000001583')])]
+    assert r1.evidence.has_supporting_reference == [association.Curie.from_str('GO_REF:0000024')]
 
     if is_gaf:
-        assert r1['subject']['label'] == 'ypf1'
-        assert r1['date'] == '20150305'
+        assert r1.subject.label == 'ypf1'
+        assert r1.date == '20150305'
 
     for r in results:
         #print(str(r))
-        sid = r['subject']['id']
-        prov = r['provided_by']
+        sid = r.subject.id
+        prov = r.provided_by
         assert prov == 'PomBase' or prov == 'UniProt'
-        assert r['object']['id'].startswith('GO:')
-        assert sid.startswith('PomBase:') or (not is_gaf and sid.startswith('PR'))
+        assert r.object.id.namespace == "GO"
+        assert sid.namespace == 'PomBase' or (not is_gaf and sid.namespace == 'PR')
         if is_gaf:
-            assert r['subject']['taxon']['id'] =='NCBITaxon:4896'
+            assert str(r.subject.taxon) =='NCBITaxon:4896'
 
     # for m in p.report.messages:
     #     print("MESSAGE: {}".format(m))
@@ -222,12 +227,12 @@ def parse_with2(f, p):
 
     p.config.ontology = ont
     assocs = p.parse(open(f, "r"), skipheader=True)
-    neg_assocs = [a for a in assocs if a['negated'] == True]
+    neg_assocs = [a for a in assocs if a.negated == True]
     assert len(neg_assocs) == 3
     for a in assocs:
-        print('REL: {}'.format(a['relation']))
-    assert len([a for a in assocs if a['relation']['id'] == 'involved_in']) == 1
-    assert len([a for a in assocs if a['relation']['id'] == 'contributes_to']) == 1
+        print('REL: {}'.format(a.relation))
+    assert len([a for a in assocs if str(a.relation) == relations.lookup_label('involved_in')]) == 1
+    assert len([a for a in assocs if str(a.relation) == relations.lookup_label('contributes_to')]) == 1
 
 def test_errors_gaf():
     config = assocparser.AssocParserConfig(
@@ -245,7 +250,7 @@ def test_errors_gaf():
             n_invalid_idspace += 1
     assert len(msgs) == 14
     assert n_invalid_idspace == 1
-    assert len(assocs) == 4
+    assert len(assocs) == 2
 
     w = GafWriter()
     w.write(assocs)
