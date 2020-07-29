@@ -316,7 +316,7 @@ def test_subject_extensions():
 def test_object_extensions():
     p = GafParser()
     assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tpart_of(X:1)\tUniProtKB:P12345")
-    # print(p.report.to_markdown())
+    print(p.report.to_markdown())
     assert len(assoc_result.associations[0].object_extensions) > 0
     object_extensions = [
         association.ConjunctiveSet([
