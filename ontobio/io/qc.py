@@ -8,6 +8,7 @@ import logging
 from dataclasses import dataclass
 
 from typing import List, Dict, Any, Tuple, Union
+from prefixcommons import curie_util
 from ontobio import ontol
 from ontobio import ecomap
 from ontobio.io import assocparser
@@ -411,8 +412,9 @@ class GoRule30(GoRule):
         return goref.lower().replace("_", "").replace(":", "-")
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        references = str(annotation.evidence.has_supporting_reference)
+        references = annotation.evidence.has_supporting_reference
         for ref in references:
+            ref = str(ref)
             # Not allowed is obsolete and GO_PAINT:x
             if ref.startswith("GO_PAINT") or (config.goref_metadata is not None and config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("is_obsolete", False)):
                 return self._result(False)
@@ -563,7 +565,7 @@ class GoRule57(GoRule):
         for er in evidences_references:
             evidence_code = er["evidence"]
             reference = er["reference"]
-            if str(annotation.evidence.type) == evidence_code and [str(ref) for ref in annotation.evidence.has_supporting_reference] == reference:
+            if str(annotation.evidence.type) == evidence_code and [str(ref) for ref in annotation.evidence.has_supporting_reference] == [reference]:
                 return self._result(False)
 
         properties = config.group_metadata.get("filter_out", {}).get("annotation_properties", [])
@@ -591,7 +593,7 @@ class GoRule58(RepairRule):
         bad_conjunctions = []
         for con in annotation.object_extensions:
             # Count each extension unit, represented by tuple (Relation, Namespace)
-            extension_counts = collections.Counter([(unit.relation, unit.term.namespace) for unit in con.elements])
+            extension_counts = collections.Counter([(str(unit.relation), unit.term.namespace) for unit in con.elements])
 
             matches = self._do_conjunctions_match_constraint(con, annotation.object.id, config.extensions_constraints, extension_counts)
             # If there is a match in the constraints, then we're all good and we can exit with a pass!
@@ -625,10 +627,11 @@ class GoRule58(RepairRule):
 
             extension_good = False
             for constraint in constraints:
+                constraint_relation_uri = association.relations.lookup_label(constraint["relation"])
+                ext_relation_uri = curie_util.expand_uri(str(ext.relation))
+                if ext_relation_uri == constraint_relation_uri:
 
-                if ext.relation == constraint["relation"]:
-
-                    if (ext.term.namespace in constraint["namespaces"] and term in constraint["primary_terms"]):
+                    if (ext.term.namespace in constraint["namespaces"] and str(term) in constraint["primary_terms"]):
                         # If we match namespace and go term, then if we there is a cardinality constraint, check that.
                         if "cardinality" in constraint:
                             cardinality_violations = [(ext, num) for ext, num in dict(conjunction_counts).items() if num > constraint["cardinality"]]

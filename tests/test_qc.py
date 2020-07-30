@@ -373,6 +373,7 @@ def test_go_rule28():
     a[3] = ""
     a[4] = "GO:0005975"
     a[5] = "PMID:12345"
+    a[6] = "IDA"
     a[8] = "P"
     a[12] = "taxon:123"
     a[13] = "20200303"
@@ -387,6 +388,7 @@ def test_go_rule28():
     a[3] = ""
     a[4] = "GO:0005975"
     a[5] = "PMID:12345"
+    a[6] = "IDA"
     a[8] = "C"
     a[12] = "taxon:123"
     a[13] = "20200303"
@@ -437,6 +439,7 @@ def test_gorule30():
     a = ["blah"] * 15
     a[3] = ""
     a[5] = "GO_REF:0000033"
+    a[6] = "IDA"
     a[8] = "P"
     a[12] = "taxon:123"
     a[13] = "20200303"
@@ -501,6 +504,7 @@ def test_gorule39():
     a[3] = ""
     a[4] = "GO:0032991"
     a[5] = "PMID:21873635"
+    a[6] = "IDA"
     a[8] = "C"
     a[12] = "taxon:123"
     a[13] = "20200303"
@@ -509,12 +513,12 @@ def test_gorule39():
     test_result = qc.GoRule39().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
 
-    assoc.subject.id = "FB:1234"
+    assoc.subject.id = association.Curie("FB", "1234")
     test_result = qc.GoRule39().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.subject.id = "ComplexPortal:12345"
-    assoc.object.id = "GO:0000023"
+    assoc.subject.id = association.Curie("ComplexPortal", "12345")
+    assoc.object.id = association.Curie("GO", "0000023")
     test_result = qc.GoRule39().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
@@ -581,6 +585,7 @@ def test_gorule46():
     a[3] = ""
     a[4] = "GO:0051260" # Self-binding, yes
     a[5] = "PMID:21873635"
+    a[6] = "IDA"
     a[7] = "PomBase:SPAC25B8.17"
     a[8] = "P"
     a[12] = "taxon:123"
@@ -590,11 +595,11 @@ def test_gorule46():
     test_result = qc.GoRule46().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.evidence.with_support_from = [association.ConjunctiveSet(["PomBase:BLAH123"])]
+    assoc.evidence.with_support_from = association.ConjunctiveSet.str_to_conjunctions("PomBase:BLAH123")
     test_result = qc.GoRule46().test(assoc, config)
     assert test_result.result_type == qc.ResultType.WARNING
 
-    assoc.evidence.with_support_from = [association.ConjunctiveSet(["PomBase:SPAC25B8.17"]), association.ConjunctiveSet(["PomBase:BLAH123"])]
+    assoc.evidence.with_support_from = association.ConjunctiveSet.str_to_conjunctions("PomBase:SPAC25B8.17|PomBase:BLAH123")
     test_result = qc.GoRule46().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
 
@@ -643,12 +648,12 @@ def test_gorule57():
     a[3] = "GO:0003674"
     a[4] = "PMID:12345"
     a[5] = "ECO:0000501"
+    a[6] = "IDA"
     a[7] = "taxon:2"
     a[8] = "20200303"
     a[9] = "MGI"
     a[10] = ""
     a[11] = ""
-    a[12] = "taxon:123"
 
     res = gpadparser.to_association(a)
     assoc = gpadparser.to_association(a).associations[0]
@@ -673,12 +678,12 @@ def test_gorule57():
     assert test_result.result_type == qc.ResultType.ERROR
 
     assoc.evidence.type = "ECO:0000320"
-    assoc.evidence.has_supporting_reference = "PMID:21873635"
+    assoc.evidence.has_supporting_reference = ["PMID:21873635"]
     test_result = qc.GoRule57().test(assoc, config)
     assert test_result.result_type == qc.ResultType.ERROR
 
     assoc.evidence.type = "ECO:some_garbage"
-    assoc.evidence.has_supporting_reference = "PMID:some_garbage"
+    assoc.evidence.has_supporting_reference = ["PMID:some_garbage"]
     assoc.properties = {"noctua-model-id": "some_garbage"}
     test_result = qc.GoRule57().test(assoc, config)
     assert test_result.result_type == qc.ResultType.ERROR
@@ -714,7 +719,7 @@ def test_gorule58():
     assert test_result.result_type == qc.ResultType.PASS
 
     # Fails because `not_relation` is not an allowed relation
-    a[15] = "not_relation(GO:987),occurs_in(CL:1234567)|occurs_in(CL:12345)"
+    a[15] = "coincident_with(GO:987),occurs_in(CL:1234567)|occurs_in(CL:12345)"
     assoc = gafparser.to_association(a).associations[0]
     test_result = qc.GoRule58().test(assoc, config)
     a[15] = "occurs_in(CL:12345)"
@@ -754,6 +759,7 @@ def test_all_rules():
     a[4] = "GO:0006397"
     a[5] = "PMID:21873635"
     a[6] = "ISS"
+    a[7] = "PomBase:SPAC25B8.17"
     a[8] = "P"
     a[12] = "taxon:123"
     a[13] = "20180330"
