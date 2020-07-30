@@ -28,7 +28,10 @@ def test_go_rule02():
     a = ["blah"] * 15
     a[3] = "NOT"
     a[4] = "GO:0005515"
+    a[5] = "PMID:12345"
+    a[6] = "IDA"
     a[8] = "F"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -48,8 +51,10 @@ def test_go_rule_06():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0005575" # Cellular component
+    a[5] = "PMID:12345"
     a[6] = "HEP"
     a[8] = "C"
+    a[12] = "taxon:123"
     a[13] = "20200303"
 
     assoc = gafparser.to_association(a).associations[0]
@@ -70,8 +75,10 @@ def test_go_rule_07():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0003824"
+    a[5] = "PMID:12345"
     a[6] = "IPI"
     a[8] = "F"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -91,8 +98,10 @@ def test_go_rule08():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0006810" # do not annotate
+    a[5] = "PMID:12345"
     a[6] = "IEA"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -122,8 +131,10 @@ def test_go_rule11():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0003674"
+    a[5] = "PMID:12345"
     a[6] = "ND"
     a[8] = "F"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -134,8 +145,10 @@ def test_go_rule11():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:1234567"
+    a[5] = "PMID:12345"
     a[6] = "ND"
     a[8] = "F"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -145,8 +158,10 @@ def test_go_rule11():
     # Not ND and not Root
     a[3] = ""
     a[4] = "GO:1234567"
+    a[5] = "PMID:12345"
     a[6] = "IEA"
     a[8] = "F"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -157,8 +172,10 @@ def test_go_rule11():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0003674"
+    a[5] = "PMID:12345"
     a[6] = "IEA"
     a[8] = "F"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -196,6 +213,7 @@ def test_go_rules_15():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0044419"
+    a[5] = "PMID:12345"
     a[6] = "IEA"
     a[8] = "P"
     a[12] = "taxon:123|taxon:456"
@@ -220,9 +238,11 @@ def test_go_rule_16():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:1234567"
+    a[5] = "PMID:12345"
     a[6] = "IC"
     a[7] = "BLAH:12345"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -230,13 +250,13 @@ def test_go_rule_16():
     assert test_result.result_type == qc.ResultType.ERROR
 
     # withfrom has GO term
-    assoc.evidence.with_support_from = [association.ConjunctiveSet(["GO:0023456"])]
+    assoc.evidence.with_support_from = association.ConjunctiveSet.str_to_conjunctions("GO:0023456")
 
     test_result = qc.GoRule16().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
     # Pipe
-    assoc.evidence.with_support_from = [association.ConjunctiveSet(["GO:0012345"]), association.ConjunctiveSet(["BLAH:54321"])]
+    assoc.evidence.with_support_from = association.ConjunctiveSet.str_to_conjunctions("GO:0012345|BLAH:54321")
 
     test_result = qc.GoRule16().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
@@ -249,7 +269,7 @@ def test_go_rule_16():
 
     # Not IC
     assoc.evidence.type = "ECO:0000501"
-    assoc.evidence.with_support_from =  [association.ConjunctiveSet(["BLAH:5555555"]),  association.ConjunctiveSet(["FOO:999999"])]
+    assoc.evidence.with_support_from = association.ConjunctiveSet.str_to_conjunctions("BLAH:5555555|FOO:999999")
 
     test_result = qc.GoRule16().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
@@ -259,9 +279,11 @@ def test_go_rule_17():
     # IDA with anything in withfrom
     a = ["blah"] * 15
     a[3] = ""
+    a[5] = "PMID:12345"
     a[6] = "IDA"
     a[7] = "BLAH:12345"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -277,9 +299,11 @@ def test_go_rule_18():
     # IDA with nothing in withfrom
     a = ["blah"] * 15
     a[3] = ""
+    a[5] = "PMID:12345"
     a[6] = "IPI"
     a[7] = ""
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
     assoc.evidence.with_support_from = []
@@ -302,6 +326,8 @@ def test_go_rule26():
     a[8] = "P"
     a[3] = ""
     a[13] = "20200303"
+    a[5] = "PMID:12345"
+    a[12] = "taxon:123"
     assoc = gafparser.to_association(a).associations[0]
     # Pass due to IBA in paint
     test_result = qc.GoRule26().test(assoc, config)
@@ -315,6 +341,8 @@ def test_go_rule26():
     a[8] = "P"
     a[3] = ""
     a[13] = "20200303"
+    a[5] = "PMID:12345"
+    a[12] = "taxon:123"
     assoc = gafparser.to_association(a).associations[0]
     # Pass due to non IBA
     test_result = qc.GoRule26().test(assoc, config)
@@ -328,6 +356,8 @@ def test_go_rule26():
     a[8] = "P"
     a[3] = ""
     a[13] = "20200303"
+    a[5] = "PMID:12345"
+    a[12] = "taxon:123"
     assoc = gafparser.to_association(a).associations[0]
     # Pass due to non IBA
     test_result = qc.GoRule26().test(assoc, config)
@@ -342,7 +372,9 @@ def test_go_rule28():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0005975"
+    a[5] = "PMID:12345"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -354,7 +386,9 @@ def test_go_rule28():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0005975"
+    a[5] = "PMID:12345"
     a[8] = "C"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -369,8 +403,10 @@ def test_go_rule28():
 def test_go_rule29():
     a = ["blah"] * 15
     a[3] = ""
+    a[5] = "PMID:12345"
     a[6] = "IEA"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "19901111" # Nov 11, 1990, more than a year old
     assoc = gafparser.to_association(a).associations[0]
 
@@ -402,6 +438,7 @@ def test_gorule30():
     a[3] = ""
     a[5] = "GO_REF:0000033"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -436,6 +473,7 @@ def test_gorule37():
     a[6] = "IBA"
     a[5] = "PMID:21873635"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     a[14] = "GO_Central"
     assoc = gafparser.to_association(a).associations[0]
@@ -462,7 +500,9 @@ def test_gorule39():
     a[0] = "ComplexPortal"
     a[3] = ""
     a[4] = "GO:0032991"
+    a[5] = "PMID:21873635"
     a[8] = "C"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -481,8 +521,10 @@ def test_gorule39():
 def test_gorule42():
     a = ["blah"] * 15
     a[3] = "NOT"
+    a[5] = "PMID:21873635"
     a[6] = "IKR"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -504,6 +546,7 @@ def test_gorule43():
     a[5] = "GO_REF:0000024"
     a[6] = "ISO"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -537,8 +580,10 @@ def test_gorule46():
     a[1] = "SPAC25B8.17"
     a[3] = ""
     a[4] = "GO:0051260" # Self-binding, yes
+    a[5] = "PMID:21873635"
     a[7] = "PomBase:SPAC25B8.17"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -568,9 +613,11 @@ def test_gorule50():
     a[0] = "HELLO"
     a[1] = "123"
     a[3] = ""
+    a[5] = "PMID:21873635"
     a[6] = "ISS"
     a[7] = "HELLO:123"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20200303"
     assoc = gafparser.to_association(a).associations[0]
 
@@ -601,6 +648,7 @@ def test_gorule57():
     a[9] = "MGI"
     a[10] = ""
     a[11] = ""
+    a[12] = "taxon:123"
 
     res = gpadparser.to_association(a)
     assoc = gpadparser.to_association(a).associations[0]
@@ -652,6 +700,7 @@ def test_gorule58():
     a[9] = "MGI"
     a[10] = ""
     a[11] = ""
+    a[12] = "taxon:123"
     a[13] = "20200303"
     a[14] = "GO_Central"
     a[15] = "has_input(GO:0003674),occurs_in(CL:123456)"
@@ -703,8 +752,10 @@ def test_all_rules():
     a = ["blah"] * 15
     a[3] = ""
     a[4] = "GO:0006397"
+    a[5] = "PMID:21873635"
     a[6] = "ISS"
     a[8] = "P"
+    a[12] = "taxon:123"
     a[13] = "20180330"
     assoc = gafparser.to_association(a).associations[0]
 

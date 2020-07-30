@@ -310,7 +310,7 @@ class GoRule18(GoRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
-        withfrom = str(annotation.evidence.with_support_from)
+        withfrom = annotation.evidence.with_support_from
 
         if evidence == "ECO:0000353":
             return self._result(bool(withfrom))
