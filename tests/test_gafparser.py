@@ -190,12 +190,12 @@ def test_qualifiers_gaf():
     p = GafParser()
     # p.config.ontology = ont
     assocs = p.parse(open(QGAF, "r"), skipheader=True)
-    neg_assocs = [a for a in assocs if a['negated'] == True]
+    neg_assocs = [a for a in assocs if a.negated == True]
     assert len(neg_assocs) == 3
     for a in assocs:
-        print('REL: {}'.format(a['relation']))
+        print('REL: {}'.format(str(a.relation)))
 
-    assert len([a for a in assocs if a['relation']['id'] == 'contributes_to']) == 1
+    assert len([a for a in assocs if str(a.relation) == 'RO:0002326']) == 1
 
     # For the space in `colocalizes with`
     assert len(list(filter(lambda e: e["obj"] == "colocalizes with", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
@@ -295,8 +295,8 @@ def test_gorule_repair():
     assocs = p.parse(gaf, skipheader=True)
 
     assert assocs[0].aspect == "C"
-    assert len(p.report.messages) == 1
-    assert p.report.messages[0]["type"] == assocparser.Report.VIOLATES_GO_RULE
+    assert len(p.report.to_report_json()["messages"]["gorule-0000028"]) == 1
+    assert p.report.to_report_json()["messages"]["gorule-0000028"][0]["type"] == assocparser.Report.VIOLATES_GO_RULE
 
 def test_bad_date():
     p = GafParser()
