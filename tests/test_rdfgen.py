@@ -16,7 +16,7 @@ ONT = "tests/resources/go-truncated-pombase.json"
 def test_parse():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
-    assocs = p.parse(open(POMBASE, "r"))
+    assocs = p.parse(open(POMBASE, "r"), skipheader=True)
     #gen(assocs,SimpleAssocRdfTransform(),'simple')
     gen(assocs, CamRdfTransform(), 'cam')
 
@@ -81,6 +81,6 @@ def gen(assocs, tr, n):
     fn = 'tests/resources/{}.rdf'.format(n)
     tr.emit_header()
     for a in assocs:
-        tr.translate(a)
+        tr.translate(a.to_hash_assoc())
     tr.writer.serialize(destination=open(fn,'wb'))
     #tr.writer.serialize(fn, 'ntriples')
