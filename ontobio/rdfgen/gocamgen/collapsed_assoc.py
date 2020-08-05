@@ -77,8 +77,8 @@ class CollapsedAssociationSet:
     def __iter__(self):
         return iter(self.collapsed_associations)
 
-    def get_with_froms(self, annot):
-        source_line = annot["source_line"]
+    def get_with_froms(self, annot: GoAssociation):
+        source_line = annot.source_line
         vals = source_line.split("\t")
         with_from_col = vals[6]
         # Parse into array (by "|") of arrays (by ",")
@@ -91,13 +91,13 @@ class CollapsedAssociationSet:
             with_from_ds.append(validated_comma_with_froms)
 
         # Now arrange these into "header" and "line" values
-        eco_code = annot["evidence"]["type"]
-        term = annot["object"]["id"]
+        eco_code = annot.evidence.type
+        term = str(annot.object.id)
         is_binding = eco_code == IPI_ECO_CODE and BINDING_ROOT in self.go_ontology.ancestors(term, reflexive=True)
         if is_binding:
             # Using GPI, check with_froms for taxon equivalency to subj_id
             if self.gpi_entities:
-                subject_id = annot["subject"]["id"]
+                subject_id = str(annot.subject.id)
                 subject_entity = self.gpi_entities[subject_id]
                 values_separated = []
                 for wf in with_from_ds:
@@ -123,6 +123,7 @@ class CollapsedAssociationSet:
 
 class CollapsedAssociation:
     def __init__(self, header):
+        # TODO: Refactor out complex dictionary structure - reuse GoAssociation
         self.header = header
         self.lines: List[CollapsedAssociationLine] = []
 
@@ -136,7 +137,7 @@ class CollapsedAssociation:
 
     def annot_extensions(self):
         if "object_extensions" in self.header:
-            return self.header["object_extensions"].get("union_of")
+            return self.header["object_extensions"]
         return {}
 
     def qualifiers(self):
@@ -165,15 +166,18 @@ def dedupe_extensions(extensions):
 class CollapsedAssociationLine:
     def __init__(self, assoc: GoAssociation, with_from=None):
         self.source_line = assoc.source_line
-        self.references = sorted(assoc["evidence"]["has_supporting_reference"])
-        self.evidence_code = assoc["evidence"]["type"]
-        self.date = assoc["date"]
-        self.assigned_by = assoc["provided_by"]
-        self.annotation_properties = None
+        self.references = [str(ref) for ref in sorted(assoc.evidence.has_supporting_reference)]
+        self.evidence_code = str(assoc.evidence.type)
+        self.date = assoc.date
+        self.assigned_by = assoc.provided_by
         self.with_from = with_from
+        self.annotation_properties = assoc.properties
+        # self.annotation_properties = {}
+        # for prop, vals in assoc.properties.items():
+        #     self.annotation_properties[str(prop)] = vals
 
-        if "annotation_properties" in assoc:
-            self.annotation_properties = assoc["annotation_properties"]
+        # if "annotation_properties" in assoc:
+        #     self.annotation_properties = assoc["annotation_properties"]
 
     def as_dict(self):
         ds = {
@@ -192,10 +196,8 @@ class CollapsedAssociationLine:
         return ds
 
 
-def get_annot_extensions(annot):
-    if len(annot.object_extensions) > 0:
-        return annot.object_extensions
-    return {}
+def get_annot_extensions(annot: GoAssociation):
+    return annot.object_extensions
 
 
 def extract_properties_from_string(prop_col):

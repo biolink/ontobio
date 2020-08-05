@@ -15,7 +15,7 @@ from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TripleP
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
 from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
-from ontobio.model.association import GoAssociation
+from ontobio.model.association import GoAssociation, ExtensionUnit
 
 
 # logging.basicConfig(level=logging.INFO)
@@ -440,14 +440,14 @@ class AssocGoCamModel(GoCamModel):
                 for uo in annotation_extensions:
                     # Grab occurs_in's
                     # Make a new uo if situation found
-                    occurs_in_exts = [ext for ext in uo['intersection_of'] if ext["property"] == "occurs_in"]
+                    occurs_in_exts: List[ExtensionUnit] = [ext for ext in uo.elements if ext.relation == "occurs_in"]
                     # onto_grouping = {
                     #     "CL": [{}, {}],
                     #     "EMAPA": [{}]
                     # }
                     onto_grouping = {}
                     for ext in occurs_in_exts:
-                        ont_prefix = ext["filler"].split(":")[0]
+                        ont_prefix = ext.term.split(":")[0]
                         if ont_prefix not in onto_grouping:
                             onto_grouping[ont_prefix] = []
                         onto_grouping[ont_prefix].append(ext)
@@ -459,25 +459,25 @@ class AssocGoCamModel(GoCamModel):
                                 # Create new 'intersection_of' list
                                 new_exts_list = []
                                 # Add ext to this new list if its prefix is not ont_prefix
-                                for int_of_ext in uo['intersection_of']:
-                                    if int_of_ext["property"] != "occurs_in" or int_of_ext["filler"].split(":")[0] != ont_prefix:
+                                for int_of_ext in uo.elements:
+                                    if int_of_ext.relation != "occurs_in" or int_of_ext.term.split(":")[0] != ont_prefix:
                                         # Add the extensions that don't currently concern us
                                         new_exts_list.append(int_of_ext)
                                 # Then add occurs_in ext in current iteration
                                 new_exts_list.append(ext)
-                                annotation_extensions.append({"intersection_of": new_exts_list})
+                                annotation_extensions.append(new_exts_list)
                 # Remove original, un-split extension from list so it isn't translated
                 [annotation_extensions.remove(ext_set) for ext_set in extension_sets_to_remove]
 
                 for uo in annotation_extensions:
                     int_bits = []
-                    for rel in uo["intersection_of"]:
-                        int_bits.append("{}({})".format(rel["property"], rel["filler"]))
+                    for rel in uo.elements:
+                        int_bits.append(str(rel))
                     ext_str = ",".join(int_bits)
 
                     annot_subgraph = self.translate_primary_annotation(a)
 
-                    intersection_extensions = dedupe_extensions(uo['intersection_of'])
+                    intersection_extensions: List[ExtensionUnit] = dedupe_extensions(uo.elements)
                     # is_cool = self.extensions_mapper.annot_following_rules(intersection_extensions, aspect, term)
                     is_cool = True  # Open the flood gates
                     if is_cool:
@@ -485,11 +485,11 @@ class AssocGoCamModel(GoCamModel):
                         # Nesting repeated extension relations (i.e. occurs_in, part_of)
                         ext_rels_to_nest = ['occurs_in', 'part_of']  # Switch to turn on/off extension nesting
                         for ertn in ext_rels_to_nest:
-                            nest_exts = [ext for ext in intersection_extensions if ext["property"] == ertn]
+                            nest_exts = [ext for ext in intersection_extensions if ext.relation == ertn]
                             if len(nest_exts) > 1:
                                 # Sort by specific term to general term
                                 sorted_nest_ext_terms = sort_terms_by_ontology_specificity(
-                                    [ne["filler"] for ne in nest_exts])
+                                    [ne.term for ne in nest_exts])
                                 # Translate
                                 loc_subj_n = annot_subgraph.get_anchor()
                                 for idx, ne_term in enumerate(sorted_nest_ext_terms):
@@ -511,8 +511,8 @@ class AssocGoCamModel(GoCamModel):
                                 # Remove from intersection_extensions because this is now already translated
                                 [intersection_extensions.remove(ext) for ext in nest_exts]
                         for rel in intersection_extensions:
-                            ext_relation = rel["property"]
-                            ext_target = rel["filler"]
+                            ext_relation = rel.relation
+                            ext_target = rel.term
                             if ext_relation not in list(INPUT_RELATIONS.keys()) + list(HAS_REGULATION_TARGET_RELATIONS.keys()):
                                 # No RO term yet. Try looking up in RO
                                 relation_term = self.translate_relation_to_ro(ext_relation)
