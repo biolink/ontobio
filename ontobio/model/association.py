@@ -28,6 +28,7 @@ Date = typing.NewType("Date", str)
 @dataclass
 class Error:
     info: str
+    entity: str = ""
 
 @dataclass
 class Curie:
@@ -70,19 +71,91 @@ class Term:
 
 C = TypeVar("C")
 
+@dataclass
+class ConjunctElement:
+    
+    withfromcurie = re.compile(r"[\w]+:[\w][\w\-\.:]*")
+    label_extension = re.compile(r"([\w]+)\(([\w]+:[\w][\w\-\.:]*)\)")
+    curie_extension = re.compile(r"([\w]+:[\w][\w\-\.:]*)\(([\w]+:[\w][\w\-\.:]*)\)")
+    
+    
+    
+    def __str__(self) -> str:
+        return NotImplementedError
+
+    @classmethod
+    def from_str(ConjunctElement, entity: str):
+        """
+        Given the entity as a string, build one of the subtypes of this class.
+        If the string cannot be converted into one of the subtypes, then this
+        will return an `Error` with the info having info about what went wrong
+        during the parse.
+        """
+        # TODO This can be done with the python 3.8 language feature `:=`
+        # TODO Found here: https://www.python.org/dev/peps/pep-0572/
+
+        # parsed = None
+        # withfrom_matches = self.withfromcurie.findall(entity)
+        # if withfrom_matches:
+        #     parsed = WithFromCurieElement(Curie.from_str(withfrom_matches[0]))
+        # else:
+        #     label_extension_matches = self.label_extension.findall(entity)
+        #     if label_extension_matches:
+        #         parsed = self.
+        # 
+        # 
+        # 
+        # elif self.label_extension matches entity:
+        #     parsed = LabelExtensionElement using above match
+        # elif self.curie_extension matches entity:
+        #     parsed = CurieExtensionElement using above match
+        # else:
+        #     parsed = Error("Couldn't Parse at all")
+        # 
+        # return parsed
+
+# @dataclass
+# class WithFromCurieElement(ConjunctElement):
+#     withfrom: Curie
+# 
+#     def __str__(self) -> str:
+#         return str(self.withfrom)
+# 
+# @dataclass
+# class LabelExtensionElement(ConjunctElement):
+#     extension: ExtensionUnit
+# 
+#     def __str__(self) -> str:
+#         return self.extension.__relation_to_label()
+# 
+# @dataclass
+# class CurieExtensionElement(ConjunctElement):
+#     extension: ExtensionUnit
+# 
+#     def __str__(self) -> str:
+#         return str(self.extension)
+
+
 @dataclass(unsafe_hash=True)
 class ConjunctiveSet:
+    """
+    The field `elements` can be a list of Curie or ExtensionUnit.
+    """
     elements: List
 
     def __str__(self) -> str:
         return ",".join([str(conj) for conj in self.elements])
+        
+    def display(self, conjunct_to_str=lambda c: str(c)) -> str:
+        return ",".join([conjunct_to_str(conj) for conj in self.elements])
 
     @classmethod
-    def list_to_str(ConjunctiveSet, conjunctions: List) -> str:
+    def list_to_str(ConjunctiveSet, conjunctions: List, conjunct_to_str=lambda c: str(c)) -> str:
         """
         List should be a list of ConjunctiveSet
+        Given [ConjunctiveSet, ConjunctiveSet]
         """
-        return "|".join([str(conj) for conj in conjunctions])
+        return "|".join([conj.display(conjunct_to_str=conjunct_to_str) for conj in conjunctions])
 
     @classmethod
     def str_to_conjunctions(ConjunctiveSet, entity: str, conjunct_element_builder: Union[C, Error]=lambda el: Curie.from_str(el)) -> Union[List[C], Error]:
@@ -117,8 +190,7 @@ class Evidence:
     has_supporting_reference: List[Curie]
     with_support_from: List[ConjunctiveSet]
 
-relation_tuple = re.compile(r'([\w_]+)\((\w+:[\w][\w\.]*)\)')
-
+relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.]*)\)')
 @dataclass(unsafe_hash=True)
 class ExtensionUnit:
     relation: Curie
@@ -140,19 +212,29 @@ class ExtensionUnit:
                 # print("Error because rel_uri isn't in the file: {}".format(rel))
                 return Error(entity)
 
-            rel_curi = Curie.from_str(curie_util.contract_uri(rel_uri, strict=False)[0])
             term_curie = Curie.from_str(term)
+            rel_curie = Curie.from_str(curie_util.contract_uri(rel_uri, strict=False)[0])
             if isinstance(term_curie, Error):
                 # print("Error because term is screwed up: {}".format(term))
                 return Error("`{}`: {}".format(term, term_curie.info))
-            return ExtensionUnit(rel_curi, term_curie)
+            return ExtensionUnit(rel_curie, term_curie)
         else:
             # print("Just couldn't even parse it at all: {}".format(entity))
             return Error(entity)
 
     def __str__(self) -> str:
-        return "{relation}({term})".format(relation=self.relation, term=self.term)
-        
+        """
+        Display Curie(term)
+        """
+        return self.display()
+
+    def display(self, use_rel_label=False):
+        rel = str(self.relation)
+        if use_rel_label:
+            rel = self.__relation_to_label()
+
+        return "{rel}({term})".format(rel=rel, term=self.term)
+
     def __relation_to_label(self) -> str:
         # Curie -> expand to URI -> reverse relation lookup Label
         return relations.lookup_uri(curie_util.expand_uri(str(self.relation), strict=False))
@@ -203,12 +285,9 @@ class GoAssociation:
             self.interacting_taxon.namespace = "taxon"
             taxon = "{taxon}|{interacting}".format(taxon=taxon, interacting=str(self.interacting_taxon))
 
-        # Convert all relation CURIEs to labels here
-        # object_extensions = ConjunctiveSet.list_to_str(self.object_extensions)
-        # for ext in object_extensions:
-        #     for e in ext.elements:
-        #         e.relatio
-
+        # For extensions, we provide the to string function on ConjunctElement that
+        # calls its `display` method, with the flag to use labels instead of the CURIE.
+        # This function is used to turn the whole column correctly into a string
         return [
             self.subject.id.namespace,
             self.subject.id.identity,
@@ -225,7 +304,8 @@ class GoAssociation:
             taxon,
             self.date,
             self.provided_by,
-            ConjunctiveSet.list_to_str(self.object_extensions),
+            ConjunctiveSet.list_to_str(self.object_extensions, 
+                conjunct_to_str=lambda conj: conj.display(use_rel_label=True)),
             gp_isoforms
         ]
 
@@ -265,18 +345,20 @@ class GoAssociation:
         ]
 
     def to_gpad_tsv(self) -> List:
-        qualifiers = []
-        qualifiers.extend([str(q) for q in self.qualifiers])
-        if qualifiers == []:
+        
+        # Curie Object -> CURIE Str -> URI -> Label
+        qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
+        
+        # Try qualifiers first since, if we are going from GAF -> GPAD and the GAF had a qualifier, that would be
+        # more specific than the relation, which is calculated from the aspect/Go term.
+        if qual_labels == []:
             # If there were no qualifiers, then we'll use the Relation. Gpad requires at least one qualifier (which is the relation)
-            qualifiers.append(str(self.relation))
+            qual_labels.append(relations.lookup_uri(curie_util.expand_uri(str(self.relation), strict=False)))
             
         if self.negated:
-            qualifiers.append("NOT")
+            qual_labels = ["NOT"] + qual_labels
 
-        qualifier = "|".join(qualifiers)
-        
-        print(self)
+        qualifier = "|".join(qual_labels)
 
         props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties.items()]
         return [

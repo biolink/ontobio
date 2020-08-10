@@ -91,7 +91,7 @@ def parse_with(f, p):
         p.config.ontology = None
 
     results = p.parse(open(f, "r"), skipheader=True)
-    print(p.report.to_markdown())
+    # print(p.report.to_markdown())
     r1 = results[0]
     # TODO: test datafile does not have ECOs yet!!
     assert ecomap.ecoclass_to_coderef(str(r1.evidence.type))[0] == 'ISO' or str(r1.evidence.type) == 'ECO:0000201'
@@ -116,7 +116,7 @@ def parse_with(f, p):
     #     print("MESSAGE: {}".format(m))
     print("MESSAGES (sample): {}".format(p.report.messages[0:5]))
     assert len(p.report.messages) == 0
-    print(p.report.to_markdown())
+    # print(p.report.to_markdown())
 
 def test_flag_invalid_id():
     ont = OntologyFactory().create(ONT)

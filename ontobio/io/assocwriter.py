@@ -55,24 +55,6 @@ class AssocWriter():
         else:
             print(line)
 
-    def _extension_expression(self, object_extensions):
-        unions = []
-        for union_key, union_value in object_extensions.items():
-            if union_key == "union_of":
-                # union_value is list of { "intersection_of" ...}
-                for union_item in union_value:
-                    for intersect_key, intersect_value in union_item.items():
-                        if intersect_key == "intersection_of":
-                            intersections = []
-                            for intersect_item in intersect_value:
-                                prop = intersect_item["property"]
-                                filler = intersect_item["filler"]
-                                full_property = "{property}({filler})".format(property=prop, filler=filler)
-                                intersections.append(full_property)
-                            joined_intersections = ",".join(intersections)
-                            unions.append(joined_intersections)
-
-        return "|".join(unions)
 
     def normalize_taxon(self, taxon):
         global internal_taxon
