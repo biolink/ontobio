@@ -372,7 +372,8 @@ class GoAssociation:
             str(self.interacting_taxon) if self.interacting_taxon else "",
             self.date,
             self.provided_by,
-            ConjunctiveSet.list_to_str(self.object_extensions),
+            ConjunctiveSet.list_to_str(self.object_extensions, 
+                conjunct_to_str=lambda conj: conj.display(use_rel_label=True)),
             "|".join(props_list)
         ]
 
