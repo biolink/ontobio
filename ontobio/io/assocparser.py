@@ -339,7 +339,7 @@ class Report(object):
             self.add_association(a)
 
     def add_association(self, association):
-        if isinstance(association, dict):
+        if isinstance(association, dict) and "header" in association:
             # Then we are a header
             self.header.append(association["line"])
         else:
