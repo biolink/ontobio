@@ -298,9 +298,8 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 if products["ttl"]:
-                    if "header" not in association or not association["header"]:
-                        transformer.provenance()
-                        transformer.translate(association)
+                    transformer.provenance()
+                    transformer.translate(association)
 
                 if products["gpad"]:
                     gpadwriter.write_assoc(association)
