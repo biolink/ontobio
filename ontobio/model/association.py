@@ -270,7 +270,7 @@ class GoAssociation:
         
         # Curie Object -> CURIE Str -> URI -> Label
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
-        if len(qual_labels) == 1 and self.qualifiers[0] not in allowed_qualifiers:
+        if len(qual_labels) == 1 and qual_labels[0] not in allowed_qualifiers:
             logger.error("Cannot write qualifier `{}` in GAF version 2.1 since only {} are allowed: skipping".format(self.qualifiers[0]), ", ".join(allowed_qualifiers))
             return []
 
