@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-__version__ = '2.0.0-pre2'
+__version__ = '2.0.0-pre3'
 
 from .ontol_factory import OntologyFactory
 from .ontol import Ontology, Synonym, TextDefinition

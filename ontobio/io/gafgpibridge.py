@@ -1,7 +1,7 @@
 import json
 from typing import Dict, NewType, List
 
-Association = NewType("Association", dict)
+from ontobio.model.association import GoAssociation
 
 class Entity(dict):
 
@@ -18,24 +18,24 @@ class GafGpiBridge(object):
     def __init__(self):
         self.cache = []
 
-    def convert_association(self, association: Association) -> Entity:
+    def convert_association(self, association) -> Entity:
         """
         'id' is already `join`ed in both the Association and the Entity,
         so we don't have to worry about what that looks like. We assume
         it's correct.
         """
-        if "header" not in association or association["header"] == False:
+        if isinstance(association, GoAssociation):
             # print(json.dumps(association, indent=4))
             gpi_obj = {
-                'id': association["subject"]["id"],
-                'label': association["subject"]["label"],  # db_object_symbol,
-                'full_name': association["subject"]["fullname"],  # db_object_name,
-                'synonyms': association["subject"]["synonyms"],
-                'type': association["subject"]["type"], #db_object_type,
+                'id': str(association.subject.id),
+                'label': association.subject.label,  # db_object_symbol,
+                'full_name': association.subject.fullname,  # db_object_name,
+                'synonyms': association.subject.synonyms,
+                'type': association.subject.type, #db_object_type,
                 'parents': "", # GAF does not have this field, but it's optional in GPI
                 'xrefs': "", # GAF does not have this field, but it's optional in GPI
                 'taxon': {
-                    'id': association["subject"]["taxon"]["id"]
+                    'id': str(association.subject.taxon)
                 }
             }
             return Entity(gpi_obj)

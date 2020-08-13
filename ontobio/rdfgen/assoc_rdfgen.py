@@ -213,10 +213,10 @@ class CamRdfTransform(RdfTransform):
         # as a distinct assertion/annotation, where each assertion
         # has its own conjunction of relational expressions
 
-        association = association.to_hash_assoc() # type: Dict
-
-        if "header" in association and association["header"]:
+        if isinstance(association, dict) and "header" in association:
             return
+            
+        association = association.to_hash_assoc() # type: Dict
 
         object_extensions = association.get('object_extensions', {})
 
