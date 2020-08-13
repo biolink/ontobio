@@ -30,7 +30,7 @@ class Error:
     info: str
     entity: str = ""
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class Curie:
     namespace: str
     identity: str
@@ -55,7 +55,7 @@ class Curie:
         return Curie(namespace, identity)
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class Subject:
     id: Curie
     label: str
@@ -64,7 +64,7 @@ class Subject:
     type: str
     taxon: Curie
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class Term:
     id: Curie
     taxon: Curie
@@ -120,7 +120,7 @@ class ConjunctiveSet:
 
         return conjunctions
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class Evidence:
     type: Curie # Curie of the ECO class
     has_supporting_reference: List[Curie]
