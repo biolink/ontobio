@@ -257,7 +257,6 @@ class GafParser(assocparser.AssocParser):
 
 ecomap = EcoMap()
 ecomap.mappings()
-relation_tuple = re.compile(r'(\w+)\((\w+:\w+)\)')
 
 def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown", qualifier_parser=assocparser.Qualifier2_1()) -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report

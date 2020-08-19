@@ -126,7 +126,7 @@ class Evidence:
     has_supporting_reference: List[Curie]
     with_support_from: List[ConjunctiveSet]
 
-relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.]*)\)')
+relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.:\-]*)\)')
 @dataclass(unsafe_hash=True)
 class ExtensionUnit:
     relation: Curie
