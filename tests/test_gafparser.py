@@ -308,10 +308,24 @@ def test_subject_extensions():
     p = GafParser()
     assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tpart_of(X:1)\tUniProtKB:P12345")
     assert len(assoc_result.associations[0].subject_extensions) == 1
-    
+
     subject_extensions = assoc_result.associations[0].subject_extensions
     gene_product_form_id = subject_extensions[0].term
     assert gene_product_form_id == association.Curie.from_str("UniProtKB:P12345")
+
+def test_subject_extensions_bad_curie():
+    """
+    Offending field is `GDP_bound`
+    """
+    p = GafParser()
+    assoc_result = p.parse_line("PomBase\tSPBC1289.03c\tspi1\t\tGO:0005515\tPMID:18422602\tIPI\tPomBase:SPAC25A8.01c\tF\tRan GTPase Spi1\t\tprotein\ttaxon:4896\t20080718\tPomBase\t\tGDP_bound")
+    assert assoc_result.associations == []
+    assert assoc_result.skipped == True
+    assert len(p.report.to_report_json()["messages"]["gorule-0000001"]) == 1
+    assert p.report.to_report_json()["messages"]["gorule-0000001"][0]["type"] == p.report.INVALID_ID
+    assert p.report.to_report_json()["messages"]["gorule-0000001"][0]["obj"] == "GDP_bound"
+    print(json.dumps(p.report.to_report_json(), indent=4))
+
 
 def test_object_extensions():
     p = GafParser()
@@ -324,7 +338,7 @@ def test_object_extensions():
         ])
     ]
     assert assoc_result.associations[0].object_extensions == object_extensions
-    
+
 def test_object_extensions_error():
     p = GafParser()
     assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tpart_of(X)\tUniProtKB:P12345")

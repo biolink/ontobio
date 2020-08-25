@@ -81,7 +81,7 @@ class ConjunctiveSet:
 
     def __str__(self) -> str:
         return ",".join([str(conj) for conj in self.elements])
-        
+
     def display(self, conjunct_to_str=lambda c: str(c)) -> str:
         return ",".join([conjunct_to_str(conj) for conj in self.elements])
 
@@ -174,7 +174,7 @@ class ExtensionUnit:
     def __relation_to_label(self) -> str:
         # Curie -> expand to URI -> reverse relation lookup Label
         return relations.lookup_uri(curie_util.expand_uri(str(self.relation), strict=False))
-    
+
     def to_hash(self, use_label=False) -> dict:
         rel = self.__relation_to_label() if use_label else str(self.relation)
         return {
@@ -201,9 +201,9 @@ class GoAssociation:
 
     def to_gaf_2_1_tsv(self) -> List:
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
-        
+
         allowed_qualifiers = {"contributes_to", "colocalizes_with"}
-        
+
         # Curie Object -> CURIE Str -> URI -> Label
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
         if len(qual_labels) == 1 and qual_labels[0] not in allowed_qualifiers:
@@ -214,7 +214,7 @@ class GoAssociation:
             qual_labels.append("NOT")
 
         qualifier = "|".join(qual_labels)
-        
+
         self.object.taxon.namespace = "taxon"
         taxon = str(self.object.taxon)
         if self.interacting_taxon:
@@ -240,7 +240,7 @@ class GoAssociation:
             taxon,
             self.date,
             self.provided_by,
-            ConjunctiveSet.list_to_str(self.object_extensions, 
+            ConjunctiveSet.list_to_str(self.object_extensions,
                 conjunct_to_str=lambda conj: conj.display(use_rel_label=True)),
             gp_isoforms
         ]
@@ -251,7 +251,7 @@ class GoAssociation:
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifers]
         if self.negated:
             qual_labels.append("NOT")
-            
+
         qualifier = "|".ajoin(qual_labels)
 
         self.object.taxon.namespace = "taxon"
@@ -281,16 +281,16 @@ class GoAssociation:
         ]
 
     def to_gpad_tsv(self) -> List:
-        
+
         # Curie Object -> CURIE Str -> URI -> Label
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
-        
+
         # Try qualifiers first since, if we are going from GAF -> GPAD and the GAF had a qualifier, that would be
         # more specific than the relation, which is calculated from the aspect/Go term.
         if qual_labels == []:
             # If there were no qualifiers, then we'll use the Relation. Gpad requires at least one qualifier (which is the relation)
             qual_labels.append(relations.lookup_uri(curie_util.expand_uri(str(self.relation), strict=False)))
-            
+
         if self.negated:
             qual_labels = ["NOT"] + qual_labels
 
@@ -308,7 +308,7 @@ class GoAssociation:
             str(self.interacting_taxon) if self.interacting_taxon else "",
             self.date,
             self.provided_by,
-            ConjunctiveSet.list_to_str(self.object_extensions, 
+            ConjunctiveSet.list_to_str(self.object_extensions,
                 conjunct_to_str=lambda conj: conj.display(use_rel_label=True)),
             "|".join(props_list)
         ]

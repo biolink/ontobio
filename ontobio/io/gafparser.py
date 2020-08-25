@@ -345,7 +345,14 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         report.error(source_line, Report.INVALID_SYMBOL, gaf_line[5], first_error.info, taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    subject_extensions = [association.ExtensionUnit(association.Curie.from_str("rdfs:subClassOf"), association.Curie.from_str(gaf_line[16]))] if gaf_line[16] else []
+    subject_extensions = []
+    if gaf_line[16]:
+        subject_filler = association.Curie.from_str(gaf_line[16])
+        if isinstance(subject_filler, association.Error):
+            report.error(source_line, assocparser.Report.INVALID_ID, gaf_line[16], subject_filler.info, taxon=str(taxon), rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+        # filler is not an Error, so keep moving
+        subject_extensions.append(association.ExtensionUnit(association.Curie.from_str("rdfs:subClassOf"), subject_filler))
 
     conjunctions = []
     if gaf_line[15]:
