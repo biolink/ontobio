@@ -175,6 +175,7 @@ class Report(object):
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
     VIOLATES_GO_RULE = "Violates GO Rule"
     RULE_PASS = "Passes GO Rule"
+    INVALID_REFERENCES = "Only one reference per ID space allowed"
 
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
