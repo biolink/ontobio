@@ -639,6 +639,26 @@ def test_gorule50():
     test_result = qc.GoRule50().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.PASS
 
+def test_gorule55():
+    a = ["blah"] * 15
+    a[0] = "HELLO"
+    a[1] = "123"
+    a[3] = ""
+    a[5] = "GO:0012345|PMID:1234567"
+    a[6] = "ISS"
+    a[7] = "HELLO:123"
+    a[8] = "P"
+    a[12] = "taxon:12345"
+    a[13] = "20200303"
+    assoc = gafparser.to_association(a).associations[0]
+
+    test_result = qc.GoRule55().test(assoc, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    assoc.evidence.has_supporting_reference = [association.Curie.from_str("GO:0001234"), association.Curie.from_str("GO:123456")]
+    test_result = qc.GoRule55().test(assoc, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.WARNING
+
 
 def test_gorule57():
     a = ["blah"] * 12
@@ -766,7 +786,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 22
+    assert len(test_results.keys()) == 23
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
