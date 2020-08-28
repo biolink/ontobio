@@ -761,7 +761,6 @@ class CamTurtleRdfWriter(TurtleRdfWriter):
         self.graph.add((self.base, DC.contributor, Literal("http://orcid.org/0000-0002-6659-0416"))) #TODO
         self.graph.add((self.base, URIRef("http://geneontology.org/lego/modelstate"), Literal("development")))
         self.graph.add((self.base, OWL.versionIRI, self.base))
-        self.graph.add((self.base, OWL.imports, URIRef("http://purl.obolibrary.org/obo/go/extensions/go-lego.owl")))
 
 
 class AnnotonCamRdfTransform(CamRdfTransform):
