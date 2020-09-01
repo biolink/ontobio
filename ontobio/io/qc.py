@@ -545,6 +545,23 @@ class GoRule50(GoRule):
 
         return result
 
+class GoRule55(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000055", "References should have only one ID per ID space", FailMode.SOFT)
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        found_id_spaces = dict()
+        for ref in annotation.evidence.has_supporting_reference:
+            id_space = ref.split(":", maxsplit=1)[0]
+            if id_space in found_id_spaces:
+                return self._result(False)
+            else:
+                found_id_spaces[id_space] = ref
+        # We found no duplicate IDs, so we good
+        return self._result(True)
+
+
 class GoRule57(GoRule):
 
     def __init__(self):
@@ -669,6 +686,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule43": GoRule43(),
     "GoRule46": GoRule46(),
     "GoRule50": GoRule50(),
+    "GoRule55": GoRule55(),
     "GoRule57": GoRule57(),
     "GoRule58": GoRule58(),
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13

@@ -196,15 +196,14 @@ def convert_assocs(ont, file, outfile, p, args):
     write_assocs(assocs, outfile, args)
 
 def write_assocs(assocs, outfile, args):
-    w = GpadWriter()
+    w = None
     fmt = args.to
     if fmt is None or fmt == 'gaf':
-        w = GafWriter()
+        w = GafWriter(file=outfile)
     elif fmt == 'gpad':
-        w = GpadWriter()
+        w = GpadWriter(file=outfile)
     else:
         raise ValueError("Not supported: {}".format(fmt))
-    w.file = outfile
     w.write(assocs)
 
 def map2slim(ont, file, outfile, p, args):
