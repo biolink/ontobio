@@ -4,6 +4,7 @@ from ontobio.vocabulary.relations import OboRO, Evidence
 from ontobio.vocabulary.upper import UpperLevel
 from ontobio.ecomap import EcoMap
 from ontobio.rdfgen import relations
+from ontobio.model import association as association_model
 from rdflib import Namespace
 from rdflib import BNode
 from rdflib import Literal
@@ -204,7 +205,7 @@ class CamRdfTransform(RdfTransform):
         self.emit_type(PART_OF, OWL.ObjectProperty)
         self.emit_type(OCCURS_IN, OWL.ObjectProperty)
 
-    def translate(self, association, and_xps=None):
+    def translate(self, association: association_model.GoAssociation):
 
         # See https://github.com/biolink/ontobio/pull/136
         # if the association has an annotation extension, and this
@@ -212,77 +213,87 @@ class CamRdfTransform(RdfTransform):
         # as a distinct assertion/annotation, where each assertion
         # has its own conjunction of relational expressions
 
-        if "header" in association and association["header"]:
+        if isinstance(association, dict) and "header" in association:
             return
+            
+        association = association.to_hash_assoc() # type: Dict
 
-        if and_xps is None and association['object_extensions'] != {}:
-            x = association['object_extensions']
-            for ix in x['union_of']:
-                and_xps = ix['intersection_of']
-                self.translate(association, and_xps)
+        object_extensions = association.get('object_extensions', {})
 
-        sub = association['subject']
-        obj = association['object']
-        rel = association['relation']
-        sub_uri = self.uri(sub)
-        obj_uri = self.uri(obj)
+        conjunctive_sets = []  # Will be a list of lists, e.g. [[rel1(GO:1), rel2(GO:2)], [rel1(GO:3)]]
+        for cj in object_extensions.get("union_of", []):
+            conjunctive_sets.append(cj['intersection_of'])
+        if not conjunctive_sets:
+            conjunctive_sets.append([])  # A dummy list val to trigger one go through the loop
 
-        # E.g. instance of gene product class
-        enabler_id = genid(base=self.writer.base)
-        self.emit_type(enabler_id, sub_uri)
-        self.emit_type(enabler_id, OWL.NamedIndividual)
+        for conjunctive_set in conjunctive_sets:
+            # and_xps = ix.get'intersection_of']
+            # self.translate(association, and_xps)
 
-        # subject GP class label and taxon restriction
-        self.emit_label(sub_uri, sub["label"])
-        if "taxon" in sub:
-            restriction = rdflib.BNode()
-            self.emit_type(restriction, OWL.Restriction)
-            self.emit(restriction, OWL.onProperty, self.uri(ro.in_taxon))
-            self.emit(restriction, OWL.someValuesFrom, self.uri(sub["taxon"]["id"]))
-            self.emit(sub_uri, RDFS.subClassOf, restriction)
+            sub = association['subject']
+            obj = association['object']
+            rel = association['relation']
+            sub_uri = self.uri(sub)
+            obj_uri = self.uri(obj)
 
-        # E.g. instance of GO class
-        tgt_id = genid(base=self.writer.base)
-        self.emit_type(tgt_id, obj_uri)
-        self.emit_type(tgt_id, OWL.NamedIndividual)
+            # E.g. instance of gene product class
+            enabler_id = genid(base=self.writer.base)
+            self.emit_type(enabler_id, sub_uri)
+            self.emit_type(enabler_id, OWL.NamedIndividual)
 
-        aspect = association['aspect']
-        aspect_triple = None
+            # subject GP class label and taxon restriction
+            self.emit_label(sub_uri, sub["label"])
+            if "taxon" in sub:
+                restriction = rdflib.BNode()
+                self.emit_type(restriction, OWL.Restriction)
+                self.emit(restriction, OWL.onProperty, self.uri(ro.in_taxon))
+                self.emit(restriction, OWL.someValuesFrom, self.uri(sub["taxon"]["id"]))
+                self.emit(sub_uri, RDFS.subClassOf, restriction)
 
-        # todo: use relation
-        if aspect == 'F':
-            aspect_triple = self.emit(tgt_id, ENABLED_BY, enabler_id)
-        elif aspect == 'P':
-            mf_id = genid(base=self.writer.base)
-            self.emit_type(mf_id, MOLECULAR_FUNCTION)
-            aspect_triple = self.emit(mf_id, ENABLED_BY, enabler_id)
-            aspect_triple = self.emit(mf_id, PART_OF, tgt_id)
-        elif aspect == 'C':
-            mf_id = genid(base=self.writer.base)
-            self.emit_type(mf_id, MOLECULAR_FUNCTION)
-            aspect_triple = self.emit(mf_id, ENABLED_BY, enabler_id)
-            aspect_triple = self.emit(mf_id, OCCURS_IN, tgt_id)
-        else:
-            # Skip this association if the aspect makes no sense.
-            logger.warning("Aspect field is not F, P, or C, so this association is skipped.")
-            return
+            # E.g. instance of GO class
+            tgt_id = genid(base=self.writer.base)
+            self.emit_type(tgt_id, obj_uri)
+            self.emit_type(tgt_id, OWL.NamedIndividual)
 
-        if self.include_subject_info:
-            pass
-            # TODO
+            aspect = association['aspect']
+            aspect_triple = None
 
-        if and_xps is not None:
-            for ext in and_xps:
-                filler_inst = genid(base=self.writer.base)
-                self.emit_type(filler_inst, self.uri(ext['filler']))
-                p = self.lookup_relation(ext['property'])
-                if p is None:
-                    if ext["property"] not in self.bad_properties_found:
-                        self.bad_properties_found.add(ext["property"])
-                        logger.warning("No such property {}".format(ext))
-                else:
-                    self.emit(tgt_id, p, filler_inst)
-        self.translate_evidence(association, aspect_triple)
+            # todo: use relation
+            if aspect == 'F':
+                aspect_triple = self.emit(tgt_id, ENABLED_BY, enabler_id)
+            elif aspect == 'P':
+                mf_id = genid(base=self.writer.base)
+                self.emit_type(mf_id, MOLECULAR_FUNCTION)
+                aspect_triple = self.emit(mf_id, ENABLED_BY, enabler_id)
+                aspect_triple = self.emit(mf_id, PART_OF, tgt_id)
+            elif aspect == 'C':
+                mf_id = genid(base=self.writer.base)
+                self.emit_type(mf_id, MOLECULAR_FUNCTION)
+                aspect_triple = self.emit(mf_id, ENABLED_BY, enabler_id)
+                aspect_triple = self.emit(mf_id, OCCURS_IN, tgt_id)
+            else:
+                # Skip this association if the aspect makes no sense.
+                logger.warning("Aspect field is not F, P, or C, so this association is skipped.")
+                return
+
+            if self.include_subject_info:
+                pass
+                # TODO
+
+            if association['object_extensions'] != {}:
+                pass
+            if conjunctive_set != []:
+                for ext in conjunctive_set:
+                    filler_inst = genid(base=self.writer.base)
+                    self.emit_type(filler_inst, self.uri(ext['filler']))
+                    p = self.lookup_relation(ext['property'])
+                    if p is None:
+                        if ext["property"] not in self.bad_properties_found:
+                            self.bad_properties_found.add(ext["property"])
+                            logger.warning("No such property {}".format(ext))
+                    else:
+                        self.emit(tgt_id, p, filler_inst)
+            self.translate_evidence(association, aspect_triple)
 
     def provenance(self):
         self.writer.graph.bind("metago", "http://model.geneontology.org/")
@@ -302,7 +313,9 @@ class SimpleAssocRdfTransform(RdfTransform):
             return
         self._emit_header_done = True
 
-    def translate(self, association):
+    def translate(self, association: association_model.GoAssociation):
+        association = association.to_hash_assoc()
+
         sub = association['subject']
         obj = association['subject']
         rel = association['relation']['id']

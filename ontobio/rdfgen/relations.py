@@ -1,5 +1,6 @@
+from bidict import bidict
 
-__relation_label_lookup = {
+__relation_label_lookup = bidict({
     "occurs in": "http://purl.obolibrary.org/obo/BFO_0000066",
     "happens during": "http://purl.obolibrary.org/obo/RO_0002092",
     "has input": "http://purl.obolibrary.org/obo/RO_0002233",
@@ -42,10 +43,58 @@ __relation_label_lookup = {
     "acts upstream of positive effect": "http://purl.obolibrary.org/obo/RO_0004034",
     "located in": "http://purl.obolibrary.org/obo/RO_0001025",
     "is active in": "http://purl.obolibrary.org/obo/RO_0002432",
+    "exists during": "http://purl.obolibrary.org/obo/GOREL_0000032",
+    "coincident with": "http://purl.obolibrary.org/obo/RO_0002008",
+    "has regulation target": "http://purl.obolibrary.org/obo/GOREL_0000015",
+    "not happens during": "http://purl.obolibrary.org/obo/GOREL_0000025",
+    "not exists during": "http://purl.obolibrary.org/obo/GOREL_0000026",
+    "directly negatively regulates": "http://purl.obolibrary.org/obo/RO_0002449",
+    "inhibited by": "http://purl.obolibrary.org/obo/GOREL_0000508",
+    "activated by": "http://purl.obolibrary.org/obo/GOREL_0000507",
+    "regulates o acts on population of": "http://purl.obolibrary.org/obo/GOREL_0001008",
+    "regulates o occurs in": "http://purl.obolibrary.org/obo/GOREL_0001004",
+    "regulates o results in movement of": "http://purl.obolibrary.org/obo/GOREL_0001005",
+    "acts on population of": "http://purl.obolibrary.org/obo/GOREL_0001006",
+    "regulates o has input": "http://purl.obolibrary.org/obo/GOREL_0001030",
+    "regulates o has participant": "http://purl.obolibrary.org/obo/GOREL_0001016",
+    "has output o axis of": "http://purl.obolibrary.org/obo/GOREL_0001002",
+    "regulates o results in formation of": "http://purl.obolibrary.org/obo/GOREL_0001025",
+    "regulates o results in acquisition of features of": "http://purl.obolibrary.org/obo/GOREL_0001010",
+    "regulates o has agent": "http://purl.obolibrary.org/obo/GOREL_0001011",
+    "results in formation of": "http://purl.obolibrary.org/obo/RO_0002297",
+    "has output o axis of": "http://purl.obolibrary.org/obo/GOREL_0001002",
+    "has start location": "http://purl.obolibrary.org/obo/RO_0002231",
+    "has output": "http://purl.obolibrary.org/obo/GOREL_0000006",
+    "results in commitment to": "http://purl.obolibrary.org/obo/RO_0002348",
+    "regulates o results in commitment to": "http://purl.obolibrary.org/obo/GOREL_0001022",
+    "regulates o has output": "http://purl.obolibrary.org/obo/GOREL_0001003",
+    "has target end location": "http://purl.obolibrary.org/obo/RO_0002339",
+    "regulates o results in development of": "http://purl.obolibrary.org/obo/GOREL_0001023",
+    "results in determination of": "http://purl.obolibrary.org/obo/RO_0002349",
+    "has target end location": "http://purl.obolibrary.org/obo/RO_0002339",
+    "regulates o results in maturation of": "http://purl.obolibrary.org/obo/GOREL_0001012",
+    "regulates o results in morphogenesis of": "http://purl.obolibrary.org/obo/GOREL_0001026",
+    "has agent": "http://purl.obolibrary.org/obo/RO_0002218",
+    "causally upstream of or within": "http://purl.obolibrary.org/obo/RO_0002418",
+    "overlaps": "http://purl.obolibrary.org/obo/RO_0002131",
+    "has target start location": "http://purl.obolibrary.org/obo/RO_0002338",
+    "capable of part of": "http://purl.obolibrary.org/obo/RO_0002216",
+    "regulates o results in specification of": "http://purl.obolibrary.org/obo/GOREL_0001027",
+    "results in division of": "http://purl.obolibrary.org/obo/GOREL_0001019",
+    "regulates translation of": "http://purl.obolibrary.org/obo/GOREL_0098790",
+    "imports": "http://purl.obolibrary.org/obo/RO_0002340"
+})
 
-}
+def lookup_uri(uri, default=None):
+    if uri is None:
+        return default
+
+    return __relation_label_lookup.inverse.get(uri, default).replace(" ", "_")
 
 def lookup_label(label, default=None):
+    if label is None:
+        return default
+
     return __relation_label_lookup.get(label.replace("_", " "), default)
 
 def label_relation_lookup():
