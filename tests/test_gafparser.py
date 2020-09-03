@@ -313,6 +313,13 @@ def test_subject_extensions():
     gene_product_form_id = subject_extensions[0].term
     assert gene_product_form_id == association.Curie.from_str("UniProtKB:P12345")
 
+def test_bad_withfrom():
+    p = GafParser()
+    # With/from has no identity portion after the namespace
+    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase")
+    assert assoc_result.associations == []
+    assert p.report.to_report_json()["messages"]["gorule-0000001"][0]["obj"] == "SGD:"
+
 def test_subject_extensions_bad_curie():
     """
     Offending field is `GDP_bound`

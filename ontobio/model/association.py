@@ -40,7 +40,7 @@ class Curie:
 
     @classmethod
     def from_str(Curie, entity: str):
-        splitup = entity.rsplit(":", maxsplit=1)
+        splitup = entity.split(":", maxsplit=1)
         splitup += [""] * (2 - len(splitup))
         namespace, identity = splitup
         if namespace == "" and identity == "":
@@ -252,7 +252,7 @@ class GoAssociation:
         if self.negated:
             qual_labels.append("NOT")
 
-        qualifier = "|".ajoin(qual_labels)
+        qualifier = "|".join(qual_labels)
 
         self.object.taxon.namespace = "taxon"
         taxon = str(self.object.taxon)

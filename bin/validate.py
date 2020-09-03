@@ -215,7 +215,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         rule_contexts=rule_contexts
     )
     logger.info("Producing {}".format(source_gaf))
-    logger.info("AssocParserConfig used: {}".format(config))
+    # logger.info("AssocParserConfig used: {}".format(config))
     split_source = os.path.split(source_gaf)[0]
     validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")

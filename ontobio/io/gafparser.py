@@ -327,19 +327,32 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     object = association.Term(association.Curie.from_str(gaf_line[4]), taxon)
+    if isinstance(object, association.Error):
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[4], "Problem parsing GO Term", taxon=gaf_line[TAXON_INDEX], rule=1)
 
+    # References
     references = [association.Curie.from_str(e) for e in gaf_line[5].split("|") if e]
+    for r in references:
+        if isinstance(r, association.Error):
+            report.error(source_line, Report.INVALID_SYMBOL, gaf_line[5], "Problem parsing references", taxon=gaf_line[TAXON_INDEX], rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
     gorefs = [ref for ref in references if ref.namespace == "GO_REF"] + [None]
     eco_curie = ecomap.coderef_to_ecoclass(gaf_line[6], reference=gorefs[0])
     if eco_curie is None:
         report.error(source_line, Report.UNKNOWN_EVIDENCE_CLASS, gaf_line[6], msg="Expecting a known ECO GAF code, e.g ISS", rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    evidence = association.Evidence(
-        association.Curie.from_str(eco_curie),
-        references,
-        association.ConjunctiveSet.str_to_conjunctions(gaf_line[7]))
+    withfroms = association.ConjunctiveSet.str_to_conjunctions(gaf_line[7])
+    if isinstance(withfroms, association.Error):
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[7], "Problem parsing with/from", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
 
+    evidence_type = association.Curie.from_str(eco_curie)
+    if isinstance(evidence_type, association.Error):
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[6], "Problem parsing evidence type", taxon=gaf_line[TAXON_INDEX], rule=1)
+
+    evidence = association.Evidence(association.Curie.from_str(eco_curie), references, withfroms)
     if any([isinstance(e, association.Error) for e in evidence.has_supporting_reference]):
         first_error = [e for e in evidence.has_supporting_reference if isinstance(e, association.Error)][0]
         report.error(source_line, Report.INVALID_SYMBOL, gaf_line[5], first_error.info, taxon=str(taxon), rule=1)
@@ -369,6 +382,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation_label, "Could not find CURIE for relation `{}`".format(relation_label), taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
+    # We don't have to check that this is well formed because we're grabbing it from the known relations URI map.
     relation_curie = association.Curie.from_str(curie_util.contract_uri(relation_uri)[0])
 
     a = association.GoAssociation(
