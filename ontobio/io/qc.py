@@ -576,6 +576,10 @@ class GoRule57(GoRule):
         if annotation.evidence.type in evidence_codes:
             return self._result(False)
 
+        provided_bys = config.group_metadata.get("filter_for", {}).get("provided_by", [])
+        if provided_bys and str(annotation.provided_by) not in provided_bys:
+            return self._result(False)
+
         evidences_references = config.group_metadata.get("filter_out", {}).get("evidence_reference", [])
         for er in evidences_references:
             evidence_code = er["evidence"]
