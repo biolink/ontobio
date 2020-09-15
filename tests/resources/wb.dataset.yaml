@@ -1,0 +1,49 @@
+id: wb
+label: WormBase database of nematode biology
+description: "GO data for WormBase database of nematode biology"
+project_name: "WormBase"
+contact_email: "help@wormbase.org"
+project_url: "http://www.wormbase.org/"
+funding_source: "US National Institutes of Health, UK Medical Research Council, UK Biotechnology and Biological Sciences Research Council"
+email_report: "ranjana@its.caltech.edu,vanauken@caltech.edu"
+filter_out:
+  evidence:
+    - ECO:0000501
+    - ECO:0000318
+  evidence_reference:
+    - evidence: ECO:0000320
+      reference: PMID:21873635
+filter_for:
+  provided_by:
+    - WB
+datasets:
+ -
+   id: wb.gaf
+   label: "wb gaf file"
+   description: "gaf file for wb from WormBase database of nematode biology"
+   url: http://current.geneontology.org/annotations/wb.gaf.gz
+   type: gaf
+   dataset: wb
+   submitter: wb
+   compression: gzip
+   source: ftp://ftp.wormbase.org/pub/wormbase/species/c_elegans/PRJNA13758/annotation/go_annotations/c_elegans.PRJNA13758.current.go_annotations.gaf.gz
+   entity_type:
+   status: active
+   species_code: Cele
+   taxa:
+    - NCBITaxon:6239
+ -
+   id: wb.gpi
+   label: "wb gpi file"
+   description: "gpi file for Caenorhabditis elegans from WormBase"
+   url: http://current.geneontology.org/annotations/wb.gpi.gz
+   type: gpi
+   dataset: wb
+   submitter: wb
+   compression: gzip
+   source: ftp://ftp.wormbase.org/pub/wormbase/species/c_elegans/PRJNA13758/annotation/gene_product_info/c_elegans.PRJNA13758.current.gene_product_info.gpi.gz
+   entity_type:
+   status: active
+   species_code: Cele
+   taxa:
+    - NCBITaxon:6239
