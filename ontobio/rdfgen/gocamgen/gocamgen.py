@@ -1,4 +1,5 @@
 from ontobio.rdfgen.assoc_rdfgen import CamRdfTransform, TurtleRdfWriter, genid, prefix_context
+from ontobio.rdfgen import relations
 from ontobio.vocabulary.relations import OboRO, Evidence
 from ontobio.vocabulary.upper import UpperLevel
 from prefixcommons.curie_util import expand_uri, contract_uri
@@ -15,7 +16,7 @@ from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TripleP
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
 from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
-from ontobio.model.association import GoAssociation, ExtensionUnit
+from ontobio.model.association import GoAssociation, ExtensionUnit, Curie
 
 
 # logging.basicConfig(level=logging.INFO)
@@ -65,7 +66,8 @@ INPUT_RELATIONS = {
     "has_direct_input": "RO:0002233",
     "has input": "RO:0002233",
     "has_input": "RO:0002233",
-    "occurs_in": "BFO:0000066"
+    "occurs_in": "BFO:0000066",
+    "has_agent": "RO:0002218"
 }
 ACTS_UPSTREAM_OF_RELATIONS = {
     "acts_upstream_of": "RO:0002263",
@@ -230,6 +232,7 @@ class GoCamModel():
         self.writer.emit(stmt_id, OWL.annotatedSource, source_id)
         self.writer.emit(stmt_id, OWL.annotatedProperty, property_id)
         self.writer.emit(stmt_id, OWL.annotatedTarget, target_id)
+        self.writer.emit_type(property_id, OWL.ObjectProperty)
 
         if evidence:
             self.add_evidence(stmt_id, evidence.evidence_code, evidence.references)
@@ -395,6 +398,17 @@ class GoCamModel():
         return found_triples
 
 
+def relation_equals(rel_a, rel_b):
+    if ":" not in str(rel_a):
+        rel_a = contract_uri_wrapper(relations.lookup_label(rel_a))
+    if ":" not in str(rel_b):
+        rel_b = contract_uri_wrapper(relations.lookup_label(rel_b))[0]
+
+    # Get to curie str to compare
+    result = str(rel_a) == str(rel_b)
+    return result
+
+
 class AssocGoCamModel(GoCamModel):
     ENABLES_O_RELATION_LOOKUP = {}
 
@@ -416,7 +430,7 @@ class AssocGoCamModel(GoCamModel):
 
         for a in self.associations:
 
-            term = a.object_id()
+            term = str(a.object_id())
 
             # Add evidences tied to axiom_ids
             evidences = GoCamEvidence.create_from_collapsed_association(a)
@@ -429,7 +443,7 @@ class AssocGoCamModel(GoCamModel):
                 # For annots w/o extensions, this is where we write subgraph to model
                 annot_subgraph.write_to_model(self, evidences)
             else:
-                aspect = self.go_aspector.go_aspect(term)
+                aspect = self.go_aspector.go_aspect(str(term))
 
                 # TODO: Handle deduping in collapsed_assoc - need access to extensions_mapper.dedupe_extensions
                 annotation_extensions = dedupe_extensions(annotation_extensions)
@@ -440,14 +454,14 @@ class AssocGoCamModel(GoCamModel):
                 for uo in annotation_extensions:
                     # Grab occurs_in's
                     # Make a new uo if situation found
-                    occurs_in_exts: List[ExtensionUnit] = [ext for ext in uo.elements if ext.relation == "occurs_in"]
+                    occurs_in_exts: List[ExtensionUnit] = [ext for ext in uo.elements if relation_equals(ext.relation, "occurs_in")]
                     # onto_grouping = {
                     #     "CL": [{}, {}],
                     #     "EMAPA": [{}]
                     # }
                     onto_grouping = {}
                     for ext in occurs_in_exts:
-                        ont_prefix = ext.term.split(":")[0]
+                        ont_prefix = ext.term.namespace
                         if ont_prefix not in onto_grouping:
                             onto_grouping[ont_prefix] = []
                         onto_grouping[ont_prefix].append(ext)
@@ -460,7 +474,7 @@ class AssocGoCamModel(GoCamModel):
                                 new_exts_list = []
                                 # Add ext to this new list if its prefix is not ont_prefix
                                 for int_of_ext in uo.elements:
-                                    if int_of_ext.relation != "occurs_in" or int_of_ext.term.split(":")[0] != ont_prefix:
+                                    if not relation_equals(int_of_ext.relation, "occurs_in") or int_of_ext.term.namespace != ont_prefix:
                                         # Add the extensions that don't currently concern us
                                         new_exts_list.append(int_of_ext)
                                 # Then add occurs_in ext in current iteration
@@ -485,7 +499,7 @@ class AssocGoCamModel(GoCamModel):
                         # Nesting repeated extension relations (i.e. occurs_in, part_of)
                         ext_rels_to_nest = ['occurs_in', 'part_of']  # Switch to turn on/off extension nesting
                         for ertn in ext_rels_to_nest:
-                            nest_exts = [ext for ext in intersection_extensions if ext.relation == ertn]
+                            nest_exts = [ext for ext in intersection_extensions if relation_equals(ext.relation, ertn)]
                             if len(nest_exts) > 1:
                                 # Sort by specific term to general term
                                 sorted_nest_ext_terms = sort_terms_by_ontology_specificity(
@@ -499,7 +513,7 @@ class AssocGoCamModel(GoCamModel):
                                     subj_shape = SHEX_HELPER.shape_from_class(AnnotationSubgraph.node_class(loc_subj_n),
                                                                               self.go_aspector)
                                     loc_obj_n = annot_subgraph.add_instance_of_class(ne_term)
-                                    obj_shape = SHEX_HELPER.shape_from_class(ne_term,
+                                    obj_shape = SHEX_HELPER.shape_from_class(str(ne_term),
                                                                              self.go_aspector)
                                     # location_relation = "BFO:0000050"  # part_of
                                     location_relation = SHEX_HELPER.relation_lookup(subj_shape, obj_shape)
@@ -511,8 +525,8 @@ class AssocGoCamModel(GoCamModel):
                                 # Remove from intersection_extensions because this is now already translated
                                 [intersection_extensions.remove(ext) for ext in nest_exts]
                         for rel in intersection_extensions:
-                            ext_relation = rel.relation
-                            ext_target = rel.term
+                            ext_relation = relations.lookup_uri(expand_uri_wrapper(str(rel.relation)))
+                            ext_target = str(rel.term)
                             if ext_relation not in list(INPUT_RELATIONS.keys()) + list(HAS_REGULATION_TARGET_RELATIONS.keys()):
                                 # No RO term yet. Try looking up in RO
                                 relation_term = self.translate_relation_to_ro(ext_relation)
@@ -524,19 +538,23 @@ class AssocGoCamModel(GoCamModel):
                                 # Need to find what mf we're talking about
                                 anchor_n = annot_subgraph.get_anchor()
                                 annot_subgraph.add_edge(anchor_n, INPUT_RELATIONS[ext_relation], ext_target_n)
-                            elif ext_relation in REGULATES_CHAIN_RELATIONS:
+                            # elif ext_relation in REGULATES_CHAIN_RELATIONS:
+                            elif ext_relation.startswith("regulates_o_"):
                                 # Get target MF from primary term (BP) e.g. GO:0007346 regulates some mitotic cell cycle
                                 regulates_rel, regulated_term = self.get_rel_and_term_in_logical_definitions(term)
                                 if regulates_rel:
-                                    regulated_term_n = annot_subgraph.add_instance_of_class(regulated_term)
-                                    anchor_n = annot_subgraph.get_anchor()
-                                    annot_subgraph.add_edge(anchor_n, regulates_rel, regulated_term_n)
-                                    ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
                                     # Need to derive chained relation (e.g. "occurs_in") from this ext rel. Just replace("regulates_o_", "")?
                                     chained_rel_label = ext_relation.replace("regulates_o_", "")
                                     chained_rel = INPUT_RELATIONS.get(chained_rel_label)
                                     if chained_rel is None:
                                         chained_rel = self.translate_relation_to_ro(chained_rel_label)
+                                    if chained_rel is None:
+                                        # We have tried all we can for this poor thing. Skip translating this extension.
+                                        continue
+                                    regulated_term_n = annot_subgraph.add_instance_of_class(regulated_term)
+                                    anchor_n = annot_subgraph.get_anchor()
+                                    annot_subgraph.add_edge(anchor_n, regulates_rel, regulated_term_n)
+                                    ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
                                     annot_subgraph.add_edge(regulated_term_n, chained_rel, ext_target_n)
                                 else:
                                     logger.warning("Couldn't get regulates relation from LD of: {}".format(term))
@@ -600,13 +618,13 @@ class AssocGoCamModel(GoCamModel):
         # self.extensions_mapper.go_aspector.write_cache()
 
     def translate_primary_annotation(self, annotation: CollapsedAssociation):
-        gp_id = annotation.subject_id()
-        term = annotation.object_id()
+        gp_id = str(annotation.subject_id())
+        term = str(annotation.object_id())
         annot_subgraph = AnnotationSubgraph(annotation)
 
         # TODO: qualifiers are coming through as relation terms now
         for q_term in annotation.qualifiers():
-            q = self.ro_ontology.label(q_term)
+            q = self.ro_ontology.label(str(q_term))
             if q == "enables":
                 term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)

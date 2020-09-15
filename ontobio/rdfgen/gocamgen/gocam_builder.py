@@ -171,23 +171,14 @@ class AssocExtractor:
             click.echo("Making products...")
             with click.progressbar(iterable=gpad_parser.association_generator(file=gf, skipheader=True),
                                    length=lines) as associations:
-                for a in associations:
-                    line = a["source_line"]
-                    vals = [el.strip() for el in line.split("\t")]
-
-                    parsed = gpadparser.to_association(list(vals))
-                    if parsed.associations == []:
-                        continue
-
-                    self.assocs.append(parsed.associations[0])
-                # self.assocs = self.extract_properties_from_assocs(associations)
+                self.assocs = list(associations)
 
         self.entity_parents = self.parse_gpi_parents(gpi_file)
 
     def group_assocs(self):
         assocs_by_gene = {}
         for a in self.assocs:
-            subject_id = a.subject.id
+            subject_id = str(a.subject.id)
             # If entity has parent, assign to parent entity model
             if subject_id in self.entity_parents:
                 subject_id = self.entity_parents[subject_id]

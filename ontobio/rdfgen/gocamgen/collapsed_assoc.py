@@ -91,7 +91,7 @@ class CollapsedAssociationSet:
             with_from_ds.append(validated_comma_with_froms)
 
         # Now arrange these into "header" and "line" values
-        eco_code = annot.evidence.type
+        eco_code = str(annot.evidence.type)
         term = str(annot.object.id)
         is_binding = eco_code == IPI_ECO_CODE and BINDING_ROOT in self.go_ontology.ancestors(term, reflexive=True)
         if is_binding:
@@ -166,7 +166,7 @@ def dedupe_extensions(extensions):
 class CollapsedAssociationLine:
     def __init__(self, assoc: GoAssociation, with_from=None):
         self.source_line = assoc.source_line
-        self.references = [str(ref) for ref in sorted(assoc.evidence.has_supporting_reference)]
+        self.references = [str(ref) for ref in sorted(assoc.evidence.has_supporting_reference, key=lambda x: str(x))]
         self.evidence_code = str(assoc.evidence.type)
         self.date = assoc.date
         self.assigned_by = assoc.provided_by
