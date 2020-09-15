@@ -247,8 +247,8 @@ class GafWriter(AssocWriter):
             allowed_qualifiers = {"contributes_to", "colocalizes_with"}
             # Detect if the qualifier is wrong
             if len(assoc["qualifiers"]) == 1 and assoc["qualifiers"][0] not in allowed_qualifiers:
-                logger.error("Cannot write qualifier `{}` in GAF version 2.1 since only {} are allowed: skipping".format(assoc["qualifers"][0]), ", ".join(allowed_qualifiers))
-                return []
+                logger.warning("Cannot write qualifier `{}` in GAF version 2.1 since only {} are allowed".format(assoc["qualifiers"][0], ", ".join(allowed_qualifiers)))
+                assoc["qualifiers"] = []  # Blank out qualifer
 
         else:
             # Then we're 2.2

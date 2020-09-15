@@ -1,5 +1,6 @@
 from ontobio.io import assocwriter
 from ontobio.io import gafparser
+from ontobio.io import gpadparser
 import json
 import io
 
@@ -210,3 +211,51 @@ def test_roundtrip():
     writer.write_assoc(assoc_dict)
     gaf = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert line == gaf
+
+def test_gpad_qualifier_removed_in_gaf_2_1():
+    # Qualifier is `part_of` and should be returned blank instead of removing the whole line
+    line = "PomBase\tSPBC1348.01\tpart_of\tGO:0009897\tGO_REF:0000051\tECO:0000201\t\t\t20060201\tPomBase\t\t"
+    parser = gpadparser.GpadParser()
+    out = io.StringIO()
+    writer = assocwriter.GafWriter(file=out, version="2.1")  # Write out to gaf 2.1
+
+    assoc = parser.parse_line(line).associations[0]
+    writer.write_assoc(assoc)
+    gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    assert gpad_to_gaf_line.split("\t")[3] == ""
+
+    # Test with a `NOT`
+    line = "PomBase\tSPBC1348.01\tNOT|part_of\tGO:0009897\tGO_REF:0000051\tECO:0000201\t\t\t20060201\tPomBase\t\t"
+    parser = gpadparser.GpadParser()
+    out = io.StringIO()
+    writer = assocwriter.GafWriter(file=out, version="2.1")  # Write out to gaf 2.1
+
+    assoc = parser.parse_line(line).associations[0]
+    writer.write_assoc(assoc)
+    gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    assert gpad_to_gaf_line.split("\t")[3] == "NOT"
+
+def test_gaf2_2_qualifier_to_gaf2_1():
+    # Qualifier is `part_of` and should be returned blank instead of removing the whole line
+    line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+    out = io.StringIO()
+    writer = assocwriter.GafWriter(file=out, version="2.1")  # Write out to gaf 2.1
+
+    assoc = parser.parse_line(line).associations[0]
+    writer.write_assoc(assoc)
+    gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    assert gpad_to_gaf_line.split("\t")[3] == ""
+
+    # Test with a `NOT`
+    line = "WB\tWBGene00000001\taap-1\tNOT|involved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+    out = io.StringIO()
+    writer = assocwriter.GafWriter(file=out, version="2.1")  # Write out to gaf 2.1
+
+    assoc = parser.parse_line(line).associations[0]
+    writer.write_assoc(assoc)
+    gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    assert gpad_to_gaf_line.split("\t")[3] == "NOT"
