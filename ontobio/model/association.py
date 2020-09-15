@@ -207,19 +207,29 @@ class GoAssociation:
         # Curie Object -> CURIE Str -> URI -> Label
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
         if len(qual_labels) == 1 and qual_labels[0] not in allowed_qualifiers:
-            logger.error("Cannot write qualifier `{}` in GAF version 2.1 since only {} are allowed: skipping".format(self.qualifiers[0]), ", ".join(allowed_qualifiers))
-            return []
+            logger.warning("Cannot write qualifier `{}` in GAF version 2.1 since only {} are allowed".format(self.qualifiers[0], ", ".join(allowed_qualifiers)))
+            # return []
+            self.qualifiers = []
 
         if self.negated:
             qual_labels.append("NOT")
 
         qualifier = "|".join(qual_labels)
 
-        self.object.taxon.namespace = "taxon"
-        taxon = str(self.object.taxon)
-        if self.interacting_taxon:
-            self.interacting_taxon.namespace = "taxon"
-            taxon = "{taxon}|{interacting}".format(taxon=taxon, interacting=str(self.interacting_taxon))
+        if self.subject.taxon:
+            self.subject.taxon.namespace = "taxon"
+            taxon = str(self.subject.taxon)
+            if self.interacting_taxon:
+                for taxa in self.interacting_taxon:
+                    taxa.namespace = "taxon"
+                    taxon = "{taxon}|{interacting}".format(taxon=taxon, interacting=str(taxa))
+        else:
+            logger.error("Missing taxon for subject {}: skipping".format(str(self.subject.id)))
+            return []
+
+        if not self.aspect:
+            logger.error("Missing aspect for object {}: skipping".format(str(self.object.id)))
+            return []
 
         # For extensions, we provide the to string function on ConjunctElement that
         # calls its `display` method, with the flag to use labels instead of the CURIE.

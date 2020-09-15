@@ -52,7 +52,8 @@ class GpadParser(assocparser.AssocParser):
                         "symbol": entity["label"],
                         "name": entity["full_name"],
                         "synonyms": entitywriter.stringify(entity["synonyms"]),
-                        "type": entity["type"]
+                        "type": entity["type"],
+                        "taxon": entity["taxon"]["id"]
                     }
                 print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
 
@@ -191,11 +192,12 @@ class GpadParser(assocparser.AssocParser):
 
         if self.gpi is not None:
             gp = self.gpi.get(str(assoc.subject.id), {})
-            if gp is not {}:
+            if gp:
                 assoc.subject.label = gp["symbol"]
                 assoc.subject.fullname = gp["name"]
                 assoc.subject.synonyms = gp["synonyms"].split("|")
                 assoc.subject.type = gp["type"]
+                assoc.subject.taxon = association.Curie.from_str(gp["taxon"])
             else:
                 # ERROR
                 pass

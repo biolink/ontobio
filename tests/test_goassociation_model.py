@@ -68,3 +68,12 @@ def test_conjunctive_set_list_to_str():
             association.ConjunctiveSet(["GO:987"])
         ])
     assert c == "MGI:12345,DOI:333|GO:987"
+
+def test_negated_qualifers():
+
+    # MGI     MGI:1916729     part_of GO:0005813      MGI:MGI:4834177|GO_REF:0000096  ECO:0000266     UniProtKB:A7E2U8                20150323        MGI
+    gpad = ["MGI", "MGI:1916729", "part_of", "GO:0005813", "MGI:MGI:4834177|GO_REF:0000096", "ECO:0000266", "UniProtKB:A7E2U8", "20150323", "MGI"]
+    gpad = ["PomBase", "SPBC11B10.09", "cdc2", "NOT", "GO:0007275", "PMID:21873635", "IBA", "PANTHER:PTN000623979|TAIR:locus:2099478", "P", "Cyclin-dependent kinase 1", "UniProtKB:P04551|PTN000624043", "protein", "taxon:284812", "20170228", "GO_Central", "", ""]
+    association = gpadparser.to_association(gpad).associations[0]
+    to_gaf = association.to_gaf_2_1_tsv()
+    assert to_gaf[3] == "NOT"

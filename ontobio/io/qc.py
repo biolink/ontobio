@@ -577,11 +577,15 @@ class GoRule57(GoRule):
         if str(annotation.evidence.type) in evidence_codes:
             return self._result(False)
 
+        provided_bys = config.group_metadata.get("filter_for", {}).get("provided_by", [])
+        if str(annotation.provided_by) not in provided_bys:
+            return self._result(False)
+
         evidences_references = config.group_metadata.get("filter_out", {}).get("evidence_reference", [])
         for er in evidences_references:
             evidence_code = er["evidence"]
             reference = er["reference"]
-            if str(annotation.evidence.type) == evidence_code and [str(ref) for ref in annotation.evidence.has_supporting_reference] == [reference]:
+            if str(annotation.evidence.type) == evidence_code and reference in [str(ref) for ref in annotation.evidence.has_supporting_reference]:
                 return self._result(False)
 
         properties = config.group_metadata.get("filter_out", {}).get("annotation_properties", [])

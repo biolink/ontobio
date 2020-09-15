@@ -692,6 +692,9 @@ def test_gorule57():
                 }
             ],
             "annotation_properties": ["noctua-model-id"]
+        },
+        "filter_for": {
+            "provided_by": ["MGI"]
         }
     })
     test_result = qc.GoRule57().test(assoc, config)
@@ -711,6 +714,10 @@ def test_gorule57():
     assoc.properties = {}
     test_result = qc.GoRule57().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
+
+    assoc.provided_by = "UniProt"
+    test_result = qc.GoRule57().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR
 
 def test_gorule58():
     a = ["blah"] * 16
