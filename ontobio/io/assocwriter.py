@@ -185,7 +185,7 @@ class GafWriter(AssocWriter):
 
             self._write(assoc["line"] + "\n")
             return []
-        
+
         if self.version == "2.2":
             return assoc.to_gaf_2_2_tsv()
         else:
