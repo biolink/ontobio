@@ -82,7 +82,9 @@ __relation_label_lookup = bidict({
     "regulates o results in specification of": "http://purl.obolibrary.org/obo/GOREL_0001027",
     "results in division of": "http://purl.obolibrary.org/obo/GOREL_0001019",
     "regulates translation of": "http://purl.obolibrary.org/obo/GOREL_0098790",
-    "imports": "http://purl.obolibrary.org/obo/RO_0002340"
+    "imports": "http://purl.obolibrary.org/obo/RO_0002340",
+    "directly regulates": "http://purl.obolibrary.org/obo/RO_0002578",
+    "regulates o results in division of": "http://purl.obolibrary.org/obo/GOREL_0001024"
 })
 
 def lookup_uri(uri, default=None):
