@@ -12,18 +12,18 @@ PomBase	SPAC977.10			GO:1990578	PMID:19171118	IDA		C	plasma membrane sodium ion/
 ! Wrong columns
 PomBase	SPAC977.10
 ! bad extension syntax
-PomBase	SPAC25B8.17	ypf1		GO:0000001	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo
+PomBase	SPAC25B8.17	ypf1		GO:0000001	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	part_of
 ! bad extension filler: not a CURIE
-PomBase	SPAC25B8.17	ypf1		GO:0000002	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo(x)
+PomBase	SPAC25B8.17	ypf1		GO:0000002	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	part_of(x)
 ! bad extension filler: space in ID
-PomBase	SPAC25B8.17	ypf1		GO:0000003	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo(X:9 X:8)
+PomBase	SPAC25B8.17	ypf1		GO:0000003	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	part_of(X:9 X:8)
 ! bad extension filler: space in ID, with an additional valid expression
-PomBase	SPAC25B8.17	ypf1		GO:0000004	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo(X:9 X:8),foo(X:1)
+PomBase	SPAC25B8.17	ypf1		GO:0000004	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	part_of(X:9 X:8),part_of(X:1)
 ! Bad evidence code
-PomBase	SPAC25B8.17	ypf1		GO:0000005	GO_REF:0000024	MADEUP	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	foo(X:1)
+PomBase	SPAC25B8.17	ypf1		GO:0000005	GO_REF:0000024	MADEUP	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase	part_of(X:1)
 ! Bad date, but fixable
-PomBase	SPAC25B8.17	ypf1		GO:0000006	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	2015-03-05	PomBase	foo(X:1)
+PomBase	SPAC25B8.17	ypf1		GO:0000006	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	2015-03-05	PomBase	part_of(X:1)
 ! Bad date, unparsable
-PomBase	SPAC25B8.17	ypf1		GO:0000007	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	TODAY	PomBase	foo(X:1)
+PomBase	SPAC25B8.17	ypf1		GO:0000007	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	TODAY	PomBase	part_of(X:1)
 ! empty col1 and col2
 		At2g28815		GO:0005762	PMID:21873635	IBA	PANTHER:PTN000259457|UniProtKB:Q9NX20|SGD:S000000134	C	60S ribosomal protein L16-like, mitochondrial	UniProtKB:Q84WZ8|PTN000259517	protein	taxon:3702	2017-02-28	GO_Central		

@@ -18,6 +18,8 @@ from ontobio.io.gafparser import GafParser
 from ontobio.util.user_agent import get_user_agent
 from collections import defaultdict
 
+import json
+
 logger = logging.getLogger(__name__)
 
 
@@ -104,6 +106,9 @@ class AssociationSetFactory():
         """
         Creates from a list of association objects
         """
+        assocs = [a.to_hash_assoc() for a in assocs]
+        print(json.dumps(assocs[0], indent=4))
+
         amap = defaultdict(list)
         subject_label_map = {}
         for a in assocs:

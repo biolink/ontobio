@@ -20,92 +20,16 @@ import click
 
 logger = logging.getLogger(__name__)
 
-@dataclass
-class ValidateResult:
-    valid: bool
-    original: str
-    parsed: Optional
-    message: str
 
-@dataclass
-class ColumnValidator:
 
-    def cardinality(self, field: str, entity: str, minimum: int, maximum: Optional[int]) -> ValidateResult:
-        items = [i for i in entity.split("|") if i != ""]
-        if len(items) < minimum:
-            return ValidateResult(False, entity, None, "{} must have at least {} items".format(field, minimum))
-        elif maximum is not None and len(items) > maximum:
-            return ValidateResult(False, entity, None, "{} cannot have more than {} items".format(field, maximum))
 
-        return ValidateResult(True, entity, items, "")
-
-    def validate(self, entity) -> ValidateResult:
-        return NotImplemented
-
-@dataclass
-class Qualifier2_1(ColumnValidator):
-    valid_qualifiers = {
-        "contributes_to",
-        "colocalizes_with",
-    }
-
-    def validate(self, entity) -> ValidateResult:
-        result = self.cardinality("Qualifier", entity, 0, 2)
-        if not result.valid:
-            return result
-
-        invalid_non_not = [q for q in result.parsed if q not in self.valid_qualifiers and q != "NOT"]
-        if invalid_non_not:
-            result.valid = False
-            result.parsed = None
-            result.message = "Invalid Qualifiers: {}".format(", ".join(invalid_non_not))
-
-        return result
-
-@dataclass
-class Qualifier2_2(ColumnValidator):
-    valid_qualifiers = {
-        "enables",
-        "contributes_to",
-        "involved_in",
-        "acts_upstream_of",
-        "acts_upstream_of_positive_effect",
-        "acts_upstream_of_negative_effect",
-        "acts_upstream_of_or_within",
-        "acts_upstream_of_or_within_positive_effect",
-        "acts_upstream_of_or_within_negative_effect",
-        "located_in",
-        "part_of",
-        "is_active_in",
-        "colocalizes_with"
-    }
-
-    def validate(self, entity) -> ValidateResult:
-        result = self.cardinality("Qualifier", entity, 1, 2)
-        if not result.valid:
-            return result
-
-        invalid_non_not = [q for q in result.parsed if q not in self.valid_qualifiers and q != "NOT"]
-        if invalid_non_not:
-            result.valid = False
-            result.parsed = None
-            result.message = "Invalid Qualifiers: {}".format(", ".join(invalid_non_not))
-            return result
-
-        if "NOT" in result.parsed and len(result.parsed) == 1:
-            # If not is the only elemnent, then it's wrong
-            result.valid = False
-            result.parsed = None
-            result.message = "`NOT` is not a Qualifier and so cannot exist by itself"
-            return result
-
-        if len(result.parsed) == 2 and "NOT" not in result.parsed:
-            result.valid = False
-            result.parsed = None
-            result.message = "There can be only one relation entry for the Qualifier field"
-            return result
-
-        return result
+gaf_line_validators = {
+    "default": assocparser.ColumnValidator(),
+    "qualifier2_1": assocparser.Qualifier2_1(),
+    "qualifier2_2": assocparser.Qualifier2_2(),
+    "curie": assocparser.CurieValidator(),
+    "taxon": assocparser.TaxonValidator()
+}
 
 
 class GafParser(assocparser.AssocParser):
@@ -152,11 +76,11 @@ class GafParser(assocparser.AssocParser):
         else:
             self.default_version
 
-    def qualifier_parser(self) -> ColumnValidator:
+    def qualifier_parser(self) -> assocparser.ColumnValidator:
         if self.gaf_version() == "2.2":
-            return Qualifier2_2()
+            return assocparser.Qualifier2_2()
 
-        return Qualifier2_1()
+        return assocparser.Qualifier2_1()
 
     def skim(self, file):
         file = self._ensure_file(file)
@@ -260,209 +184,81 @@ class GafParser(assocparser.AssocParser):
                 self.report.message(assocparser.Report.INFO, line, Report.RULE_PASS, "",
                                     msg="Passing Rule", rule=int(rule.id.split(":")[1]))
 
-        vals = list(go_rule_results.annotation.to_gaf_tsv())
-        [db,
-         db_object_id,
-         db_object_symbol,
-         qualifier,
-         goid,
-         reference,
-         evidence,
-         withfrom,
-         aspect,
-         db_object_name,
-         db_object_synonym,
-         db_object_type,
-         taxon,
-         date,
-         assigned_by,
-         annotation_xp,
-         gene_product_isoform] = vals
-        split_line = assocparser.SplitLine(line=line, values=vals, taxon=taxon)
+        assoc = go_rule_results.annotation  # type: association.GoAssociation
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon=str(assoc.object.taxon))
 
-        if self.config.group_idspace is not None and assigned_by not in self.config.group_idspace:
-            self.report.warning(line, Report.INVALID_ID, assigned_by,
-                "GORULE:0000027: assigned_by is not present in groups reference", taxon=taxon, rule=27)
+        if self.config.group_idspace is not None and assoc.provided_by not in self.config.group_idspace:
+            self.report.warning(line, Report.INVALID_ID, assoc.provided_by,
+                "GORULE:0000027: assigned_by is not present in groups reference", taxon=str(assoc.object.taxon), rule=27)
 
+        db = assoc.subject.id.namespace
         if self.config.entity_idspaces is not None and db not in self.config.entity_idspaces:
             # Are we a synonym?
             upgrade = self.config.entity_idspaces.reverse(db)
             if upgrade is not None:
                 # If we found a synonym
-                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "GORULE:0000027: {} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=taxon, rule=27)
-                db = upgrade
+                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "GORULE:0000027: {} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=str(assoc.object.taxon), rule=27)
+                assoc.subject.id.namespace = upgrade
 
         ## --
         ## db + db_object_id. CARD=1
         ## --assigned_by
-        id = self._pair_to_id(db, db_object_id)
-        if not self._validate_id(id, split_line, allowed_ids=self.config.entity_idspaces):
-
+        if not self._validate_id(str(assoc.subject.id), split_line, allowed_ids=self.config.entity_idspaces):
             return assocparser.ParseResult(line, [], True)
-
 
         # Using a given gpi file to validate the gene object
         if self.gpi is not None:
-            entity = self.gpi.get(id, None)
+            entity = self.gpi.get(str(assoc.subject.id), None)
             if entity is not None:
-                db_object_symbol = entity["symbol"]
-                db_object_name = entity["name"]
-                db_object_synonym = entity["synonyms"]
-                db_object_type = entity["type"]
+                assoc.subject.label = entity["symbol"]
+                assoc.subject.fullname = entity["name"]
+                assoc.subject.synonyms = entity["synonyms"].split("|")
+                assoc.subject.type = entity["type"]
 
-        if not self._validate_id(goid, split_line, context=ANNOTATION):
-            print("skipping because {} not validated!".format(goid))
+        if not self._validate_id(str(assoc.object.id), split_line, context=ANNOTATION):
+            print("skipping because {} not validated!".format(assoc.object.id))
             return assocparser.ParseResult(line, [], True)
 
-        valid_goid = self._validate_ontology_class_id(goid, split_line)
-        if valid_goid == None:
+        valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
+        if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
-        goid = valid_goid
+        assoc.object.id = association.Curie.from_str(valid_goid)
 
-        ecomap = self.config.ecomap
-        if ecomap is not None:
-            if ecomap.coderef_to_ecoclass(evidence, reference) is None:
-                self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, evidence,
-                                msg="Expecting a known ECO GAF code, e.g ISS", rule=1)
-                return assocparser.ParseResult(line, [], True)
-
-        references = self.validate_pipe_separated_ids(reference, split_line)
-        if references == None:
+        references = self.validate_curie_ids(assoc.evidence.has_supporting_reference, split_line)
+        if references is None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
 
         # With/From
-        withfroms = self.validate_pipe_separated_ids(withfrom, split_line, empty_allowed=True, extra_delims=",")
-        if withfroms == None:
-            # Reporting occurs in above function call
-            return assocparser.ParseResult(line, [], True)
+        for wf in assoc.evidence.with_support_from:
+            validated = self.validate_curie_ids(wf.elements, split_line)
+            if validated is None:
+                return assocparser.ParseResult(line, [], True)
 
         # validation
-        self._validate_symbol(db_object_symbol, split_line)
+        self._validate_symbol(assoc.subject.label, split_line)
 
-        # Example use case: mapping from UniProtKB to MOD ID
-        if self.config.entity_map is not None:
-            id = self.map_id(id, self.config.entity_map)
-            toks = id.split(":")
-            db = toks[0]
-            db_object_id = toks[1:]
-            vals[1] = db_object_id
-
-
-        ## --
-        ## end of line re-processing
-        ## --
-        # regenerate line post-mapping
-        line = "\t".join(vals)
 
         ## --
         ## taxon CARD={1,2}
         ## --
         ## if a second value is specified, this is the interacting taxon
         ## We do not use the second value
-        taxons = taxon.split("|")
-        normalized_taxon = self._taxon_id(taxons[0], split_line)
-        if normalized_taxon == None:
-            self.report.error(line, assocparser.Report.INVALID_TAXON, taxon,
-                                msg="Taxon ID is invalid")
+        valid_taxon = self._validate_taxon(str(assoc.object.taxon), split_line)
+        valid_interacting = self._validate_taxon(str(assoc.interacting_taxon), split_line) if assoc.interacting_taxon else True
+        if not valid_taxon:
+            self.report.error(line, assocparser.Report.INVALID_TAXON, str(assoc.object.taxon), "Taxon ID is invalid", rule=27)
+        if not valid_interacting:
+            self.report.error(line, assocparser.Report.INVALID_TAXON, str(assoc.interacting_taxon), "Taxon ID is invalid", rule=27)
+        if (not valid_taxon) or (not valid_interacting):
             return assocparser.ParseResult(line, [], True)
 
-        self._validate_taxon(normalized_taxon, split_line)
-
-        interacting_taxon = None
-        if len(taxons) == 2:
-            interacting_taxon = self._taxon_id(taxons[1], split_line)
-            if interacting_taxon == None:
-                self.report.error(line, assocparser.Report.INVALID_TAXON, taxon,
-                                    msg="Taxon ID is invalid")
-                return assocparser.ParseResult(line, [], True)
-
-        ## --
-        ## db_object_synonym CARD=0..*
-        ## --
-        synonyms = db_object_synonym.split("|")
-        if db_object_synonym == "":
-            synonyms = []
-
-        ## --
-        ## parse annotation extension
-        ## See appendix in http://doi.org/10.1186/1471-2105-15-155
-        ## --
-        object_or_exprs = self._parse_full_extension_expression(annotation_xp, line=split_line)
-
-        ## --
-        ## qualifier
-        ## --
-        negated, relation, other_qualifiers = self._parse_qualifier(qualifier, aspect)
-
-        ## --
-        ## goid
-        ## --
-        # TODO We shouldn't overload buildin keywords/functions
-        object = {'id': goid,
-                  'taxon': normalized_taxon}
-
-        # construct subject dict
-        subject = {
-            'id': id,
-            'label': db_object_symbol,
-            'type': db_object_type,
-            'fullname': db_object_name,
-            'synonyms': synonyms,
-            'taxon': {
-                'id': normalized_taxon
-            }
-        }
-
-        ## --
-        ## gene_product_isoform
-        ## --
-        ## This is mapped to a more generic concept of subject_extensions
-        subject_extns = []
-        if gene_product_isoform is not None and gene_product_isoform != '':
-            subject_extns.append({'property': 'isoform', 'filler': gene_product_isoform})
-
-        object_extensions = {}
-        if object_or_exprs is not None and len(object_or_exprs) > 0:
-            object_extensions['union_of'] = object_or_exprs
-
-        ## --
-        ## evidence
-        ## reference
-        ## withfrom
-        ## --
-        evidence_obj = {
-            'type': evidence,
-            'has_supporting_reference': references,
-            'with_support_from': withfroms
-        }
-
-        ## Construct main return dict
-        assoc = {
-            'source_line': line,
-            'subject': subject,
-            'object': object,
-            'negated': negated,
-            'qualifiers': other_qualifiers, # should be either 0 or 1 item
-            'aspect': aspect,
-            'relation': {
-                'id': relation
-            },
-            'interacting_taxon': interacting_taxon,
-            'evidence': evidence_obj,
-            'provided_by': assigned_by,
-            'date': date,
-            'subject_extensions': subject_extns,
-            'object_extensions': object_extensions
-        }
-
-        return assocparser.ParseResult(line, [assoc], False, evidence.upper())
+        return assocparser.ParseResult(line, [assoc], False, vals[6])
 
 ecomap = EcoMap()
 ecomap.mappings()
-relation_tuple = re.compile(r'(.+)\((.+)\)')
 
-def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown", qualifier_parser=Qualifier2_1()) -> assocparser.ParseResult:
+def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown", qualifier_parser=assocparser.Qualifier2_1()) -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report
     source_line = "\t".join(gaf_line)
 
@@ -482,8 +278,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
 
     if len(gaf_line) != 17:
         report.error(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-            msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(gaf_line)),
-            rule=1)
+            msg="There were {columns} columns found in this line, and there should be 15 (for GAF v1) or 17 (for GAF v2)".format(columns=len(gaf_line)), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     ## check for missing columns
@@ -498,39 +293,79 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     if gaf_line[DB_OBJECT_INDEX] == "":
         report.error(source_line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
-    if gaf_line[TAXON_INDEX] == "":
-        report.error(source_line, Report.INVALID_TAXON, "EMPTY", "taxon column is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
-        return assocparser.ParseResult(source_line, [], True, report=report)
     if gaf_line[REFERENCE_INDEX] == "":
         report.error(source_line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    taxon = gaf_line[12].split("|")
-    taxon_curie = taxon[0].replace("taxon", "NCBITaxon")
-    date = assocparser._normalize_gaf_date(gaf_line[13], report, taxon_curie, source_line)
+    parsed_taxons_result = gaf_line_validators["taxon"].validate(gaf_line[TAXON_INDEX])  # type: ValidateResult
+    if not parsed_taxons_result.valid:
+        report.error(source_line, Report.INVALID_TAXON, parsed_taxons_result.original, parsed_taxons_result.message, taxon=parsed_taxons_result.original, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    taxon = parsed_taxons_result.parsed[0]
+
+    date = assocparser._normalize_gaf_date(gaf_line[13], report, str(taxon), source_line)
     if date is None:
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    interacting_taxon = taxon[1].replace("taxon", "NCBITaxon") if len(taxon) == 2 else None
-    subject_curie = "{db}:{id}".format(db=gaf_line[0], id=gaf_line[1])
-    subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon_curie)
+    interacting_taxon = parsed_taxons_result.parsed[1] if len(parsed_taxons_result.parsed) == 2 else None
+    subject_curie = association.Curie(gaf_line[0], gaf_line[1])
+    subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon)
     aspect = gaf_line[8]
-    negated, relation, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
+    negated, relation_label, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
+    # Note: Relation label is grabbed from qualifiers, if any exist in _parse_qualifier
+    qualifiers = [association.Curie.from_str(curie_util.contract_uri(relations.lookup_label(q), strict=False)[0]) for q in qualifiers]
 
     # column 4 is qualifiers -> index 3
     # For allowed, see http://geneontology.org/docs/go-annotations/#annotation-qualifiers
+    # We use the below validate to check validaty if qualifiers, not as much to *parse* them into the GoAssociation object.
+    # For GoAssociation we will use the above qualifiers list. This is fine because the above does not include `NOT`, etc
+    # This is confusing, and we can fix later on by consolidating qualifier and relation in GoAssociation.
     parsed_qualifiers = qualifier_parser.validate(gaf_line[3])
     if not parsed_qualifiers.valid:
         report.error(source_line, Report.INVALID_QUALIFIER, parsed_qualifiers.original, parsed_qualifiers.message, taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    object = association.Term(gaf_line[4], taxon_curie)
-    evidence = association.Evidence(
-        ecomap.coderef_to_ecoclass(gaf_line[6]),
-        [e for e in gaf_line[5].split("|") if e],
-        association.ConjunctiveSet.str_to_conjunctions(gaf_line[7]))
+    object = association.Term(association.Curie.from_str(gaf_line[4]), taxon)
+    if isinstance(object, association.Error):
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[4], "Problem parsing GO Term", taxon=gaf_line[TAXON_INDEX], rule=1)
 
-    subject_extensions = [association.ExtensionUnit("rdfs:subClassOf", gaf_line[16])] if gaf_line[16] else []
+    # References
+    references = [association.Curie.from_str(e) for e in gaf_line[5].split("|") if e]
+    for r in references:
+        if isinstance(r, association.Error):
+            report.error(source_line, Report.INVALID_SYMBOL, gaf_line[5], "Problem parsing references", taxon=gaf_line[TAXON_INDEX], rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
+    gorefs = [ref for ref in references if ref.namespace == "GO_REF"] + [None]
+    eco_curie = ecomap.coderef_to_ecoclass(gaf_line[6], reference=gorefs[0])
+    if eco_curie is None:
+        report.error(source_line, Report.UNKNOWN_EVIDENCE_CLASS, gaf_line[6], msg="Expecting a known ECO GAF code, e.g ISS", rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    withfroms = association.ConjunctiveSet.str_to_conjunctions(gaf_line[7])
+    if isinstance(withfroms, association.Error):
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[7], "Problem parsing with/from", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    evidence_type = association.Curie.from_str(eco_curie)
+    if isinstance(evidence_type, association.Error):
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[6], "Problem parsing evidence type", taxon=gaf_line[TAXON_INDEX], rule=1)
+
+    evidence = association.Evidence(association.Curie.from_str(eco_curie), references, withfroms)
+    if any([isinstance(e, association.Error) for e in evidence.has_supporting_reference]):
+        first_error = [e for e in evidence.has_supporting_reference if isinstance(e, association.Error)][0]
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[5], first_error.info, taxon=str(taxon), rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    subject_extensions = []
+    if gaf_line[16]:
+        subject_filler = association.Curie.from_str(gaf_line[16])
+        if isinstance(subject_filler, association.Error):
+            report.error(source_line, assocparser.Report.INVALID_ID, gaf_line[16], subject_filler.info, taxon=str(taxon), rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+        # filler is not an Error, so keep moving
+        subject_extensions.append(association.ExtensionUnit(association.Curie.from_str("rdfs:subClassOf"), subject_filler))
 
     conjunctions = []
     if gaf_line[15]:
@@ -539,18 +374,21 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
             conjunct_element_builder=lambda el: association.ExtensionUnit.from_str(el))
 
         if isinstance(conjunctions, association.Error):
-            report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=taxon, rule=1)
+            report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie) and relation should have corresponding URI", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-    looked_up_rel = relations.lookup_label(relation)
-    if looked_up_rel is None:
-        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation, "Could not find CURIE for relation `{}`".format(relation), taxon=taxon, rule=1)
+    relation_uri = relations.lookup_label(relation_label)
+    if relation_uri is None:
+        report.error(source_line, assocparser.Report.INVALID_QUALIFIER, relation_label, "Could not find CURIE for relation `{}`".format(relation_label), taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
+
+    # We don't have to check that this is well formed because we're grabbing it from the known relations URI map.
+    relation_curie = association.Curie.from_str(curie_util.contract_uri(relation_uri)[0])
 
     a = association.GoAssociation(
         source_line="\t".join(gaf_line),
         subject=subject,
-        relation=curie_util.contract_uri(looked_up_rel)[0],
+        relation=relation_curie,
         object=object,
         negated=negated,
         qualifiers=qualifiers,

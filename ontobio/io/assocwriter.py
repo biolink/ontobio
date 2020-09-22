@@ -7,10 +7,11 @@ import datetime
 import json
 import logging
 
-from typing import List
+from typing import List, Union
 
 from ontobio import ecomap
 from ontobio.io import assocparser
+from ontobio.model import association
 
 logger = logging.getLogger(__name__)
 
@@ -54,24 +55,6 @@ class AssocWriter():
         else:
             print(line)
 
-    def _extension_expression(self, object_extensions):
-        unions = []
-        for union_key, union_value in object_extensions.items():
-            if union_key == "union_of":
-                # union_value is list of { "intersection_of" ...}
-                for union_item in union_value:
-                    for intersect_key, intersect_value in union_item.items():
-                        if intersect_key == "intersection_of":
-                            intersections = []
-                            for intersect_item in intersect_value:
-                                prop = intersect_item["property"]
-                                filler = intersect_item["filler"]
-                                full_property = "{property}({filler})".format(property=prop, filler=filler)
-                                intersections.append(full_property)
-                            joined_intersections = ",".join(intersections)
-                            unions.append(joined_intersections)
-
-        return "|".join(unions)
 
     def normalize_taxon(self, taxon):
         global internal_taxon
@@ -91,7 +74,7 @@ class AssocWriter():
 
         return taxon
 
-    def as_tsv(self, assoc) -> List[str]:
+    def as_tsv(self, assoc: Union[association.GoAssociation, dict]) -> List[str]:
         """
         Transform a single association to a string line.
         """
@@ -130,49 +113,15 @@ class GpadWriter(AssocWriter):
         self._write("!gpa-version: 1.1\n")
         self.ecomap = ecomap.EcoMap()
 
-    def as_tsv(self, assoc):
+    def as_tsv(self, assoc: Union[association.GoAssociation, dict]):
         """
         Write a single association to a line in the output file
         """
-        if assoc.get("header", False):
+        if isinstance(assoc, dict):
             return []
 
-        subj = assoc['subject']
+        return assoc.to_gpad_tsv()
 
-        db, db_object_id = self._split_prefix(subj)
-
-        rel = assoc['relation']
-        qualifier = rel['id']
-        if assoc['negated']:
-            qualifier = 'NOT|' + qualifier
-
-        goid = assoc['object']['id']
-
-        ev = assoc['evidence']
-
-        evidence = self.ecomap.coderef_to_ecoclass(ev['type'])
-        withfrom = "|".join(ev['with_support_from'])
-        reference = "|".join(ev['has_supporting_reference'])
-
-        date = assoc['date']
-        assigned_by = assoc['provided_by']
-
-        annotation_properties = '' # TODO
-        interacting_taxon_id = assoc['interacting_taxon']
-        vals = [db,
-                db_object_id,
-                qualifier,
-                goid,
-                reference,
-                evidence,
-                withfrom,
-                interacting_taxon_id, # TODO
-                date,
-                assigned_by,
-                self._extension_expression(assoc['object_extensions']),
-                annotation_properties]
-
-        return vals
 
 class GafWriter(AssocWriter):
     """
@@ -198,6 +147,7 @@ class GafWriter(AssocWriter):
     the incoming annotation has a qualifier in the 2.2 set, but 2.1 is being
     written out, or if the qualifier is empty and 2.2 is being written.
     """
+
     def __init__(self, file=None, source=None, version="2.1"):
         self.file = file
         if version not in ["2.1", "2.2"]:
@@ -222,12 +172,12 @@ class GafWriter(AssocWriter):
 
         return full_taxon
 
-    def as_tsv(self, assoc):
+    def as_tsv(self, assoc: Union[association.GoAssociation, dict]):
         """
         Write a single association to a line in the output file
         """
         # Handle comment 'associations'
-        if assoc.get("header", False):
+        if isinstance(assoc, dict):
 
             # Skip incoming gaf-version headers, as we created the version above already
             if assocparser.parser_version_regex.match(assoc["line"]):
@@ -236,66 +186,8 @@ class GafWriter(AssocWriter):
             self._write(assoc["line"] + "\n")
             return []
 
-        # print("Writing assoc {}".format(assoc))
-        subj = assoc['subject']
-
-        db, db_object_id = self._split_prefix(subj)
-
-        qual_negated = ["NOT"] if assoc["negated"] else []
-        qualifier = ""
-        if self.version == "2.1":
-            allowed_qualifiers = {"contributes_to", "colocalizes_with"}
-            # Detect if the qualifier is wrong
-            if len(assoc["qualifiers"]) == 1 and assoc["qualifiers"][0] not in allowed_qualifiers:
-                logger.warning("Cannot write qualifier `{}` in GAF version 2.1 since only {} are allowed".format(assoc["qualifiers"][0], ", ".join(allowed_qualifiers)))
-                assoc["qualifiers"] = []  # Blank out qualifer
-
+        if self.version == "2.2":
+            return assoc.to_gaf_2_2_tsv()
         else:
-            # Then we're 2.2
-            if len(assoc["qualifiers"]) == 0:
-                logger.error("Qualifier must not be empty for GAF version 2.2")
-                return []
-
-        # assoc["qualifiers"] is appropriately set up for whatever version this is
-        quals = qual_negated + assoc["qualifiers"]
-        qualifier = "|".join(quals)
-
-        goid = assoc['object']['id']
-
-        ev = assoc['evidence']
-        evidence = ev['type']
-        withfrom = "|".join(ev['with_support_from'])
-        reference = "|".join(ev['has_supporting_reference'])
-
-        date = assoc['date']
-        assigned_by = assoc['provided_by']
-
-        annotation_properties = '' # TODO
-        # if we have any subject extensions, list each one that has a "property" equal to "isoform", take the first one, and grab the "filler"
-        gene_product_isoform = [e for e in assoc["subject_extensions"] if e["property"] == "isoform"][0]["filler"] if len(assoc["subject_extensions"]) > 0 else ""
-
-        aspect = assoc['aspect']
-        interacting_taxon_id = assoc["interacting_taxon"]
-        taxon = self._full_taxon_field(self.normalize_taxon(subj['taxon']['id']), self.normalize_taxon(interacting_taxon_id))
-
-        extension_expression = self._extension_expression(assoc['object_extensions'])
-
-        vals = [db,
-                db_object_id,
-                subj.get('label'),
-                qualifier,
-                goid,
-                reference,
-                evidence,
-                withfrom,
-                aspect,
-                subj["fullname"],
-                "|".join(subj.get('synonyms',[])),
-                subj.get('type'),
-                taxon,
-                date,
-                assigned_by,
-                extension_expression,
-                gene_product_isoform]
-
-        return vals
+            # Default to GAF 2.1
+            return assoc.to_gaf_2_1_tsv()
