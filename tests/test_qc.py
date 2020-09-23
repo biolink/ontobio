@@ -689,6 +689,10 @@ def test_gorule57():
                 {
                     "evidence": "ECO:0000320",
                     "reference": "PMID:21873635"
+                },
+                {
+                    "evidence": "ECO:0000266",
+                    "reference": "GO_REF:0000096"
                 }
             ],
             "annotation_properties": ["noctua-model-id"]
@@ -702,6 +706,11 @@ def test_gorule57():
 
     assoc.evidence.type = "ECO:0000320"
     assoc.evidence.has_supporting_reference = ["PMID:21873635"]
+    test_result = qc.GoRule57().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    assoc.evidence.type = "ECO:0000266"
+    assoc.evidence.has_supporting_reference = ["MGI:MGI:4834177", "GO_REF:0000096"]
     test_result = qc.GoRule57().test(assoc, config)
     assert test_result.result_type == qc.ResultType.ERROR
 

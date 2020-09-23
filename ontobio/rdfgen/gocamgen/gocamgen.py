@@ -16,7 +16,7 @@ from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TripleP
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
 from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
-from ontobio.model.association import GoAssociation, ExtensionUnit, Curie
+from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet
 
 
 # logging.basicConfig(level=logging.INFO)
@@ -479,7 +479,7 @@ class AssocGoCamModel(GoCamModel):
                                         new_exts_list.append(int_of_ext)
                                 # Then add occurs_in ext in current iteration
                                 new_exts_list.append(ext)
-                                annotation_extensions.append(new_exts_list)
+                                annotation_extensions.append(ConjunctiveSet(elements=new_exts_list))
                 # Remove original, un-split extension from list so it isn't translated
                 [annotation_extensions.remove(ext_set) for ext_set in extension_sets_to_remove]
 
@@ -624,7 +624,11 @@ class AssocGoCamModel(GoCamModel):
 
         # TODO: qualifiers are coming through as relation terms now
         for q_term in annotation.qualifiers():
-            q = self.ro_ontology.label(str(q_term))
+            if ":" in str(q_term):
+                # It's a curie (nice!) but we're talking labels
+                q = self.ro_ontology.label(str(q_term)).replace(" ", "_")
+            else:
+                q = q_term
             if q == "enables":
                 term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
