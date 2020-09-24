@@ -281,7 +281,7 @@ class GoAssociation:
             gp_isoforms
         ]
 
-    def to_gpad_tsv(self) -> List:
+    def to_gpad_1_1_tsv(self) -> List:
 
         # Curie Object -> CURIE Str -> URI -> Label
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
@@ -311,6 +311,25 @@ class GoAssociation:
             self.provided_by,
             ConjunctiveSet.list_to_str(self.object_extensions,
                 conjunct_to_str=lambda conj: conj.display(use_rel_label=True)),
+            "|".join(props_list)
+        ]
+
+    def to_gpad_2_0_tsv(self) -> List:
+
+        props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties.items()]
+        return [
+            str(self.subject.id),
+            "NOT" if self.negated else "",
+            str(self.relation),
+            str(self.object.id),
+            "|".join([str(ref) for ref in self.evidence.has_supporting_reference]),
+            str(self.evidence.type),
+            ConjunctiveSet.list_to_str(self.evidence.with_support_from),
+            str(self.interacting_taxon) if self.interacting_taxon else "",
+            self.date,
+            self.provided_by,
+            ConjunctiveSet.list_to_str(self.object_extensions,
+                conjunct_to_str=lambda conj: conj.display()),
             "|".join(props_list)
         ]
 
