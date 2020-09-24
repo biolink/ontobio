@@ -28,6 +28,9 @@ from ontobio import ecomap
 from ontobio.io import parsereport
 from ontobio.util.user_agent import get_user_agent
 from ontobio.model import association
+from ontobio.rdfgen import relations
+
+from prefixcommons import curie_util
 
 TAXON = 'TAXON'
 ENTITY = 'ENTITY'
@@ -44,11 +47,131 @@ def write_to_file(optional_file, text):
 
 SplitLine = namedtuple("SplitLine", ["line", "values", "taxon"])
 SplitLine.__str__ = lambda self: self.line
-
 """
 This is a collection that views a gaf line in two ways: as the full line, and
 as the separated by tab list of values. We also tack on the taxon.
 """
+
+@dataclass
+class ValidateResult:
+    valid: bool
+    original: str
+    parsed: Optional
+    message: str
+
+@dataclass
+class ColumnValidator:
+
+    def cardinality(self, field: str, entity: str, minimum: int, maximum: Optional[int]) -> ValidateResult:
+        items = [i for i in entity.split("|") if i != ""]
+        if len(items) == 0 and 0 < minimum:
+            return ValidateResult(False, "EMPTY", None, "{} must have at least {} items".format(field, minimum))
+        if len(items) < minimum:
+            return ValidateResult(False, entity, None, "{} must have at least {} items".format(field, minimum))
+        elif maximum is not None and len(items) > maximum:
+            return ValidateResult(False, entity, None, "{} cannot have more than {} items".format(field, maximum))
+
+        return ValidateResult(True, entity, items, "")
+
+    def validate(self, entity) -> ValidateResult:
+        return ValidateResult(True, entity, entity, "")
+
+@dataclass
+class Qualifier2_1(ColumnValidator):
+    valid_qualifiers = {
+        "contributes_to",
+        "colocalizes_with",
+    }
+
+    def validate(self, entity) -> ValidateResult:
+        result = self.cardinality("Qualifier", entity, 0, 2)
+        if not result.valid:
+            return result
+
+        invalid_non_not = [q for q in result.parsed if q not in self.valid_qualifiers and q != "NOT"]
+        if invalid_non_not:
+            result.valid = False
+            result.parsed = None
+            result.message = "Invalid Qualifiers: {}".format(", ".join(invalid_non_not))
+
+        return result
+
+@dataclass
+class Qualifier2_2(ColumnValidator):
+
+    valid_qualifiers = {
+        "enables",
+        "contributes_to",
+        "involved_in",
+        "acts_upstream_of",
+        "acts_upstream_of_positive_effect",
+        "acts_upstream_of_negative_effect",
+        "acts_upstream_of_or_within",
+        "acts_upstream_of_or_within_positive_effect",
+        "acts_upstream_of_or_within_negative_effect",
+        "located_in",
+        "part_of",
+        "is_active_in",
+        "colocalizes_with"
+    }
+
+    def validate(self, entity) -> ValidateResult:
+        result = self.cardinality("Qualifier", entity, 1, 2)
+        if not result.valid:
+            return result
+
+        invalid_non_not = [q for q in result.parsed if q not in self.valid_qualifiers and q != "NOT"]
+        if invalid_non_not:
+            result.valid = False
+            result.parsed = None
+            result.message = "Invalid Qualifiers: {}".format(", ".join(invalid_non_not))
+            return result
+
+        if "NOT" in result.parsed and len(result.parsed) == 1:
+            # If not is the only elemnent, then it's wrong
+            result.valid = False
+            result.parsed = None
+            result.message = "`NOT` is not a Qualifier and so cannot exist by itself"
+            return result
+
+        if len(result.parsed) == 2 and "NOT" not in result.parsed:
+            result.valid = False
+            result.parsed = None
+            result.message = "There can be only one relation entry for the Qualifier field"
+            return result
+
+        return result
+
+
+@dataclass
+class CurieValidator(ColumnValidator):
+    def validate(self, entity):
+        curie = association.Curie.from_str(entity)
+        if isinstance(curie, association.Error):
+            return ValidateResult(False, entity, None, curie.info)
+
+        return ValidateResult(True, entity, curie, "")
+
+
+@dataclass
+class TaxonValidator(CurieValidator):
+
+    def validate(self, entity):
+        cardinality_result = self.cardinality("Taxon", entity, 1, 2)
+        if not cardinality_result.valid:
+            return cardinality_result
+
+        parsed_taxons = []
+        for taxa in cardinality_result.parsed:
+            result = super().validate(taxa)
+            if not result.valid:
+                return result
+
+            result.parsed.namespace = "NCBITaxon"
+            parsed_taxons.append(result.parsed)
+
+        return ValidateResult(True, entity, parsed_taxons, "")
+
 
 class AssocParserConfig():
     """
@@ -175,6 +298,7 @@ class Report(object):
     EXTENSION_SYNTAX_ERROR = "Syntax error in annotation extension field"
     VIOLATES_GO_RULE = "Violates GO Rule"
     RULE_PASS = "Passes GO Rule"
+    INVALID_REFERENCES = "Only one reference per ID space allowed"
 
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
@@ -216,7 +340,8 @@ class Report(object):
             self.add_association(a)
 
     def add_association(self, association):
-        if "header" in association and association["header"]:
+        if isinstance(association, dict) and "header" in association:
+            # Then we are a header
             self.header.append(association["line"])
         else:
             self.n_assocs += 1
@@ -356,7 +481,7 @@ class AssocParser(object):
             self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
             for association in parsed_result.associations:
                 # yield association if we don't care if it's a header or if it's definitely a real gaf line
-                if not skipheader or "header" not in association:
+                if not skipheader or not isinstance(association, dict):
                     yield association
 
         logger.info(self.report.short_summary())
@@ -597,6 +722,16 @@ class AssocParser(object):
                 return None
 
         return sorted(valids)
+
+    def validate_curie_ids(self, ids: List[association.Curie], line: SplitLine) -> Optional[List[association.Curie]]:
+        valids = []
+        for i in ids:
+            if self._validate_id(str(i), line):
+                valids.append(i)
+            else:
+                return None
+
+        return valids
 
         # We are only reporting, so just pass it through
 

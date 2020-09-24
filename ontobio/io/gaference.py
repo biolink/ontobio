@@ -133,9 +133,9 @@ def make_conjunctions(extension: List) -> association.ConjunctiveSet:
 relation_tuple = re.compile(r"(.+)\((.+)\)")
 def make_keys_from_gaf(gaf: association.GoAssociation) -> List[AnnotationKey]:
 
-    term = curie_util.expand_uri(gaf.object.id, cmaps=[prefix_context])
-    relation = curie_util.expand_uri(gaf.relation, cmaps=[prefix_context])
-    taxon = curie_util.expand_uri(gaf.object.taxon, cmaps=[prefix_context])
+    term = curie_util.expand_uri(str(gaf.object.id), cmaps=[prefix_context])
+    relation = curie_util.expand_uri(str(gaf.relation), cmaps=[prefix_context])
+    taxon = curie_util.expand_uri(str(gaf.object.taxon), cmaps=[prefix_context])
     extensions = gaf.object_extensions # type: List[association.ConjunctiveSet]
 
     annotation_keys = []  # type: List[AnnotationKey]

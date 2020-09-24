@@ -3,8 +3,8 @@ import json
 
 from ontobio.io import assocparser
 from ontobio.io import gafparser
-
 from ontobio.io import assocwriter
+from ontobio.model import association
 
 def test_no_colon_in_id():
     parser = gafparser.GafParser()
@@ -94,7 +94,12 @@ def test_validate_pipe_with_additional_delims():
     assert set(ids) == set(["F:123", "B:234", "B:111"])
 
     result = parser.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:1990578\tGO_REF:0000024\tISO\tUniProtKB:Q9CXD9|ensembl:ENSMUSP00000038569,PMID:11111\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20150305\tPomBase\t\t")
-    assert set(result.associations[0]["evidence"]["with_support_from"]) == set(["UniProtKB:Q9CXD9", "ensembl:ENSMUSP00000038569", "PMID:11111"])
+    expected = [
+        association.ConjunctiveSet(elements=[association.Curie.from_str("UniProtKB:Q9CXD9")]),
+        association.ConjunctiveSet(elements=[association.Curie.from_str("ensembl:ENSMUSP00000038569"),
+            association.Curie.from_str("PMID:11111")])
+    ]
+    assert result.associations[0].evidence.with_support_from == expected
 
 def test_doi_id():
     parser = gafparser.GafParser()

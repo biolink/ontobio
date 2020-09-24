@@ -58,7 +58,8 @@ setuptools.setup(
         'yamldown',
         'dataclasses',
         'diskcache>=4.0.0',
-        'PyShEx==0.7.11'
+        'PyShEx==0.7.11',
+        'bidict==0.19.0'
     ],
 
     # List additional groups of dependencies here (e.g. development

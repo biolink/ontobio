@@ -220,7 +220,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         rule_contexts=rule_contexts
     )
     logger.info("Producing {}".format(source_gaf))
-    logger.info("AssocParserConfig used: {}".format(config))
+    # logger.info("AssocParserConfig used: {}".format(config))
     split_source = os.path.split(source_gaf)[0]
     validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
@@ -303,9 +303,8 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 if products["ttl"]:
-                    if "header" not in association or not association["header"]:
-                        transformer.provenance()
-                        transformer.translate(association)
+                    transformer.provenance()
+                    transformer.translate(association)
 
                 if products["gpad"]:
                     gpadwriter.write_assoc(association)
