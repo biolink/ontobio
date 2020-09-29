@@ -11,7 +11,7 @@ class HpoaParser(AssocParser):
     Note that there are similarities with Gaf format, so we inherit from GafParser, and override
     """
 
-    def __init__(self,config=assocparser.AssocParserConfig()):
+    def __init__(self, config=assocparser.AssocParserConfig()):
         """
         Arguments:
         ---------

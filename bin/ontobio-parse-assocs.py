@@ -144,16 +144,14 @@ def main():
 
     # TODO: use a factory
     if fmt == 'gaf':
-        p = GafParser(dataset=args.file)
+        p = GafParser(config=config, dataset=args.file)
     elif fmt == 'gpad':
-        p = GpadParser()
+        p = GpadParser(config=config)
     elif fmt == 'hpoa':
-        p = HpoaParser()
+        p = HpoaParser(config=config)
     elif fmt == "gpi":
         p = entityparser.GpiParser()
         func = validate_entity
-
-    p.config = config
 
     outfh = None
     if args.outfile is not None:
