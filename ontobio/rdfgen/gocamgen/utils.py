@@ -2,8 +2,10 @@ from os import path
 import json
 import logging
 import requests
+from typing import List
 from ontobio.rdfgen.assoc_rdfgen import prefix_context
 from ontobio.rdfgen.gocamgen.errors import ShexException
+from ontobio.model.association import Curie
 from prefixcommons.curie_util import expand_uri, contract_uri
 from pyshexc.parser_impl import generate_shexj
 
@@ -20,12 +22,12 @@ def contract_uri_wrapper(id):
     return uri
 
 
-def sort_terms_by_ontology_specificity(terms):
+def sort_terms_by_ontology_specificity(terms: List[Curie]):
     # Used primarily for sorting occurs_in annotation extensions
     # What's first? EMAPA or UBERON? Shouldn't matter for extensions since assertion
     # should chain occurs_in to both EMAPA and UBERON (They would be split into separate assertions or thrown out)
     ONTOLOGY_ORDER = {'GO': 1, 'CL': 2, 'WBbt': 3, 'EMAPA': 4, 'UBERON': 5}  # From most specific to most general
-    terms.sort(key=lambda t: ONTOLOGY_ORDER[t.split(":")[0]])
+    terms.sort(key=lambda t: ONTOLOGY_ORDER[t.namespace])
 
     return terms
 
