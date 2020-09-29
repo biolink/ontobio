@@ -41,7 +41,7 @@ class GpadParser(assocparser.AssocParser):
         """
         self.config = config
         self.report = assocparser.Report(config=self.config, group="unknown", dataset="unknown")
-        self.gpi = dict()
+        self.gpi = None
         if self.config.gpi_authority_path is not None:
             print("Loading GPI...")
             self.gpi = dict()
