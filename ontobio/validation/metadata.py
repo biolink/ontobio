@@ -138,27 +138,12 @@ def get_yamldown_metadata(yamldown_dir, meta_id) -> dict:
 def metayaml_id(rule_path) -> str:
     return os.path.splitext(os.path.basename(rule_path))[0]
 
-def get_dataset_by_type(metadata, type):
-    for dataset in metadata["datasets"]:
-        if dataset["type"] == type:
-            return dataset
-
 def source_path(dataset_metadata, target_dir, group):
     extension = dataset_metadata["type"]
     if dataset_metadata["compression"]:
         extension = "{ext}.gz".format(ext=extension)
 
     path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
-    return path
-
-def target_path_by_type(metadata, target_dir, group, type):
-    dataset_metadata = get_dataset_by_type(metadata, type)
-    if dataset_metadata["compression"]:
-        extension = "{ext}.gz".format(ext=type)
-
-    path = os.path.join(target_dir, "groups", group, "{name}.{ext}".format(name=dataset_metadata["dataset"], ext=extension))
-    if not os.path.exists(path):
-        raise click.ClickException("Could not find or read {}".format(path))
     return path
 
 def database_entities(metadata):
