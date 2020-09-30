@@ -263,7 +263,8 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
         [association.Curie.from_str(e) for e in gpad_line[4].split("|") if e],
         association.ConjunctiveSet.str_to_conjunctions(gpad_line[6]))
 
-    raw_qs = gpad_line[2].split("|")
+    # Guarenteed to have at least one element, from above check
+    raw_qs = gpad_line[QUALIFIER].split("|")
     negated = "NOT" in raw_qs
 
     looked_up_qualifiers = [relations.lookup_label(q) for q in raw_qs if q != "NOT"]
@@ -301,7 +302,7 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     a = association.GoAssociation(
         source_line="\t".join(gpad_line),
         subject=subject,
-        relation="",
+        relation=qualifiers[0],
         object=object,
         negated=negated,
         qualifiers=qualifiers,
