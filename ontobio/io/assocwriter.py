@@ -112,7 +112,7 @@ class GpadWriter(AssocWriter):
     """
     Writes Associations in GPAD format
     """
-    def __init__(self, file=None, version="1.1"):
+    def __init__(self, file=None, version=GPAD_1_2):
         self.file = file
         self.version = version
         self._write("!gpa-version: {}\n".format(version))
@@ -128,8 +128,8 @@ class GpadWriter(AssocWriter):
         if self.version == GPAD_2_0:
             return assoc.to_gpad_2_0_tsv()
         else:
-            # Default output to gpad 1.1
-            return assoc.to_gpad_1_1_tsv()
+            # Default output to gpad 1.2
+            return assoc.to_gpad_1_2_tsv()
 
 
 

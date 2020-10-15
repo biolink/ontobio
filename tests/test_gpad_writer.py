@@ -18,7 +18,7 @@ def test_gpad_iba_writing():
     outlines = out.getvalue().split("\n")
 
     expected_lines = [
-        "!gpa-version: 1.1",
+        "!gpa-version: 1.2",
         "WB\tWBGene00022144\tpart_of\tGO:0005886\tPMID:21873635\tECO:0000318\tPANTHER:PTN000073732|RGD:3252\t\t20180308\tGO_Central\t\t",
         ""
     ]

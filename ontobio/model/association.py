@@ -281,7 +281,7 @@ class GoAssociation:
             gp_isoforms
         ]
 
-    def to_gpad_1_1_tsv(self) -> List:
+    def to_gpad_1_2_tsv(self) -> List:
 
         # Curie Object -> CURIE Str -> URI -> Label
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
