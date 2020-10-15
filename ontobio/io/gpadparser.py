@@ -42,6 +42,8 @@ class GpadParser(assocparser.AssocParser):
         self.config = config
         self.report = assocparser.Report(config=self.config, group="unknown", dataset="unknown")
         self.gpi = None
+        self.default_version = "1.2"
+        self.version = None
         if self.config.gpi_authority_path is not None:
             print("Loading GPI...")
             self.gpi = dict()
@@ -57,6 +59,11 @@ class GpadParser(assocparser.AssocParser):
                     }
                 print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
 
+    def gaf_version(self) -> str:
+        if self.version:
+            return self.version
+        else:
+            return self.default_version
 
     def skim(self, file):
         file = self._ensure_file(file)
@@ -107,7 +114,24 @@ class GpadParser(assocparser.AssocParser):
             return parsed
 
         if self.is_header(line):
+            if self.version is None:
+                # We are still looking
+                parsed = assocparser.parser_version_regex.findall(line)
+                if len(parsed) == 1:
+                    filetype, version, _ = parsed[0]
+                    if version == "2.0":
+                        logger.info("Detected GPAD version 2.0")
+                        self.version = version
+                    else:
+                        logger.info("Detected GAF version {}, so defaulting to 1.2".format(version))
+                        self.version = self.default_version
+
             return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
+
+        # At this point, we should have gone through all the header, and a version number should be established
+        if self.version is None:
+            logger.warning("No version number found for this file so we will assum GAF version: {}".format(self.default_version))
+            self.version = self.default_version
 
         vals = [el.strip() for el in line.split("\t")]
 
@@ -134,23 +158,9 @@ class GpadParser(assocparser.AssocParser):
                                     msg="Passing Rule", rule=int(rule.id.split(":")[1]))
 
         assoc = go_rule_results.annotation  # type: association.GoAssociation
-        vals = list(go_rule_results.annotation.to_gpad_tsv())
-        [db,
-         db_object_id,
-         qualifier,
-         goid,
-         reference,
-         evidence,
-         withfrom,
-         interacting_taxon_id,
-         date,
-         assigned_by,
-         annotation_xp,
-         annotation_properties] = vals
 
         split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
 
-        id = self._pair_to_id(db, db_object_id)
         if not self._validate_id(str(assoc.subject.id), split_line, context=ENTITY):
             return assocparser.ParseResult(line, [], True)
 
