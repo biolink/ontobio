@@ -3,7 +3,7 @@ from ontobio.io import entityparser
 from ontobio.io import entitywriter
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
-from ontobio.model import association
+from ontobio.model import association, collections
 
 from ontobio.rdfgen import relations
 from prefixcommons import curie_util
@@ -32,7 +32,7 @@ class GpadParser(assocparser.AssocParser):
     """
 
 
-    def __init__(self, config=assocparser.AssocParserConfig(), group="unknown", dataset="unknown"):
+    def __init__(self, config=assocparser.AssocParserConfig(), group="unknown", dataset="unknown", bio_entities=None):
         """
         Arguments:
         ---------
@@ -41,21 +41,24 @@ class GpadParser(assocparser.AssocParser):
         """
         self.config = config
         self.report = assocparser.Report(config=self.config, group="unknown", dataset="unknown")
-        self.gpi = None
-        if self.config.gpi_authority_path is not None:
-            print("Loading GPI...")
-            self.gpi = dict()
-            parser = entityparser.GpiParser()
-            with open(self.config.gpi_authority_path) as gpi_f:
-                entities = parser.parse(file=gpi_f)
-                for entity in entities:
-                    self.gpi[entity["id"]] = {
-                        "symbol": entity["label"],
-                        "name": entity["full_name"],
-                        "synonyms": entitywriter.stringify(entity["synonyms"]),
-                        "type": entity["type"]
-                    }
-                print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
+        self.bio_entities = bio_entities
+        if self.bio_entities is None:
+            self.bio_entities = collections.BioEntities(dict())
+        # self.gpi = dict()
+        # if self.config.gpi_authority_path is not None:
+        #     print("Loading GPI...")
+        #     self.gpi = dict()
+        #     parser = entityparser.GpiParser()
+        #     with open(self.config.gpi_authority_path) as gpi_f:
+        #         entities = parser.parse(file=gpi_f)
+        #         for entity in entities:
+        #             self.gpi[entity["id"]] = {
+        #                 "symbol": entity["label"],
+        #                 "name": entity["full_name"],
+        #                 "synonyms": entitywriter.stringify(entity["synonyms"]),
+        #                 "type": entity["type"]
+        #             }
+        #         print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
 
 
     def skim(self, file):
@@ -111,7 +114,7 @@ class GpadParser(assocparser.AssocParser):
 
         vals = [el.strip() for el in line.split("\t")]
 
-        parsed = to_association(list(vals), report=self.report)
+        parsed = to_association(list(vals), report=self.report, bio_entities=self.bio_entities)
         if parsed.associations == []:
             return parsed
 
@@ -190,16 +193,6 @@ class GpadParser(assocparser.AssocParser):
             if validated is None:
                 return assocparser.ParseResult(line, [], True)
 
-        if self.gpi is not None:
-            gp = self.gpi.get(str(assoc.subject.id), {})
-            if gp is not {}:
-                assoc.subject.label = gp["symbol"]
-                assoc.subject.fullname = gp["name"]
-                assoc.subject.synonyms = gp["synonyms"].split("|")
-                assoc.subject.type = gp["type"]
-            else:
-                # ERROR
-                pass
 
         return assocparser.ParseResult(line, [assoc], False)
 
@@ -207,7 +200,7 @@ class GpadParser(assocparser.AssocParser):
         return line.startswith("!")
 
 relation_tuple = re.compile(r'(.+)\((.+)\)')
-def to_association(gpad_line: List[str], report=None, group="unknown", dataset="unknown") -> assocparser.ParseResult:
+def to_association(gpad_line: List[str], report=None, group="unknown", dataset="unknown", bio_entities=None) -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report
     source_line = "\t".join(gpad_line)
 
@@ -256,6 +249,11 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     subject_curie = association.Curie(gpad_line[0], gpad_line[1])
     subject = association.Subject(subject_curie, "", "", [], "", taxon)
 
+    entity = bio_entities.get(gpad_line[0])
+    if entity is not None:
+        subject = entity
+        taxon = subject.taxon
+
     object = association.Term(association.Curie.from_str(gpad_line[3]), taxon)
 
     evidence = association.Evidence(
@@ -298,6 +296,8 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
             return assocparser.ParseResult(source_line, [], True, report=report)
 
     properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
+
+
     # print(properties_list)
     a = association.GoAssociation(
         source_line="\t".join(gpad_line),

@@ -72,6 +72,8 @@ def main():
                         help='Increase output verbosity')
     parser.add_argument("--allow_paint", required=False, action="store_const", const=True,
                         help="Allow IBAs in parser")
+    parser.add_argument("-g", "--gpi", type=str, required=False, default=None,
+                        help="GPI file")
 
 
     subparsers = parser.add_subparsers(dest='subcommand', help='sub-command help')
@@ -133,8 +135,10 @@ def main():
         filter_out_evidence=args.filter_out,
         filtered_evidence_file=filtered_evidence_file,
         annotation_inferences=gaferences,
-        paint=args.allow_paint
+        paint=args.allow_paint,
+        gpi_authority_path=args.gpi
     )
+    print(config.gpi_authority_path)
     p = None
     fmt = None
     if args.format is None:

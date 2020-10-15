@@ -10,7 +10,7 @@ import logging
 from typing import List, Union
 
 from ontobio import ecomap
-from ontobio.io import assocparser
+from ontobio.io import parser_version_regex
 from ontobio.model import association
 
 logger = logging.getLogger(__name__)
@@ -180,7 +180,7 @@ class GafWriter(AssocWriter):
         if isinstance(assoc, dict):
 
             # Skip incoming gaf-version headers, as we created the version above already
-            if assocparser.parser_version_regex.match(assoc["line"]):
+            if parser_version_regex.match(assoc["line"]):
                 return []
 
             self._write(assoc["line"] + "\n")
