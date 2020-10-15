@@ -59,7 +59,7 @@ class GpadParser(assocparser.AssocParser):
                     }
                 print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
 
-    def gaf_version(self) -> str:
+    def gpad_version(self) -> str:
         if self.version:
             return self.version
         else:
@@ -123,7 +123,7 @@ class GpadParser(assocparser.AssocParser):
                         logger.info("Detected GPAD version 2.0")
                         self.version = version
                     else:
-                        logger.info("Detected GAF version {}, so defaulting to 1.2".format(version))
+                        logger.info("Detected GPAD version {}, so defaulting to 1.2".format(version))
                         self.version = self.default_version
 
             return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
@@ -135,7 +135,7 @@ class GpadParser(assocparser.AssocParser):
 
         vals = [el.strip() for el in line.split("\t")]
 
-        parsed = to_association(list(vals), report=self.report)
+        parsed = to_association(list(vals), report=self.report, version=self.gpad_version())
         if parsed.associations == []:
             return parsed
 
@@ -216,8 +216,10 @@ class GpadParser(assocparser.AssocParser):
     def is_header(self, line):
         return line.startswith("!")
 
+
 relation_tuple = re.compile(r'(.+)\((.+)\)')
-def to_association(gpad_line: List[str], report=None, group="unknown", dataset="unknown") -> assocparser.ParseResult:
+
+def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknown"):
     report = Report(group=group, dataset=dataset) if report is None else report
     source_line = "\t".join(gpad_line)
 
@@ -266,7 +268,12 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     subject_curie = association.Curie(gpad_line[0], gpad_line[1])
     subject = association.Subject(subject_curie, "", "", [], "", taxon)
 
-    object = association.Term(association.Curie.from_str(gpad_line[3]), taxon)
+    go_term = association.Curie.from_str(gpad_line[3])
+    if go_term.is_error():
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[3], "Problem parsing GO Term", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    object = association.Term(go_term, taxon)
 
     evidence = association.Evidence(
         association.Curie.from_str(gpad_line[5]),
@@ -310,7 +317,7 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
     properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
     # print(properties_list)
     a = association.GoAssociation(
-        source_line="\t".join(gpad_line),
+        source_line=source_line,
         subject=subject,
         relation=qualifiers[0],
         object=object,
@@ -326,3 +333,127 @@ def to_association(gpad_line: List[str], report=None, group="unknown", dataset="
         properties={ prop[0]: prop[1] for prop in properties_list if prop })
 
     return assocparser.ParseResult(source_line, [a], False, report=report)
+
+def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknown"):
+    report = Report(group=group, dataset=dataset) if report is None else report
+    source_line = "\t".join(gpad_line)
+
+    if source_line == "":
+        report.error(source_line, "Blank Line", "EMPTY", "Blank lines are not allowed", rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    if len(gpad_line) > 12:
+        report.warning(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+            msg="There were more than 12 columns in this line. Proceeding by cutting off extra columns.",
+            rule=1)
+
+        gpad_line = gpad_line[:12]
+
+    if 12 > len(gpad_line) >= 10:
+        gpad_line += [""] * (12 - len(gpad_line))
+
+    if len(gpad_line) != 12:
+        report.error(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
+            msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)))
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+        ## check for missing columns
+        ## We use indeces here because we run GO RULES before we split the vals into individual variables
+        SUBJECT_CURIE = 0
+        RELATION = 2
+        ONTOLOGY_CLASS_INDEX = 3
+        REFERENCE_INDEX = 4
+        EVIDENCE_INDEX = 5
+        DATE_INDEX = 8
+        ASSIGNED_BY_INDEX = 9
+        required = [SUBJECT_CURIE, RELATION, ONTOLOGY_CLASS_INDEX, REFERENCE_INDEX, EVIDENCE_INDEX, DATE_INDEX, ASSIGNED_BY_INDEX]
+        for req in required:
+            if gpad_line[req] == "":
+                report.error(source_line, Report.INVALID_ID, "EMPTY", "Column {} is empty".format(req + 1), rule=1)
+                return assocparser.ParseResult(source_line, [], True, report=report)
+
+        taxon = association.Curie("NCBITaxon", "0")
+        subject_curie = association.Curie.from_str(gpad_line[SUBJECT_CURIE])
+        if subject_curie.is_error():
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[SUBJECT_CURIE], "Problem parsing DB Object", taxon=taxon, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
+        subject = association.Subject(subject_curie, "", "", [], "", taxon)
+
+        negated = gpad_line[1] == "NOT"
+
+        relation = association.Curie.from_str(gpad_line[RELATION])
+        if relation.is_error():
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[RELATION], "Problem parsing Relation", taxon=taxon, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
+        go_term = association.Curie.from_str(gpad_line[ONTOLOGY_CLASS_INDEX])
+        if go_term.is_error():
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[ONTOLOGY_CLASS_INDEX], "Problem parsing GO Term", taxon=taxon, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
+        object = association.Term(go_term, taxon)
+
+        evidence_type = association.Curie.from_str(gpad_line[EVIDENCE_INDEX])
+        if evidence_type.is_error():
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[EVIDENCE_INDEX], "Problem parsing Evidence ECO Curie", taxon=taxon, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
+        references = [association.Curie.from_str(e) for e in gpad_line[REFERENCE_INDEX].split("|") if e]
+        for r in references:
+            if r.is_error():
+                report.error(source_line, Report.INVALID_SYMBOL, gpad_line[REFERENCE_INDEX], "Problem parsing references", taxon=taxon, rule=1)
+                return assocparser.ParseResult(source_line, [], True, report=report)
+
+        withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])
+        if withfroms.is_error():
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=taxon, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
+        evidence = association.Evidence(evidence_type, references, withfroms)
+
+        interacting_taxon = None
+        if gpad_line[7] != "":
+            interacting_taxon = association.Curie.from_str(gpad_line[7])
+            if interacting_taxon.is_error():
+                report.error(source_line, Report.INVALID_SYMBOL, gpad_line[7], "Problem parsing Interacting Taxon", taxon=taxon, rule=1)
+                return assocparser.ParseResult(source_line, [], True, report=report)
+
+        conjunctions = []
+        # The elements of the extension units are Curie(Curie)
+        if gpad_line[10]:
+            conjunctions = association.ConjunctiveSet.str_to_conjunctions(
+                gpad_line[10],
+                conjunct_element_builder=lambda el: association.ExtensionUnit.from_curie_str(el))
+
+            if isinstance(conjunctions, association.Error):
+                report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=str(taxon), rule=1)
+                return assocparser.ParseResult(source_line, [], True, report=report)
+
+        properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
+
+        a = association.GoAssociation(
+            source_line=source_line,
+            subject=subject,
+            relation=relation,
+            object=object,
+            negated=negated,
+            qualifiers=[relation],
+            aspect=None,
+            interacting_taxon=interacting_taxon,
+            evidence=evidence,
+            subject_extensions=[],
+            object_extensions=conjunctions,
+            provided_by=gpad_line[9],
+            date=gpad_line[8],
+            properties={ prop[0]: prop[1] for prop in properties_list if prop })
+
+        return assocparser.ParseResult(source_line, [a], False, report=report)
+
+
+def to_association(gpad_line: List[str], report=None, group="unknown", dataset="unknown", version="1.2") -> assocparser.ParseResult:
+
+    if version == "2.0":
+        return from_2_0(gpad_line, report=report, group=group, dataset=dataset)
+    else:
+        return from_1_2(gpad_line, report=report, group=group, dataset=dataset)
