@@ -137,7 +137,7 @@ class Evidence:
 
 
 relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.:\-]*)\)')
-curie_relation_tuple = re.compile(r"(.+)\(.+\)")
+curie_relation_tuple = re.compile(r"(.+)\((.+)\)")
 @dataclass(unsafe_hash=True)
 class ExtensionUnit:
     relation: Curie

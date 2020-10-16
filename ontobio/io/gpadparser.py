@@ -405,8 +405,8 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             report.error(source_line, Report.INVALID_SYMBOL, gpad_line[REFERENCE_INDEX], "Problem parsing references", taxon=taxon, rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-    withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])
-    if withfroms.is_error():
+    withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])  # Returns a list of ConjuctiveSets or Error
+    if isinstance(withfroms, association.Error):
         report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=taxon, rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
