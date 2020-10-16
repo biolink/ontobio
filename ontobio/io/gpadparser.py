@@ -357,98 +357,98 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)))
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-        ## check for missing columns
-        ## We use indeces here because we run GO RULES before we split the vals into individual variables
-        SUBJECT_CURIE = 0
-        RELATION = 2
-        ONTOLOGY_CLASS_INDEX = 3
-        REFERENCE_INDEX = 4
-        EVIDENCE_INDEX = 5
-        DATE_INDEX = 8
-        ASSIGNED_BY_INDEX = 9
-        required = [SUBJECT_CURIE, RELATION, ONTOLOGY_CLASS_INDEX, REFERENCE_INDEX, EVIDENCE_INDEX, DATE_INDEX, ASSIGNED_BY_INDEX]
-        for req in required:
-            if gpad_line[req] == "":
-                report.error(source_line, Report.INVALID_ID, "EMPTY", "Column {} is empty".format(req + 1), rule=1)
-                return assocparser.ParseResult(source_line, [], True, report=report)
-
-        taxon = association.Curie("NCBITaxon", "0")
-        subject_curie = association.Curie.from_str(gpad_line[SUBJECT_CURIE])
-        if subject_curie.is_error():
-            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[SUBJECT_CURIE], "Problem parsing DB Object", taxon=taxon, rule=1)
+    ## check for missing columns
+    ## We use indeces here because we run GO RULES before we split the vals into individual variables
+    SUBJECT_CURIE = 0
+    RELATION = 2
+    ONTOLOGY_CLASS_INDEX = 3
+    REFERENCE_INDEX = 4
+    EVIDENCE_INDEX = 5
+    DATE_INDEX = 8
+    ASSIGNED_BY_INDEX = 9
+    required = [SUBJECT_CURIE, RELATION, ONTOLOGY_CLASS_INDEX, REFERENCE_INDEX, EVIDENCE_INDEX, DATE_INDEX, ASSIGNED_BY_INDEX]
+    for req in required:
+        if gpad_line[req] == "":
+            report.error(source_line, Report.INVALID_ID, "EMPTY", "Column {} is empty".format(req + 1), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-        subject = association.Subject(subject_curie, "", "", [], "", taxon)
+    taxon = association.Curie("NCBITaxon", "0")
+    subject_curie = association.Curie.from_str(gpad_line[SUBJECT_CURIE])
+    if subject_curie.is_error():
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[SUBJECT_CURIE], "Problem parsing DB Object", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
 
-        negated = gpad_line[1] == "NOT"
+    subject = association.Subject(subject_curie, "", "", [], "", taxon)
 
-        relation = association.Curie.from_str(gpad_line[RELATION])
-        if relation.is_error():
-            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[RELATION], "Problem parsing Relation", taxon=taxon, rule=1)
+    negated = gpad_line[1] == "NOT"
+
+    relation = association.Curie.from_str(gpad_line[RELATION])
+    if relation.is_error():
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[RELATION], "Problem parsing Relation", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    go_term = association.Curie.from_str(gpad_line[ONTOLOGY_CLASS_INDEX])
+    if go_term.is_error():
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[ONTOLOGY_CLASS_INDEX], "Problem parsing GO Term", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    object = association.Term(go_term, taxon)
+
+    evidence_type = association.Curie.from_str(gpad_line[EVIDENCE_INDEX])
+    if evidence_type.is_error():
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[EVIDENCE_INDEX], "Problem parsing Evidence ECO Curie", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    references = [association.Curie.from_str(e) for e in gpad_line[REFERENCE_INDEX].split("|") if e]
+    for r in references:
+        if r.is_error():
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[REFERENCE_INDEX], "Problem parsing references", taxon=taxon, rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-        go_term = association.Curie.from_str(gpad_line[ONTOLOGY_CLASS_INDEX])
-        if go_term.is_error():
-            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[ONTOLOGY_CLASS_INDEX], "Problem parsing GO Term", taxon=taxon, rule=1)
+    withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])
+    if withfroms.is_error():
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    evidence = association.Evidence(evidence_type, references, withfroms)
+
+    interacting_taxon = None
+    if gpad_line[7] != "":
+        interacting_taxon = association.Curie.from_str(gpad_line[7])
+        if interacting_taxon.is_error():
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[7], "Problem parsing Interacting Taxon", taxon=taxon, rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-        object = association.Term(go_term, taxon)
+    conjunctions = []
+    # The elements of the extension units are Curie(Curie)
+    if gpad_line[10]:
+        conjunctions = association.ConjunctiveSet.str_to_conjunctions(
+            gpad_line[10],
+            conjunct_element_builder=lambda el: association.ExtensionUnit.from_curie_str(el))
 
-        evidence_type = association.Curie.from_str(gpad_line[EVIDENCE_INDEX])
-        if evidence_type.is_error():
-            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[EVIDENCE_INDEX], "Problem parsing Evidence ECO Curie", taxon=taxon, rule=1)
+        if isinstance(conjunctions, association.Error):
+            report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-        references = [association.Curie.from_str(e) for e in gpad_line[REFERENCE_INDEX].split("|") if e]
-        for r in references:
-            if r.is_error():
-                report.error(source_line, Report.INVALID_SYMBOL, gpad_line[REFERENCE_INDEX], "Problem parsing references", taxon=taxon, rule=1)
-                return assocparser.ParseResult(source_line, [], True, report=report)
+    properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
 
-        withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])
-        if withfroms.is_error():
-            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=taxon, rule=1)
-            return assocparser.ParseResult(source_line, [], True, report=report)
+    a = association.GoAssociation(
+        source_line=source_line,
+        subject=subject,
+        relation=relation,
+        object=object,
+        negated=negated,
+        qualifiers=[relation],
+        aspect=None,
+        interacting_taxon=interacting_taxon,
+        evidence=evidence,
+        subject_extensions=[],
+        object_extensions=conjunctions,
+        provided_by=gpad_line[9],
+        date=gpad_line[8],
+        properties={ prop[0]: prop[1] for prop in properties_list if prop })
 
-        evidence = association.Evidence(evidence_type, references, withfroms)
-
-        interacting_taxon = None
-        if gpad_line[7] != "":
-            interacting_taxon = association.Curie.from_str(gpad_line[7])
-            if interacting_taxon.is_error():
-                report.error(source_line, Report.INVALID_SYMBOL, gpad_line[7], "Problem parsing Interacting Taxon", taxon=taxon, rule=1)
-                return assocparser.ParseResult(source_line, [], True, report=report)
-
-        conjunctions = []
-        # The elements of the extension units are Curie(Curie)
-        if gpad_line[10]:
-            conjunctions = association.ConjunctiveSet.str_to_conjunctions(
-                gpad_line[10],
-                conjunct_element_builder=lambda el: association.ExtensionUnit.from_curie_str(el))
-
-            if isinstance(conjunctions, association.Error):
-                report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=str(taxon), rule=1)
-                return assocparser.ParseResult(source_line, [], True, report=report)
-
-        properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
-
-        a = association.GoAssociation(
-            source_line=source_line,
-            subject=subject,
-            relation=relation,
-            object=object,
-            negated=negated,
-            qualifiers=[relation],
-            aspect=None,
-            interacting_taxon=interacting_taxon,
-            evidence=evidence,
-            subject_extensions=[],
-            object_extensions=conjunctions,
-            provided_by=gpad_line[9],
-            date=gpad_line[8],
-            properties={ prop[0]: prop[1] for prop in properties_list if prop })
-
-        return assocparser.ParseResult(source_line, [a], False, report=report)
+    return assocparser.ParseResult(source_line, [a], False, report=report)
 
 
 def to_association(gpad_line: List[str], report=None, group="unknown", dataset="unknown", version="1.2") -> assocparser.ParseResult:
