@@ -239,7 +239,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     if len(gpad_line) != 12:
         report.error(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-            msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)))
+            msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     ## check for missing columns
@@ -354,7 +354,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     if len(gpad_line) != 12:
         report.error(source_line, assocparser.Report.WRONG_NUMBER_OF_COLUMNS, "",
-            msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)))
+            msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     ## check for missing columns

@@ -1,5 +1,6 @@
 from ontobio.io.gpadparser import GpadParser, to_association
 from ontobio.io import assocparser
+from ontobio.model.association import ConjunctiveSet, ExtensionUnit, Curie
 
 import yaml
 
@@ -35,7 +36,9 @@ def test_parse_1_2():
         "creation-date=2020-09-17|modification-date=2020-09-17|contributor-id=http://orcid.org/0000-0003-2689-5511"
     ]
     result = to_association(list(vals), report=report, version="1.2")
-    assert len(result.associations) > 0
+    assert result.skipped == 0
+    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 0
+    assert len(result.associations) == 1
 
 
 def test_parse_2_0():
@@ -56,14 +59,22 @@ def test_parse_2_0():
         "creation-date=2020-09-17|modification-date=2020-09-17|contributor-id=http://orcid.org/0000-0003-2689-5511"
     ]
     result = to_association(list(vals), report=report, version=version)
-    assert len(result.associations) > 0
+    assert result.skipped == 0
+    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 0
+    assert len(result.associations) == 1
 
     # Annotation_Extensions
     vals[10] = "BFO:0000066(CL:0000010),GOREL:0001004(CL:0000010)"
     result = to_association(list(vals), report=report, version=version)
-    assert len(result.associations) > 0
+    assert result.associations[0].object_extensions == [ConjunctiveSet([
+            ExtensionUnit(Curie("BFO", "0000066"), Curie("CL", "0000010")),
+            ExtensionUnit(Curie("GOREL", "0001004"), Curie("CL", "0000010"))
+        ])]
 
     # With_or_From
     vals[6] = "PR:Q505B8|PR:Q8CHK4"
     result = to_association(list(vals), report=report, version=version)
-    assert len(result.associations) > 0
+    assert result.associations[0].evidence.with_support_from == [
+        ConjunctiveSet([Curie("PR", "Q505B8")]),
+        ConjunctiveSet([Curie("PR", "Q8CHK4")])
+    ]
