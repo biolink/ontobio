@@ -78,3 +78,8 @@ def test_parse_2_0():
         ConjunctiveSet([Curie("PR", "Q505B8")]),
         ConjunctiveSet([Curie("PR", "Q8CHK4")])
     ]
+
+    # Confirm non-"MGI:MGI:" IDs will parse
+    vals[0] = "WB:WBGene00001189"
+    result = to_association(list(vals), report=report, version=version)
+    assert result.associations[0].subject.id == Curie("WB", "WBGene00001189")
