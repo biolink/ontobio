@@ -30,6 +30,9 @@ class Error:
     info: str
     entity: str = ""
 
+    def is_error(self):
+        return True
+
 @dataclass(unsafe_hash=True)
 class Curie:
     namespace: str
@@ -53,6 +56,9 @@ class Curie:
             return Error("Identity of CURIE is empty")
 
         return Curie(namespace, identity)
+
+    def is_error(self) -> bool:
+        return False
 
 
 @dataclass(unsafe_hash=True)
@@ -120,13 +126,18 @@ class ConjunctiveSet:
 
         return conjunctions
 
+    def is_error(self) -> bool:
+        return False
+
 @dataclass(unsafe_hash=True)
 class Evidence:
     type: Curie # Curie of the ECO class
     has_supporting_reference: List[Curie]
     with_support_from: List[ConjunctiveSet]
 
+
 relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.:\-]*)\)')
+curie_relation_tuple = re.compile(r"(.+)\((.+)\)")
 @dataclass(unsafe_hash=True)
 class ExtensionUnit:
     relation: Curie
@@ -156,6 +167,26 @@ class ExtensionUnit:
             return ExtensionUnit(rel_curie, term_curie)
         else:
             # print("Just couldn't even parse it at all: {}".format(entity))
+            return Error(entity)
+
+    @classmethod
+    def from_curie_str(ExtensionUnit, entity: str) -> Union:
+        """
+        Attempts to parse string entity as an ExtensionUnit
+        If the `relation(term)` is not formatted correctly, an Error is returned.
+        `relation` is a Curie, and so is any errors in formatting are delegated to Curie.from_str()
+        """
+        parsed = curie_relation_tuple.findall(entity)
+        if len(parsed) == 1:
+            rel, term = parsed[0]
+
+            rel_curie = Curie.from_str(rel)
+            term_curie = Curie.from_str(term)
+            if rel_curie.is_error() or term_curie.is_error():
+                return Error("`{}`: {}".format(term.info, term_curie.info))
+            return ExtensionUnit(rel_curie, term_curie)
+
+        else:
             return Error(entity)
 
     def __str__(self) -> str:
