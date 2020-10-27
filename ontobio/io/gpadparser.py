@@ -202,7 +202,7 @@ class GpadParser(assocparser.AssocParser):
 
         # With/From
         for wf in assoc.evidence.with_support_from:
-            validated = self.validate_curie_ids(wf.elements, line)
+            validated = self.validate_curie_ids(wf.elements, split_line)
             if validated is None:
                 return assocparser.ParseResult(line, [], True)
 

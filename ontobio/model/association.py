@@ -182,8 +182,10 @@ class ExtensionUnit:
 
             rel_curie = Curie.from_str(rel)
             term_curie = Curie.from_str(term)
-            if rel_curie.is_error() or term_curie.is_error():
-                return Error("`{}`: {}".format(term.info, term_curie.info))
+            if term_curie.is_error():
+                return Error("`{}`: {}".format(term, term_curie.info))
+            if rel_curie.is_error():
+                return Error("`{}`: {}".format(rel, rel_curie.info))
             return ExtensionUnit(rel_curie, term_curie)
 
         else:
