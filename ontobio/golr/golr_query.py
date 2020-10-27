@@ -85,6 +85,7 @@ class GolrFields:
     OBJECT_TAXON_CLOSURE_LABEL_SEARCHABLE = 'object_taxon_closure_label_searchable'
     SUBJECT_GENE_CLOSURE='subject_gene_closure'
     SUBJECT_GENE_LABEL_SEARCHABLE='subject_gene_label_searchable'
+    OBJECT_GENE_LABEL_SEARCHABLE = 'object_gene_label_searchable'
     SUBJECT='subject'
     SUBJECT_LABEL='subject_label'
     SUBJECT_CLOSURE_LABEL_SEARCHABLE='subject_closure_label_searchable'
@@ -970,6 +971,10 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     M.OBJECT_CLOSURE
                 ]
 
+        if self.sort is None and self.get_config().default_solr_schema != 'amigo':
+            # Make default descending by count of publications for monarch
+            self.sort = 'source_count desc'
+
         if self.solr is None:
             if self.url is None:
                 endpoint = self.get_config().solr_assocs
@@ -1319,6 +1324,17 @@ class GolrAssociationQuery(GolrAbstractQuery):
         for field in self.non_null_fields:
             filter_queries.append(field + ":['' TO *]")
 
+        search_fields = None
+        if self.q is not None and self.get_config().default_solr_schema != 'amigo':
+            search_fields = [
+                M.SUBJECT_LABEL_SEARCHABLE,
+                M.OBJECT_LABEL_SEARCHABLE,
+                M.SUBJECT_TAXON_LABEL_SEARCHABLE,
+                M.OBJECT_TAXON_LABEL_SEARCHABLE,
+                M.SUBJECT_GENE_LABEL_SEARCHABLE,
+                M.OBJECT_GENE_LABEL_SEARCHABLE,
+            ]
+
         params = {
             'q': qstr,
             'fq': filter_queries,
@@ -1327,7 +1343,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
             'facet.limit': facet_limit,
             'facet.mincount': self.facet_mincount,
             'fl': ",".join(list(filter(None, select_fields))),
-            'rows': rows
+            'rows': rows,
+            "defType": "edismax"
         }
 
         if self.start is not None:
@@ -1353,6 +1370,9 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         if self.sort is not None:
             params['sort'] = self.sort
+
+        if search_fields:
+            params['qf'] = search_fields
 
         return params
 
