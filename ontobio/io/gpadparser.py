@@ -263,7 +263,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     subject_curie = association.Curie(gpad_line[0], gpad_line[1])
     subject = association.Subject(subject_curie, "", "", [], "", taxon)
 
-    entity = bio_entities.get(gpad_line[0])
+    entity = bio_entities.get(subject_curie)
     if entity is not None:
         subject = entity
         taxon = subject.taxon
@@ -380,6 +380,10 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     subject = association.Subject(subject_curie, "", "", [], "", taxon)
+    entity = bio_entities.get(subject_curie)
+    if entity is not None:
+        subject = entity
+        taxon = subject.taxon
 
     negated = gpad_line[1] == "NOT"
 

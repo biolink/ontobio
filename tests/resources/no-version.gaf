@@ -1,0 +1,29 @@
+!GOC Validation Date: 11/25/2011 $
+!Submission Date: 04/03/2017
+!
+! The above "Submission Date" is when the annotation project provided
+! this file to the Gene Ontology Consortium (GOC).  The "GOC Validation
+! Date" indicates when this file was last changed as a result of a GOC
+! validation and filtering process.
+!
+! Note: The contents of this file may differ from that submitted to the
+! GOC. The identifiers and syntax of the file have been checked, rows of
+! data not meeting the standards set by the GOC have been removed. This
+! file may also have annotations removed because the annotations for the
+! listed Taxonomy identifier are only allowed in a file provided by
+! another annotation project.  The original submitted file is available from:
+!  http://www.geneontology.org/gene-associations/submission/
+!
+! For information on which taxon are allowed in which files please see:
+!  http://www.geneontology.org/GO.annotation.shtml#script
+!
+!Project_name: PomBase
+!URL: http://www.pombase.org/
+!Contact Email: helpdesk@pombase.org
+!
+PomBase	SPAC25B8.17	ypf1		GO:1990578	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase
+PomBase	SPAC977.10	nhe1		GO:1990578	PMID:19171118	IDA		C	plasma membrane sodium ion/proton antiporter Nhe1/Sod2	sod2	protein	taxon:4896	20151201	PomBase
+PomBase	SPCC895.07	alp14		GO:0000942	PMID:11432827	IDA		C	TOG/XMAP14 family protein Alp14	mtc1	protein	taxon:4896	20150116	PomBase
+PomBase	SPBC11C11.03	ndc80		GO:0000942	PMID:11553715	IDA		C	NMS complex subunit Ndc80	ndc10|tid3	protein	taxon:4896	20150122	PomBase
+PomBase	SPBC16D10.09	pcn1		GO:0043626	PMID:8663159	IDA		C	PCNA	pcn	protein	taxon:4896	20150326	PomBase
+PomBase	SPBC16D10.09	pcn1		GO:0043626	PMID:9563836	IDA		C	PCNA	pcn	protein	taxon:4896	20160129	PomBase

@@ -62,20 +62,9 @@ class GafParser(assocparser.AssocParser):
             self.config = assocparser.AssocParserConfig()
         self.report = assocparser.Report(group=group, dataset=dataset, config=self.config)
         # self.gpi = None
-        # if self.config.gpi_authority_path is not None:
-        #     self.gpi = dict()
-        #     parser = entityparser.GpiParser()
-        #     with open(self.config.gpi_authority_path) as gpi_f:
-        #         entities = parser.parse(file=gpi_f)
-        #         for entity in entities:
-        #             self.gpi[entity["id"]] = {
-        #                 "symbol": entity["label"],
-        #                 "name": entity["full_name"],
-        #                 "synonyms": entitywriter.stringify(entity["synonyms"]),
-        #                 "type": entity["type"]
-        #             }
-        #
-        #         print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
+        if self.config.gpi_authority_path is not None:
+            self.bio_entities.merge(collections.BioEntities.load_from_file(self.config.gpi_authority_path))
+            print("Loaded {} entities from {}".format(len(self.bio_entities.entities.keys()), self.config.gpi_authority_path))
 
     def gaf_version(self) -> str:
         if self.version:
