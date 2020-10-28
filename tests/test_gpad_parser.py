@@ -84,11 +84,6 @@ def test_parse_2_0():
     result = to_association(list(vals), report=report, version=version)
     assert result.associations[0].subject.id == Curie("WB", "WBGene00001189")
 
-    # Interacting taxon - this example should fail
-    vals[7] = "Staphylococcus aureus ; NCBITaxon:1280"
-    result = to_association(list(vals), report=report, version=version)
-    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) > 0
-    assert len(result.associations) == 0
     # Now test valid interacting taxon value
     vals[7] = "NCBITaxon:1280"
     result = to_association(list(vals), report=report, version=version)

@@ -55,9 +55,6 @@ class Curie:
         if identity == "":
             return Error("Identity of CURIE is empty")
 
-        if " " in namespace:
-            return Error("No spaces allowed in CURIE prefix")
-
         return Curie(namespace, identity)
 
     def is_error(self) -> bool:
