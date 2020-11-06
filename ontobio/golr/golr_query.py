@@ -971,7 +971,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                     M.OBJECT_CLOSURE
                 ]
 
-        if self.sort is None and self.get_config().default_solr_schema != 'amigo':
+        if self.sort is None and not self._use_amigo_schema(object_category):
             # Make default descending by count of publications for monarch
             self.sort = 'source_count desc'
 
@@ -1325,7 +1325,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
             filter_queries.append(field + ":['' TO *]")
 
         search_fields = None
-        if self.q is not None and self.get_config().default_solr_schema != 'amigo':
+        if self.q is not None and not self._use_amigo_schema(object_category):
             search_fields = [
                 M.SUBJECT_LABEL_SEARCHABLE,
                 M.OBJECT_LABEL_SEARCHABLE,
