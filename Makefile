@@ -26,7 +26,9 @@ foo:
 travis_test:
 	pytest tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
 	       tests/test_rdfgen.py tests/test_phenosim_engine.py tests/test_ontol.py \
-		   tests/test_validation_rules.py tests/unit/test_annotation_scorer.py tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py
+		   tests/test_validation_rules.py tests/unit/test_annotation_scorer.py \
+		   tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
+		   tests/unit/test_clinical_mod.py
 
 cleandist:
 	rm dist/* || true
