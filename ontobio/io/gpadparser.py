@@ -302,7 +302,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             report.error(source_line, Report.INVALID_TAXON, taxon_result.original, taxon_result.message, taxon=taxon_result.original, rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
         else:
-            interacting_taxon = taxon_result.parsed
+            interacting_taxon = taxon_result.parsed[0]
 
     conjunctions = []
     if gpad_line[10]:
