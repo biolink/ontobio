@@ -44,7 +44,7 @@ setuptools.setup(
 
     # Dependencies
     install_requires=[
-        'networkx==2.2',
+        'networkx',
         'jsobject',
         'pyyaml',
         'pysolr',
@@ -53,8 +53,8 @@ setuptools.setup(
         'prefixcommons',
         'marshmallow==3.0.0b11',
         'scipy',
-        'pandas==1.0.5',
-        'click==7.0',
+        'pandas',
+        'click',
         'yamldown',
         'dataclasses',
         'diskcache>=4.0.0',
