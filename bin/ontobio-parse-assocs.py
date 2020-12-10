@@ -29,6 +29,7 @@ from ontobio.io.assocwriter import GafWriter, GpadWriter
 from ontobio.io import assocparser
 from ontobio.io import gaference
 from ontobio.slimmer import get_minimal_subgraph
+import sys
 import json
 import logging
 
@@ -86,8 +87,10 @@ def main():
 
     parser_n = subparsers.add_parser('convert', help='Convert associations')
     parser_n.set_defaults(function=convert_assocs)
-    parser_n.add_argument('-t', '--to', type=str, required=True,
+    parser_n.add_argument('-t', '--to', type=str, required=True, choices=["GAF", "GPAD"],
                           help='Format to convert to')
+    parser_n.add_argument("-v", "--version", type=str, required=False,
+                          help="Version for the file format. GAF default is 2.1, GPAD default is 1.2")
 
     parser_n = subparsers.add_parser('map2slim', help='Map to a subset/slim')
     parser_n.set_defaults(function=map2slim)
@@ -199,11 +202,11 @@ def convert_assocs(ont, file, outfile, p, args):
 
 def write_assocs(assocs, outfile, args):
     w = None
-    fmt = args.to
+    fmt = args.to.lower()
     if fmt is None or fmt == 'gaf':
-        w = GafWriter(file=outfile)
+        w = GafWriter(file=outfile, version=args.version)
     elif fmt == 'gpad':
-        w = GpadWriter(file=outfile)
+        w = GpadWriter(file=outfile, version=args.version)
     else:
         raise ValueError("Not supported: {}".format(fmt))
     w.write(assocs)
