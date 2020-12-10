@@ -10,7 +10,7 @@ import logging
 from typing import List, Union
 
 from ontobio import ecomap
-from ontobio.io import assocparser
+from ontobio.io import parser_version_regex
 from ontobio.model import association
 
 logger = logging.getLogger(__name__)
@@ -104,13 +104,18 @@ class AssocWriter():
         for a in assocs:
             self.write_assoc(a)
 
+
+GPAD_2_0 = "2.0"
+GPAD_1_2 = "1.2"
+
 class GpadWriter(AssocWriter):
     """
     Writes Associations in GPAD format
     """
-    def __init__(self, file=None):
+    def __init__(self, file=None, version=GPAD_1_2):
         self.file = file
-        self._write("!gpa-version: 1.1\n")
+        self.version = version
+        self._write("!gpa-version: {}\n".format(version))
         self.ecomap = ecomap.EcoMap()
 
     def as_tsv(self, assoc: Union[association.GoAssociation, dict]):
@@ -120,7 +125,12 @@ class GpadWriter(AssocWriter):
         if isinstance(assoc, dict):
             return []
 
-        return assoc.to_gpad_tsv()
+        if self.version == GPAD_2_0:
+            return assoc.to_gpad_2_0_tsv()
+        else:
+            # Default output to gpad 1.2
+            return assoc.to_gpad_1_2_tsv()
+
 
 
 class GafWriter(AssocWriter):
@@ -180,7 +190,7 @@ class GafWriter(AssocWriter):
         if isinstance(assoc, dict):
 
             # Skip incoming gaf-version headers, as we created the version above already
-            if assocparser.parser_version_regex.match(assoc["line"]):
+            if parser_version_regex.match(assoc["line"]):
                 return []
 
             self._write(assoc["line"] + "\n")

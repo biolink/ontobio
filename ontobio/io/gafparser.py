@@ -8,13 +8,17 @@ from dataclasses import dataclass
 from prefixcommons import curie_util
 
 from ontobio.io import assocparser
+from ontobio.io import parser_version_regex
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import qc
 from ontobio.io import entityparser
 from ontobio.io import entitywriter
 from ontobio.model import association
+from ontobio.model import collections
 from ontobio.ecomap import EcoMap
 from ontobio.rdfgen import relations
+
+import functools
 
 import click
 
@@ -39,7 +43,7 @@ class GafParser(assocparser.AssocParser):
 
     ANNOTATION_CLASS_COLUMN=4
 
-    def __init__(self, config=None, group="unknown", dataset="unknown"):
+    def __init__(self, config=None, group="unknown", dataset="unknown", bio_entities=None):
         """
         Arguments:
         ---------
@@ -50,25 +54,17 @@ class GafParser(assocparser.AssocParser):
         self.group = group
         self.version = None
         self.default_version = "2.1"
+        self.bio_entities = bio_entities
+        if self.bio_entities is None:
+            self.bio_entities = collections.BioEntities(dict())
 
         if config is None:
             self.config = assocparser.AssocParserConfig()
         self.report = assocparser.Report(group=group, dataset=dataset, config=self.config)
-        self.gpi = None
+        # self.gpi = None
         if self.config.gpi_authority_path is not None:
-            self.gpi = dict()
-            parser = entityparser.GpiParser()
-            with open(self.config.gpi_authority_path) as gpi_f:
-                entities = parser.parse(file=gpi_f)
-                for entity in entities:
-                    self.gpi[entity["id"]] = {
-                        "symbol": entity["label"],
-                        "name": entity["full_name"],
-                        "synonyms": entitywriter.stringify(entity["synonyms"]),
-                        "type": entity["type"]
-                    }
-
-                print("Loaded {} entities from {}".format(len(self.gpi.keys()), self.config.gpi_authority_path))
+            self.bio_entities.merge(collections.BioEntities.load_from_file(self.config.gpi_authority_path))
+            print("Loaded {} entities from {}".format(len(self.bio_entities.entities.keys()), self.config.gpi_authority_path))
 
     def gaf_version(self) -> str:
         if self.version:
@@ -138,7 +134,7 @@ class GafParser(assocparser.AssocParser):
             # Save off version info here
             if self.version is None:
                 # We are still looking
-                parsed = assocparser.parser_version_regex.findall(line)
+                parsed = parser_version_regex.findall(line)
                 if len(parsed) == 1:
                     filetype, version, _ = parsed[0]
                     if version == "2.2":
@@ -161,7 +157,7 @@ class GafParser(assocparser.AssocParser):
         # We treat everything as GAF2 by adding two blank columns.
         # TODO: check header metadata to see if columns corresponds to declared dataformat version
 
-        parsed = to_association(list(vals), report=self.report, qualifier_parser=self.qualifier_parser())
+        parsed = to_association(list(vals), report=self.report, qualifier_parser=self.qualifier_parser(), bio_entities=self.bio_entities)
         if parsed.associations == []:
             return parsed
 
@@ -207,13 +203,13 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         # Using a given gpi file to validate the gene object
-        if self.gpi is not None:
-            entity = self.gpi.get(str(assoc.subject.id), None)
-            if entity is not None:
-                assoc.subject.label = entity["symbol"]
-                assoc.subject.fullname = entity["name"]
-                assoc.subject.synonyms = entity["synonyms"].split("|")
-                assoc.subject.type = entity["type"]
+        # if self.gpi is not None:
+        #     entity = self.gpi.get(str(assoc.subject.id), None)
+        #     if entity is not None:
+        #         assoc.subject.label = entity["symbol"]
+        #         assoc.subject.fullname = entity["name"]
+        #         assoc.subject.synonyms = entity["synonyms"].split("|")
+        #         assoc.subject.type = entity["type"]
 
         if not self._validate_id(str(assoc.object.id), split_line, context=ANNOTATION):
             print("skipping because {} not validated!".format(assoc.object.id))
@@ -258,8 +254,9 @@ class GafParser(assocparser.AssocParser):
 ecomap = EcoMap()
 ecomap.mappings()
 
-def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown", qualifier_parser=assocparser.Qualifier2_1()) -> assocparser.ParseResult:
+def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown", qualifier_parser=assocparser.Qualifier2_1(), bio_entities=None) -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report
+    bio_entities = collections.BioEntities(dict()) if bio_entities is None else bio_entities
     source_line = "\t".join(gaf_line)
 
     if source_line == "":
@@ -297,7 +294,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         report.error(source_line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    parsed_taxons_result = gaf_line_validators["taxon"].validate(gaf_line[TAXON_INDEX])  # type: ValidateResult
+    parsed_taxons_result = gaf_line_validators["taxon"].validate(gaf_line[TAXON_INDEX])  # type: assocparser.ValidateResult
     if not parsed_taxons_result.valid:
         report.error(source_line, Report.INVALID_TAXON, parsed_taxons_result.original, parsed_taxons_result.message, taxon=parsed_taxons_result.original, rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
@@ -311,6 +308,10 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     interacting_taxon = parsed_taxons_result.parsed[1] if len(parsed_taxons_result.parsed) == 2 else None
     subject_curie = association.Curie(gaf_line[0], gaf_line[1])
     subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon)
+    gpi_entity = bio_entities.get(subject_curie)
+    if gpi_entity is not None and subject != gpi_entity:
+        subject = gpi_entity
+
     aspect = gaf_line[8]
     negated, relation_label, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
     # Note: Relation label is grabbed from qualifiers, if any exist in _parse_qualifier

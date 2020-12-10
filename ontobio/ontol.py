@@ -1109,7 +1109,7 @@ class Synonym(AbstractPropertyValue):
         hasNarrowSynonym='narrow',
         hasRelatedSynonym='related')
 
-    def __init__(self, class_id, val=None, pred='hasRelatedSynonym', lextype=None, xrefs=None, ontology=None, confidence=1.0):
+    def __init__(self, class_id, val=None, pred='hasRelatedSynonym', lextype=None, xrefs=None, ontology=None, confidence=1.0, synonymType=None):
         """
         Arguments
         ---------
@@ -1125,7 +1125,7 @@ class Synonym(AbstractPropertyValue):
              Provenance or cross-references to same usage
 
         """
-        pred = pred.replace("http://www.geneontology.org/formats/oboInOwl#","")
+        pred = pred.replace("http://www.geneontology.org/formats/oboInOwl#", "")
         self.class_id = class_id
         self.val = val
         self.pred = pred
@@ -1133,9 +1133,11 @@ class Synonym(AbstractPropertyValue):
         self.xrefs = xrefs
         self.ontology = ontology
         self.confidence = confidence
+        self.synonymType = synonymType
 
     def __str__(self):
-        return '{} "{}" {} {} {} {}'.format(self.class_id, self.val, self.pred, self.lextype, self.xrefs, self.confidence)
+        return '{} "{}" {} {} {} {} {}'.format(self.class_id, self.val, self.pred, self.lextype, self.xrefs, self.confidence, self.synonymType)
+
     def __repr__(self):
         return self.__str__()
 
@@ -1168,7 +1170,7 @@ class Synonym(AbstractPropertyValue):
         }
 
     def __cmp__(self, other):
-        (x,y) = (str(self),str(other))
+        (x, y) = (str(self), str(other))
         if x > y:
             return 1
         if x < y:

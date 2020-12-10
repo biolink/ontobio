@@ -66,26 +66,26 @@ class EntityParser(assocparser.AssocParser):
         file.close()
         return ents
 
-def load_gpi(self, gpi_path):
-    """
-    Loads a GPI as a file from the `config.gpi_authority_path`
-    """
-    if self.config.gpi_authority_path is not None:
-        gpis = dict()
-        parser = entityparser.GpiParser()
-        with open(self.config.gpi_authority_path) as gpi_f:
-            entities = parser.parse(file=gpi_f)
-            for entity in entities:
-                gpis[entity["id"]] = {
-                    "symbol": entity["label"],
-                    "name": entity["full_name"],
-                    "synonyms": entitywriter.stringify(entity["synonyms"]),
-                    "type": entity["type"]
-                }
-        return gpis
+# def load_gpi(self, gpi_path):
+#     """
+#     Loads a GPI as a file from the `config.gpi_authority_path`
+#     """
+#     if self.config.gpi_authority_path is not None:
+#         gpis = dict()
+#         parser = GpiParser()
+#         with open(self.config.gpi_authority_path) as gpi_f:
+#             entities = parser.parse(file=gpi_f)
+#             for entity in entities:
+#                 gpis[entity["id"]] = {
+#                     "symbol": entity["label"],
+#                     "name": entity["full_name"],
+#                     "synonyms": entitywriter.stringify(entity["synonyms"]),
+#                     "type": entity["type"]
+#                 }
+#         return gpis
 
     # If there is no config file path, return None
-    return None
+    # return None
 
 class GpiParser(EntityParser):
 
