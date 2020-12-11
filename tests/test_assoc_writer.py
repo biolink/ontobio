@@ -165,6 +165,25 @@ def test_gaf2_2_qualifier_to_gaf2_1():
     gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert gpad_to_gaf_line.split("\t")[3] == "NOT"
 
+def test_writing_to_gaf_2_2():
+    line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+    assoc = parser.parse_line(line).associations[0] # type: GoAssociation
+
+    gaf_22_out = assoc.to_gaf_2_2_tsv()
+    assert gaf_22_out[3] == "involved_in"
+
+    # With NOT
+    line = "WB\tWBGene00000001\taap-1\tNOT|involved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+
+    assoc = parser.parse_line(line).associations[0] # type: GoAssociation
+
+    gaf_22_out = assoc.to_gaf_2_2_tsv()
+    assert gaf_22_out[3] == "NOT|involved_in"
+
 def test_gaf_to_gpad2():
     line = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:999|taxon:888\t20150305\tPomBase\tpart_of(X:1)\tUniProtKB:P12345"
     parser = gafparser.GafParser()

@@ -285,9 +285,9 @@ class GoAssociation:
     def to_gaf_2_2_tsv(self) -> List:
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
 
-        qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifers]
+        qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
         if self.negated:
-            qual_labels.append("NOT")
+            qual_labels.insert(0, "NOT")
 
         qualifier = "|".join(qual_labels)
 
