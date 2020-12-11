@@ -89,7 +89,7 @@ def main():
     parser_n.set_defaults(function=convert_assocs)
     parser_n.add_argument('-t', '--to', type=str, required=True, choices=["GAF", "GPAD"],
                           help='Format to convert to')
-    parser_n.add_argument("-v", "--version", type=str, required=False,
+    parser_n.add_argument("-n", "--format-version", type=str, required=False, default=None,
                           help="Version for the file format. GAF default is 2.1, GPAD default is 1.2")
 
     parser_n = subparsers.add_parser('map2slim', help='Map to a subset/slim')
@@ -203,12 +203,20 @@ def convert_assocs(ont, file, outfile, p, args):
 def write_assocs(assocs, outfile, args):
     w = None
     fmt = args.to.lower()
+    version = args.version
     if fmt is None or fmt == 'gaf':
-        w = GafWriter(file=outfile, version=args.version)
+        if version:
+            w = GafWriter(file=outfile, version=args.version)
+        else:
+            w = GafWriter(file=outfile)
     elif fmt == 'gpad':
-        w = GpadWriter(file=outfile, version=args.version)
+        if version:
+            w = GpadWriter(file=outfile, version=args.version)
+        else:
+            w = GpadWriter(file=outfile)
     else:
         raise ValueError("Not supported: {}".format(fmt))
+
     w.write(assocs)
 
 def map2slim(ont, file, outfile, p, args):
