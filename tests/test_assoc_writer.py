@@ -184,6 +184,18 @@ def test_writing_to_gaf_2_2():
     gaf_22_out = assoc.to_gaf_2_2_tsv()
     assert gaf_22_out[3] == "NOT|involved_in"
 
+def test_full_gaf_2_2_write():
+    line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+    out = io.StringIO()
+    writer = assocwriter.GafWriter(file=out, version="2.2")
+
+    assoc = parser.parse_line(line).associations[0]
+    writer.write_assoc(assoc)
+    out_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    assert out_line.split("\t") == line.split("\t")
+
 def test_gaf_to_gpad2():
     line = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:999|taxon:888\t20150305\tPomBase\tpart_of(X:1)\tUniProtKB:P12345"
     parser = gafparser.GafParser()
