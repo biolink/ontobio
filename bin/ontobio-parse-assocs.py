@@ -87,9 +87,9 @@ def main():
 
     parser_n = subparsers.add_parser('convert', help='Convert associations')
     parser_n.set_defaults(function=convert_assocs)
-    parser_n.add_argument('-t', '--to', type=str, required=True, choices=["GAF", "GPAD"],
+    parser_n.add_argument('-t', '--to', type=str, required=True, choices=["GAF", "GPAD", "gaf", "gpad"],
                           help='Format to convert to')
-    parser_n.add_argument("-n", "--format-version", type=str, required=False, default=None,
+    parser_n.add_argument("-n", "--format-version", dest="version", type=str, required=False, default=None,
                           help="Version for the file format. GAF default is 2.1, GPAD default is 1.2")
 
     parser_n = subparsers.add_parser('map2slim', help='Map to a subset/slim')
