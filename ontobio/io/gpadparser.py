@@ -331,7 +331,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
         subject_extensions=[],
         object_extensions=conjunctions,
         provided_by=gpad_line[9],
-        date=gpad_line[8],
+        date=date,
         properties={ prop[0]: prop[1] for prop in properties_list if prop })
 
     return assocparser.ParseResult(source_line, [a], False, report=report)

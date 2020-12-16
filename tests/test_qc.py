@@ -328,6 +328,11 @@ def test_go_rule29():
     test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.WARNING
 
+    ## Confirm the test can parse a YYYY-MM-DD date format from GPAD
+    assoc = make_annotation(evidence="ECO:0000501", date="1990-11-11", qualifier="part_of", from_gaf=False).associations[0]
+    test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
+    assert test_result.result_type == qc.ResultType.ERROR
+
 def test_gorule30():
     assoc = make_annotation(references="GO_REF:0000033").associations[0]
 
