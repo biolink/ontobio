@@ -328,8 +328,11 @@ def test_go_rule29():
     test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.WARNING
 
-    ## Confirm the test can parse a YYYY-MM-DD date format from GPAD
-    assoc = make_annotation(evidence="ECO:0000501", date="1990-11-11", qualifier="part_of", from_gaf=False).associations[0]
+    ## Confirm the test can parse a YYYY-MM-DD date format from GPAD 2.0
+    gpad_2_0_vals = assoc.to_gpad_2_0_tsv()  # Cheat to shortcut DB and DB_Object_ID concatenation
+    gpad_2_0_vals[5] = "ECO:0000501"
+    gpad_2_0_vals[8] = "1990-11-11"
+    assoc = gpadparser.to_association(gpad_2_0_vals, version="2.0").associations[0]
     test_result = qc.GoRule29().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
 
