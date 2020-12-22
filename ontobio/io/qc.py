@@ -137,7 +137,7 @@ class GoRule06(GoRule):
         if config.ontology is None:
             return self._result(True)
 
-        go_namespace = [predval for predval in config.ontology.get_graph().node.get(str(annotation.object.id), {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
+        go_namespace = [predval for predval in config.ontology.get_graph().nodes.get(str(annotation.object.id), {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
         evidence = str(annotation.evidence.type)
         fails = evidence in [self.iep, self.hep] and "biological_process" not in [o["val"] for o in go_namespace]
         return self._result(not fails)
@@ -347,7 +347,7 @@ class GoRule28(RepairRule):
         if config.ontology is None:
             return TestResult(ResultType.PASS, self.title, annotation)
 
-        namespaces = [predval for predval in config.ontology.get_graph().node.get(goterm, {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
+        namespaces = [predval for predval in config.ontology.get_graph().nodes.get(goterm, {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
         # the namespaces expression cascades through the json representation of this
         # ontology using empty dict/list if the key is not present
 
