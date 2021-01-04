@@ -347,15 +347,15 @@ class OboFormatGraphRenderer(GraphRenderer):
     # TODO
     def render_xrefs(self, nid, ontol, **args):
         g = ontol.xref_graph # TODO - use ontol methods directly
-        n = g.node[nid]
+        n = g.nodes[nid]
         s = "[Term]\n"
         s += self.tag('id ! TODO', nid)
         s += self.tag('name', n['label'])
         for p in g.predecessors(nid):
             for _,ea in g.get_edge_data(p,nid).items():
                 pred = ea['pred']
-                if p in g and 'label' in g.node[p]:
-                    p = '{} ! {}'.format(p, g.node[p]['label'])
+                if p in g and 'label' in g.nodes[p]:
+                    p = '{} ! {}'.format(p, g.nodes[p]['label'])
                 if pred == 'subClassOf':
                     s += self.tag('is_a', p)
                 else:

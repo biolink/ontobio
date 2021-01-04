@@ -14,7 +14,7 @@ def test_remote_sparql():
     # default method is sparql
     ont = factory.create('pato')
     g = ont.get_graph()
-    info = g.node[PLOIDY]
+    info = g.nodes[PLOIDY]
     print(str(info))
     nodes = g.nodes()
     print(len(nodes))
