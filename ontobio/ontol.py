@@ -151,6 +151,12 @@ class Ontology():
             if ont.xref_graph is not None:
                 for (o,s,m) in ont.xref_graph.edges(data=True):
                     self.xref_graph.add_edge(o,s,**m)
+            if ont.all_logical_definitions is not None:
+                for ld in ont.all_logical_definitions:
+                    self.add_logical_definition(ld)
+            if ont.all_property_chain_axioms is not None:
+                for pca in ont.all_property_chain_axioms:
+                    self.add_property_chain_axiom(pca)
 
     def subgraph(self, nodes=None):
         """
@@ -669,6 +675,11 @@ class Ontology():
         else:
             return []
 
+    def add_logical_definition(self, logical_def):
+        if self.all_logical_definitions is None:
+            self.all_logical_definitions = []
+        self.all_logical_definitions.append(logical_def)
+
     def get_property_chain_axioms(self, nid):
         """
         Retrieves property chain axioms for a class id
@@ -687,6 +698,11 @@ class Ontology():
             return [x for x in pcas if x.predicate_id == nid]
         else:
             return []
+
+    def add_property_chain_axiom(self, pca):
+        if self.all_property_chain_axioms is None:
+            self.all_property_chain_axioms = []
+        self.all_property_chain_axioms.append(pca)
 
     def get_node_type(self, nid):
         n = self.node(nid)
