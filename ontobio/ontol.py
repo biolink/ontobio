@@ -56,6 +56,7 @@ class Ontology():
         self.graphdoc = graphdoc
 
         self.all_logical_definitions = []
+        self.all_property_chain_axioms = []
 
         # alternatively accept a payload object
         if payload is not None:
