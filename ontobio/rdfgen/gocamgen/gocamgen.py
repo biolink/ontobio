@@ -17,6 +17,7 @@ from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
 from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
 from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet
+from ontobio.io.assocparser import AssocParserConfig
 
 
 # logging.basicConfig(level=logging.INFO)
@@ -129,9 +130,13 @@ class GoCamEvidence:
 
     @staticmethod
     def create_from_annotation(annot):
+        # Why is annot still dict old style?
         evidence_code = annot["evidence"]["type"]
         references = annot["evidence"]["has_supporting_reference"]
-        annot_date = "{0:%Y-%m-%d}".format(datetime.datetime.strptime(annot["date"], "%Y%m%d"))
+        annot_date = annot["date"]
+        if "-" not in annot_date:
+            # Likely in YYYYMMDD format, correct to YYYY-MM-DD
+            annot_date = "{0:%Y-%m-%d}".format(datetime.datetime.strptime(annot_date, "%Y%m%d"))
         source_line = annot["source_line"].rstrip().replace("\t", " ")
         # contributors = handle_annot_properties() # Need annot_properties to be parsed w/ GpadParser first
         contributors = []
@@ -240,8 +245,9 @@ class GoCamModel():
         return stmt_id
 
     def create_axiom(self, subject_id, relation_uri, object_id):
-        subject_uri = subject_id if subject_id.__class__.__name__ == "URIRef" else self.declare_individual(subject_id)
-        object_uri = object_id if object_id.__class__.__name__ == "URIRef" else self.declare_individual(object_id)
+        # If not URIRef, will be class IDs
+        subject_uri = subject_id if isinstance(subject_id, URIRef) else self.declare_individual(subject_id)
+        object_uri = object_id if isinstance(object_id, URIRef) else self.declare_individual(object_id)
         axiom_id = self.add_axiom(self.writer.emit(subject_uri, relation_uri, object_uri))
         return axiom_id
 
@@ -264,8 +270,8 @@ class GoCamModel():
             axiom_id = self.find_bnode(found_triple)
         else:
             # subject_uri = self.declare_individual(subject_id)
-            subject_uri = subject_id if subject_id.__class__.__name__ == "URIRef" else self.declare_individual(subject_id)
-            object_uri = object_id if object_id.__class__.__name__ == "URIRef" else self.declare_individual(object_id)
+            subject_uri = subject_id if isinstance(subject_id, URIRef) else self.declare_individual(subject_id)
+            object_uri = object_id if isinstance(object_id, URIRef) else self.declare_individual(object_id)
             # TODO Can emit() be changed to emit_axiom()?
             axiom_id = self.add_axiom(self.writer.emit(subject_uri, relation_uri, object_uri))
         if annoton and relation_uri == ENABLED_BY:
@@ -303,7 +309,7 @@ class GoCamModel():
                     annot_mf = source_annoton.molecular_function["object"]["id"]
                 except:
                     annot_mf = ""
-                if self.writer.writer.graph.__contains__((u,rel,None)) and gene_connection.object_id != annot_mf:
+                if (u,rel,None) in self.writer.writer.graph and gene_connection.object_id != annot_mf:
                     source_id = self.declare_individual(gene_connection.object_id)
                     source_annoton.individuals[gene_connection.object_id] = source_id
                     break
@@ -335,11 +341,11 @@ class GoCamModel():
         graph = self.writer.writer.graph
 
         triples = []
-        if subject.__class__.__name__ == "URIRef" or subject is None:
+        if isinstance(subject, URIRef) or subject is None:
             subjects = [subject]
         else:
             subjects = self.uri_list_for_individual(subject)
-        if object_id.__class__.__name__ == "URIRef" or object_id is None:
+        if isinstance(object_id, URIRef) or object_id is None:
             objects = [object_id]
         else:
             objects = self.uri_list_for_individual(object_id)
@@ -412,15 +418,16 @@ def relation_equals(rel_a, rel_b):
 class AssocGoCamModel(GoCamModel):
     ENABLES_O_RELATION_LOOKUP = {}
 
-    def __init__(self, modeltitle, assocs: List[GoAssociation], connection_relations=None, store=None):
+    def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None):
         GoCamModel.__init__(self, modeltitle, connection_relations, store)
         self.associations = CollapsedAssociationSet(assocs)
         self.ontology = None
-        self.ro_ontology = None
-        self.go_aspector = None
+        if config:
+            self.ontology = config.ontology
+        self.go_aspector = None  # TODO: Can I always grab aspect from ontology term DS
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
         self.graph.bind("GOREL", GOREL)  # Because GOREL isn't in context.jsonld's
-        self.gpi_entities = None
+        self.gpi_entities = gpi_entities
 
     def translate(self):
 
@@ -626,7 +633,8 @@ class AssocGoCamModel(GoCamModel):
         for q_term in annotation.qualifiers():
             if ":" in str(q_term):
                 # It's a curie (nice!) but we're talking labels
-                q = self.ro_ontology.label(str(q_term)).replace(" ", "_")
+                # q = self.ro_ontology.label(str(q_term)).replace(" ", "_")
+                q = self.ontology.label(str(q_term)).replace(" ", "_")
             else:
                 q = q_term
             if q == "enables":
@@ -677,13 +685,15 @@ class AssocGoCamModel(GoCamModel):
 
     def translate_relation_to_ro(self, relation_label):
         # Also check in GO_REL and use xref to RO
-        for n in self.ro_ontology.nodes():
-            node_label = self.ro_ontology.label(n)
-            if node_label == relation_label.replace("_", " "):
-                return n
-        # Is GOREL in go-lego?
+        # for n in self.ro_ontology.nodes():
+        #     node_label = self.ro_ontology.label(n)
         for n in self.ontology.nodes():
             node_label = self.ontology.label(n)
+            if node_label == relation_label.replace("_", " "):
+                return n
+        # # Is GOREL in go-lego?
+        # for n in self.ontology.nodes():
+        #     node_label = self.ontology.label(n)
             if node_label == relation_label:
                 gorel_node = self.ontology.node(n)
                 # What we want will likely be in xref:
@@ -705,7 +715,8 @@ class AssocGoCamModel(GoCamModel):
         restrictions = []
         for ld in lds:
             for r in ld.restrictions:
-                if r[0] in self.ro_ontology.descendants("RO:0002211", reflexive=True):
+                # if r[0] in self.ro_ontology.descendants("RO:0002211", reflexive=True):
+                if r[0] in self.ontology.descendants("RO:0002211", reflexive=True):
                     restrictions.append(r)
         return restrictions
 
@@ -722,8 +733,8 @@ class AssocGoCamModel(GoCamModel):
     def get_causally_upstream_relation(self, relation):
         regulates = "RO:0002211"
         causally_upstream_relations = []
-        if relation == regulates or regulates in self.ro_ontology.ancestors(relation):
-            for p in self.ro_ontology.parents(relation,
+        if relation == regulates or regulates in self.ontology.ancestors(relation):
+            for p in self.ontology.parents(relation,
                                               relations=['subPropertyOf']):
                 # For GO:0045944 this is grabbing both RO:0002304 and RO:0002211
                 # Need specifically RO:0002304; how to specify?
@@ -736,7 +747,8 @@ class AssocGoCamModel(GoCamModel):
             if relation in self.ENABLES_O_RELATION_LOOKUP:
                 return self.ENABLES_O_RELATION_LOOKUP[relation]
             else:
-                causally_upstream_relation = self.ro_ontology.get_property_chain_axioms(relation)[0].chain_predicate_ids[1]  # always 2nd idx?
+                property_chain_axioms = self.ontology.get_property_chain_axioms(relation)
+                causally_upstream_relation = property_chain_axioms[0].chain_predicate_ids[1]
                 self.ENABLES_O_RELATION_LOOKUP[relation] = causally_upstream_relation
                 return causally_upstream_relation
         if len(causally_upstream_relations) > 0:
