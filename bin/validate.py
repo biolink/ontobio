@@ -545,41 +545,27 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 @click.option("--gpad_path", "-g", type=click.Path(), required=True)
 @click.option("--gpi_path", "-i", type=click.Path(), required=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
-@click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
-@click.option("--datasets_file", "-d", type=click.Path(exists=True), required=False)
-@click.option("--gaferencer_file", "-e", type=click.Path(exists=True), required=False)
-@click.option("--extensions_constraints_file", "-c", type=click.Path(exists=True), required=False)
-def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, datasets_file=None, gaferencer_file=None, extensions_constraints_file=None):
-    if gpad_path.endswith(".gz"):
-        unzipped = os.path.splitext(gpad_path)[0]
-        unzip(gpad_path, unzipped)
-        gpad_path = unzipped
+@click.option("--ontology", "-o", type=click.Path(exists=True), required=True, multiple=True)
+def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology):
     # NOTE: Validation on GPAD not included here since it's currently baked into produce() above.
-    parser_config = assocparser.AssocParserConfig()
-    parser_config.rule_contexts = ["import"]
-    gaferences = None
-    if gaferencer_file:
-        gaferences = gaference.load_gaferencer_inferences_from_file(gaferencer_file)
-        parser_config.annotation_inferences = gaferences
-    if datasets_file:
-        with open(datasets_file, "r") as group_data:
-            parser_config.group_metadata = yaml.load(group_data, Loader=yaml.FullLoader)
-    if extensions_constraints_file:
-        with open(extensions_constraints_file, "r") as constraints_file:
-            parser_config.extensions_constraints = yaml.load(constraints_file, Loader=yaml.FullLoader)
-    extractor = AssocExtractor(gpad_path, gpi_path, parser_config=parser_config)
+    # Multi-param to accept multiple ontology files, then merge to one (this will make a much smaller ontology
+    #  with only what we need, i.e. GO, RO, GOREL)
+    ontology_graph = OntologyFactory().create(ontology[0], ignore_cache=True)
+    for ont in ontology[1:]:
+        ontology_graph.merge([OntologyFactory().create(ont, ignore_cache=True)])
+    parser_config = assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                  gpi_authority_path=gpi_path
+                                                  )
+    extractor = AssocExtractor(gpad_path, parser_config=parser_config)
     assocs_by_gene = extractor.group_assocs()
 
     absolute_target = os.path.abspath(target)
     gpad_basename = os.path.basename(gpad_path)
     gpad_basename_root, gpad_ext = os.path.splitext(gpad_basename)
-    if gpad_ext in [".gpad", ".gpa"]:
-        output_basename = gpad_basename_root + ".nq"
-    else:
-        output_basename = gpad_basename + ".nq"
+    output_basename = "{}.nq".format(gpad_basename_root)
     output_path = os.path.join(absolute_target, output_basename)
 
-    builder = GoCamBuilder(ontology, gpi_file=gpi_path)
+    builder = GoCamBuilder(parser_config=parser_config)
 
     for gene, associations in assocs_by_gene.items():
         builder.make_model_and_add_to_store(gene, annotations=associations)

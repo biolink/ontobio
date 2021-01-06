@@ -41,26 +41,16 @@ parser.add_argument('-N', '--nquads', help="Filepath to write model file in N-Qu
 
 
 class GoCamBuilder:
-    def __init__(self, ontology=None, gpi_file=None):
-        if ontology is None:
-            ontology_graph = OntologyFactory().create("http://purl.obolibrary.org/obo/go/extensions/go-lego.owl")
-        else:
-            ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
-        self.ontology = ontology_graph
-        self.ro_ontology = self.extract_relations_ontology(self.ontology)
-        # self.ontology = OntologyFactory().create("http://purl.obolibrary.org/obo/go.owl")
-        # self.ro_ontology = OntologyFactory().create("http://purl.obolibrary.org/obo/ro.owl")
-        self.aspector = GoAspector(self.ontology)
+    def __init__(self, parser_config: AssocParserConfig):
+        self.config = parser_config
+        self.aspector = GoAspector(self.config.ontology)
         self.store = plugin.get('IOMemory', Store)()
         self.errors = GeneErrorSet()  # Errors by gene ID
-        self.gpi_entities = self.parse_gpi(gpi_file)
+        self.gpi_entities = self.parse_gpi(parser_config.gpi_authority_path)
 
     def translate_to_model(self, gene, assocs: List[GoAssociation]):
-        model = AssocGoCamModel(gene, assocs, store=self.store)
-        model.ontology = self.ontology
-        model.ro_ontology = self.ro_ontology
-        model.go_aspector = self.aspector
-        model.gpi_entities = self.gpi_entities
+        model = AssocGoCamModel(gene, assocs, config=self.config, store=self.store, gpi_entities=self.gpi_entities)
+        model.go_aspector = self.aspector  # TODO: Grab aspect from ontology node
         model.translate()
 
         return model
@@ -157,13 +147,9 @@ class GoCamBuilder:
 
 
 class AssocExtractor:
-    def __init__(self, gpad_file, gpi_file, parser_config: AssocParserConfig = None):
+    def __init__(self, gpad_file, parser_config: AssocParserConfig):
         self.assocs = []
-        if parser_config:
-            gpad_parser = gpadparser.GpadParser(config=parser_config)
-        else:
-            gpad_parser = gpadparser.GpadParser()
-            gpad_parser.config.rule_contexts = ["import"]
+        gpad_parser = gpadparser.GpadParser(config=parser_config)
         with open(gpad_file) as sg:
             lines = sum(1 for line in sg)
 
@@ -173,7 +159,7 @@ class AssocExtractor:
                                    length=lines) as associations:
                 self.assocs = list(associations)
 
-        self.entity_parents = self.parse_gpi_parents(gpi_file)
+        self.entity_parents = self.parse_gpi_parents(parser_config.gpi_authority_path)
 
     def group_assocs(self):
         assocs_by_gene = {}
