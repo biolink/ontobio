@@ -424,6 +424,13 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             report.error(source_line, Report.INVALID_SYMBOL, gpad_line[7], "Problem parsing Interacting Taxon", taxon=taxon, rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
+    date_str = gpad_line[DATE_INDEX]
+    if date_str is None or date_str == "":
+        report.warning(source_line, Report.INVALID_DATE, date_str, "GORULE:0000001: empty",
+                       taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    date = association.Date(year=date_str[0:4], month=date_str[5:7], day=date_str[8:10], time=date_str[10:0])
+
     conjunctions = []
     # The elements of the extension units are Curie(Curie)
     if gpad_line[10]:
@@ -450,7 +457,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
         subject_extensions=[],
         object_extensions=conjunctions,
         provided_by=gpad_line[9],
-        date=gpad_line[8],
+        date=date,
         properties={ prop[0]: prop[1] for prop in properties_list if prop })
 
     return assocparser.ParseResult(source_line, [a], False, report=report)

@@ -385,14 +385,9 @@ class GoRule29(GoRule):
 
         time_compare_delta_short = self.one_year
         time_compare_delta_long = self.two_years
-        if "-" in date:
-            # Accommodating YYYY-MM-DD format
-            year, month, day = date[0:4], date[5:7], date[8:10]
-        else:
-            year, month, day = date[0:4], date[4:6], date[6:8]
-        time_diff = now - datetime.datetime(int(year),
-                                            int(month),
-                                            int(day),
+        time_diff = now - datetime.datetime(int(date.year),
+                                            int(date.month),
+                                            int(date.day),
                                             0, 0, 0, 0)
 
         iea = "ECO:0000501"

@@ -838,18 +838,19 @@ def _normalize_gaf_date(date, report, taxon, line):
 
     # We check int(date)
     if len(date) == 8 and date.isdigit():
-        d = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0)
+        d = association.Date(date[0:4], date[4:6], date[6:8], "")
     else:
         report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYYMMDD, got: {}".format(date),
             taxon=taxon, rule=1)
         try:
             d = dateutil.parser.parse(date)
+            d = association.Date(str(d.year), str(d.month), str(d.day), "")
         except:
             report.error(line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date),
                 taxon=taxon, rule=1)
             return None
 
-    return d.strftime("%Y%m%d")
+    return d
 
 ## we generate both qualifier and relation field
 ## Returns: (negated, relation, other_qualifiers)

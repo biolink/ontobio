@@ -68,3 +68,8 @@ def test_conjunctive_set_list_to_str():
             association.ConjunctiveSet(["GO:987"])
         ])
     assert c == "MGI:12345,DOI:333|GO:987"
+
+def test_date():
+    date_str = "20210105"
+    date = association.Date(date_str[0:4], date_str[4:6], date_str[6:8], "")
+    assert association.ymd_str(date, "-") == "2021-01-05"
