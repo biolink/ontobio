@@ -54,7 +54,7 @@ __relation_label_lookup = bidict({
     "regulates o acts on population of": "http://purl.obolibrary.org/obo/GOREL_0001008",
     "regulates o occurs in": "http://purl.obolibrary.org/obo/GOREL_0001004",
     "regulates o results in movement of": "http://purl.obolibrary.org/obo/GOREL_0001005",
-    "acts on population of": "http://purl.obolibrary.org/obo/GOREL_0001006",
+    "acts on population of": "http://purl.obolibrary.org/obo/RO_0012003",
     "regulates o has input": "http://purl.obolibrary.org/obo/GOREL_0001030",
     "regulates o has participant": "http://purl.obolibrary.org/obo/GOREL_0001016",
     "has output o axis of": "http://purl.obolibrary.org/obo/GOREL_0001002",
