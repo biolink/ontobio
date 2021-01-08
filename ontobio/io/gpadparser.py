@@ -291,7 +291,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     qualifiers = [association.Curie.from_str(curie_util.contract_uri(q)[0]) for q in looked_up_qualifiers]
 
-    date = assocparser._normalize_gaf_date(gpad_line[8], report, "", source_line)
+    date = assocparser.parse_date(gpad_line[8], report, source_line)
     if date is None:
         return assocparser.ParseResult(source_line, [], True, report=report)
 
@@ -424,12 +424,9 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             report.error(source_line, Report.INVALID_SYMBOL, gpad_line[7], "Problem parsing Interacting Taxon", taxon=taxon, rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-    date_str = gpad_line[DATE_INDEX]
-    if date_str is None or date_str == "":
-        report.warning(source_line, Report.INVALID_DATE, date_str, "GORULE:0000001: empty",
-                       taxon=taxon, rule=1)
+    date = assocparser.parse_iso_date(gpad_line[DATE_INDEX], report, source_line)
+    if date is None:
         return assocparser.ParseResult(source_line, [], True, report=report)
-    date = association.Date(year=date_str[0:4], month=date_str[5:7], day=date_str[8:10], time=date_str[10:0])
 
     conjunctions = []
     # The elements of the extension units are Curie(Curie)
