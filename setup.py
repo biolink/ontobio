@@ -17,6 +17,8 @@ with open(init_path) as read_file:
 pattern = re.compile(r"^__version__ = ['\"]([^'\"]*)['\"]", re.MULTILINE)
 version = pattern.search(text).group(1)
 
+with open("requirements.txt", "r") as FH:
+    REQUIREMENTS = FH.readlines()
 
 setuptools.setup(
     name='ontobio',
@@ -43,23 +45,7 @@ setuptools.setup(
     include_package_data=True,
 
     # Dependencies
-    install_requires=[
-        'networkx==2.2',
-        'jsobject',
-        'pyyaml',
-        'pysolr',
-        'requests',
-        'sparqlwrapper',
-        'prefixcommons',
-        'marshmallow==3.0.0b11',
-        'scipy',
-        'pandas',
-        'click',
-        'yamldown',
-        'dataclasses',
-        'diskcache>=4.0.0',
-        'bidict==0.19.0'
-    ],
+    install_requires=[r for r in REQUIREMENTS if not r.startswith("#")],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
