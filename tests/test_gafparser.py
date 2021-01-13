@@ -100,7 +100,7 @@ def parse_with(f, p):
 
     if is_gaf:
         assert r1.subject.label == 'ypf1'
-        assert r1.date == '20150305'
+        assert association.ymd_str(r1.date, "") == '20150305'
 
     for r in results:
         #print(str(r))

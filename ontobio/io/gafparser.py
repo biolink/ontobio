@@ -18,6 +18,7 @@ from ontobio.model import collections
 from ontobio.ecomap import EcoMap
 from ontobio.rdfgen import relations
 
+import dateutil.parser
 import functools
 
 import click
@@ -301,7 +302,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
 
     taxon = parsed_taxons_result.parsed[0]
 
-    date = assocparser._normalize_gaf_date(gaf_line[13], report, str(taxon), source_line)
+    date = assocparser.parse_date(gaf_line[13], report, source_line)
     if date is None:
         return assocparser.ParseResult(source_line, [], True, report=report)
 
