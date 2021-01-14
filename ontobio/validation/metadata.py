@@ -140,7 +140,7 @@ def metayaml_id(rule_path) -> str:
 
 def source_path(dataset_metadata, target_dir, group):
     extension = dataset_metadata["type"]
-    if dataset_metadata["compression"]:
+    if dataset_metadata.get("compression", False):
         extension = "{ext}.gz".format(ext=extension)
 
     path = os.path.join(target_dir, "groups", group, "{name}-src.{ext}".format(name=dataset_metadata["dataset"], ext=extension))

@@ -136,7 +136,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
         # Local target download path setup - path and then directories
         path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url, base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
-        if dataset_metadata["compression"] == "gzip":
+        if dataset_metadata.get("compression", None) == "gzip":
             # Unzip any downloaded file that has gzip, strip of the gzip extension
             unzipped = os.path.splitext(path)[0]
             unzip(path, unzipped)

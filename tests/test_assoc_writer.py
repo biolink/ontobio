@@ -1,6 +1,6 @@
 from ontobio.io import assocwriter
 from ontobio.io import gafparser, gpadparser
-from ontobio.model.association import GoAssociation, Curie, Subject, Term, ConjunctiveSet, Evidence, ExtensionUnit
+from ontobio.model.association import GoAssociation, Curie, Subject, Term, ConjunctiveSet, Evidence, ExtensionUnit, Date
 import json
 import io
 
@@ -33,7 +33,7 @@ def test_gaf_writer():
             )]
         ),
         provided_by="PomBase",
-        date="20150305",
+        date=Date(year="2015", month="03", day="05", time=""),
         subject_extensions=[
             ExtensionUnit(
                 relation=Curie("rdfs", "subClassOf"),
@@ -165,6 +165,37 @@ def test_gaf2_2_qualifier_to_gaf2_1():
     gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert gpad_to_gaf_line.split("\t")[3] == "NOT"
 
+def test_writing_to_gaf_2_2():
+    line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+    assoc = parser.parse_line(line).associations[0] # type: GoAssociation
+
+    gaf_22_out = assoc.to_gaf_2_2_tsv()
+    assert gaf_22_out[3] == "involved_in"
+
+    # With NOT
+    line = "WB\tWBGene00000001\taap-1\tNOT|involved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+
+    assoc = parser.parse_line(line).associations[0] # type: GoAssociation
+
+    gaf_22_out = assoc.to_gaf_2_2_tsv()
+    assert gaf_22_out[3] == "NOT|involved_in"
+
+def test_full_gaf_2_2_write():
+    line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+    out = io.StringIO()
+    writer = assocwriter.GafWriter(file=out, version="2.2")
+
+    assoc = parser.parse_line(line).associations[0]
+    writer.write_assoc(assoc)
+    out_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    assert out_line.split("\t") == line.split("\t")
+
 def test_gaf_to_gpad2():
     line = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:999|taxon:888\t20150305\tPomBase\tpart_of(X:1)\tUniProtKB:P12345"
     parser = gafparser.GafParser()
@@ -176,7 +207,7 @@ def test_gaf_to_gpad2():
 
     lines = out.getvalue().split("\n")
     assert lines[0] == "!gpa-version: 2.0"
-    assert lines[1] == "PomBase:SPAC25B8.17\t\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t20150305\tPomBase\tBFO:0000050(X:1)\t"
+    assert lines[1] == "PomBase:SPAC25B8.17\t\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t2015-03-05\tPomBase\tBFO:0000050(X:1)\t"
 
     line = "PomBase\tSPAC25B8.17\typf1\tNOT\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:999|taxon:888\t20150305\tPomBase\tpart_of(X:1)\tUniProtKB:P12345"
     parser = gafparser.GafParser()
@@ -188,4 +219,4 @@ def test_gaf_to_gpad2():
 
     lines = out.getvalue().split("\n")
     assert lines[0] == "!gpa-version: 2.0"
-    assert lines[1] == "PomBase:SPAC25B8.17\tNOT\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t20150305\tPomBase\tBFO:0000050(X:1)\t"
+    assert lines[1] == "PomBase:SPAC25B8.17\tNOT\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t2015-03-05\tPomBase\tBFO:0000050(X:1)\t"

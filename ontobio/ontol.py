@@ -145,7 +145,7 @@ class Ontology():
             g = self.get_graph()
             srcg = ont.get_graph()
             for n in srcg.nodes():
-                g.add_node(n, **srcg.node[n])
+                g.add_node(n, **srcg.nodes[n])
             for (o,s,m) in srcg.edges(data=True):
                 g.add_edge(o,s,**m)
             if ont.xref_graph is not None:
@@ -335,13 +335,13 @@ class Ontology():
 
         Wraps networkx by default
         """
-        return self.get_graph().node.get(id, None)
+        return self.get_graph().nodes.get(id, None)
 
     def has_node(self, id):
         """
         True if id identifies a node in the ontology graph
         """
-        return id in self.get_graph().node
+        return id in self.get_graph().nodes()
 
     def sorted_nodes(self):
         """
@@ -903,7 +903,7 @@ class Ontology():
         """
         g = self.get_graph()
         if nid in g:
-            n = g.node[nid]
+            n = g.nodes[nid]
             if 'label' in n:
                 return n['label']
             else:

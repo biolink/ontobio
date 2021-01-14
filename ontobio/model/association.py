@@ -23,7 +23,11 @@ logger = logging.getLogger(__name__)
 
 Aspect = typing.NewType("Aspect", str)
 Provider = typing.NewType("Provider", str)
-Date = typing.NewType("Date", str)
+Date = collections.namedtuple("Date", ["year", "month", "day", "time"])
+
+
+def ymd_str(date: Date, separator: str) -> str:
+    return "{year}{sep}{month}{sep}{day}".format(year=date.year, sep=separator, month=date.month, day=date.day)
 
 @dataclass
 class Error:
@@ -275,7 +279,7 @@ class GoAssociation:
             "|".join(self.subject.synonyms),
             self.subject.type,
             taxon,
-            self.date,
+            ymd_str(self.date, ""),
             self.provided_by,
             ConjunctiveSet.list_to_str(self.object_extensions,
                 conjunct_to_str=lambda conj: conj.display(use_rel_label=True)),
@@ -285,9 +289,9 @@ class GoAssociation:
     def to_gaf_2_2_tsv(self) -> List:
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
 
-        qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifers]
+        qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
         if self.negated:
-            qual_labels.append("NOT")
+            qual_labels.insert(0, "NOT")
 
         qualifier = "|".join(qual_labels)
 
@@ -311,7 +315,7 @@ class GoAssociation:
             "|".join(self.subject.synonyms),
             self.subject.type,
             taxon,
-            self.date,
+            ymd_str(self.date, ""),
             self.provided_by,
             ConjunctiveSet.list_to_str(self.object_extensions),
             gp_isoforms
@@ -343,7 +347,7 @@ class GoAssociation:
             str(self.evidence.type),
             ConjunctiveSet.list_to_str(self.evidence.with_support_from),
             str(self.interacting_taxon) if self.interacting_taxon else "",
-            self.date,
+            ymd_str(self.date, ""),
             self.provided_by,
             ConjunctiveSet.list_to_str(self.object_extensions,
                 conjunct_to_str=lambda conj: conj.display(use_rel_label=True)),
@@ -362,7 +366,7 @@ class GoAssociation:
             str(self.evidence.type),
             ConjunctiveSet.list_to_str(self.evidence.with_support_from),
             str(self.interacting_taxon) if self.interacting_taxon else "",
-            self.date,
+            ymd_str(self.date, "-"),
             self.provided_by,
             ConjunctiveSet.list_to_str(self.object_extensions,
                 conjunct_to_str=lambda conj: conj.display()),
@@ -423,7 +427,7 @@ class GoAssociation:
             "interacting_taxon": self.interacting_taxon,
             "evidence": evidence,
             "provided_by": self.provided_by,
-            "date": self.date,
+            "date": ymd_str(self.date, ""),
             "subject_extensions": subject_extensions,
             "object_extensions": object_extensions
         }

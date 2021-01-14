@@ -58,7 +58,7 @@ class OboJsonMapper(object):
             id = self.contract_uri(node['id'])
             digraph.add_node(id, **node)
             if 'lbl' in node:
-                digraph.node[id]['label'] = node['lbl']
+                digraph.nodes[id]['label'] = node['lbl']
             if parse_meta and 'meta' in node:
                 if node['meta'] is None:
                     node['meta'] = {}
@@ -230,7 +230,7 @@ def _triple_to_association(digraph, subject, predicate, obj):
     association = {
         'subject': {
             'id': subject,
-            'label': digraph.node[subject]['lbl'],
+            'label': digraph.nodes[subject]['lbl'],
             'iri': expand_uri(subject, [get_curie_map()])
         },
         'subject_eq': subject_eq,
@@ -241,7 +241,7 @@ def _triple_to_association(digraph, subject, predicate, obj):
         },
         'object': {
             'id': obj,
-            'label': digraph.node[obj]['lbl'],
+            'label': digraph.nodes[obj]['lbl'],
             'iri': expand_uri(obj, [get_curie_map()])
         },
         'object_eq': object_eq,
@@ -268,12 +268,12 @@ def _triple_to_association(digraph, subject, predicate, obj):
                 if edge['pred'] == 'RO:0002558' and obj not in eco_codes:
                     association['evidence_types'].append({
                         'id': obj,
-                        'label': digraph.node[obj]['lbl']
+                        'label': digraph.nodes[obj]['lbl']
                     })
                 elif edge['pred'] == 'dc:source' and obj not in pubs:
                     association['publications'].append({
                         'id': obj,
-                        'label': digraph.node[obj]['lbl']
+                        'label': digraph.nodes[obj]['lbl']
                     })
 
     return association
