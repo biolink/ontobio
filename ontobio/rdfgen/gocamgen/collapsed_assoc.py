@@ -3,7 +3,7 @@ from typing import List
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.assocparser import SplitLine
-from ontobio.model.association import GoAssociation
+from ontobio.model.association import GoAssociation, ymd_str
 from ontobio.rdfgen.gocamgen import errors
 
 logger = logging.getLogger(__name__)
@@ -196,7 +196,7 @@ class CollapsedAssociationLine:
                 "type": self.evidence_code,
                 "has_supporting_reference": self.references
             },
-            "date": self.date,
+            "date": ymd_str(self.date, separator="-"),
             "provided_by": self.assigned_by,
         }
         if self.annotation_properties:
