@@ -1,8 +1,12 @@
+import logging
 from typing import List
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.assocparser import SplitLine
 from ontobio.model.association import GoAssociation
+from ontobio.rdfgen.gocamgen import errors
+
+logger = logging.getLogger(__name__)
 
 GPAD_PARSER = GpadParser()
 BINDING_ROOT = "GO:0005488"  # binding
@@ -98,7 +102,13 @@ class CollapsedAssociationSet:
             # Using GPI, check with_froms for taxon equivalency to subj_id
             if self.gpi_entities:
                 subject_id = str(annot.subject.id)
-                subject_entity = self.gpi_entities[subject_id]
+                try:
+                    subject_entity = self.gpi_entities[subject_id]
+                except KeyError as ex:
+                    error_message = "Annotation Object ID '{}' missing from provided GPI. Skipping annotation translation.".format(subject_id)
+                    logger.warning(error_message)
+                    # Throw Exception and except-skip in model builder
+                    raise errors.GocamgenException(error_message)
                 values_separated = []
                 for wf in with_from_ds:
                     wf_separated = {

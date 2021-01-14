@@ -546,7 +546,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 @click.option("--gpi_path", "-i", type=click.Path(), required=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=True, multiple=True)
-def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology):
+@click.option("--ttl", default=False, is_flag=True)
+def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl):
     # NOTE: Validation on GPAD not included here since it's currently baked into produce() above.
     # Multi-param to accept multiple ontology files, then merge to one (this will make a much smaller ontology
     #  with only what we need, i.e. GO, RO, GOREL)
@@ -563,14 +564,21 @@ def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology):
     gpad_basename = os.path.basename(gpad_path)
     gpad_basename_root, gpad_ext = os.path.splitext(gpad_basename)
     output_basename = "{}.nq".format(gpad_basename_root)
+    report_basename = "{}.gocamgen.report".format(gpad_basename_root)
     output_path = os.path.join(absolute_target, output_basename)
+    report_path = os.path.join(absolute_target, report_basename)
 
     builder = GoCamBuilder(parser_config=parser_config)
 
     for gene, associations in assocs_by_gene.items():
-        builder.make_model_and_add_to_store(gene, annotations=associations)
+        if ttl:
+            builder.make_model_and_write_out(gene, annotations=associations, output_directory=absolute_target)
+        else:
+            builder.make_model_and_add_to_store(gene, annotations=associations)
+    if not ttl:
+        builder.write_out_store_to_nquads(filepath=output_path)
 
-    builder.write_out_store_to_nquads(filepath=output_path)
+    builder.write_report(report_filepath=report_path)
 
 
 @cli.command()

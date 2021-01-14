@@ -26,7 +26,7 @@ def sort_terms_by_ontology_specificity(terms: List[Curie]):
     # Used primarily for sorting occurs_in annotation extensions
     # What's first? EMAPA or UBERON? Shouldn't matter for extensions since assertion
     # should chain occurs_in to both EMAPA and UBERON (They would be split into separate assertions or thrown out)
-    ONTOLOGY_ORDER = {'GO': 1, 'CL': 2, 'WBbt': 3, 'EMAPA': 4, 'UBERON': 5}  # From most specific to most general
+    ONTOLOGY_ORDER = {'SO': 1, 'GO': 2, 'CL': 3, 'WBbt': 4, 'EMAPA': 5, 'UBERON': 6}  # From most specific to most general
     terms.sort(key=lambda t: ONTOLOGY_ORDER[t.namespace])
 
     return terms

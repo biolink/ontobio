@@ -49,7 +49,8 @@ class GoCamBuilder:
         self.gpi_entities = self.parse_gpi(parser_config.gpi_authority_path)
 
     def translate_to_model(self, gene, assocs: List[GoAssociation]):
-        model = AssocGoCamModel(gene, assocs, config=self.config, store=self.store, gpi_entities=self.gpi_entities)
+        model_id = gene.replace(":", "_")
+        model = AssocGoCamModel(gene, assocs, config=self.config, store=self.store, gpi_entities=self.gpi_entities, model_id=model_id)
         model.go_aspector = self.aspector  # TODO: Grab aspect from ontology node
         model.translate()
 
@@ -98,6 +99,12 @@ class GoCamBuilder:
         cg = ConjunctiveGraph(self.store)
         cg.serialize(destination=filepath, format="nquads")
         logger.info(f"Full model graphstore written out in N-Quads format to {filepath}")
+
+    def write_report(self, report_filepath):
+        with open(report_filepath, "w+") as reportf:
+            for gene, errs in self.errors.errors.items():
+                for ex in errs:
+                    reportf.write(f"{type(ex).__name__} - {gene}: {ex}\n")
 
     @staticmethod
     def extract_relations_ontology(ontology_graph):

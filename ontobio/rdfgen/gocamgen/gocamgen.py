@@ -16,6 +16,7 @@ from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TripleP
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
 from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
+from ontobio.rdfgen.gocamgen import errors
 from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet
 from ontobio.io.assocparser import AssocParserConfig
 
@@ -140,8 +141,8 @@ class GoCamEvidence:
         source_line = annot["source_line"].rstrip().replace("\t", " ")
         # contributors = handle_annot_properties() # Need annot_properties to be parsed w/ GpadParser first
         contributors = []
-        if "annotation_properties" in annot and "contributor" in annot["annotation_properties"]:
-            contributors = annot["annotation_properties"]["contributor"]
+        if "annotation_properties" in annot and "contributor-id" in annot["annotation_properties"]:
+            contributors = annot["annotation_properties"]["contributor-id"]
         if len(contributors) == 0:
             contributors = [GoCamEvidence.DEFAULT_CONTRIBUTOR]
 
@@ -185,8 +186,8 @@ class GoCamModel():
         "located_in": "RO:0001025",
     }
 
-    def __init__(self, modeltitle, connection_relations=None, store=None):
-        cam_writer = CamTurtleRdfWriter(modeltitle, store=store)
+    def __init__(self, modeltitle, connection_relations=None, store=None, model_id=None):
+        cam_writer = CamTurtleRdfWriter(modeltitle, store=store, model_id=model_id)
         self.writer = AnnotonCamRdfTransform(cam_writer)
         self.modeltitle = modeltitle
         self.classes = []
@@ -418,8 +419,8 @@ def relation_equals(rel_a, rel_b):
 class AssocGoCamModel(GoCamModel):
     ENABLES_O_RELATION_LOOKUP = {}
 
-    def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None):
-        GoCamModel.__init__(self, modeltitle, connection_relations, store)
+    def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None, model_id=None):
+        GoCamModel.__init__(self, modeltitle, connection_relations, store, model_id=model_id)
         self.associations = CollapsedAssociationSet(assocs)
         self.ontology = None
         if config:
@@ -532,7 +533,12 @@ class AssocGoCamModel(GoCamModel):
                                 # Remove from intersection_extensions because this is now already translated
                                 [intersection_extensions.remove(ext) for ext in nest_exts]
                         for rel in intersection_extensions:
-                            ext_relation = relations.lookup_uri(expand_uri_wrapper(str(rel.relation)))
+                            try:
+                                ext_relation = relations.lookup_uri(expand_uri_wrapper(str(rel.relation)))
+                            except AttributeError:
+                                # AttributeError: 'NoneType' object has no attribute 'replace'
+                                error_msg = "Relation '{}' not found in relations lookup. Skipping annotation translation.".format(str(rel.relation))
+                                raise errors.GocamgenException(error_msg)
                             ext_target = str(rel.term)
                             if ext_relation not in list(INPUT_RELATIONS.keys()) + list(HAS_REGULATION_TARGET_RELATIONS.keys()):
                                 # No RO term yet. Try looking up in RO
@@ -774,8 +780,12 @@ class ReferencePreference:
 
 
 class CamTurtleRdfWriter(TurtleRdfWriter):
-    def __init__(self, modeltitle, store=None):
-        self.base = genid(base="http://model.geneontology.org")
+    def __init__(self, modeltitle, store=None, model_id: str=None):
+        base = "http://model.geneontology.org"
+        if model_id is not None:
+            self.base = URIRef(model_id, base=base)
+        else:
+            self.base = genid(base=base)
         if store is not None:
             graph = rdflib.Graph(identifier=self.base, store=store)
         else:
