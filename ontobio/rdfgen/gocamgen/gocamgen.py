@@ -17,7 +17,7 @@ from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
 from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
 from ontobio.rdfgen.gocamgen import errors
-from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet
+from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet, ymd_str
 from ontobio.io.assocparser import AssocParserConfig
 
 
@@ -135,9 +135,6 @@ class GoCamEvidence:
         evidence_code = annot["evidence"]["type"]
         references = annot["evidence"]["has_supporting_reference"]
         annot_date = annot["date"]
-        if "-" not in annot_date:
-            # Likely in YYYYMMDD format, correct to YYYY-MM-DD
-            annot_date = "{0:%Y-%m-%d}".format(datetime.datetime.strptime(annot_date, "%Y%m%d"))
         source_line = annot["source_line"].rstrip().replace("\t", " ")
         # contributors = handle_annot_properties() # Need annot_properties to be parsed w/ GpadParser first
         contributors = []
@@ -148,7 +145,8 @@ class GoCamEvidence:
 
         return GoCamEvidence(evidence_code, references,
                            contributors=contributors,
-                           date=annot_date,
+                           # "{date}T{time}".format(date=ymd_str(date), time=date.time)
+                           date=ymd_str(annot_date, separator="-"),
                            comment=source_line)
 
     @staticmethod
@@ -533,9 +531,8 @@ class AssocGoCamModel(GoCamModel):
                                 # Remove from intersection_extensions because this is now already translated
                                 [intersection_extensions.remove(ext) for ext in nest_exts]
                         for rel in intersection_extensions:
-                            try:
-                                ext_relation = relations.lookup_uri(expand_uri_wrapper(str(rel.relation)))
-                            except AttributeError:
+                            ext_relation = relations.lookup_uri(expand_uri_wrapper(str(rel.relation)), default="")
+                            if ext_relation == "":
                                 # AttributeError: 'NoneType' object has no attribute 'replace'
                                 error_msg = "Relation '{}' not found in relations lookup. Skipping annotation translation.".format(str(rel.relation))
                                 raise errors.GocamgenException(error_msg)

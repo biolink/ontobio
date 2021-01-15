@@ -102,9 +102,9 @@ class CollapsedAssociationSet:
             # Using GPI, check with_froms for taxon equivalency to subj_id
             if self.gpi_entities:
                 subject_id = str(annot.subject.id)
-                try:
+                if subject_id in self.gpi_entities:
                     subject_entity = self.gpi_entities[subject_id]
-                except KeyError as ex:
+                else:
                     error_message = "Annotation Object ID '{}' missing from provided GPI. Skipping annotation translation.".format(subject_id)
                     logger.warning(error_message)
                     # Throw Exception and except-skip in model builder
@@ -196,7 +196,7 @@ class CollapsedAssociationLine:
                 "type": self.evidence_code,
                 "has_supporting_reference": self.references
             },
-            "date": ymd_str(self.date, separator="-"),
+            "date": self.date,
             "provided_by": self.assigned_by,
         }
         if self.annotation_properties:
