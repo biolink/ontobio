@@ -29,6 +29,7 @@ from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
 from ontobio.io import gaference
 from ontobio.rdfgen import assoc_rdfgen
+from ontobio.rdfgen.gocamgen.gocam_builder import GoCamBuilder, AssocExtractor
 from ontobio.validation import metadata
 from ontobio.validation import tools
 from ontobio.validation import rules
@@ -538,6 +539,46 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
         end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
 
+
+@cli.command()
+@click.pass_context
+@click.option("--gpad_path", "-g", type=click.Path(), required=True)
+@click.option("--gpi_path", "-i", type=click.Path(), required=True)
+@click.option("--target", "-t", type=click.Path(), required=True)
+@click.option("--ontology", "-o", type=click.Path(exists=True), required=True, multiple=True)
+@click.option("--ttl", default=False, is_flag=True)
+def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl):
+    # NOTE: Validation on GPAD not included here since it's currently baked into produce() above.
+    # Multi-param to accept multiple ontology files, then merge to one (this will make a much smaller ontology
+    #  with only what we need, i.e. GO, RO, GOREL)
+    ontology_graph = OntologyFactory().create(ontology[0], ignore_cache=True)
+    for ont in ontology[1:]:
+        ontology_graph.merge([OntologyFactory().create(ont, ignore_cache=True)])
+    parser_config = assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                  gpi_authority_path=gpi_path
+                                                  )
+    extractor = AssocExtractor(gpad_path, parser_config=parser_config)
+    assocs_by_gene = extractor.group_assocs()
+
+    absolute_target = os.path.abspath(target)
+    gpad_basename = os.path.basename(gpad_path)
+    gpad_basename_root, gpad_ext = os.path.splitext(gpad_basename)
+    output_basename = "{}.nq".format(gpad_basename_root)
+    report_basename = "{}.gocamgen.report".format(gpad_basename_root)
+    output_path = os.path.join(absolute_target, output_basename)
+    report_path = os.path.join(absolute_target, report_basename)
+
+    builder = GoCamBuilder(parser_config=parser_config)
+
+    for gene, associations in assocs_by_gene.items():
+        if ttl:
+            builder.make_model_and_write_out(gene, annotations=associations, output_directory=absolute_target)
+        else:
+            builder.make_model_and_add_to_store(gene, annotations=associations)
+    if not ttl:
+        builder.write_out_store_to_nquads(filepath=output_path)
+
+    builder.write_report(report_filepath=report_path)
 
 
 @cli.command()

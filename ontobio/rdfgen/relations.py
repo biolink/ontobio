@@ -54,7 +54,7 @@ __relation_label_lookup = bidict({
     "regulates o acts on population of": "http://purl.obolibrary.org/obo/GOREL_0001008",
     "regulates o occurs in": "http://purl.obolibrary.org/obo/GOREL_0001004",
     "regulates o results in movement of": "http://purl.obolibrary.org/obo/GOREL_0001005",
-    "acts on population of": "http://purl.obolibrary.org/obo/GOREL_0001006",
+    "acts on population of": "http://purl.obolibrary.org/obo/RO_0012003",
     "regulates o has input": "http://purl.obolibrary.org/obo/GOREL_0001030",
     "regulates o has participant": "http://purl.obolibrary.org/obo/GOREL_0001016",
     "has output o axis of": "http://purl.obolibrary.org/obo/GOREL_0001002",
@@ -64,7 +64,7 @@ __relation_label_lookup = bidict({
     "results in formation of": "http://purl.obolibrary.org/obo/RO_0002297",
     "has output o axis of": "http://purl.obolibrary.org/obo/GOREL_0001002",
     "has start location": "http://purl.obolibrary.org/obo/RO_0002231",
-    "has output": "http://purl.obolibrary.org/obo/GOREL_0000006",
+    "has output": "http://purl.obolibrary.org/obo/RO_0002234",
     "results in commitment to": "http://purl.obolibrary.org/obo/RO_0002348",
     "regulates o results in commitment to": "http://purl.obolibrary.org/obo/GOREL_0001022",
     "regulates o has output": "http://purl.obolibrary.org/obo/GOREL_0001003",
@@ -84,7 +84,8 @@ __relation_label_lookup = bidict({
     "regulates translation of": "http://purl.obolibrary.org/obo/GOREL_0098790",
     "imports": "http://purl.obolibrary.org/obo/RO_0002340",
     "directly regulates": "http://purl.obolibrary.org/obo/RO_0002578",
-    "regulates o results in division of": "http://purl.obolibrary.org/obo/GOREL_0001024"
+    "regulates o results in division of": "http://purl.obolibrary.org/obo/GOREL_0001024",
+    "regulates o transports or maintains localization of": "http://purl.obolibrary.org/obo/GOREL_0000038"
 })
 
 def lookup_uri(uri, default=None):
