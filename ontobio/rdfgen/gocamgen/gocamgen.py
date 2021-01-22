@@ -14,7 +14,7 @@ import logging
 from typing import List
 from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TriplePatternFinder
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
-from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions
+from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions, CollapsedAssociationLine
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
 from ontobio.rdfgen.gocamgen import errors
 from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet, ymd_str
@@ -34,6 +34,8 @@ PAV = Namespace('http://purl.org/pav/')
 DC = Namespace("http://purl.org/dc/elements/1.1/")
 RDFS = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 GOREL = Namespace("http://purl.obolibrary.org/obo/GOREL_")
+NCBITAXON = Namespace("http://purl.obolibrary.org/obo/NCBITaxon_")
+BIOLINK = Namespace("https://w3id.org/biolink/vocab/")
 
 # Stealing a lot of code for this from ontobio.rdfgen:
 # https://github.com/biolink/ontobio
@@ -130,30 +132,25 @@ class GoCamEvidence:
         self.id = None
 
     @staticmethod
-    def create_from_annotation(annot):
-        # Why is annot still dict old style?
-        evidence_code = annot["evidence"]["type"]
-        references = annot["evidence"]["has_supporting_reference"]
-        annot_date = annot["date"]
-        source_line = annot["source_line"].rstrip().replace("\t", " ")
-        # contributors = handle_annot_properties() # Need annot_properties to be parsed w/ GpadParser first
+    def create_from_annotation(annot: CollapsedAssociationLine):
+        source_line = annot.source_line.rstrip().replace("\t", " ")
         contributors = []
-        if "annotation_properties" in annot and "contributor-id" in annot["annotation_properties"]:
-            contributors = annot["annotation_properties"]["contributor-id"]
+        if "contributor-id" in annot.annotation_properties:
+            contributors = [annot.annotation_properties["contributor-id"]]
         if len(contributors) == 0:
             contributors = [GoCamEvidence.DEFAULT_CONTRIBUTOR]
 
-        return GoCamEvidence(evidence_code, references,
+        return GoCamEvidence(annot.evidence_code, annot.references,
                            contributors=contributors,
                            # "{date}T{time}".format(date=ymd_str(date), time=date.time)
-                           date=ymd_str(annot_date, separator="-"),
+                           date=ymd_str(annot.date, separator="-"),
                            comment=source_line)
 
     @staticmethod
     def create_from_collapsed_association(collapsed_association: CollapsedAssociation):
         evidences = []
         for line in collapsed_association:
-            evidence = GoCamEvidence.create_from_annotation(line.as_dict())
+            evidence = GoCamEvidence.create_from_annotation(line)
             if line.with_from:
                 evidence.with_from = ",".join(line.with_from)
             evidences.append(evidence)
@@ -185,9 +182,9 @@ class GoCamModel():
     }
 
     def __init__(self, modeltitle, connection_relations=None, store=None, model_id=None):
-        cam_writer = CamTurtleRdfWriter(modeltitle, store=store, model_id=model_id)
-        self.writer = AnnotonCamRdfTransform(cam_writer)
         self.modeltitle = modeltitle
+        cam_writer = CamTurtleRdfWriter(self.modeltitle, store=store, model_id=model_id)
+        self.writer = AnnotonCamRdfTransform(cam_writer)
         self.classes = []
         self.individuals = {}   # Maintain entity-to-IRI dictionary. Prevents dup individuals but we may want dups?
         # TODO: Refactor to make graph more prominent
@@ -203,6 +200,9 @@ class GoCamModel():
             filename += ".ttl"
         with open(filename, 'wb') as f:
             self.writer.writer.serialize(destination=f, format=format)
+
+    def declare_contributor(self, contributor: str):
+        self.graph.add((self.writer.writer.base, DC.contributor, Literal(contributor)))
 
     def declare_properties(self):
         # AnnotionProperty
@@ -425,8 +425,20 @@ class AssocGoCamModel(GoCamModel):
             self.ontology = config.ontology
         self.go_aspector = None  # TODO: Can I always grab aspect from ontology term DS
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
+        self.contributors = set()
         self.graph.bind("GOREL", GOREL)  # Because GOREL isn't in context.jsonld's
         self.gpi_entities = gpi_entities
+        ncbi_taxon = self.taxon_id_from_entity(str(assocs[0].subject.id))
+        # Emit model-level in_taxon triple from ncbi_taxon
+        if ncbi_taxon:
+            # <https://w3id.org/biolink/vocab/in_taxon> <http://purl.obolibrary.org/obo/NCBITaxon_10090>
+            self.graph.add((self.writer.writer.base, BIOLINK.in_taxon, URIRef(expand_uri_wrapper(ncbi_taxon))))
+        self.graph.add((self.writer.writer.base, DC.title, Literal(modeltitle)))
+
+    def taxon_id_from_entity(self, entity_id: str):
+        if entity_id in self.gpi_entities:
+            return self.gpi_entities[entity_id]["taxon"]["id"]
+        return None
 
     def translate(self):
 
@@ -440,6 +452,10 @@ class AssocGoCamModel(GoCamModel):
 
             # Add evidences tied to axiom_ids
             evidences = GoCamEvidence.create_from_collapsed_association(a)
+            # Record all contributors at model level
+            for e in evidences:
+                for c in e.contributors:
+                    self.contributors.add(c)
 
             annotation_extensions = a.annot_extensions()
 
@@ -627,6 +643,15 @@ class AssocGoCamModel(GoCamModel):
                     annot_subgraph.write_to_model(self, evidences)
         # self.extensions_mapper.go_aspector.write_cache()
 
+        if len(self.contributors) == 0 or self.contributors == set(self.default_contributor):
+            contributors = set(self.default_contributor)
+        elif self.default_contributor in self.contributors:
+            contributors = self.contributors - set(self.default_contributor)
+        else:
+            contributors = self.contributors
+        for c in contributors:
+            self.declare_contributor(c)
+
     def translate_primary_annotation(self, annotation: CollapsedAssociation):
         gp_id = str(annotation.subject_id())
         term = str(annotation.object_id())
@@ -799,7 +824,6 @@ class CamTurtleRdfWriter(TurtleRdfWriter):
         self.graph.add((self.base, URIRef("http://purl.org/pav/providedBy"), Literal("http://geneontology.org")))
         self.graph.add((self.base, DC.date, Literal(str(now.year) + "-" + str(now.month) + "-" + str(now.day))))
         self.graph.add((self.base, DC.title, Literal(modeltitle)))
-        self.graph.add((self.base, DC.contributor, Literal("http://orcid.org/0000-0002-6659-0416"))) #TODO
         self.graph.add((self.base, URIRef("http://geneontology.org/lego/modelstate"), Literal("development")))
         self.graph.add((self.base, OWL.versionIRI, self.base))
 
