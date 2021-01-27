@@ -40,7 +40,7 @@ def test_bioentities_merge_clobber():
 def test_bioentities_load_from_file():
     pombase = collections.BioEntities.load_from_file("tests/resources/truncated-pombase.gpi")
     assert len(pombase.entities.keys()) == 199 # Has 199 gpi lines in the file
-    assert pombase.get(Curie.from_str("PomBase:SPAC1565.04c")) == Subject(Curie.from_str("PomBase:SPAC1565.04c"), "ste4", "adaptor protein Ste4", [], "protein", Curie.from_str("NCBITaxon:4896"))
+    assert pombase.get(Curie.from_str("PomBase:SPAC1565.04c")) == Subject(Curie.from_str("PomBase:SPAC1565.04c"), "ste4", ["adaptor protein Ste4"], [], ["protein"], Curie.from_str("NCBITaxon:4896"))
 
 def test_bioentities_file_gone():
     gone = collections.BioEntities.load_from_file("not_here.gpi")
@@ -87,3 +87,13 @@ def test_construct_collection_no_version_error():
     collection = collections.construct_collection("tests/resources/no-version.gaf", [], assocparser.AssocParserConfig())
     assert collection.associations.associations == []
     assert collection.report.to_report_json()["messages"]["gorule-0000001"][0]["type"] == "Invalid Annotation File"
+
+def test_bioentities_from_gpi_2_0():
+    entities = collections.BioEntities.load_from_file("tests/resources/mgi.truncated.gpi2")
+    assert entities.get(Curie(namespace="MGI", identity="MGI:1918925")) == Subject(
+        id=Curie.from_str("MGI:MGI:1918925"),
+        label="0610010F05Rik",
+        fullname=["RIKEN cDNA 0610010F05 gene"],
+        synonyms=[], type=[Curie.from_str("SO:0001217")],
+        taxon=Curie(namespace="NCBITaxon", identity="10090"),
+        db_xrefs=[Curie.from_str("UniProtKB:Q68FF0")])

@@ -71,7 +71,7 @@ class GafParser(assocparser.AssocParser):
         if self.version:
             return self.version
         else:
-            self.default_version
+            return self.default_version
 
     def qualifier_parser(self) -> assocparser.ColumnValidator:
         if self.gaf_version() == "2.2":
@@ -308,7 +308,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
 
     interacting_taxon = parsed_taxons_result.parsed[1] if len(parsed_taxons_result.parsed) == 2 else None
     subject_curie = association.Curie(gaf_line[0], gaf_line[1])
-    subject = association.Subject(subject_curie, gaf_line[2], gaf_line[9], gaf_line[10].split("|"), gaf_line[11], taxon)
+    subject = association.Subject(subject_curie, gaf_line[2], [gaf_line[9]], gaf_line[10].split("|"), [association.map_gp_type_label_to_curie(gaf_line[11])], taxon)
     gpi_entity = bio_entities.get(subject_curie)
     if gpi_entity is not None and subject != gpi_entity:
         subject = gpi_entity

@@ -32,15 +32,20 @@ class BioEntities:
     @classmethod
     def load_from_file(BioEntities, path: str):
         entities = dict() # type: Dict[Curie, Subject]
+        print("loading from {}".format(path))
         try:
             gpi_parser = entityparser.GpiParser()
             with open(path) as gpi:
                 for line in gpi:
-                    _, ents = gpi_parser.parse_line(line)
+
+                    ents = gpi_parser.line_as_entity_subject(line)
+                    if ents is None:
+                        continue
+
                     for entity in ents:
-                        # entity will be a well-formed curie
-                        entity_id = Curie.from_str(entity["id"])
-                        entities[entity_id] = Subject(entity_id, entity["label"], entity["full_name"], entity["synonyms"], entity["type"], Curie.from_str(entity["taxon"]["id"]))
+                        entity_id = entity.id
+                        entities[entity_id] = entity
+
         except Exception as e:
             logger.error("Failed to read GPI file: {}".format(str(e)))
 
@@ -58,7 +63,7 @@ class AssociationCollection:
     report: assocparser.Report
 
     @classmethod
-    def initial():  # type AssociationCollection
+    def initial(cls):  # type AssociationCollection
         return AssociationCollection([], GoAssociations([]), BioEntities(dict()), assocparser.Report())
 
 
@@ -67,12 +72,12 @@ def create_parser_from_header(line: str, config: assocparser.AssocParserConfig, 
     parsed_version = parser_version_regex.findall(line)
     if len(parsed_version) == 1:
         filetype, version, _ = parsed_version[0]
-        if filetype in ["gpa", "gpad"]:
-            parser = gpadparser.GpadParser(config=config, bio_entities=bio_entities)
+        if filetype in ["gpad", "gpa"]:
+            parser = gpadparser.GpadParser(config=config, bio_entities=bio_entities, group=group, dataset=dataset)
             if version in ["1.2", "2.0"]:
                 parser.version = version
         elif filetype == "gaf":
-            parser = gafparser.GafParser(config=config, bio_entities=bio_entities)
+            parser = gafparser.GafParser(config=config, bio_entities=bio_entities, group=group, dataset=dataset)
             if version in ["2.1", "2.2"]:
                 parser.version = version
 
@@ -107,7 +112,7 @@ class NoVersionInFile(Exception):
     report: assocparser.Report
 
     def __str__(self):
-        return "NoVersionInFile: {}".format(message)
+        return "NoVersionInFile: {}".format(self.message)
 
 @dataclass
 class GeneralAssocParser(assocparser.AssocParser):

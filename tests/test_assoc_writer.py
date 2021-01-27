@@ -1,6 +1,6 @@
 from ontobio.io import assocwriter
 from ontobio.io import gafparser, gpadparser
-from ontobio.model.association import GoAssociation, Curie, Subject, Term, ConjunctiveSet, Evidence, ExtensionUnit, Date
+from ontobio.model.association import GoAssociation, Curie, Subject, Term, ConjunctiveSet, Evidence, ExtensionUnit, Date, Aspect, Provider
 import json
 import io
 
@@ -11,8 +11,8 @@ def test_gaf_writer():
         subject=Subject(
             id=Curie("PomBase", "SPAC25B8.17"),
             label="ypf1",
-            type="protein",
-            fullname="intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)",
+            type=["protein"],
+            fullname=["intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)"],
             synonyms=["ppp81"],
             taxon=Curie("NCBITaxon", "4896")
         ),
@@ -22,7 +22,7 @@ def test_gaf_writer():
         ),
         negated=False,
         qualifiers=[],
-        aspect="C",
+        aspect=Aspect("C"),
         relation=Curie("BFO", "0000050"),
         interacting_taxon=Curie("NCBITaxon", "555"),
         evidence=Evidence(
@@ -32,7 +32,7 @@ def test_gaf_writer():
                 elements=[Curie("SGD", "S000001583")]
             )]
         ),
-        provided_by="PomBase",
+        provided_by=Provider("PomBase"),
         date=Date(year="2015", month="03", day="05", time=""),
         subject_extensions=[
             ExtensionUnit(
