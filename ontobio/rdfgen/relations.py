@@ -1,4 +1,28 @@
 from bidict import bidict
+from ontobio.model import association
+
+
+def obo_uri_to_curie(uri: str):
+
+    """
+    OBO URIs and CURIEs follow the same pattern: <base>/<namespace>_<local_id>
+
+    So this just looks at the last slash separated item, splits on underscore, and we have our Curie.
+    """
+    full_identifier = uri.rsplit("/", maxsplit=1)[1] # Throw away the base, grab the second element
+    namespace, identifier = full_identifier.split("_", maxsplit=1) # Assume 1 underscore
+    return association.Curie(namespace, identifier)
+
+def curie_to_obo_uri(curie, base=None) -> str:
+    """
+    :param curie: association.Curie to be expanded into a URI
+    :return: the expanded URI for the given CURIE
+    """
+    if base is None:
+        base = "http://purl.obolibrary.org/obo"
+
+    return "{base}/{ns}_{id}".format(base=base, ns=curie.namespace, id=curie.identity)
+
 
 __relation_label_lookup = bidict({
     "occurs in": "http://purl.obolibrary.org/obo/BFO_0000066",
@@ -62,16 +86,13 @@ __relation_label_lookup = bidict({
     "regulates o results in acquisition of features of": "http://purl.obolibrary.org/obo/GOREL_0001010",
     "regulates o has agent": "http://purl.obolibrary.org/obo/GOREL_0001011",
     "results in formation of": "http://purl.obolibrary.org/obo/RO_0002297",
-    "has output o axis of": "http://purl.obolibrary.org/obo/GOREL_0001002",
     "has start location": "http://purl.obolibrary.org/obo/RO_0002231",
     "has output": "http://purl.obolibrary.org/obo/RO_0002234",
     "results in commitment to": "http://purl.obolibrary.org/obo/RO_0002348",
     "regulates o results in commitment to": "http://purl.obolibrary.org/obo/GOREL_0001022",
     "regulates o has output": "http://purl.obolibrary.org/obo/GOREL_0001003",
-    "has target end location": "http://purl.obolibrary.org/obo/RO_0002339",
     "regulates o results in development of": "http://purl.obolibrary.org/obo/GOREL_0001023",
     "results in determination of": "http://purl.obolibrary.org/obo/RO_0002349",
-    "has target end location": "http://purl.obolibrary.org/obo/RO_0002339",
     "regulates o results in maturation of": "http://purl.obolibrary.org/obo/GOREL_0001012",
     "regulates o results in morphogenesis of": "http://purl.obolibrary.org/obo/GOREL_0001026",
     "has agent": "http://purl.obolibrary.org/obo/RO_0002218",

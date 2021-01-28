@@ -135,7 +135,7 @@ def test_no_flag_valid_id():
 def test_convert_gaf_to_gpad():
     p = GafParser()
     p.config.ecomap = EcoMap()
-    w  = GpadWriter()
+    w = GpadWriter()
     p2 = GpadParser()
     convert(POMBASE, p, w, p2)
 
@@ -149,7 +149,7 @@ def convert(file, p, w, p2):
     assocs2 = p2.parse(outfile.name)
     for a in assocs2:
         print("REPARSED: {}".format(a))
-    len(assocs) == len(assocs2)
+    assert len(assocs) == len(assocs2)
 
 
 def test_invalid_goid_in_gpad():

@@ -49,6 +49,9 @@ class GpadParser(assocparser.AssocParser):
         self.bio_entities = bio_entities
         if self.bio_entities is None:
             self.bio_entities = collections.BioEntities(dict())
+        if self.config.gpi_authority_path is not None:
+            self.bio_entities.merge(collections.BioEntities.load_from_file(self.config.gpi_authority_path))
+            print("Loaded {} entities from {}".format(len(self.bio_entities.entities.keys()), self.config.gpi_authority_path))
         # self.gpi = dict()
         # if self.config.gpi_authority_path is not None:
         #     print("Loading GPI...")
@@ -261,7 +264,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     taxon = association.Curie("NCBITaxon", "0")
     subject_curie = association.Curie(gpad_line[0], gpad_line[1])
-    subject = association.Subject(subject_curie, "", "", [], "", taxon)
+    subject = association.Subject(subject_curie, "", [""], [], [], taxon)
 
     entity = bio_entities.get(subject_curie)
     if entity is not None:
@@ -382,6 +385,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     subject = association.Subject(subject_curie, "", "", [], "", taxon)
     entity = bio_entities.get(subject_curie)
     if entity is not None:
+        # If we found a subject entity, then set `subject` to the found entity
         subject = entity
         taxon = subject.taxon
 

@@ -91,6 +91,8 @@ class GpiWriter(EntityWriter):
     """
     def __init__(self, file=None):
         self.file = file
+        if self.file:
+            self.file.write("!gpi-version: 2.1")
 
     def write_entity(self, entity):
         """
