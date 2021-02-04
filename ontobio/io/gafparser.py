@@ -2,7 +2,7 @@ import re
 import logging
 import json
 
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Set, Dict
 from dataclasses import dataclass
 
 from prefixcommons import curie_util
@@ -17,6 +17,7 @@ from ontobio.model import association
 from ontobio.model import collections
 from ontobio.ecomap import EcoMap
 from ontobio.rdfgen import relations
+from ontobio.ontol import Ontology
 
 import dateutil.parser
 import functools
@@ -35,6 +36,9 @@ gaf_line_validators = {
     "curie": assocparser.CurieValidator(),
     "taxon": assocparser.TaxonValidator()
 }
+
+def compute_cell_component_subtree_closures(ontology: Ontology) -> Dict[association.Curie, Set[association.Curie]]:
+    ontology.descendants()
 
 
 class GafParser(assocparser.AssocParser):
@@ -58,6 +62,8 @@ class GafParser(assocparser.AssocParser):
         self.bio_entities = bio_entities
         if self.bio_entities is None:
             self.bio_entities = collections.BioEntities(dict())
+
+        self.cell_component_descendents_closure = None
 
         if config is None:
             self.config = assocparser.AssocParserConfig()
@@ -251,6 +257,22 @@ class GafParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         return assocparser.ParseResult(line, [assoc], False, vals[6])
+
+    def upgrade_empty_qualifier(self, association: association.GoAssociation) -> association.GoAssociation:
+        """
+        From https://github.com/geneontology/go-site/issues/1558
+
+        For GAF 2.1 we will apply an algorithm to find a best fit relation if the qualifier column is empty.
+        If the qualifiers field is empty, then:
+            If the GO Term is a Molecular Function, then the new qualifier should be `enables`
+            If the GO Term is a Biological Process, then the new qualifier should be `acts_upstream_or_within
+            Otherwise for Cellular Component, if it's subclass of anatomical structure, than use `located_in`
+                and if it's a protein-containing complexes, use `part_of`
+        :param association: GoAssociation
+        :return: the possibly upgraded GoAssociation
+
+
+        """
 
 ecomap = EcoMap()
 ecomap.mappings()
