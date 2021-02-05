@@ -6,6 +6,7 @@ import datetime
 import re
 import logging
 
+import bidict
 from prefixcommons import curie_util
 
 from ontobio.rdfgen import relations
@@ -72,10 +73,159 @@ class Curie:
 class Subject:
     id: Curie
     label: str
-    fullname: str
+    """
+    label is also `DB_Object_Symbol` in the GPI spec
+    """
+
+    fullname: List[str]
+    """
+    fullname is also `DB_Object_Name` in the GPI spec, cardinality 0+
+    """
+
     synonyms: List[str]
-    type: str
+    """
+    Cardinality 0+
+    """
+
+    type: List[Curie]
+    """
+    In GPI 1.2, this was a string, corresponding to labels of the Sequence Ontology
+    gene, protein_complex; protein; transcript; ncRNA; rRNA; tRNA; snRNA; snoRNA,
+    any subclass of ncRNA.
+    If the specific type is unknown, use `gene_product`.
+
+    When reading gpi 1.2, these labels should be mapped to the 2.0 spec, stating that
+    the type must be a Curie in the Sequence Ontology OR Protein Ontology OR Gene Ontology
+
+    In GPI 1.2, there is only 1 value, and is required.
+    In GPI 2.0 there is a minimum of 1, but maybe more.
+
+    If writing out to GPI 1.2/GAF just take the first value in the list.
+    """
+
     taxon: Curie
+    """
+    Should be NCBITaxon:...
+    """
+
+    encoded_by: List[Curie]
+    """
+    Optional, or cardinality 0+
+    """
+
+    parents: List[Curie]
+    """
+    Optional, or cardinality 0+
+    """
+
+    contained_complex_members: List[Curie]
+    """
+    Optional, or cardinality 0+
+    """
+
+    db_xrefs: List[Curie]
+    """
+    Optional, or cardinality 0+
+    """
+
+    properties: Dict[str, str]
+    """
+    Optional, or cardinality 0+
+    """
+
+    def __init__(self, id: Curie, label: str, fullname: List[str], synonyms: List[str], type: Union[List[str], List[Curie]], taxon: Curie,
+                    encoded_by: List[Curie]=None, parents: List[Curie]=None, contained_complex_members: List[Curie]=None,
+                    db_xrefs: List[Curie]=None, properties: Dict=None):
+
+        if len(type) > 0:
+            if isinstance(type[0], str):
+                # If the incoming `type` list is strings, then they are labels, so convert to Curie
+                self.type = [map_gp_type_label_to_curie(t) for t in type]
+            else:
+                # We will assume that incoming type is a Curie at this point, if not a string
+                self.type = type
+        else:
+            # If we didn't receive anything, then default to "gene_produce"
+            self.type = [Curie(namespace="CHEBI", identity="33695")]
+
+        self.id = id
+        self.label = label
+        self.fullname = fullname
+        self.synonyms = synonyms
+        self.taxon = taxon
+        self.encoded_by = encoded_by if encoded_by else []
+        self.parents = parents if parents else []
+        self.contained_complex_members = contained_complex_members if contained_complex_members else []
+        self.db_xrefs = db_xrefs if db_xrefs else []
+        self.properties = properties if properties else dict()
+
+    def fullname_field(self, max=None) -> str:
+        """
+        Converts the `fullname` or `DB_Object_Name` into the field text string used in files
+        """
+
+        if not max:
+            max = len(self.fullname)
+
+        return "|".join([n for n in self.fullname[0:max]])
+
+# ===============================================================================
+__default_entity_type_to_curie_mapping = bidict.bidict({
+    "protein_coding_gene": Curie.from_str("SO:0001217"),
+    "snRNA": Curie.from_str("SO:0000274"),
+    "ncRNA": Curie.from_str("SO:0000655"),
+    "rRNA": Curie.from_str("SO:0000252"),
+    "mRNA": Curie.from_str("SO:0000234"),
+    "lnc_RNA": Curie.from_str("SO:0001877"),
+    "lincRNA": Curie.from_str("SO:0001463"),
+    "tRNA": Curie.from_str("SO:0000253"),
+    "snoRNA": Curie.from_str("SO:0000275"),
+    "miRNA": Curie.from_str("SO:0000276"),
+    "RNA": Curie.from_str("SO:0000356"),
+    "scRNA": Curie.from_str("SO:0000013"),
+    "piRNA": Curie.from_str("SO:0001035"),
+    "tmRNA": Curie.from_str("SO:0000584"),
+    "SRP_RNA": Curie.from_str("SO:0000590"),
+    "primary_transcript": Curie.from_str("SO:0000185"),
+    "ribozyme": Curie.from_str("SO:0000374"),
+    "telomerase_RNA": Curie.from_str("SO:0000390"),
+    "RNase_P_RNA": Curie.from_str("SO:0000386"),
+    "antisense_RNA": Curie.from_str("SO:0000644"),
+    "RNase_MRP_RNA": Curie.from_str("SO:0000385"),
+    "guide_RNA": Curie.from_str("SO:0000602"),
+    "hammerhead_ribozyme": Curie.from_str("SO:0000380"),
+    "protein": Curie.from_str("PR:000000001"),
+    "marker or uncloned locus": Curie.from_str("SO:0001645"),
+    "gene segment": Curie.from_str("SO:3000000"),
+    "pseudogene": Curie.from_str("SO:0000336"),
+    "gene": Curie.from_str("SO:0000704"),
+    "biological region": Curie.from_str("SO:0001411"),
+    "protein_complex": Curie.from_str("GO:0032991"),
+    "transcript": Curie.from_str("SO:0000673"),
+    "gene_product": Curie.from_str("CHEBI:33695"),
+    "ncRNA-coding gene": Curie.from_str("SO:0001263"),
+    "antisense_lncRNA": Curie.from_str("SO:0001904"),
+    "transposable_element_gene": Curie.from_str("SO:0000111")
+})
+
+def map_gp_type_label_to_curie(type_label: str) -> Curie:
+    """
+    Map entity types in GAF or GPI 1.2 into CURIEs in Sequence Ontology (SO),
+    Protein Ontology (PRO), or Gene Ontology (GO).
+
+    This is a measure to upgrade the pseudo-labels into proper Curies. Present here are
+    the existing set of labels in current use, and how they should be mapped into CURIEs.
+    """
+    # normalized_label = type_label.translate()
+    global __default_entity_type_to_curie_mapping
+    return __default_entity_type_to_curie_mapping.get(type_label, __default_entity_type_to_curie_mapping["gene_product"])
+
+def gp_type_label_to_curie(type: Curie) -> str:
+    """
+    This is the reverse of `map_gp_type_label_to_curie`
+    """
+    global __default_entity_type_to_curie_mapping
+    return __default_entity_type_to_curie_mapping.inverse.get(type, "gene_product")
 
 @dataclass(unsafe_hash=True)
 class Term:
@@ -167,7 +317,7 @@ class ExtensionUnit:
                 return Error(entity)
 
             term_curie = Curie.from_str(term)
-            rel_curie = Curie.from_str(curie_util.contract_uri(rel_uri, strict=False)[0])
+            rel_curie = relations.obo_uri_to_curie(rel_uri)
             if isinstance(term_curie, Error):
                 # print("Error because term is screwed up: {}".format(term))
                 return Error("`{}`: {}".format(term, term_curie.info))
@@ -213,7 +363,7 @@ class ExtensionUnit:
 
     def __relation_to_label(self) -> str:
         # Curie -> expand to URI -> reverse relation lookup Label
-        return relations.lookup_uri(curie_util.expand_uri(str(self.relation), strict=False))
+        return relations.lookup_uri(relations.curie_to_obo_uri(self.relation))
 
     def to_hash(self, use_label=False) -> dict:
         rel = self.__relation_to_label() if use_label else str(self.relation)
@@ -237,7 +387,7 @@ class GoAssociation:
     object_extensions: List[ConjunctiveSet]
     provided_by: Provider
     date: Date
-    properties: Dict[Curie, List[str]]
+    properties: Dict[str, List[str]]
 
     def to_gaf_2_1_tsv(self) -> List:
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
@@ -275,9 +425,9 @@ class GoAssociation:
             ecomap.ecoclass_to_coderef(str(self.evidence.type))[0],
             ConjunctiveSet.list_to_str(self.evidence.with_support_from),
             self.aspect if self.aspect else "",
-            self.subject.fullname,
+            self.subject.fullname_field(),
             "|".join(self.subject.synonyms),
-            self.subject.type,
+            gp_type_label_to_curie(self.subject.type[0]),
             taxon,
             ymd_str(self.date, ""),
             self.provided_by,
@@ -311,9 +461,9 @@ class GoAssociation:
             ecomap.ecoclass_to_coderef(str(self.evidence.type))[0],
             ConjunctiveSet.list_to_str(self.evidence.with_support_from),
             self.aspect if self.aspect else "",
-            self.subject.fullname,
+            self.subject.fullname_field(),
             "|".join(self.subject.synonyms),
-            self.subject.type,
+            gp_type_label_to_curie(self.subject.type[0]),
             taxon,
             ymd_str(self.date, ""),
             self.provided_by,
@@ -377,8 +527,8 @@ class GoAssociation:
         subject = {
             "id": str(self.subject.id),
             "label": self.subject.label,
-            "type": self.subject.type,
-            "fullname": self.subject.fullname,
+            "type": gp_type_label_to_curie(self.subject.type[0]),
+            "fullname": self.subject.fullname[0],
             "synonyms": self.subject.synonyms,
             "taxon": {
                 "id": str(self.subject.taxon)

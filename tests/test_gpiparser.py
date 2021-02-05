@@ -15,7 +15,7 @@ def test_parse_gpi():
     r1 = results[0]
     assert r1['label'] == 'a'
     assert r1['taxon']['id'] == 'NCBITaxon:10090'
-    assert r1['full_name'] == 'nonagouti'
+    assert r1['full_name'] == ['nonagouti']
     assert r1['xrefs'] == ['UniProtKB:Q03288']
     assert r1['parents'] == []
 

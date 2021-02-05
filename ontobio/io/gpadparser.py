@@ -49,6 +49,9 @@ class GpadParser(assocparser.AssocParser):
         self.bio_entities = bio_entities
         if self.bio_entities is None:
             self.bio_entities = collections.BioEntities(dict())
+        if self.config.gpi_authority_path is not None:
+            self.bio_entities.merge(collections.BioEntities.load_from_file(self.config.gpi_authority_path))
+            print("Loaded {} entities from {}".format(len(self.bio_entities.entities.keys()), self.config.gpi_authority_path))
         # self.gpi = dict()
         # if self.config.gpi_authority_path is not None:
         #     print("Loading GPI...")
@@ -136,7 +139,7 @@ class GpadParser(assocparser.AssocParser):
 
         # At this point, we should have gone through all the header, and a version number should be established
         if self.version is None:
-            logger.warning("No version number found for this file so we will assum GAF version: {}".format(self.default_version))
+            logger.warning("No version number found for this file so we will assume GPAD version: {}".format(self.default_version))
             self.version = self.default_version
 
         vals = [el.strip() for el in line.split("\t")]
@@ -261,7 +264,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     taxon = association.Curie("NCBITaxon", "0")
     subject_curie = association.Curie(gpad_line[0], gpad_line[1])
-    subject = association.Subject(subject_curie, "", "", [], "", taxon)
+    subject = association.Subject(subject_curie, "", [""], [], [], taxon)
 
     entity = bio_entities.get(subject_curie)
     if entity is not None:
@@ -275,10 +278,23 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     object = association.Term(go_term, taxon)
 
-    evidence = association.Evidence(
-        association.Curie.from_str(gpad_line[5]),
-        [association.Curie.from_str(e) for e in gpad_line[4].split("|") if e],
-        association.ConjunctiveSet.str_to_conjunctions(gpad_line[6]))
+    evidence_type = association.Curie.from_str(gpad_line[5])
+    if evidence_type.is_error():
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[5], "Problem parsing Evidence ECO Curie", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    references = [association.Curie.from_str(e) for e in gpad_line[4].split("|") if e]
+    for r in references:
+        if r.is_error():
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[4], "Problem parsing references", taxon=taxon, rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)
+
+    withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])  # Returns a list of ConjuctiveSets or Error
+    if isinstance(withfroms, association.Error):
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=taxon, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+
+    evidence = association.Evidence(evidence_type, references, withfroms)
 
     # Guarenteed to have at least one element, from above check
     raw_qs = gpad_line[QUALIFIER].split("|")
@@ -382,6 +398,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     subject = association.Subject(subject_curie, "", "", [], "", taxon)
     entity = bio_entities.get(subject_curie)
     if entity is not None:
+        # If we found a subject entity, then set `subject` to the found entity
         subject = entity
         taxon = subject.taxon
 
