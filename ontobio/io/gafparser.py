@@ -37,8 +37,10 @@ gaf_line_validators = {
     "taxon": assocparser.TaxonValidator()
 }
 
-def compute_cell_component_subtree_closures(ontology: Ontology) -> Dict[association.Curie, Set[association.Curie]]:
-    ontology.descendants()
+def protein_complex_sublcass_closure(ontology: Ontology) -> Set[str]:
+    protein_containing_complex = association.Curie(namespace="GO", identity="0032991")
+    children_of_complexes = set(ontology.descendants(str(protein_containing_complex), relations=["subClassOf"], reflexive=True))
+    return children_of_complexes
 
 
 class GafParser(assocparser.AssocParser):
@@ -63,7 +65,7 @@ class GafParser(assocparser.AssocParser):
         if self.bio_entities is None:
             self.bio_entities = collections.BioEntities(dict())
 
-        self.cell_component_descendents_closure = None
+        self.cell_component_descendants_closure = None
 
         if config is None:
             self.config = assocparser.AssocParserConfig()
@@ -150,6 +152,9 @@ class GafParser(assocparser.AssocParser):
                     else:
                         logger.info("Detected GAF version {}, so using 2.1".format(version))
                         self.version = self.default_version
+                        # Compute the cell component subclass closure
+                        if self.config.ontology:
+                            self.cell_component_descendants_closure = protein_complex_sublcass_closure(self.config.ontology)
 
             return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
 
@@ -258,7 +263,7 @@ class GafParser(assocparser.AssocParser):
 
         return assocparser.ParseResult(line, [assoc], False, vals[6])
 
-    def upgrade_empty_qualifier(self, association: association.GoAssociation) -> association.GoAssociation:
+    def upgrade_empty_qualifier(self, assoc: association.GoAssociation) -> association.GoAssociation:
         """
         From https://github.com/geneontology/go-site/issues/1558
 
@@ -270,9 +275,36 @@ class GafParser(assocparser.AssocParser):
                 and if it's a protein-containing complexes, use `part_of`
         :param association: GoAssociation
         :return: the possibly upgraded GoAssociation
-
-
         """
+        term = str(assoc.object.id)
+        namespace = self.config.ontology.obo_namespace(term)
+
+        if len(assoc.qualifiers) >= 1:
+            # If there's a qualifier, then pass through unchanged
+            return assoc
+
+        if namespace == "molecular_function":
+            enables = association.Curie(namespace="RO", identity="0002327")
+            assoc.qualifiers = [enables]
+            assoc.relation = enables
+        elif namespace == "biological_process":
+            acts_upstream_or_within = association.Curie(namespace="RO", identity="0002264")
+            assoc.qualifiers = [acts_upstream_or_within]
+            assoc.relation = acts_upstream_or_within
+        elif namespace == "cellular_component":
+            if term in self.cell_component_descendants_closure:
+                part_of = association.Curie(namespace="BFO", identity="0000050")
+                assoc.qualifiers = [part_of]
+                assoc.relation = part_of
+            else:
+                located_in = association.Curie(namespace="RO", identity="0001025")
+                assoc.qualifiers = [located_in]
+                assoc.relation = located_in
+
+        self.report.warning(assoc.source_line, Report.INVALID_QUALIFIER,
+                            "EMPTY", "GORULE:0000059 Upgrading qualifier/relation to {} when reading GAF 2.1".format(assoc.relation),
+                            taxon=str(assoc.subject.taxon), rule=59)
+        return assoc
 
 ecomap = EcoMap()
 ecomap.mappings()

@@ -784,6 +784,19 @@ class Ontology():
             syns.append(Synonym(nid, val=self.label(nid), pred='label'))
         return syns
 
+    def obo_namespace(self, nid):
+        go_namespace = [predval for predval in
+                        self.get_graph().nodes
+                            .get(nid, {})
+                            .get("meta", {})
+                            .get("basicPropertyValues", []) if predval["pred"] == "OIO:hasOBONamespace"]
+
+        if len(go_namespace) >= 1:
+            return go_namespace[0]["val"]
+        else:
+            return None
+
+
     def add_node(self, id, label=None, type='CLASS', meta=None):
         """
         Add a new node to the ontology
