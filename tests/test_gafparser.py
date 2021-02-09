@@ -1,5 +1,6 @@
 from ontobio.io import assocparser
 from ontobio.io.gpadparser import GpadParser
+from ontobio.io import gafparser
 from ontobio.io.gafparser import GafParser
 from ontobio.io import GafWriter
 from ontobio.io.assocwriter import GpadWriter
@@ -115,7 +116,8 @@ def parse_with(f, p):
     # for m in p.report.messages:
     #     print("MESSAGE: {}".format(m))
     print("MESSAGES (sample): {}".format(p.report.messages[0:5]))
-    assert len(p.report.messages) == 0
+    # Messages that aren't about upgrading qualifiers in rule 59 should be 0
+    assert len([msg for msg in p.report.messages if msg["rule"] != 59]) == 0
     # print(p.report.to_markdown())
 
 def test_flag_invalid_id():
@@ -213,6 +215,75 @@ def test_qualifiers_gaf_2_2():
 
 
     assert len([a for a in assocs if association.Curie.from_str("RO:0004035") in a.qualifiers]) == 1
+
+
+def test_gaf_2_1_creates_cell_component_closure():
+    ontology = OntologyFactory().create("tests/resources/goslim_generic.json")
+    closure = gafparser.protein_complex_sublcass_closure(ontology)
+    # "GO:1902494" as an example that should be in the set
+    assert "GO:0005840" in closure
+
+    p = GafParser(config=assocparser.AssocParserConfig(ontology=ontology))
+    with open("tests/resources/pombase_single.gaf") as gaf:
+        # First line will be version declaration, triggering closure computation
+        p.parse_line(gaf.readline())
+
+    assert "GO:0005840" in p.cell_component_descendants_closure
+
+def test_gaf_2_1_qualifiers_upconvert():
+    line = ["SGD", "S000000819", "AFG3", "", "GO:0005840", "PMID:8681382|SGD_REF:S000055187", "IMP", "", "P", "Mitochondrial inner membrane m-AAA protease component", "YER017C|AAA family ATPase AFG3|YTA10", "gene", "taxon:559292", "20170428", "SGD"]
+    parsed = gafparser.to_association(line)
+    assoc = parsed.associations[0]
+
+    ontology = OntologyFactory().create("tests/resources/goslim_generic.json")
+    p = GafParser(config=assocparser.AssocParserConfig(ontology=ontology))
+    p.make_internal_cell_component_closure()
+
+    assoc = p.upgrade_empty_qualifier(assoc)
+    assert assoc.qualifiers[0] == association.Curie(namespace="BFO", identity="0000050")
+
+def test_gaf_2_1_upconvert_in_parse():
+    gaf = io.StringIO("!gaf-version: 2.1\nSGD\tS000000819\tAFG3\t\tGO:0005840\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
+    ontology = OntologyFactory().create("tests/resources/goslim_generic.json")
+    p = GafParser(config=assocparser.AssocParserConfig(ontology=ontology))
+
+    # We're 2.1, qualifier blank, cell component term from above, ontology defined: should upgrade
+    assocs = p.parse(gaf, skipheader=True)
+    assert assocs[0].relation == association.Curie(namespace="BFO", identity="0000050")
+
+def test_gaf_2_1_simple_terms():
+    line = ["SGD", "S000000819", "AFG3", "", "GO:0006259", "PMID:8681382|SGD_REF:S000055187", "IMP", "", "P", "Mitochondrial inner membrane m-AAA protease component", "YER017C|AAA family ATPase AFG3|YTA10", "gene", "taxon:559292", "20170428", "SGD"]
+    ontology = OntologyFactory().create("tests/resources/goslim_generic.json")
+    p = GafParser(config=assocparser.AssocParserConfig(ontology=ontology))
+    p.make_internal_cell_component_closure()
+
+    parsed = gafparser.to_association(line)
+    assoc = p.upgrade_empty_qualifier(parsed.associations[0])
+    assert assoc.qualifiers[0] == association.Curie(namespace="RO", identity="0002264")
+
+    line = ["SGD", "S000000819", "AFG3", "", "GO:0042393", "PMID:8681382|SGD_REF:S000055187", "IMP", "", "P",
+            "Mitochondrial inner membrane m-AAA protease component", "YER017C|AAA family ATPase AFG3|YTA10", "gene",
+            "taxon:559292", "20170428", "SGD"]
+    ontology = OntologyFactory().create("tests/resources/goslim_generic.json")
+    p = GafParser(config=assocparser.AssocParserConfig(ontology=ontology))
+    p.make_internal_cell_component_closure()
+
+    parsed = gafparser.to_association(line)
+    assoc = p.upgrade_empty_qualifier(parsed.associations[0])
+    assert assoc.qualifiers[0] == association.Curie(namespace="RO", identity="0002327")
+
+    line = ["SGD", "S000000819", "AFG3", "", "GO:0005773", "PMID:8681382|SGD_REF:S000055187", "IMP", "", "P",
+            "Mitochondrial inner membrane m-AAA protease component", "YER017C|AAA family ATPase AFG3|YTA10", "gene",
+            "taxon:559292", "20170428", "SGD"]
+    ontology = OntologyFactory().create("tests/resources/goslim_generic.json")
+    p = GafParser(config=assocparser.AssocParserConfig(ontology=ontology))
+    p.make_internal_cell_component_closure()
+
+    parsed = gafparser.to_association(line)
+    assoc = p.upgrade_empty_qualifier(parsed.associations[0])
+    assert assoc.qualifiers[0] == association.Curie(namespace="RO", identity="0001025")
+
+
 
 def test_default_gaf_version():
     p = GafParser()

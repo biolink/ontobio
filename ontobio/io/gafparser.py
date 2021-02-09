@@ -37,6 +37,7 @@ gaf_line_validators = {
     "taxon": assocparser.TaxonValidator()
 }
 
+
 def protein_complex_sublcass_closure(ontology: Ontology) -> Set[str]:
     protein_containing_complex = association.Curie(namespace="GO", identity="0032991")
     children_of_complexes = set(ontology.descendants(str(protein_containing_complex), relations=["subClassOf"], reflexive=True))
@@ -114,6 +115,9 @@ class GafParser(assocparser.AssocParser):
             tuples.append( (id,n,t) )
         return tuples
 
+    def make_internal_cell_component_closure(self):
+        if self.config.ontology:
+            self.cell_component_descendants_closure = protein_complex_sublcass_closure(self.config.ontology)
 
     def parse_line(self, line):
         """
@@ -153,15 +157,15 @@ class GafParser(assocparser.AssocParser):
                         logger.info("Detected GAF version {}, so using 2.1".format(version))
                         self.version = self.default_version
                         # Compute the cell component subclass closure
-                        if self.config.ontology:
-                            self.cell_component_descendants_closure = protein_complex_sublcass_closure(self.config.ontology)
+                        self.make_internal_cell_component_closure()
 
             return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
 
         # At this point, we should have gone through all the header, and a version number should be established
         if self.version is None:
-            logger.warning("No version number found for this file so we will assum GAF version: {}".format(self.default_version))
+            logger.warning("No version number found for this file so we will assume GAF version: {}".format(self.default_version))
             self.version = self.default_version
+            self.make_internal_cell_component_closure()
 
         vals = [el.strip() for el in line.split("\t")]
 
@@ -174,7 +178,15 @@ class GafParser(assocparser.AssocParser):
             return parsed
 
         assoc = parsed.associations[0]
-        # self.report = parsed.report
+
+        # Qualifier is index 3
+        # If we are 2.1, and qualifier has no relation
+        # Also must have an ontology
+        # Then upgrade
+        # For https://github.com/geneontology/go-site/issues/1558
+        if self.gaf_version() == "2.1" and (vals[3] == "" or vals[3] == "NOT") and self.config.ontology:
+            assoc = self.upgrade_empty_qualifier(assoc)
+
         ## Run GO Rules, save split values into individual variables
         go_rule_results = qc.test_go_rules(assoc, self.config, group=self.group)
         for rule, result in go_rule_results.all_results.items():
@@ -273,15 +285,11 @@ class GafParser(assocparser.AssocParser):
             If the GO Term is a Biological Process, then the new qualifier should be `acts_upstream_or_within
             Otherwise for Cellular Component, if it's subclass of anatomical structure, than use `located_in`
                 and if it's a protein-containing complexes, use `part_of`
-        :param association: GoAssociation
+        :param assoc: GoAssociation
         :return: the possibly upgraded GoAssociation
         """
         term = str(assoc.object.id)
         namespace = self.config.ontology.obo_namespace(term)
-
-        if len(assoc.qualifiers) >= 1:
-            # If there's a qualifier, then pass through unchanged
-            return assoc
 
         if namespace == "molecular_function":
             enables = association.Curie(namespace="RO", identity="0002327")
