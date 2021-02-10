@@ -184,6 +184,16 @@ def test_writing_to_gaf_2_2():
     gaf_22_out = assoc.to_gaf_2_2_tsv()
     assert gaf_22_out[3] == "NOT|involved_in"
 
+def test_gaf_2_2_extensions():
+    line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\tpart_of(EMAPA:17972),part_of(CL:0000018)\t"
+    parser = gafparser.GafParser()
+    parser.version = "2.2"
+    assoc = parser.parse_line(line).associations[0]
+
+    gaf_22_out = assoc.to_gaf_2_2_tsv()
+    assert gaf_22_out[15] == "part_of(EMAPA:17972),part_of(CL:0000018)"
+
+
 def test_full_gaf_2_2_write():
     line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
     parser = gafparser.GafParser()
