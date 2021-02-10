@@ -467,7 +467,8 @@ class GoAssociation:
             taxon,
             ymd_str(self.date, ""),
             self.provided_by,
-            ConjunctiveSet.list_to_str(self.object_extensions),
+            ConjunctiveSet.list_to_str(self.object_extensions,
+                conjunct_to_str=lambda conj: conj.display(use_rel_label=True)),
             gp_isoforms
         ]
 
