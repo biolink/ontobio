@@ -230,3 +230,16 @@ def test_gaf_to_gpad2():
     lines = out.getvalue().split("\n")
     assert lines[0] == "!gpa-version: 2.0"
     assert lines[1] == "PomBase:SPAC25B8.17\tNOT\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t2015-03-05\tPomBase\tBFO:0000050(X:1)\t"
+
+def test_writing_assoc_properties():
+    line = "MGI:MGI:1922721\t\tRO:0002327\tGO:0019904\tMGI:MGI:3769586|PMID:17984326\tECO:0000353\tPR:Q0KK55\t\t2010-12-01\tMGI\tBFO:0000066(EMAPA:17787),RO:0002233(MGI:MGI:1923734)\tcreation-date=2008-02-07|modification-date=2010-12-01|comment=v-KIND domain binding of Kndc1;MGI:1923734|contributor-id=http://orcid.org/0000-0003-2689-5511|contributor-id=http://orcid.org/0000-0003-3394-9805"
+    parser = gpadparser.GpadParser()
+    parser.version = "2.0"
+    out = io.StringIO()
+    writer = assocwriter.GpadWriter(file=out, version="2.0")  # Write back out to gpad 2.0
+
+    assoc = parser.parse_line(line).associations[0]
+    writer.write_assoc(assoc)
+    written_gpad_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    written_props = written_gpad_line.split("\t")[11]
+    assert len(written_props.split("|")) == 5
