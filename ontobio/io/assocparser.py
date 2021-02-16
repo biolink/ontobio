@@ -897,6 +897,10 @@ def parse_iso_date(date: str, report: Report, line: List) -> Optional[associatio
 
     return d
 
+def parse_annotation_properties(properties_field: str):
+    properties_list = [tuple(prop.split("=", maxsplit=1)) for prop in properties_field.split("|") if prop]
+    return properties_list
+
 ## we generate both qualifier and relation field
 ## Returns: (negated, relation, other_qualifiers)
 def _parse_qualifier(qualifier, aspect):

@@ -59,6 +59,11 @@ def test_parse_interacting_taxon():
     result = to_association(list(vals), report=report, version="1.2")
     assert result.associations[0].interacting_taxon == Curie(namespace="NCBITaxon", identity="5678")
 
+def test_duplicate_key_annot_properties():
+    properties_str = "creation-date=2008-02-07|modification-date=2010-12-01|comment=v-KIND domain binding of Kndc1;MGI:1923734|contributor-id=http://orcid.org/0000-0003-2689-5511|contributor-id=http://orcid.org/0000-0003-3394-9805"
+    prop_list = assocparser.parse_annotation_properties(properties_str)
+    contributor_ids = [value for key, value in prop_list if key == "contributor-id"]
+    assert len(contributor_ids) == 2
 
 def test_parse_2_0():
     version = "2.0"
@@ -112,3 +117,7 @@ def test_parse_2_0():
     vals[0] = "WB:WBGene00001189"
     result = to_association(list(vals), report=report, version=version)
     assert result.associations[0].subject.id == Curie("WB", "WBGene00001189")
+
+    # Test annotation property retrieval
+    contributors = result.associations[0].annotation_property_values(property_key="contributor-id")
+    assert len(contributors) == 1

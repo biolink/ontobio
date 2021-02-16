@@ -330,7 +330,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-    properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
+    properties_list = assocparser.parse_annotation_properties(gpad_line[11])
 
 
     # print(properties_list)
@@ -348,7 +348,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
         object_extensions=conjunctions,
         provided_by=gpad_line[9],
         date=date,
-        properties={ prop[0]: prop[1] for prop in properties_list if prop })
+        properties=properties_list)
 
     return assocparser.ParseResult(source_line, [a], False, report=report)
 
@@ -456,7 +456,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             report.error(source_line, Report.EXTENSION_SYNTAX_ERROR, conjunctions.info, "extensions should be relation(curie)", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-    properties_list = [prop.split("=") for prop in gpad_line[11].split("|") if prop]
+    properties_list = assocparser.parse_annotation_properties(gpad_line[11])
 
     a = association.GoAssociation(
         source_line=source_line,
@@ -472,7 +472,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
         object_extensions=conjunctions,
         provided_by=gpad_line[9],
         date=date,
-        properties={ prop[0]: prop[1] for prop in properties_list if prop })
+        properties=properties_list)
 
     return assocparser.ParseResult(source_line, [a], False, report=report)
 

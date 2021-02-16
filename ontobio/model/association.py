@@ -16,7 +16,7 @@ ecomap = EcoMap()
 ecomap.mappings()
 
 
-from typing import List, Optional, NamedTuple, Dict, Callable, Union, TypeVar
+from typing import List, Optional, NamedTuple, Dict, Callable, Union, TypeVar, Tuple
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
@@ -387,7 +387,7 @@ class GoAssociation:
     object_extensions: List[ConjunctiveSet]
     provided_by: Provider
     date: Date
-    properties: Dict[str, List[str]]
+    properties: List[Tuple[str, str]]
 
     def to_gaf_2_1_tsv(self) -> List:
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
@@ -488,7 +488,7 @@ class GoAssociation:
 
         qualifier = "|".join(qual_labels)
 
-        props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties.items()]
+        props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties]
         return [
             self.subject.id.namespace,
             self.subject.id.identity,
@@ -507,7 +507,7 @@ class GoAssociation:
 
     def to_gpad_2_0_tsv(self) -> List:
 
-        props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties.items()]
+        props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties]
         return [
             str(self.subject.id),
             "NOT" if self.negated else "",
@@ -582,6 +582,10 @@ class GoAssociation:
             "subject_extensions": subject_extensions,
             "object_extensions": object_extensions
         }
+
+    def annotation_property_values(self, property_key: str) -> List:
+        fetched_prop_values = [value for key, value in self.properties if key == property_key]
+        return fetched_prop_values
 
 @dataclass
 class Header:
