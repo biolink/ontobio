@@ -312,13 +312,13 @@ class Report(object):
         self.config = config
         self.header = []
 
-    def error(self, line, type, obj, msg="", taxon="", rule=None):
+    def error(self, line, type, obj, msg="", taxon: str = "", rule=None):
         self.message(self.ERROR, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def warning(self, line, type, obj, msg="", taxon="", rule=None):
+    def warning(self, line, type, obj, msg="", taxon: str = "", rule=None):
         self.message(self.WARNING, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def message(self, level, line, type, obj, msg="", taxon="", rule=None, dont_record=["INFO"]):
+    def message(self, level, line, type, obj, msg="", taxon: str = "", rule=None, dont_record=["INFO"]):
         message = {
             'level': level,
             'line': line,

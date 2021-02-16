@@ -134,6 +134,7 @@ class GeneralAssocParser(assocparser.AssocParser):
                 parser = create_parser_from_header(line, self.config, bio_entities=self.bio_entities)
                 if parser is not None:
                     self.annotation_parser = parser
+                    self.report = parser.report
 
             self.headers.append(line)
             return assocparser.ParseResult(line, [], skipped=False)

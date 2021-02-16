@@ -273,25 +273,25 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     go_term = association.Curie.from_str(gpad_line[3])
     if go_term.is_error():
-        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[3], "Problem parsing GO Term", taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[3], "Problem parsing GO Term", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     object = association.Term(go_term, taxon)
 
     evidence_type = association.Curie.from_str(gpad_line[5])
     if evidence_type.is_error():
-        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[5], "Problem parsing Evidence ECO Curie", taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[5], "Problem parsing Evidence ECO Curie", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     references = [association.Curie.from_str(e) for e in gpad_line[4].split("|") if e]
     for r in references:
         if r.is_error():
-            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[4], "Problem parsing references", taxon=taxon, rule=1)
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[4], "Problem parsing references", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
     withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])  # Returns a list of ConjuctiveSets or Error
     if isinstance(withfroms, association.Error):
-        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     evidence = association.Evidence(evidence_type, references, withfroms)
@@ -315,7 +315,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     if gpad_line[7]:
         taxon_result = gpad_line_validators["taxon"].validate(gpad_line[7])
         if not taxon_result.valid:
-            report.error(source_line, Report.INVALID_TAXON, taxon_result.original, taxon_result.message, taxon=taxon_result.original, rule=1)
+            report.error(source_line, Report.INVALID_TAXON, taxon_result.original, taxon_result.message, taxon=str(taxon_result.original), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
         else:
             interacting_taxon = taxon_result.parsed[0]
@@ -392,7 +392,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     taxon = association.Curie("NCBITaxon", "0")
     subject_curie = association.Curie.from_str(gpad_line[SUBJECT_CURIE])
     if subject_curie.is_error():
-        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[SUBJECT_CURIE], "Problem parsing DB Object", taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[SUBJECT_CURIE], "Problem parsing DB Object", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     subject = association.Subject(subject_curie, "", "", [], "", taxon)
@@ -406,30 +406,30 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     relation = association.Curie.from_str(gpad_line[RELATION])
     if relation.is_error():
-        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[RELATION], "Problem parsing Relation", taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[RELATION], "Problem parsing Relation", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     go_term = association.Curie.from_str(gpad_line[ONTOLOGY_CLASS_INDEX])
     if go_term.is_error():
-        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[ONTOLOGY_CLASS_INDEX], "Problem parsing GO Term", taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[ONTOLOGY_CLASS_INDEX], "Problem parsing GO Term", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     object = association.Term(go_term, taxon)
 
     evidence_type = association.Curie.from_str(gpad_line[EVIDENCE_INDEX])
     if evidence_type.is_error():
-        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[EVIDENCE_INDEX], "Problem parsing Evidence ECO Curie", taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[EVIDENCE_INDEX], "Problem parsing Evidence ECO Curie", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     references = [association.Curie.from_str(e) for e in gpad_line[REFERENCE_INDEX].split("|") if e]
     for r in references:
         if r.is_error():
-            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[REFERENCE_INDEX], "Problem parsing references", taxon=taxon, rule=1)
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[REFERENCE_INDEX], "Problem parsing references", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
     withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])  # Returns a list of ConjuctiveSets or Error
     if isinstance(withfroms, association.Error):
-        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=taxon, rule=1)
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     evidence = association.Evidence(evidence_type, references, withfroms)
@@ -438,7 +438,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     if gpad_line[7] != "":
         interacting_taxon = association.Curie.from_str(gpad_line[7])
         if interacting_taxon.is_error():
-            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[7], "Problem parsing Interacting Taxon", taxon=taxon, rule=1)
+            report.error(source_line, Report.INVALID_SYMBOL, gpad_line[7], "Problem parsing Interacting Taxon", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
     date = assocparser.parse_iso_date(gpad_line[DATE_INDEX], report, source_line)
