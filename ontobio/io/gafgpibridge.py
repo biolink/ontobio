@@ -31,7 +31,7 @@ class GafGpiBridge(object):
                 'label': association.subject.label,  # db_object_symbol,
                 'full_name': association.subject.fullname,  # db_object_name,
                 'synonyms': association.subject.synonyms,
-                'type': association.subject.type, #db_object_type,
+                'type': [str(t) for t in association.subject.type], #db_object_type,
                 'parents': "", # GAF does not have this field, but it's optional in GPI
                 'xrefs': "", # GAF does not have this field, but it's optional in GPI
                 'taxon': {

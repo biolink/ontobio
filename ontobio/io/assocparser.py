@@ -312,13 +312,13 @@ class Report(object):
         self.config = config
         self.header = []
 
-    def error(self, line, type, obj, msg="", taxon="", rule=None):
+    def error(self, line, type, obj, msg="", taxon: str = "", rule=None):
         self.message(self.ERROR, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def warning(self, line, type, obj, msg="", taxon="", rule=None):
+    def warning(self, line, type, obj, msg="", taxon: str = "", rule=None):
         self.message(self.WARNING, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def message(self, level, line, type, obj, msg="", taxon="", rule=None, dont_record=["INFO"]):
+    def message(self, level, line, type, obj, msg="", taxon: str = "", rule=None, dont_record=["INFO"]):
         message = {
             'level': level,
             'line': line,
@@ -830,26 +830,76 @@ class AssocParser(object):
 
 
 
-def _normalize_gaf_date(date, report, taxon, line):
-    if date is None or date == "":
-        report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: empty",
-            taxon=taxon, rule=1)
-        return date
+def parse_date(date: str, report: Report, line: List) -> Optional[association.Date]:
+    if date == "":
+        report.error(line, Report.INVALID_DATE, "\'\'", "GORULE:0000001: empty", rule=1)
+        return None
 
-    # We check int(date)
+    d = None
     if len(date) == 8 and date.isdigit():
-        d = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]), 0, 0, 0, 0)
+        # For GAF date, should be YYYYMMDD all as digits and
+        # a well formed date string here will be exactly 8 characters long
+        d = association.Date(year=date[0:4], month=date[4:6], day=date[6:8], time="")
     else:
-        report.warning(line, Report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYYMMDD, got: {}".format(date),
-            taxon=taxon, rule=1)
+        report.warning(line, report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYYMMDD, got: {}".format(date), rule=1)
+        parsed = None
         try:
-            d = dateutil.parser.parse(date)
+            parsed = dateutil.parser.parse(date)
         except:
-            report.error(line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date),
-                taxon=taxon, rule=1)
+            report.error(line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date), rule=1)
             return None
 
-    return d.strftime("%Y%m%d")
+        d = association.Date(year="{:02d}".format(parsed.year), month="{:02d}".format(parsed.month), day="{:02d}".format(parsed.day), time="")
+
+    return d
+
+def parse_iso_date(date: str, report: Report, line: List) -> Optional[association.Date]:
+
+    def parse_with_dateutil(date: str, repot: Report, line: List) -> Optional[association.Date]:
+        parsed = None
+        try:
+            parsed = dateutil.parser.parse(date)
+        except:
+            report.error(line, Report.INVALID_DATE, date, "GORULE:0000001: Could not parse date '{}' at all".format(date), rule=1)
+            return None
+
+        return association.Date(
+            year="{:02d}".format(parsed.year),
+            month="{:02d}".format(parsed.month),
+            day="{:02d}".format(parsed.day),
+            time=parsed.time().isoformat())
+
+
+    if date == "":
+        report.error(line, Report.INVALID_DATE, "\'\'", "GORULE:0000001: empty", rule=1)
+        return None
+
+    d = None
+    if len(date) >= 10:
+        # For ISO style date, should be YYYY-MM-DD all as digits and
+        # a well formed date string here will be at least 10 characters long.
+        # Optionally, there could be an appended THH:MM
+        year = date[0:4]
+        month = date[5:7]
+        day = date[8:10]
+        time = date[11:]
+        if year.isdigit() and month.isdigit() and day.isdigit():
+            d = association.Date(year=year, month=month, day=day, time=time)
+        else:
+            # If any of year, month, day are not made of digits, then try to parse with dateutil
+            report.warning(line, report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYY-MM-DD, got: {}".format(date), rule=1)
+            d = parse_with_dateutil(date, report, line)
+
+    else:
+        # If we got the wrong number characters in the date, then fallback to dateutil
+        report.warning(line, report.INVALID_DATE, date, "GORULE:0000001: Date field must be YYYY-MM-DD, got: {}".format(date), rule=1)
+        d = parse_with_dateutil(date, report, line)
+
+    return d
+
+def parse_annotation_properties(properties_field: str):
+    properties_list = [tuple(prop.split("=", maxsplit=1)) for prop in properties_field.split("|") if prop]
+    return properties_list
 
 ## we generate both qualifier and relation field
 ## Returns: (negated, relation, other_qualifiers)

@@ -49,7 +49,7 @@ def test_rdfgen_includes_taxon_in_gp_class():
             )]
         ),
         provided_by=association.Provider("PomBase"),
-        date=association.Date("20150305"),
+        date=association.Date("2015", "03", "05", ""),
         subject_extensions=[
             association.ExtensionUnit(
                 relation=association.Curie("rdfs", "subClassOf"),

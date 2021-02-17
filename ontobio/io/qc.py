@@ -385,9 +385,9 @@ class GoRule29(GoRule):
 
         time_compare_delta_short = self.one_year
         time_compare_delta_long = self.two_years
-        time_diff = now - datetime.datetime(int(date[0:4]),
-                                            int(date[4:6]),
-                                            int(date[6:8]),
+        time_diff = now - datetime.datetime(int(date.year),
+                                            int(date.month),
+                                            int(date.day),
                                             0, 0, 0, 0)
 
         iea = "ECO:0000501"

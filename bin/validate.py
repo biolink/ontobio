@@ -29,6 +29,7 @@ from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
 from ontobio.io import gaference
 from ontobio.rdfgen import assoc_rdfgen
+from ontobio.rdfgen.gocamgen.gocam_builder import GoCamBuilder, AssocExtractor
 from ontobio.validation import metadata
 from ontobio.validation import tools
 from ontobio.validation import rules
@@ -196,7 +197,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[]):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2"):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -219,7 +220,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
     split_source = os.path.split(source_gaf)[0]
     validated_gaf_path = os.path.join(split_source, "{}_valid.gaf".format(dataset))
     outfile = open(validated_gaf_path, "w")
-    gafwriter = GafWriter(file=outfile, source=dataset)
+    gafwriter = GafWriter(file=outfile, source=dataset, version=gaf_output_version)
 
     click.echo("Validating source {}: {}".format(format, source_gaf))
     parser = create_parser(config, group, dataset, format)
@@ -429,7 +430,7 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     return merged_path
 
-def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[]):
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[], gaf_output_version="2.2"):
 
     end_gaf = valid_gaf
     mixin_gaf_paths = []
@@ -441,7 +442,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
             context = ["import"] if mixin_metadata.get("import", False) else []
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=context)[0]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=context, gaf_output_version=gaf_output_version)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
@@ -475,7 +476,8 @@ def cli(ctx, verbose):
 @click.option("--skip-existing-files", "-K", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
 @click.option("--only-dataset", default=None)
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset):
+@click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version):
 
     logger.info("Logging is verbose")
     products = {
@@ -530,14 +532,55 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             annotation_inferences=gaferences,
             group_metadata=group_metadata,
             extensions_constraints=extensions_constraints,
-            rule_contexts=["import"] if dataset_metadata.get("import", False) else []
+            rule_contexts=["import"] if dataset_metadata.get("import", False) else [],
+            gaf_output_version=gaf_output_version
             )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
-        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files)
+        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files, gaf_output_version=gaf_output_version)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
 
+
+@cli.command()
+@click.pass_context
+@click.option("--gpad_path", "-g", type=click.Path(), required=True)
+@click.option("--gpi_path", "-i", type=click.Path(), required=True)
+@click.option("--target", "-t", type=click.Path(), required=True)
+@click.option("--ontology", "-o", type=click.Path(exists=True), required=True, multiple=True)
+@click.option("--ttl", default=False, is_flag=True)
+def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl):
+    # NOTE: Validation on GPAD not included here since it's currently baked into produce() above.
+    # Multi-param to accept multiple ontology files, then merge to one (this will make a much smaller ontology
+    #  with only what we need, i.e. GO, RO, GOREL)
+    ontology_graph = OntologyFactory().create(ontology[0], ignore_cache=True)
+    for ont in ontology[1:]:
+        ontology_graph.merge([OntologyFactory().create(ont, ignore_cache=True)])
+    parser_config = assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                  gpi_authority_path=gpi_path
+                                                  )
+    extractor = AssocExtractor(gpad_path, parser_config=parser_config)
+    assocs_by_gene = extractor.group_assocs()
+
+    absolute_target = os.path.abspath(target)
+    gpad_basename = os.path.basename(gpad_path)
+    gpad_basename_root, gpad_ext = os.path.splitext(gpad_basename)
+    output_basename = "{}.nq".format(gpad_basename_root)
+    report_basename = "{}.gocamgen.report".format(gpad_basename_root)
+    output_path = os.path.join(absolute_target, output_basename)
+    report_path = os.path.join(absolute_target, report_basename)
+
+    builder = GoCamBuilder(parser_config=parser_config)
+
+    for gene, associations in assocs_by_gene.items():
+        if ttl:
+            builder.make_model_and_write_out(gene, annotations=associations, output_directory=absolute_target)
+        else:
+            builder.make_model_and_add_to_store(gene, annotations=associations)
+    if not ttl:
+        builder.write_out_store_to_nquads(filepath=output_path)
+
+    builder.write_report(report_filepath=report_path)
 
 
 @cli.command()
