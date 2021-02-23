@@ -312,13 +312,13 @@ class Report(object):
         self.config = config
         self.header = []
 
-    def error(self, line, type, obj, msg="", taxon="", rule=None):
+    def error(self, line, type, obj, msg="", taxon: str = "", rule=None):
         self.message(self.ERROR, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def warning(self, line, type, obj, msg="", taxon="", rule=None):
+    def warning(self, line, type, obj, msg="", taxon: str = "", rule=None):
         self.message(self.WARNING, line, type, obj, msg, taxon=taxon, rule=rule)
 
-    def message(self, level, line, type, obj, msg="", taxon="", rule=None, dont_record=["INFO"]):
+    def message(self, level, line, type, obj, msg="", taxon: str = "", rule=None, dont_record=["INFO"]):
         message = {
             'level': level,
             'line': line,
@@ -896,6 +896,10 @@ def parse_iso_date(date: str, report: Report, line: List) -> Optional[associatio
         d = parse_with_dateutil(date, report, line)
 
     return d
+
+def parse_annotation_properties(properties_field: str):
+    properties_list = [tuple(prop.split("=", maxsplit=1)) for prop in properties_field.split("|") if prop]
+    return properties_list
 
 ## we generate both qualifier and relation field
 ## Returns: (negated, relation, other_qualifiers)
