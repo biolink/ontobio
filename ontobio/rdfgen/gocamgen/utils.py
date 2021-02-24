@@ -1,5 +1,6 @@
 from os import path
 import json
+import yaml
 import logging
 import requests
 from typing import List
@@ -121,3 +122,27 @@ class ShexHelper:
         logger.warning(shex_error_message)
         # Throw Exception and except-skip in model builder
         raise ShexException(shex_error_message)
+
+
+class GroupsHelper:
+    def __init__(self, go_site_branch=None):
+        self.groups = None
+        self.go_site_branch = go_site_branch
+        if go_site_branch is None:
+            self.go_site_branch = "master"
+
+    def load_groups(self):
+        self.groups = {}
+        groups_yaml_url = "https://raw.githubusercontent.com/geneontology/go-site/{}/metadata/groups.yaml".format(self.go_site_branch)
+        groups_yaml_response = requests.get(groups_yaml_url)
+        groups_yaml_str = groups_yaml_response.text
+        groups_list = yaml.load(groups_yaml_str, Loader=yaml.FullLoader)
+        for g in groups_list:
+            shorthand = g["shorthand"]
+            gid = g["id"]
+            self.groups[shorthand] = gid
+
+    def lookup_group_id(self, group_name):
+        if self.groups is None:
+            self.load_groups()
+        return self.groups.get(group_name)

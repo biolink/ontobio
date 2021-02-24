@@ -15,7 +15,7 @@ from typing import List
 from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TriplePatternFinder
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
 from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions, CollapsedAssociationLine
-from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper
+from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper, GroupsHelper
 from ontobio.rdfgen.gocamgen import errors
 from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet, ymd_str
 from ontobio.io.assocparser import AssocParserConfig
@@ -92,6 +92,7 @@ REGULATES_CHAIN_RELATIONS = [
 
 
 SHEX_HELPER = ShexHelper()
+GROUPS_HELPER = GroupsHelper()
 
 
 def has_regulation_target_bucket(ontology, term):
@@ -121,12 +122,14 @@ class Annoton():
 
 class GoCamEvidence:
     DEFAULT_CONTRIBUTOR = "http://orcid.org/0000-0002-6659-0416"
+    DEFAULT_PROVIDED_BY = "http://geneontology.org"  # GO in groups.yaml
 
-    def __init__(self, code, references, contributors=[], date="", comment="", with_from=None):
+    def __init__(self, code, references, contributors=[], date="", comment="", with_from=None, provided_by=[]):
         self.evidence_code = code
         self.references = references
         self.date = date
         self.contributors = contributors
+        self.provided_by = provided_by
         self.comment = comment
         self.with_from = with_from
         self.id = None
@@ -136,14 +139,16 @@ class GoCamEvidence:
         source_line = annot.source_line.rstrip().replace("\t", " ")
         contributors = []
         if "contributor-id" in annot.annotation_properties:
-            contributors = [annot.annotation_properties["contributor-id"]]
+            contributors = annot.annotation_properties["contributor-id"]
         if len(contributors) == 0:
             contributors = [GoCamEvidence.DEFAULT_CONTRIBUTOR]
+        provided_by = GROUPS_HELPER.lookup_group_id(annot.assigned_by)  # Needs to be resolved to URI, e.g. ZFIN->http://zfin.org
 
         return GoCamEvidence(annot.evidence_code, annot.references,
                            contributors=contributors,
                            # "{date}T{time}".format(date=ymd_str(date), time=date.time)
                            date=ymd_str(annot.date, separator="-"),
+                           provided_by=provided_by,
                            comment=source_line)
 
     @staticmethod
@@ -203,6 +208,9 @@ class GoCamModel():
 
     def declare_contributor(self, contributor: str):
         self.graph.add((self.writer.writer.base, DC.contributor, Literal(contributor)))
+
+    def declare_provided_by(self, provided_by: str):
+        self.graph.add((self.writer.writer.base, PAV.providedBy, Literal(provided_by)))
 
     def declare_properties(self):
         # AnnotionProperty
@@ -286,6 +294,7 @@ class GoCamModel():
         ### Emit ev fields to axiom here TODO: Couple evidence and axiom emitting together
         self.writer.emit(axiom, DC.date, Literal(evidence.date))
         self.writer.emit(axiom, RDFS.comment, Literal(evidence.comment))
+        self.writer.emit(axiom, PAV.providedBy, Literal(evidence.provided_by))
         for c in evidence.contributors:
             self.writer.emit(axiom, DC.contributor, Literal(c))
 
@@ -426,6 +435,7 @@ class AssocGoCamModel(GoCamModel):
         self.go_aspector = None  # TODO: Can I always grab aspect from ontology term DS
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
         self.contributors = set()
+        self.provided_bys = set()
         self.graph.bind("GOREL", GOREL)  # Because GOREL isn't in context.jsonld's
         self.gpi_entities = gpi_entities
         ncbi_taxon = self.taxon_id_from_entity(str(assocs[0].subject.id))
@@ -456,6 +466,7 @@ class AssocGoCamModel(GoCamModel):
             for e in evidences:
                 for c in e.contributors:
                     self.contributors.add(c)
+                self.provided_bys.add(e.provided_by)
 
             annotation_extensions = a.annot_extensions()
 
@@ -651,6 +662,8 @@ class AssocGoCamModel(GoCamModel):
             contributors = self.contributors
         for c in contributors:
             self.declare_contributor(c)
+        for pb in self.provided_bys:
+            self.declare_provided_by(pb)
 
     def translate_primary_annotation(self, annotation: CollapsedAssociation):
         gp_id = str(annotation.subject_id())
@@ -821,7 +834,6 @@ class CamTurtleRdfWriter(TurtleRdfWriter):
         self.graph.add((self.base, RDF.type, OWL.Ontology))
 
         # Model attributes TODO: Should move outside init
-        self.graph.add((self.base, URIRef("http://purl.org/pav/providedBy"), Literal("http://geneontology.org")))
         self.graph.add((self.base, DC.date, Literal(str(now.year) + "-" + str(now.month) + "-" + str(now.day))))
         self.graph.add((self.base, DC.title, Literal(modeltitle)))
         self.graph.add((self.base, URIRef("http://geneontology.org/lego/modelstate"), Literal("development")))
