@@ -9,6 +9,7 @@ from rdflib.term import URIRef
 from rdflib.namespace import Namespace
 import rdflib
 import datetime
+import dateutil.parser
 import os.path as path
 import logging
 from typing import List
@@ -161,6 +162,12 @@ class GoCamEvidence:
             evidences.append(evidence)
         return evidences
 
+    @staticmethod
+    def max_date(evidences: List):
+        all_dates = [e.date for e in evidences]
+        mdate = sorted(all_dates, key=lambda x: dateutil.parser.parse(x), reverse=True)[0]
+        return mdate
+
 
 class GoCamModel():
     # TODO: Not using anymore maybe get rid of?
@@ -227,11 +234,20 @@ class GoCamModel():
             self.writer.emit_type(URIRef(expand_uri_wrapper(class_id)), OWL.Class)
             self.classes.append(class_id)
 
-    def declare_individual(self, entity_id):
+    def declare_individual(self, entity_id, evidences: List[GoCamEvidence] = None):
         entity = genid(base=self.writer.writer.base + '/')
         # TODO: Make this add_to_graph
         self.writer.emit_type(entity, self.writer.uri(entity_id))
         self.writer.emit_type(entity, OWL.NamedIndividual)
+        if evidences:
+            # Emit max date all contributors
+            max_date = GoCamEvidence.max_date(evidences)
+            self.writer.emit(entity, DC.date, Literal(max_date))
+            all_contributors = set()
+            for e in evidences:
+                [all_contributors.add(c) for c in e.contributors]
+            for c in all_contributors:
+                self.writer.emit(entity, DC.contributor, Literal(c))
         self.individuals[entity_id] = entity
         return entity
 

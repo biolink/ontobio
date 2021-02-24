@@ -148,11 +148,11 @@ class AnnotationSubgraph(MultiDiGraph):
             for u, v, relation in self.edges(data="relation"):
                 subject_instance_iri = self.node_instance_iri(u)
                 if subject_instance_iri is None:
-                    subject_instance_iri = model.declare_individual(self.node_class(u))
+                    subject_instance_iri = model.declare_individual(self.node_class(u), evidences=evidences)
                     self.nodes[u]["instance_iri"] = subject_instance_iri
                 object_instance_iri = self.node_instance_iri(v)
                 if object_instance_iri is None:
-                    object_instance_iri = model.declare_individual(self.node_class(v))
+                    object_instance_iri = model.declare_individual(self.node_class(v), evidences=evidences)
                     self.nodes[v]["instance_iri"] = object_instance_iri
                 try:
                     relation_uri = expand_uri_wrapper(relation)
