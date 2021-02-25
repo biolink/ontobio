@@ -166,8 +166,7 @@ class AnnotationSubgraph(MultiDiGraph):
                                                                    object_instance_iri)))
         # Add the evidences to whatever axioms we got
         for axiom_id in axiom_ids:
-            for evidence in evidences:
-                model.add_evidence(axiom_id, evidence)
+            model.add_evidences(axiom_id, evidences)
 
 
     @staticmethod

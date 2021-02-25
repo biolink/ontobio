@@ -302,17 +302,24 @@ class GoCamModel():
             annoton.individuals[object_id] = object_uri
         return axiom_id
 
-    def add_evidence(self, axiom, evidence: GoCamEvidence):
+    def add_evidence(self, axiom, evidence: GoCamEvidence, emit_date=True):
         # Try finding existing evidence object containing same type and references
         # ev_id = self.writer.find_or_create_evidence_id(ev)
         ev_id = self.writer.create_evidence(evidence)
         self.writer.emit(axiom, URIRef("http://geneontology.org/lego/evidence"), ev_id)
         ### Emit ev fields to axiom here TODO: Couple evidence and axiom emitting together
-        self.writer.emit(axiom, DC.date, Literal(evidence.date))
         self.writer.emit(axiom, RDFS.comment, Literal(evidence.comment))
         self.writer.emit(axiom, PAV.providedBy, Literal(evidence.provided_by))
         for c in evidence.contributors:
             self.writer.emit(axiom, DC.contributor, Literal(c))
+        if emit_date:
+            self.writer.emit(axiom, DC.date, Literal(evidence.date))
+
+    def add_evidences(self, axiom, evidences: List[GoCamEvidence]):
+        for e in evidences:
+            self.add_evidence(axiom, e, emit_date=False)
+        max_date = GoCamEvidence.max_date(evidences)
+        self.writer.emit(axiom, DC.date, Literal(max_date))
 
     def add_connection(self, gene_connection, source_annoton):
         # Switching from reusing existing activity node from annoton to creating new one for each connection - Maybe SPARQL first to check if annoton activity already used for connection?
