@@ -181,13 +181,11 @@ class CollapsedAssociationLine:
         self.date = assoc.date
         self.assigned_by = assoc.provided_by
         self.with_from = with_from
-        self.annotation_properties = assoc.properties
-        # self.annotation_properties = {}
-        # for prop, vals in assoc.properties.items():
-        #     self.annotation_properties[str(prop)] = vals
-
-        # if "annotation_properties" in assoc:
-        #     self.annotation_properties = assoc["annotation_properties"]
+        self.annotation_properties = {}
+        for k, v in assoc.properties:
+            if k not in self.annotation_properties:
+                self.annotation_properties[k] = set()
+            self.annotation_properties[k].add(v)
 
     def as_dict(self):
         ds = {
