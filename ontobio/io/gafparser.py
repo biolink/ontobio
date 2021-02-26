@@ -281,6 +281,8 @@ class GafParser(assocparser.AssocParser):
 
         For GAF 2.1 we will apply an algorithm to find a best fit relation if the qualifier column is empty.
         If the qualifiers field is empty, then:
+            If the GO Term is exactly GO:008150 Biological Process, then the qualifier should be `involved_in`
+            If the GO Term is exactly GO:0008372 Cellular Component, then the qualifer should be `is_active_in`
             If the GO Term is a Molecular Function, then the new qualifier should be `enables`
             If the GO Term is a Biological Process, then the new qualifier should be `acts_upstream_or_within
             Otherwise for Cellular Component, if it's subclass of anatomical structure, than use `located_in`
@@ -291,7 +293,15 @@ class GafParser(assocparser.AssocParser):
         term = str(assoc.object.id)
         namespace = self.config.ontology.obo_namespace(term)
 
-        if namespace == "molecular_function":
+        if term == "GO:0008150":
+            involved_in = association.Curie(namespace="RO", identity="0002331")
+            assoc.qualifiers = [involved_in]
+            assoc.relation = involved_in
+        elif term == "GO:0008372":
+            is_active_in = association.Curie(namespace="RO", identity="0002432")
+            assoc.qualifiers = [is_active_in]
+            assoc.relation = is_active_in
+        elif namespace == "molecular_function":
             enables = association.Curie(namespace="RO", identity="0002327")
             assoc.qualifiers = [enables]
             assoc.relation = enables
