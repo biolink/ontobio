@@ -451,10 +451,9 @@ class AssocGoCamModel(GoCamModel):
 
     def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None, model_id=None):
         GoCamModel.__init__(self, modeltitle, connection_relations, store, model_id=model_id)
-        self.associations = CollapsedAssociationSet(assocs)
-        self.ontology = None
-        if config:
-            self.ontology = config.ontology
+        self.ontology = config.ontology
+        self.associations = CollapsedAssociationSet(ontology=self.ontology, gpi_entities=gpi_entities)
+        self.associations.collapse_annotations(assocs)
         self.go_aspector = None  # TODO: Can I always grab aspect from ontology term DS
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
         self.contributors = set()
@@ -474,10 +473,6 @@ class AssocGoCamModel(GoCamModel):
         return None
 
     def translate(self):
-
-        self.associations.go_ontology = self.ontology
-        self.associations.gpi_entities = self.gpi_entities
-        self.associations.collapse_annotations()
 
         for a in self.associations:
 
@@ -694,7 +689,7 @@ class AssocGoCamModel(GoCamModel):
         annot_subgraph = AnnotationSubgraph(annotation)
 
         # TODO: qualifiers are coming through as relation terms now
-        for q_term in annotation.qualifiers():
+        for q_term in annotation.qualifiers:
             if ":" in str(q_term):
                 # It's a curie (nice!) but we're talking labels
                 # q = self.ro_ontology.label(str(q_term)).replace(" ", "_")
