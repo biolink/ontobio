@@ -234,10 +234,13 @@ class GoCamModel():
             self.writer.emit_type(URIRef(expand_uri_wrapper(class_id)), OWL.Class)
             self.classes.append(class_id)
 
-    def declare_individual(self, entity_id, evidences: List[GoCamEvidence] = None):
+    def declare_individual(self, entity_id, evidences: List[GoCamEvidence] = None, negated=False):
         entity = genid(base=self.writer.writer.base + '/')
         # TODO: Make this add_to_graph
-        self.writer.emit_type(entity, self.writer.uri(entity_id))
+        if negated:
+            self.writer.emit_not(entity, self.writer.uri(entity_id))
+        else:
+            self.writer.emit_type(entity, self.writer.uri(entity_id))
         self.writer.emit_type(entity, OWL.NamedIndividual)
         if evidences:
             # Emit max date all contributors
@@ -686,7 +689,7 @@ class AssocGoCamModel(GoCamModel):
     def translate_primary_annotation(self, annotation: CollapsedAssociation):
         gp_id = str(annotation.subject_id())
         term = str(annotation.object_id())
-        annot_subgraph = AnnotationSubgraph(annotation)
+        annot_subgraph = AnnotationSubgraph()
 
         # TODO: qualifiers are coming through as relation terms now
         for q_term in annotation.qualifiers:
@@ -697,14 +700,14 @@ class AssocGoCamModel(GoCamModel):
             else:
                 q = q_term
             if q == "enables":
-                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
+                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True, negated=annotation.negated)
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
                 annot_subgraph.add_edge(term_n, "RO:0002333", enabled_by_n)
             elif q == "involved_in":
                 mf_n = annot_subgraph.add_instance_of_class(upt.molecular_function)
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
                 # term_n = annot_subgraph.add_instance_of_class(term)
-                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
+                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True, negated=annotation.negated)
                 annot_subgraph.add_edge(mf_n, "RO:0002333", enabled_by_n)
                 annot_subgraph.add_edge(mf_n, "BFO:0000050", term_n)
             elif q in ACTS_UPSTREAM_OF_RELATIONS:
@@ -714,16 +717,13 @@ class AssocGoCamModel(GoCamModel):
                 mf_n = annot_subgraph.add_instance_of_class(upt.molecular_function)
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
                 # term_n = annot_subgraph.add_instance_of_class(term)
-                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
+                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True, negated=annotation.negated)
                 annot_subgraph.add_edge(mf_n, "RO:0002333", enabled_by_n)
                 annot_subgraph.add_edge(mf_n, causally_relation, term_n)
-            elif q == "NOT":
-                # Try it in UI and look at OWL
-                pass
             else:
                 # TODO: should check that existing axiom/triple isn't connected to anything else; length matches exactly
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
-                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
+                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True, negated=annotation.negated)
                 # annot_subgraph.add_edge(enabled_by_n, self.relations_dict[q], term_n)
                 if q == "part_of" and SHEX_HELPER.shape_from_class(term, self.go_aspector) == "CellularComponent":
                     # Using shex_shape function should exclude AnatomicalEntity from getting located_in
