@@ -852,7 +852,7 @@ class CamTurtleRdfWriter(TurtleRdfWriter):
         self.graph.add((self.base, RDF.type, OWL.Ontology))
 
         # Model attributes TODO: Should move outside init
-        self.graph.add((self.base, DC.date, Literal(str(now.year) + "-" + str(now.month) + "-" + str(now.day))))
+        self.graph.add((self.base, DC.date, Literal(datetime.date.today().isoformat())))
         self.graph.add((self.base, DC.title, Literal(modeltitle)))
         self.graph.add((self.base, URIRef("http://geneontology.org/lego/modelstate"), Literal("development")))
         self.graph.add((self.base, OWL.versionIRI, self.base))
