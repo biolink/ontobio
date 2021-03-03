@@ -892,9 +892,9 @@ class AnnotonCamRdfTransform(CamRdfTransform):
             self.emit(ev_id, URIRef("http://geneontology.org/lego/evidence-with"), Literal(evidence.with_from))
         for c in evidence.contributors:
             self.emit(ev_id, DC.contributor, Literal(c))
-        ref_to_emit = ReferencePreference().pick(evidence.references)
-        o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
-        self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
+        for ref_to_emit in evidence.references:
+            o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
+            self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
         self.evidences.append(evidence)
         return evidence.id
 
