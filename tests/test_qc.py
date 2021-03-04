@@ -579,6 +579,37 @@ def test_gorule58():
     test_result = qc.GoRule58().test(assoc, config)
     assert test_result.result_type == qc.ResultType.WARNING
 
+def test_gorule61():
+    config = assocparser.AssocParserConfig(ontology=ontology)
+    assoc = make_annotation(goid="GO:0005554", qualifier="enables", evidence="ECO:0000320", from_gaf=False)
+    assert assoc.report.reporter.messages.get("gorule-0000001", []) == []
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result_type == qc.ResultType.PASS
+
+    # Using `contributes_to`, but should be repaired to RO:0002327 enables
+    assoc = make_annotation(goid="GO:0005554", qualifier="contributes_to", evidence="ECO:0000320", from_gaf=False)
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result.relation == association.Curie("RO", "0002327")
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    # BP term, qualifier inside allowed BP set
+    assoc = make_annotation(goid="GO:0016192", qualifier="acts_upstream_of_or_within", evidence="ECO:0000320", from_gaf=False)
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result_type == qc.ResultType.PASS
+
+    # BP term, unallowed relation, causes Error
+    assoc = make_annotation(goid="GO:0016192", qualifier="enables", evidence="ECO:0000320", from_gaf=False)
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    # CC complex term, unallowed relation, causes repair
+    assoc = make_annotation(goid="GO:0032991", qualifier="enables", evidence="ECO:0000320", from_gaf=False)
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result_type == qc.ResultType.WARNING
+    assert test_result.result.relation == association.Curie("BFO", "0000050")
+
+
+
 
 def test_all_rules():
     # pass
@@ -597,7 +628,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 23
+    assert len(test_results.keys()) == 24
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 

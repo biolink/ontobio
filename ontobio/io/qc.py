@@ -7,11 +7,12 @@ import logging
 
 from dataclasses import dataclass
 
-from typing import List, Dict, Any, Tuple, Union
+from typing import List, Dict, Any, Optional, Set, Tuple, Union
 from prefixcommons import curie_util
+from requests.models import REDIRECT_STATI
 from ontobio import ontol
 from ontobio import ecomap
-from ontobio.io import assocparser
+from ontobio.io import assocparser, gafparser
 from ontobio.io import gaference
 from ontobio.model import association
 from ontobio.rdfgen import relations
@@ -668,6 +669,114 @@ class GoRule58(RepairRule):
         return True
 
 
+class GoRule61(RepairRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000061", "Only certain gene product to term relations are allowed for a given GO term", FailMode.HARD)
+        self.protein_containing_complex_descendents = None
+
+        self.allowed_mf = set([association.Curie(namespace="RO", identity="0002327"), association.Curie(namespace="RO", identity="0002326")])
+        self.allowed_bp = set([association.Curie("RO", "0002331"), association.Curie("RO", "0002264"),
+                            association.Curie("RO", "0004032"), association.Curie("RO", "0004033"), association.Curie("RO", "0002263"),
+                            association.Curie("RO", "0004034"), association.Curie("RO", "0004035")])
+        self.allowed_cc_complex = set([association.Curie("BFO", "0000050")])
+        self.allowed_cc_other = set([association.Curie("RO", "0001025"), association.Curie("RO", "0002432"), association.Curie("RO", "0002325")])
+
+    def make_protein_complex_descendents_if_not_present(self, ontology: Optional[ontol.Ontology]) -> Set:
+        if ontology is not None and self.protein_containing_complex_descendents is None:
+            closure = gafparser.protein_complex_sublcass_closure(ontology)
+            self.protein_containing_complex_descendents = closure
+
+        return {} if self.protein_containing_complex_descendents is None else self.protein_containing_complex_descendents
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        """
+        * GO:0005554 "molecular function"
+            * Term: GO:0005554 => relation is RO:0002327 "enables" + repair,
+            * Term: subclass of GO:0005554 => relations: {RO:0002327 "enables", RO:0002326 "contributes_to"} + filter
+        * GO:0008150 "biological process"
+            * Term: GO:0008150 => RO:0002331 "involved_in" + repair
+            * Term: subclass of GO:0008150 => relations: {RO:0002331 "involved_in", RO:0002264 "acts upstream or within", RO:0004032 "acts upstream of or within, positive effect", RO:0004033 "acts upstream of or within, negative effect", RO:0002263 "acts upstream of", RO:0004034 "acts upstream of, positive effect", RO:0004035 "acts upstream of, negative effect"} + filter
+        * GO:0008372 "cellular component
+            * Term: GO:0008372 => relation is RO:0002432 "is_active_in" + repair
+            * Term: subclass of GO:0032991 "protein-containing complex => relation is BFO:0000050 "part of" + repair
+            * Term: any other subclass of GO:0008372 => relations are {RO:0001025 "located in", RO:0002432 "is_active_in", RO:0002325 "colocalizes_with"} + repair to RO:0001025 "located in"
+
+        Let's test with
+            `MGI:MGI:98956		BFO:0000050	GO:0098978	MGI:MGI:6189459|PMID:16501258	ECO:0005589			2018-07-11	SynGO	BFO:0000050(EMAPA:35405)	contributor=http://orcid.org/0000-0003-0593-3443|model-state=production|noctua-model-id=gomodel:SYNGO_2793`
+            since I think this is triggering the rule, but seems correct actually
+        """
+        if config.ontology is None:
+            return TestResult(ResultType.PASS, "", annotation)
+
+        # print(annotation)
+        print(annotation.object)
+        term = str(annotation.object.id)
+        namespace = config.ontology.obo_namespace(term)
+        repair_state = RepairState.OKAY
+        relation = annotation.relation
+        allowed = set()
+
+        repaired_annotation = annotation
+        if term == "GO:0005554":
+            enables = association.Curie(namespace="RO", identity="0002327")
+            if relation != enables:
+                repaired_annotation = copy.deepcopy(annotation)
+                repaired_annotation.relation = enables
+                repaired_annotation.qualifiers = [enables]
+                allowed = set([enables])
+                repair_state = RepairState.REPAIRED
+        elif namespace == "molecular_function":
+            if relation not in self.allowed_mf:
+                allowed = self.allowed_mf
+                repair_state = RepairState.FAILED
+        elif term == "GO:0008150":
+            involved_in = association.Curie(namespace="RO", identity="0002331")
+            if relation != involved_in:
+                repaired_annotation = copy.deepcopy(annotation)
+                repaired_annotation.relation = involved_in
+                repaired_annotation.qualifiers = [involved_in]
+                allowed = set([involved_in])
+                repair_state = RepairState.REPAIRED
+        elif namespace == "biological_process":
+            if relation not in self.allowed_bp:
+                allowed = self.allowed_bp
+                repair_state = RepairState.FAILED
+        elif term == "GO:0008372":
+            is_active_in = association.Curie(namespace="RO", identity="0002432")
+            if relation != is_active_in:
+                repaired_annotation = copy.deepcopy(annotation)
+                repaired_annotation.relation = is_active_in
+                repaired_annotation.qualifiers = [is_active_in]
+                allowed = set([is_active_in])
+                repair_state = RepairState.REPAIRED
+        elif namespace == "cellular_component":
+            if term in self.make_protein_complex_descendents_if_not_present(config.ontology):
+                part_of = association.Curie(namespace="BFO", identity="0000050")
+                if relation not in self.allowed_cc_complex:
+                    repaired_annotation = copy.deepcopy(annotation)
+                    repaired_annotation.relation = part_of
+                    repaired_annotation.qualifiers = [part_of]
+                    allowed = self.allowed_cc_complex
+                    repair_state = RepairState.REPAIRED
+            else:
+                located_in = association.Curie(namespace="RO", identity="0001025")
+                if relation not in self.allowed_cc_other:
+                    repaired_annotation = copy.deepcopy(annotation)
+                    repaired_annotation.relation = located_in
+                    repaired_annotation.qualifiers = [located_in]
+                    allowed = self.allowed_cc_other
+                    repair_state = RepairState.REPAIRED
+        else:
+            # If we reach here, we're in a weird case where a term is not in either
+            # of the three main GO branches, or does not have a namespace defined.
+            # If this is the case we should just pass along as if the ontology is missing
+            return TestResult(repair_result(RepairState.OKAY, self.fail_mode), "{}: {}".format(self.message(repair_state), "GO term has no namespace"), repaired_annotation)
+
+        allowed_str = ", ".join([str(a) for a in allowed])
+        return TestResult(repair_result(repair_state, self.fail_mode), "{}: {} should be one of {}".format(self.message(repair_state), relation, allowed_str), repaired_annotation)
+
+
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
     "GoRule06": GoRule06(),
@@ -691,6 +800,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule55": GoRule55(),
     "GoRule57": GoRule57(),
     "GoRule58": GoRule58(),
+    "GoRule61": GoRule61(),
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
     "GoRule13": GoRule13()
 })
