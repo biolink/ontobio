@@ -6,7 +6,7 @@ See :ref:`inputs` on readthedocs for more details
 
 import ontobio.obograph_util as obograph_util
 from ontobio.ontol import Ontology
-from ontobio.sparql.sparql_ontology import EagerRemoteSparqlOntology
+from ontobio.sparql.sparql_ontology import EagerRemoteSparqlOntology, LazyRemoteSparqlOntology
 import os
 import subprocess
 import hashlib
@@ -133,6 +133,12 @@ def create_ontology(handle=None, **args):
             logger.info("using cached file: "+fn)
         g = obograph_util.convert_json_file(fn)
         ont = Ontology(handle=handle, payload=g)
+    elif handle.startswith("sparql:"):
+        logger.info("Fetching from SPARQL")
+        ont = EagerRemoteSparqlOntology(handle=handle.replace("sparql:", ""))
+    elif handle.startswith("sparql-lazy:"):
+        logger.info("Fetching from SPARQL (Lazy)")
+        ont = LazyRemoteSparqlOntology(handle=handle.replace("sparql-lazy:", ""))
     else:
         logger.info("Fetching from SPARQL")
         ont = EagerRemoteSparqlOntology(handle=handle)
