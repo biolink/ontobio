@@ -234,10 +234,13 @@ class GoCamModel():
             self.writer.emit_type(URIRef(expand_uri_wrapper(class_id)), OWL.Class)
             self.classes.append(class_id)
 
-    def declare_individual(self, entity_id, evidences: List[GoCamEvidence] = None):
+    def declare_individual(self, entity_id, evidences: List[GoCamEvidence] = None, negated=False):
         entity = genid(base=self.writer.writer.base + '/')
         # TODO: Make this add_to_graph
-        self.writer.emit_type(entity, self.writer.uri(entity_id))
+        if negated:
+            self.writer.emit_not(entity, self.writer.uri(entity_id))
+        else:
+            self.writer.emit_type(entity, self.writer.uri(entity_id))
         self.writer.emit_type(entity, OWL.NamedIndividual)
         if evidences:
             # Emit max date all contributors
@@ -451,10 +454,9 @@ class AssocGoCamModel(GoCamModel):
 
     def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None, model_id=None):
         GoCamModel.__init__(self, modeltitle, connection_relations, store, model_id=model_id)
-        self.associations = CollapsedAssociationSet(assocs)
-        self.ontology = None
-        if config:
-            self.ontology = config.ontology
+        self.ontology = config.ontology
+        self.associations = CollapsedAssociationSet(ontology=self.ontology, gpi_entities=gpi_entities)
+        self.associations.collapse_annotations(assocs)
         self.go_aspector = None  # TODO: Can I always grab aspect from ontology term DS
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
         self.contributors = set()
@@ -474,10 +476,6 @@ class AssocGoCamModel(GoCamModel):
         return None
 
     def translate(self):
-
-        self.associations.go_ontology = self.ontology
-        self.associations.gpi_entities = self.gpi_entities
-        self.associations.collapse_annotations()
 
         for a in self.associations:
 
@@ -691,10 +689,10 @@ class AssocGoCamModel(GoCamModel):
     def translate_primary_annotation(self, annotation: CollapsedAssociation):
         gp_id = str(annotation.subject_id())
         term = str(annotation.object_id())
-        annot_subgraph = AnnotationSubgraph(annotation)
+        annot_subgraph = AnnotationSubgraph()
 
         # TODO: qualifiers are coming through as relation terms now
-        for q_term in annotation.qualifiers():
+        for q_term in annotation.qualifiers:
             if ":" in str(q_term):
                 # It's a curie (nice!) but we're talking labels
                 # q = self.ro_ontology.label(str(q_term)).replace(" ", "_")
@@ -702,14 +700,14 @@ class AssocGoCamModel(GoCamModel):
             else:
                 q = q_term
             if q == "enables":
-                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
+                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True, negated=annotation.negated)
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
                 annot_subgraph.add_edge(term_n, "RO:0002333", enabled_by_n)
             elif q == "involved_in":
                 mf_n = annot_subgraph.add_instance_of_class(upt.molecular_function)
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
                 # term_n = annot_subgraph.add_instance_of_class(term)
-                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
+                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True, negated=annotation.negated)
                 annot_subgraph.add_edge(mf_n, "RO:0002333", enabled_by_n)
                 annot_subgraph.add_edge(mf_n, "BFO:0000050", term_n)
             elif q in ACTS_UPSTREAM_OF_RELATIONS:
@@ -719,16 +717,13 @@ class AssocGoCamModel(GoCamModel):
                 mf_n = annot_subgraph.add_instance_of_class(upt.molecular_function)
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
                 # term_n = annot_subgraph.add_instance_of_class(term)
-                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
+                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True, negated=annotation.negated)
                 annot_subgraph.add_edge(mf_n, "RO:0002333", enabled_by_n)
                 annot_subgraph.add_edge(mf_n, causally_relation, term_n)
-            elif q == "NOT":
-                # Try it in UI and look at OWL
-                pass
             else:
                 # TODO: should check that existing axiom/triple isn't connected to anything else; length matches exactly
                 enabled_by_n = annot_subgraph.add_instance_of_class(gp_id)
-                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True)
+                term_n = annot_subgraph.add_instance_of_class(term, is_anchor=True, negated=annotation.negated)
                 # annot_subgraph.add_edge(enabled_by_n, self.relations_dict[q], term_n)
                 if q == "part_of" and SHEX_HELPER.shape_from_class(term, self.go_aspector) == "CellularComponent":
                     # Using shex_shape function should exclude AnatomicalEntity from getting located_in
@@ -857,7 +852,7 @@ class CamTurtleRdfWriter(TurtleRdfWriter):
         self.graph.add((self.base, RDF.type, OWL.Ontology))
 
         # Model attributes TODO: Should move outside init
-        self.graph.add((self.base, DC.date, Literal(str(now.year) + "-" + str(now.month) + "-" + str(now.day))))
+        self.graph.add((self.base, DC.date, Literal(datetime.date.today().isoformat())))
         self.graph.add((self.base, DC.title, Literal(modeltitle)))
         self.graph.add((self.base, URIRef("http://geneontology.org/lego/modelstate"), Literal("development")))
         self.graph.add((self.base, OWL.versionIRI, self.base))
@@ -897,9 +892,9 @@ class AnnotonCamRdfTransform(CamRdfTransform):
             self.emit(ev_id, URIRef("http://geneontology.org/lego/evidence-with"), Literal(evidence.with_from))
         for c in evidence.contributors:
             self.emit(ev_id, DC.contributor, Literal(c))
-        ref_to_emit = ReferencePreference().pick(evidence.references)
-        o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
-        self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
+        for ref_to_emit in evidence.references:
+            o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
+            self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
         self.evidences.append(evidence)
         return evidence.id
 

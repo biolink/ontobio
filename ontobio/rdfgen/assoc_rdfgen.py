@@ -133,6 +133,12 @@ class RdfTransform(object):
     def emit_label(self, s, o):
         return self.emit(s, RDFS.label, Literal(o))
 
+    def emit_not(self, s, t):
+        bn = self.blanknode()
+        self.emit_type(bn, OWL.Class)
+        self.emit(bn, OWL.complementOf, URIRef(expand_uri(t)))
+        return self.emit_type(s, bn)
+
     def eco_class(self, code, coderef=None):
         eco_cls_id = self.ecomap.coderef_to_ecoclass(code, coderef)
         logger.debug(self.ecomap._mappings)

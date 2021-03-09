@@ -1,9 +1,7 @@
 import logging
 from typing import List
-from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gpadparser import GpadParser
-from ontobio.io.assocparser import SplitLine
-from ontobio.model.association import GoAssociation, ymd_str
+from ontobio.model.association import GoAssociation
 from ontobio.rdfgen.gocamgen import errors
 
 logger = logging.getLogger(__name__)
@@ -13,19 +11,39 @@ BINDING_ROOT = "GO:0005488"  # binding
 IPI_ECO_CODE = "ECO:0000353"
 
 
+class GoAssocWithFrom:
+    """
+    Separate with/from column values into
+    header vs line arrangement.
+    Used for explicit placement in
+    annotation assertions.
+    """
+    def __init__(self, header=None, line=None):
+        if header is None:
+            header = []
+        if line is None:
+            line = []
+        self.header = sorted(header)
+        self.line = sorted(line)
+
+    def add_to_header(self, entity):
+        self.header.append(entity)
+
+    def add_to_line(self, entity):
+        self.line.append(entity)
+
+    def __str__(self):
+        return f"Header: {','.join(self.header)} - Line: {','.join(self.line)}"
+
+
 class CollapsedAssociationSet:
-    def __init__(self, associations: List[GoAssociation]):
-        self.associations = associations
+    def __init__(self, ontology, gpi_entities):
         self.collapsed_associations = []
         self.assoc_dict = {}
-        self.go_ontology = None
-        self.gpi_entities = None
+        self.go_ontology = ontology
+        self.gpi_entities = gpi_entities
 
-    def setup_ontologies(self):
-        if self.go_ontology is None:
-            self.go_ontology = OntologyFactory().create("go")
-
-    def collapse_annotations(self):
+    def collapse_annotations(self, associations: List[GoAssociation]):
         # Here we shall decide the distinct assertion instances going into the model
         # This will reduce/eliminate need to SPARQL model graph
         # Group by:
@@ -42,57 +60,36 @@ class CollapsedAssociationSet:
         # 		5. Date
         # 		6. Assigned by
         # 		7. Properties
-        self.setup_ontologies()
-
-        for a in self.associations:
-            # Header
-            subj_id = a.subject.id
-            qualifiers = a.qualifiers
-            term = a.object.id
-            extensions = get_annot_extensions(a)
-            with_froms = self.get_with_froms(a)  # Handle pipe separation according to import requirements
+        for a in associations:
+            separated_with_froms: List[GoAssocWithFrom] = self.get_with_froms(a)
             cas = []
-            for wf in with_froms:
-                ca = self.find_or_create_collapsed_association(subj_id, qualifiers, term, wf, extensions)
-                association_line = CollapsedAssociationLine(a, wf["line"])
+            for wf in separated_with_froms:
+                ca = self.find_or_create_collapsed_association(a, wf)
+                association_line = CollapsedAssociationLine(a, wf.line)
                 ca.lines.append(association_line)
                 cas.append(ca)
 
-    def find_or_create_collapsed_association(self, subj_id, qualifiers, term, with_from, extensions):
-        query_header = {
-            'subject': {
-                'id': subj_id
-            },
-            'qualifiers': sorted(qualifiers),
-            'object': {
-                'id': term
-            },
-            'object_extensions': extensions
-        }
-        if with_from and "header" in with_from:
-            query_header['evidence'] = {'with_support_from': sorted(with_from['header'])}
+    def find_or_create_collapsed_association(self, association: GoAssociation, with_from: GoAssocWithFrom):
+        ca = self.find_by_go_association(association, with_from)
+        if ca:
+            return ca
+        else:
+            ca = CollapsedAssociation(association, with_from)
+            self.collapsed_associations.append(ca)
+            return ca
+
+    def find_by_go_association(self, association: GoAssociation, with_from: GoAssocWithFrom):
         for ca in self.collapsed_associations:
-            if ca.header == query_header:
+            if ca.header_data_matches(association, with_from):
                 return ca
-        new_ca = CollapsedAssociation(query_header)
-        self.collapsed_associations.append(new_ca)
-        return new_ca
 
     def __iter__(self):
         return iter(self.collapsed_associations)
 
-    def get_with_froms(self, annot: GoAssociation):
-        source_line = annot.source_line
-        vals = source_line.split("\t")
-        with_from_col = vals[6]
-        # Parse into array (by "|") of arrays (by ",")
-        with_from_ds = []  # The list of lists
-        for piped_with_from in with_from_col.split("|"):
-            # Will be bypassing ontobio ID validation? Let's try teaming up with ontobio functions!
-            split_line = SplitLine(line=source_line, values=vals, taxon="")  # req'd for error reporting in ontobio?
-            validated_comma_with_froms = GPAD_PARSER.validate_pipe_separated_ids(piped_with_from, split_line,
-                                                                                 empty_allowed=True, extra_delims=",")
-            with_from_ds.append(validated_comma_with_froms)
+    def get_with_froms(self, annot: GoAssociation) -> List[GoAssocWithFrom]:
+        # The craziest example:
+        # MGI:1  GO:0005515  IPI  PR:1,PR:2|WEIRD:1,PR:3|MGI:2
+        with_from_ds = annot.evidence.with_support_from
 
         # Now arrange these into "header" and "line" values
         eco_code = str(annot.evidence.type)
@@ -109,53 +106,61 @@ class CollapsedAssociationSet:
                     logger.warning(error_message)
                     # Throw Exception and except-skip in model builder
                     raise errors.GocamgenException(error_message)
-                values_separated = []
+
+                values_separated: List[GoAssocWithFrom] = []
                 for wf in with_from_ds:
-                    wf_separated = {
-                        "header": [],
-                        "line": []
-                    }
-                    for wf_id in wf:
-                        wf_entity = self.gpi_entities.get(wf_id)
+                    wf_separated = GoAssocWithFrom()
+                    for wf_id in wf.elements:
+                        wf_id_str = str(wf_id)
+                        wf_entity = self.gpi_entities.get(wf_id_str)
                         if wf_entity and wf_entity.get("taxon") == subject_entity["taxon"]:
-                            wf_separated['header'].append(wf_id)
+                            wf_separated.add_to_header(wf_id_str)
                         else:
-                            wf_separated['line'].append(wf_id)
+                            wf_separated.add_to_line(wf_id_str)
                     values_separated.append(wf_separated)
-                return values_separated
             else:
                 # Everything is defaulted to header if no GPI available
-                return [{"header": wf} for wf in with_from_ds]
+                values_separated = [GoAssocWithFrom(header=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
         else:
             # Everything is defaulted to line if not binding
-            return [{"line": wf} for wf in with_from_ds]
+            values_separated = [GoAssocWithFrom(line=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
+        if len(values_separated) == 0:
+            # Return empty object if with/from is blank
+            values_separated = [GoAssocWithFrom()]
+        return values_separated
 
 
 class CollapsedAssociation:
-    def __init__(self, header):
-        # TODO: Refactor out complex dictionary structure - reuse GoAssociation
-        self.header = header
+    def __init__(self, association: GoAssociation, with_from: GoAssocWithFrom):
+        self.subject = association.subject
+        self.object = association.object
+        self.negated = association.negated
+        self.qualifiers = sorted(association.qualifiers, key=lambda q: str(q))
+        self.with_froms = sorted(with_from.header)
+        self.object_extensions = association.object_extensions
         self.lines: List[CollapsedAssociationLine] = []
 
+    def header_data_matches(self, association: GoAssociation, with_from: GoAssocWithFrom):
+        if self.subject_id() == str(association.subject.id) and \
+           self.object_id() == str(association.object.id) and \
+           self.negated == association.negated and \
+           self.qualifiers == sorted(association.qualifiers, key=lambda q: str(q)) and \
+           self.object_extensions == association.object_extensions and \
+           self.with_froms == sorted(with_from.header):
+            return True
+        return False
+
     def subject_id(self):
-        if "subject" in self.header and "id" in self.header["subject"]:
-            return self.header["subject"]["id"]
+        return str(self.subject.id)
 
     def object_id(self):
-        if "object" in self.header and "id" in self.header["object"]:
-            return self.header["object"]["id"]
+        return str(self.object.id)
 
     def annot_extensions(self):
-        if "object_extensions" in self.header:
-            return self.header["object_extensions"]
-        return {}
-
-    def qualifiers(self):
-        return self.header.get("qualifiers")
+        return self.object_extensions
 
     def with_from(self):
-        if "evidence" in self.header and "with_support_from" in self.header["evidence"]:
-            return self.header["evidence"]["with_support_from"]
+        return self.with_froms
 
     def __str__(self):
         # TODO: Reconstruct GPAD format or original line - could mean multiple lines for each evidence
@@ -181,11 +186,7 @@ class CollapsedAssociationLine:
         self.date = assoc.date
         self.assigned_by = assoc.provided_by
         self.with_from = with_from
-        self.annotation_properties = {}
-        for k, v in assoc.properties:
-            if k not in self.annotation_properties:
-                self.annotation_properties[k] = set()
-            self.annotation_properties[k].add(v)
+        self.annotation_properties = extract_properties(assoc)
 
     def as_dict(self):
         ds = {
@@ -220,9 +221,9 @@ def extract_properties_from_string(prop_col):
     return props_dict
 
 
-def extract_properties(annot):
-    cols = annot["source_line"].rstrip().split("\t")
-    if len(cols) >= 12:
-        prop_col = cols[11]
-        annot["annotation_properties"] = extract_properties_from_string(prop_col)
-    return annot
+def extract_properties(annot: GoAssociation):
+    annotation_properties = {}
+    property_keys = set([prop[0] for prop in annot.properties])
+    for pk in property_keys:
+        annotation_properties[pk] = annot.annotation_property_values(pk)
+    return annotation_properties

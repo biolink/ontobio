@@ -19,11 +19,11 @@ logger = logging.getLogger(__name__)
 # GO:0003674-2 enabled_by WB:WBGene00001173-2
 # Are there any "-"s in identifiers?
 
+
 class AnnotationSubgraph(MultiDiGraph):
 
-    def __init__(self, annot):
+    def __init__(self):
         MultiDiGraph.__init__(self)
-        # self.source_line = annot.get("source_line").rstrip().replace("\t", " ")
         self.class_counts = {}
 
     def add_edge(self, u_for_edge, relation, v_for_edge, key=None, **attr):
@@ -37,7 +37,9 @@ class AnnotationSubgraph(MultiDiGraph):
     # {'sparql_var': 'GO_0045944_1'}
     # Returns the networkx graph node ID used in tracking instances
     # Use this node ID to get instance IRI (once it's defined) and SPARQL variable name
-    def add_instance_of_class(self, class_id, is_anchor=False):
+    def add_instance_of_class(self, class_id, is_anchor=False, negated=False):
+        if negated:
+            class_id = "NOT-{}".format(class_id)
         next_num = self.increment_class_count(class_id)
         node_id = "{}-{}".format(class_id, next_num)
         # TODO: Maybe sparql_var doesn't need to be stored and can always be parsed out of node_id? Make function
@@ -148,11 +150,11 @@ class AnnotationSubgraph(MultiDiGraph):
             for u, v, relation in self.edges(data="relation"):
                 subject_instance_iri = self.node_instance_iri(u)
                 if subject_instance_iri is None:
-                    subject_instance_iri = model.declare_individual(self.node_class(u), evidences=evidences)
+                    subject_instance_iri = model.declare_individual(self.node_class(u), evidences=evidences, negated=u.startswith("NOT-"))
                     self.nodes[u]["instance_iri"] = subject_instance_iri
                 object_instance_iri = self.node_instance_iri(v)
                 if object_instance_iri is None:
-                    object_instance_iri = model.declare_individual(self.node_class(v), evidences=evidences)
+                    object_instance_iri = model.declare_individual(self.node_class(v), evidences=evidences, negated=v.startswith("NOT-"))
                     self.nodes[v]["instance_iri"] = object_instance_iri
                 try:
                     relation_uri = expand_uri_wrapper(relation)
@@ -168,7 +170,8 @@ class AnnotationSubgraph(MultiDiGraph):
         for axiom_id in axiom_ids:
             model.add_evidences(axiom_id, evidences)
 
-
     @staticmethod
     def node_class(node):
+        # Gotta handle things like: NOT-GO:1234567-1, GO:1234567-2, MGI:MGI:4657382-1
+        node = node.lstrip("NOT-")
         return "-".join(node.split("-")[0:-1])
