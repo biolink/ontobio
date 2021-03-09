@@ -20,6 +20,7 @@ def make_annotation(db="blah",
                     db_id="blah12345",
                     db_obj_symb="blah",
                     qualifier="",
+                    negated=False,
                     goid="GO:1234567",
                     references="BLAH:54321",
                     evidence="IDA",
@@ -34,14 +35,25 @@ def make_annotation(db="blah",
                     extension="",
                     gene_form_id="",
                     properties="",
+                    version=None,
                     from_gaf=True):
 
     if from_gaf:
+        qual_parse = assocparser.Qualifier2_1()
+        if version == "2.2":
+            qual_parse = assocparser.Qualifier2_2()
+
         annotation = [db, db_id, db_obj_symb, qualifier, goid, references, evidence, withfrom, aspect, db_obj_name, db_obj_syn, db_obj_type, taxon, date, assigned_by, extension, gene_form_id]
-        return gafparser.to_association(annotation)
+
+        return gafparser.to_association(annotation, qualifier_parser=qual_parse)
     else:
-        annotation = [db, db_id, qualifier, goid, references, evidence, withfrom, taxon, date, assigned_by, extension, properties]
-        return gpadparser.to_association(annotation)
+        if version != "2.0":
+            # Default to 1.2 if we're anything but 2.0
+            annotation = [db, db_id, qualifier, goid, references, evidence, withfrom, taxon, date, assigned_by, extension, properties]
+            return gpadparser.to_association(annotation, version="1.2")
+        else:
+            annotation = ["{}:{}".format(db, db_id), "NOT" if negated else "", qualifier, goid, references, evidence, withfrom, taxon, date, assigned_by, extension, properties]
+            return gpadparser.to_association(annotation, version="2.0")
 
 def test_qc_result():
     assert qc.result(True, qc.FailMode.HARD) == qc.ResultType.PASS
@@ -581,33 +593,39 @@ def test_gorule58():
 
 def test_gorule61():
     config = assocparser.AssocParserConfig(ontology=ontology)
-    assoc = make_annotation(goid="GO:0005554", qualifier="enables", evidence="ECO:0000320", from_gaf=False)
+    assoc = make_annotation(goid="GO:0005554", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
     assert assoc.report.reporter.messages.get("gorule-0000001", []) == []
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.PASS
 
     # Using `contributes_to`, but should be repaired to RO:0002327 enables
-    assoc = make_annotation(goid="GO:0005554", qualifier="contributes_to", evidence="ECO:0000320", from_gaf=False)
+    assoc = make_annotation(goid="GO:0005554", qualifier="contributes_to", evidence="ECO:0000320", from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result.relation == association.Curie("RO", "0002327")
     assert test_result.result_type == qc.ResultType.WARNING
 
     # BP term, qualifier inside allowed BP set
-    assoc = make_annotation(goid="GO:0016192", qualifier="acts_upstream_of_or_within", evidence="ECO:0000320", from_gaf=False)
+    assoc = make_annotation(goid="GO:0016192", qualifier="acts_upstream_of_or_within", evidence="ECO:0000320", from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.PASS
 
     # BP term, unallowed relation, causes Error
-    assoc = make_annotation(goid="GO:0016192", qualifier="enables", evidence="ECO:0000320", from_gaf=False)
+    assoc = make_annotation(goid="GO:0016192", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.ERROR
 
     # CC complex term, unallowed relation, causes repair
-    assoc = make_annotation(goid="GO:0032991", qualifier="enables", evidence="ECO:0000320", from_gaf=False)
+    assoc = make_annotation(goid="GO:0032991", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.WARNING
     assert test_result.result.relation == association.Curie("BFO", "0000050")
 
+    # CC root repairs to is_active_in
+    assoc = make_annotation(goid="GO:0005575", qualifier="located_in", evidence="ND", from_gaf=True, version="2.2")
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result_type == qc.ResultType.WARNING
+    # Active in, rather than located_in
+    assert test_result.result.relation == association.Curie(namespace="RO", identity="0002432")
 
 
 

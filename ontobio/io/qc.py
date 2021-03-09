@@ -691,14 +691,14 @@ class GoRule61(RepairRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         """
-        * GO:0005554 "molecular function"
+        * GO:0003674 "molecular function"
             * Term: GO:0005554 => relation is RO:0002327 "enables" + repair,
             * Term: subclass of GO:0005554 => relations: {RO:0002327 "enables", RO:0002326 "contributes_to"} + filter
         * GO:0008150 "biological process"
             * Term: GO:0008150 => RO:0002331 "involved_in" + repair
             * Term: subclass of GO:0008150 => relations: {RO:0002331 "involved_in", RO:0002264 "acts upstream or within", RO:0004032 "acts upstream of or within, positive effect", RO:0004033 "acts upstream of or within, negative effect", RO:0002263 "acts upstream of", RO:0004034 "acts upstream of, positive effect", RO:0004035 "acts upstream of, negative effect"} + filter
-        * GO:0008372 "cellular component
-            * Term: GO:0008372 => relation is RO:0002432 "is_active_in" + repair
+        * GO:0005575 "cellular component
+            * Term: GO:0005575 => relation is RO:0002432 "is_active_in" + repair
             * Term: subclass of GO:0032991 "protein-containing complex => relation is BFO:0000050 "part of" + repair
             * Term: any other subclass of GO:0008372 => relations are {RO:0001025 "located in", RO:0002432 "is_active_in", RO:0002325 "colocalizes_with"} + repair to RO:0001025 "located in"
 
@@ -709,8 +709,6 @@ class GoRule61(RepairRule):
         if config.ontology is None:
             return TestResult(ResultType.PASS, "", annotation)
 
-        # print(annotation)
-        print(annotation.object)
         term = str(annotation.object.id)
         namespace = config.ontology.obo_namespace(term)
         repair_state = RepairState.OKAY
@@ -742,7 +740,7 @@ class GoRule61(RepairRule):
             if relation not in self.allowed_bp:
                 allowed = self.allowed_bp
                 repair_state = RepairState.FAILED
-        elif term == "GO:0008372":
+        elif term == "GO:0005575":
             is_active_in = association.Curie(namespace="RO", identity="0002432")
             if relation != is_active_in:
                 repaired_annotation = copy.deepcopy(annotation)
