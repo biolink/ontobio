@@ -1,0 +1,4 @@
+gene	term	comments
+geneA	GO:0002181	.
+geneB	GO:0006399	.
+geneC	FAKE:123	.
