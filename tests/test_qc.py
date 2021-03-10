@@ -609,10 +609,11 @@ def test_gorule61():
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.PASS
 
-    # BP term, unallowed relation, causes Error
+    # BP term, unallowed relation, Repair
     assoc = make_annotation(goid="GO:0016192", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
+    assert test_result.result.relation == association.Curie("RO", "0002264")
 
     # CC complex term, unallowed relation, causes repair
     assoc = make_annotation(goid="GO:0032991", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
