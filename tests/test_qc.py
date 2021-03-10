@@ -615,11 +615,10 @@ def test_gorule61():
     assert test_result.result_type == qc.ResultType.WARNING
     assert test_result.result.relation == association.Curie("RO", "0002264")
 
-    # CC complex term, unallowed relation, causes repair
+    # CC complex term, unallowed relation, unrepairable, causes error
     assoc = make_annotation(goid="GO:0032991", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
-    assert test_result.result_type == qc.ResultType.WARNING
-    assert test_result.result.relation == association.Curie("BFO", "0000050")
+    assert test_result.result_type == qc.ResultType.ERROR
 
     # CC root repairs to is_active_in
     assoc = make_annotation(goid="GO:0005575", qualifier="located_in", evidence="ND", from_gaf=True, version="2.2")
@@ -628,6 +627,11 @@ def test_gorule61():
     # Active in, rather than located_in
     assert test_result.result.relation == association.Curie(namespace="RO", identity="0002432")
 
+    # protein complex + repairable relation repairs to part_of
+    assoc = make_annotation(goid="GO:0032991", qualifier="is_active_in", evidence="ECO:0000320", from_gaf=False, version="1.2")
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result_type == qc.ResultType.WARNING
+    assert test_result.result.relation == association.Curie(namespace="BFO", identity="0000050")
 
 
 def test_all_rules():

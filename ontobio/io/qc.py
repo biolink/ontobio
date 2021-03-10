@@ -680,6 +680,7 @@ class GoRule61(RepairRule):
                             association.Curie("RO", "0004032"), association.Curie("RO", "0004033"), association.Curie("RO", "0002263"),
                             association.Curie("RO", "0004034"), association.Curie("RO", "0004035")])
         self.allowed_cc_complex = set([association.Curie("BFO", "0000050")])
+        self.repairable_cc_complex = set([association.Curie("RO", "0002432"), association.Curie("RO", "0001025")])
         self.allowed_cc_other = set([association.Curie("RO", "0001025"), association.Curie("RO", "0002432"), association.Curie("RO", "0002325")])
 
     def make_protein_complex_descendents_if_not_present(self, ontology: Optional[ontol.Ontology]) -> Set:
@@ -697,14 +698,11 @@ class GoRule61(RepairRule):
         * GO:0008150 "biological process"
             * Term: GO:0008150 => RO:0002331 "involved_in" + repair
             * Term: subclass of GO:0008150 => relations: {RO:0002331 "involved_in", RO:0002264 "acts upstream or within", RO:0004032 "acts upstream of or within, positive effect", RO:0004033 "acts upstream of or within, negative effect", RO:0002263 "acts upstream of", RO:0004034 "acts upstream of, positive effect", RO:0004035 "acts upstream of, negative effect"} + filter
-        * GO:0005575 "cellular component
+        * GO:0005575 "cellular component"
             * Term: GO:0005575 => relation is RO:0002432 "is_active_in" + repair
-            * Term: subclass of GO:0032991 "protein-containing complex => relation is BFO:0000050 "part of" + repair
-            * Term: any other subclass of GO:0008372 => relations are {RO:0001025 "located in", RO:0002432 "is_active_in", RO:0002325 "colocalizes_with"} + repair to RO:0001025 "located in"
-
-        Let's test with
-            `MGI:MGI:98956		BFO:0000050	GO:0098978	MGI:MGI:6189459|PMID:16501258	ECO:0005589			2018-07-11	SynGO	BFO:0000050(EMAPA:35405)	contributor=http://orcid.org/0000-0003-0593-3443|model-state=production|noctua-model-id=gomodel:SYNGO_2793`
-            since I think this is triggering the rule, but seems correct actually
+            * If term is subclass of `GO:0032991 "protein-containing complex"` with relation one of {RO:0002432 "is_active_in", RO:0001025 "located in"} => relation should be repaired to `BFO:0000050 "part of"`
+            * If term is subclass of `GO:0032991` and any other relation, then it should be filtered
+            * Term: any other subclass of `GO:0008372` => allowed relations are {`RO:0001025 "located in"`, `RO:0002432 "is_active_in"`, `RO:0002325 "colocalizes_with"`} and other relations repaired to `RO:0001025 "located in"`.
         """
         if config.ontology is None:
             return TestResult(ResultType.PASS, "", annotation)
@@ -760,11 +758,17 @@ class GoRule61(RepairRule):
             if term in self.make_protein_complex_descendents_if_not_present(config.ontology):
                 part_of = association.Curie(namespace="BFO", identity="0000050")
                 if relation not in self.allowed_cc_complex:
-                    repaired_annotation = copy.deepcopy(annotation)
-                    repaired_annotation.relation = part_of
-                    repaired_annotation.qualifiers = [part_of]
-                    allowed = self.allowed_cc_complex
-                    repair_state = RepairState.REPAIRED
+                    if relation in self.repairable_cc_complex:
+                        repaired_annotation = copy.deepcopy(annotation)
+                        repaired_annotation.relation = part_of
+                        repaired_annotation.qualifiers = [part_of]
+                        allowed = self.allowed_cc_complex
+                        repair_state = RepairState.REPAIRED
+                    else:
+                        # Not repairable to part_of, so filter
+                        repaired_annotation = annotation
+                        allowed = self.allowed_cc_complex
+                        repair_state = RepairState.FAILED
             else:
                 located_in = association.Curie(namespace="RO", identity="0001025")
                 if relation not in self.allowed_cc_other:
