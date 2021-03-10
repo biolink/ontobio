@@ -726,8 +726,12 @@ class GoRule61(RepairRule):
                 repair_state = RepairState.REPAIRED
         elif namespace == "molecular_function":
             if relation not in self.allowed_mf:
+                enables = association.Curie(namespace="RO", identity="0002327")
+                repaired_annotation = copy.deepcopy(annotation)
+                repaired_annotation.relation = enables
+                repaired_annotation.qualifiers = [enables]
                 allowed = self.allowed_mf
-                repair_state = RepairState.FAILED
+                repair_state = RepairState.REPAIRED
         elif term == "GO:0008150":
             involved_in = association.Curie(namespace="RO", identity="0002331")
             if relation != involved_in:
@@ -737,9 +741,13 @@ class GoRule61(RepairRule):
                 allowed = set([involved_in])
                 repair_state = RepairState.REPAIRED
         elif namespace == "biological_process":
+            acts_upstream_of_or_within = association.Curie("RO", "0002264")
             if relation not in self.allowed_bp:
+                repaired_annotation = copy.deepcopy(annotation)
+                repaired_annotation.relation = acts_upstream_of_or_within
+                repaired_annotation.qualifiers = [acts_upstream_of_or_within]
                 allowed = self.allowed_bp
-                repair_state = RepairState.FAILED
+                repair_state = RepairState.REPAIRED
         elif term == "GO:0005575":
             is_active_in = association.Curie(namespace="RO", identity="0002432")
             if relation != is_active_in:
