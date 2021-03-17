@@ -30,6 +30,7 @@ Date = collections.namedtuple("Date", ["year", "month", "day", "time"])
 def ymd_str(date: Date, separator: str) -> str:
     return "{year}{sep}{month}{sep}{day}".format(year=date.year, sep=separator, month=date.month, day=date.day)
 
+
 @dataclass
 class Error:
     info: str
@@ -37,6 +38,27 @@ class Error:
 
     def is_error(self):
         return True
+
+def TwoTupleStr(items: List[str]) -> tuple:
+    """
+    Create a tuple of of str that is guaranteed to be of length two from a list
+
+    If the list is larger, then only the first two elements will be used.
+    If the list is smaller, then the empty string will be used
+    """
+
+    if len(items) > 2:
+        items = items[:2]
+    
+    if len(items) < 2:
+        items += [""] * (2 - len(items))
+    
+    return tuple([str(i) for i in items])
+
+
+def parse_annotation_properties(properties_field: str) -> List[tuple]:
+    properties_list = [TwoTupleStr(prop.split("=", maxsplit=1)) for prop in properties_field.split("|") if prop]
+    return properties_list
 
 @dataclass(unsafe_hash=True)
 class Curie:

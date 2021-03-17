@@ -1,5 +1,6 @@
 from ontobio.io.gpadparser import GpadParser, to_association
 from ontobio.io import assocparser
+from ontobio.model import association
 from ontobio.model.association import ConjunctiveSet, ExtensionUnit, Curie
 
 import yaml
@@ -61,7 +62,7 @@ def test_parse_interacting_taxon():
 
 def test_duplicate_key_annot_properties():
     properties_str = "creation-date=2008-02-07|modification-date=2010-12-01|comment=v-KIND domain binding of Kndc1;MGI:1923734|contributor-id=http://orcid.org/0000-0003-2689-5511|contributor-id=http://orcid.org/0000-0003-3394-9805"
-    prop_list = assocparser.parse_annotation_properties(properties_str)
+    prop_list = association.parse_annotation_properties(properties_str)
     contributor_ids = [value for key, value in prop_list if key == "contributor-id"]
     assert set(contributor_ids) == {"http://orcid.org/0000-0003-2689-5511", "http://orcid.org/0000-0003-3394-9805"}
 
