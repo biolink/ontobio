@@ -21,7 +21,7 @@ import dateutil.parser
 from dataclasses import dataclass
 
 from collections import namedtuple, defaultdict
-from typing import Optional, List, Dict, Set
+from typing import Optional, List, Dict, Set, Union
 
 from ontobio import ontol
 from ontobio import ecomap
@@ -897,9 +897,6 @@ def parse_iso_date(date: str, report: Report, line: List) -> Optional[associatio
 
     return d
 
-def parse_annotation_properties(properties_field: str):
-    properties_list = [tuple(prop.split("=", maxsplit=1)) for prop in properties_field.split("|") if prop]
-    return properties_list
 
 ## we generate both qualifier and relation field
 ## Returns: (negated, relation, other_qualifiers)

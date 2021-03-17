@@ -10,6 +10,7 @@ from prefixcommons import curie_util
 from ontobio.model import association
 from ontobio.rdfgen import relations
 
+import functools
 import logging
 import copy
 
@@ -83,6 +84,9 @@ def load_gaferencer_inferences_from_file(gaferencer_out) -> Dict[AnnotationKey, 
         return None
 
     return build_annotation_inferences(gaferencer_out_dict)
+
+def load_gaferencer_inferences_from_files(gaferencer_out_list) -> Dict[AnnotationKey, InferenceValue]:
+    return functools.reduce(load_gaferencer_inferences_from_file, gaferencer_out_list, dict())
 
 
 def build_annotation_inferences(gaferencer_out: List[Dict]) -> Dict[AnnotationKey, InferenceValue]:
