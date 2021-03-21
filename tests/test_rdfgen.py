@@ -14,12 +14,14 @@ from ontobio.model import association
 POMBASE = "tests/resources/truncated-pombase.gaf"
 ONT = "tests/resources/go-truncated-pombase.json"
 
+
 def test_parse():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     assocs = p.parse(open(POMBASE, "r"), skipheader=True)
     #gen(assocs,SimpleAssocRdfTransform(),'simple')
     gen(assocs, CamRdfTransform(), 'cam')
+
 
 def test_rdfgen_includes_taxon_in_gp_class():
     assoc = association.GoAssociation(

@@ -1,33 +1,16 @@
 import click
 import json
-import os
-import yaml
-import requests
-import gzip
-import urllib
-import shutil
-import re
-import glob
 import logging
 import copy
-
-import yamldown
-
-from functools import wraps
 
 # from ontobio.util.user_agent import get_user_agent
 from ontobio.ontol_factory import OntologyFactory
 from ontobio import ontol
 from ontobio.io.gafparser import GafParser
-from ontobio.io.gpadparser import GpadParser
 from ontobio.io.assocwriter import GafWriter
-from ontobio.io.assocwriter import GpadWriter
 from ontobio.io import assocparser
-from ontobio.io import gafgpibridge
-from ontobio.io import entitywriter
-from ontobio.rdfgen import relations
 
-from typing import Dict, Set
+from typing import Set
 
 logger = logging.getLogger("INFER")
 logger.setLevel(logging.WARNING)
@@ -37,6 +20,7 @@ ENABLES = "enables"
 HAS_PART = "BFO:0000051"
 
 __ancestors_cache = dict()
+
 
 @click.group()
 @click.option("--log", "-L", type=click.Path(exists=False))
@@ -51,6 +35,7 @@ def cli(log):
         logfile_handler.setLevel(logging.INFO)
         logger.addHandler(logfile_handler)
         logger.setLevel(logging.INFO)
+
 
 @cli.command()
 @click.option("--ontology", "-o", "ontology_path", type=click.Path(exists=True), required=True)
@@ -77,6 +62,7 @@ def infer(ontology_path, target, gaf):
         line_count += 1
         if line_count % 100 == 0:
             click.echo("Processed {} lines".format(line_count))
+
 
 @cli.command()
 @click.option("--ontology", "-o", "ontology_path", type=click.Path(exists=True), required=True)
@@ -107,9 +93,11 @@ def termable(ontology_path, relation, allowed_trees):
 
     click.echo(desc)
 
+
 def ontology(path) -> ontol.Ontology:
     click.echo("Loading ontology from {}...".format(path))
     return OntologyFactory().create(path, ignore_cache=True)
+
 
 def ancestors(term: str, ontology: ontol.Ontology, cache) -> Set[str]:
     click.echo("Computing ancestors for {}".format(term))
@@ -127,6 +115,7 @@ def ancestors(term: str, ontology: ontol.Ontology, cache) -> Set[str]:
 
     return anc
 
+
 def gafparser_generator(ontology_graph: ontol.Ontology, gaf_file):
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -135,13 +124,16 @@ def gafparser_generator(ontology_graph: ontol.Ontology, gaf_file):
 
     return parser.association_generator(gaf_file, skipheader=True)
 
+
 def neighbor_by_relation(ontology_graph: ontol.Ontology, term, relation):
     return ontology_graph.parents(term, relations=[relation])
+
 
 def transform_relation(mf_annotation, new_mf, ontology_graph):
     new_annotation = copy.deepcopy(mf_annotation)
     new_annotation["object"]["id"] = new_mf
     return new_annotation
+
 
 def materialize_inferences(ontology_graph: ontol.Ontology, annotation):
     materialized_annotations = [] #(gp, new_mf)
@@ -170,7 +162,6 @@ def materialize_inferences(ontology_graph: ontol.Ontology, annotation):
             new_annotation = transform_relation(annotation, new_mf, ontology_graph)
             materialized_annotations.append(new_annotation)
 
-
     messages = [ message for message in messages if message[3] ] # Filter out empty has_parts
     for message in messages:
         logger.info("\nFor {gp} -> {term} \"{termdef}\":".format(gp=message[0], term=message[1], termdef=ontology_graph.label(message[1])))
@@ -179,7 +170,6 @@ def materialize_inferences(ontology_graph: ontol.Ontology, annotation):
             logger.info("\t\t has_part --> {part} \"{partdef}\"".format(part=part, partdef=ontology_graph.label(part)))
     
     return materialized_annotations
-
 
 
 if __name__ == "__main__":

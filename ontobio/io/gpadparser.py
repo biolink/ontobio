@@ -1,7 +1,5 @@
 from ontobio.io import assocparser
-from ontobio.io import entityparser
-from ontobio.io import entitywriter
-from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
+from ontobio.io.assocparser import ENTITY, ANNOTATION, Report
 from ontobio.io import parser_version_regex
 from ontobio.io import qc
 from ontobio.model import association, collections
@@ -9,10 +7,8 @@ from ontobio.model import association, collections
 from ontobio.rdfgen import relations
 from prefixcommons import curie_util
 
-from typing import List, Dict, Optional
-from dataclasses import dataclass
+from typing import List
 
-import functools
 import re
 import logging
 
@@ -27,13 +23,13 @@ gpad_line_validators = {
     "taxon": assocparser.TaxonValidator(),
 }
 
+
 class GpadParser(assocparser.AssocParser):
     """
     Parser for GO GPAD Format
 
     https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-1_2.md
     """
-
 
     def __init__(self, config=assocparser.AssocParserConfig(), group="unknown", dataset="unknown", bio_entities=None):
         """
@@ -93,12 +89,11 @@ class GpadParser(assocparser.AssocParser):
             if self._is_exclude_relation(relation):
                 continue
 
-
             id = self._pair_to_id(vals[0], vals[1])
             if not self._validate_id(id, line, context=ENTITY):
                 continue
             t = vals[3]
-            tuples.append( (id,None,t) )
+            tuples.append((id, None, t))
         return tuples
 
     def parse_line(self, line):
@@ -135,7 +130,7 @@ class GpadParser(assocparser.AssocParser):
                         logger.info("Detected GPAD version {}, so defaulting to 1.2".format(version))
                         self.version = self.default_version
 
-            return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
+            return assocparser.ParseResult(line, [{"header": True, "line": line.strip()}], False)
 
         # At this point, we should have gone through all the header, and a version number should be established
         if self.version is None:
@@ -209,7 +204,6 @@ class GpadParser(assocparser.AssocParser):
             if validated is None:
                 return assocparser.ParseResult(line, [], True)
 
-
         return assocparser.ParseResult(line, [assoc], False)
 
     def is_header(self, line):
@@ -217,6 +211,7 @@ class GpadParser(assocparser.AssocParser):
 
 
 relation_tuple = re.compile(r'(.+)\((.+)\)')
+
 
 def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknown", bio_entities=None):
     source_line = "\t".join(gpad_line)
@@ -240,8 +235,8 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    ## check for missing columns
-    ## We use indeces here because we run GO RULES before we split the vals into individual variables
+    # check for missing columns
+    # We use indeces here because we run GO RULES before we split the vals into individual variables
     DB_INDEX = 0
     DB_OBJECT_INDEX = 1
     QUALIFIER = 2
@@ -296,7 +291,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     evidence = association.Evidence(evidence_type, references, withfroms)
 
-    # Guarenteed to have at least one element, from above check
+    # Guaranteed to have at least one element, from above check
     raw_qs = gpad_line[QUALIFIER].split("|")
     negated = "NOT" in raw_qs
 
@@ -332,7 +327,6 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
 
     properties_list = assocparser.parse_annotation_properties(gpad_line[11])
 
-
     # print(properties_list)
     a = association.GoAssociation(
         source_line=source_line,
@@ -351,6 +345,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
         properties=properties_list)
 
     return assocparser.ParseResult(source_line, [a], False, report=report)
+
 
 def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknown", bio_entities=None):
     source_line = "\t".join(gpad_line)
@@ -374,8 +369,8 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             msg="There were {columns} columns found in this line, and there should be between 10 and 12".format(columns=len(gpad_line)), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
 
-    ## check for missing columns
-    ## We use indeces here because we run GO RULES before we split the vals into individual variables
+    # check for missing columns
+    # We use indeces here because we run GO RULES before we split the vals into individual variables
     SUBJECT_CURIE = 0
     RELATION = 2
     ONTOLOGY_CLASS_INDEX = 3
@@ -475,6 +470,7 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
         properties=properties_list)
 
     return assocparser.ParseResult(source_line, [a], False, report=report)
+
 
 def to_association(gpad_line: List[str], report=None, group="unknown", dataset="unknown", version="1.2", bio_entities=None) -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report

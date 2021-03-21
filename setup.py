@@ -63,14 +63,16 @@ setuptools.setup(
         'bin/rdfgen.py',
         'bin/validate.py',
         'bin/materialize.py',
+        'bin/compare_gpads.py',
         'bin/clear-cache.py'
     ]
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
-    #entry_points={
-    #    'console_scripts': [
-    #        'sample=sample:main',
-    #    ],
-    #},
+    # py_modules=['bin/compare_gpads'],
+    # entry_points='''
+    #     'console_scripts': [
+    #         'bin/compare_gpads=compare_gpads:cli',
+    #     ]
+    # '''
 )
