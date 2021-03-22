@@ -463,6 +463,7 @@ class AssocGoCamModel(GoCamModel):
         self.provided_bys = set()
         self.graph.bind("GOREL", GOREL)  # Because GOREL isn't in context.jsonld's
         self.gpi_entities = gpi_entities
+        self.errors: List[errors.GocamgenException] = []
         ncbi_taxon = self.taxon_id_from_entity(str(assocs[0].subject.id))
         # Emit model-level in_taxon triple from ncbi_taxon
         if ncbi_taxon:
@@ -615,7 +616,9 @@ class AssocGoCamModel(GoCamModel):
                                     ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
                                     annot_subgraph.add_edge(regulated_term_n, chained_rel, ext_target_n)
                                 else:
-                                    logger.warning("Couldn't get regulates relation from LD of: {}".format(term))
+                                    err_msg = "Couldn't get regulates relation from LD of: {}".format(term)
+                                    logger.warning(err_msg)
+                                    self.errors.append(errors.CollapsedAssocGocamgenException(err_msg, a))
                             elif ext_relation in HAS_REGULATION_TARGET_RELATIONS:
                                 if aspect == 'P':
                                     # For BP annotations, translate 'has regulation target' to 'has input'.

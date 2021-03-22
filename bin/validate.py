@@ -566,9 +566,11 @@ def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl):
     gpad_basename = os.path.basename(gpad_path)
     gpad_basename_root, gpad_ext = os.path.splitext(gpad_basename)
     output_basename = "{}.nq".format(gpad_basename_root)
-    report_basename = "{}.gocamgen.report".format(gpad_basename_root)
+    parse_report_basename = "{}.parser.report".format(gpad_basename_root)
+    model_report_basename = "{}.gocamgen.report".format(gpad_basename_root)
     output_path = os.path.join(absolute_target, output_basename)
-    report_path = os.path.join(absolute_target, report_basename)
+    parse_report_path = os.path.join(absolute_target, parse_report_basename)
+    model_report_path = os.path.join(absolute_target, model_report_basename)
 
     builder = GoCamBuilder(parser_config=parser_config)
 
@@ -580,7 +582,10 @@ def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl):
     if not ttl:
         builder.write_out_store_to_nquads(filepath=output_path)
 
-    builder.write_report(report_filepath=report_path)
+    # Reports
+    builder.write_report(report_filepath=model_report_path)
+    with open(parse_report_path, 'w') as prp:
+        prp.write(extractor.gpad_parser.report.to_markdown())
 
 
 @cli.command()
