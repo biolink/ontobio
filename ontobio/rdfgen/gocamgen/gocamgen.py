@@ -125,13 +125,14 @@ class GoCamEvidence:
     DEFAULT_CONTRIBUTOR = "http://orcid.org/0000-0002-6659-0416"
     DEFAULT_PROVIDED_BY = "http://geneontology.org"  # GO in groups.yaml
 
-    def __init__(self, code, references, contributors=[], date="", comment="", with_from=None, provided_by=[]):
+    def __init__(self, code, references, contributors=[], date="", comments=[], source_line="", with_from=None, provided_by=[]):
         self.evidence_code = code
         self.references = references
         self.date = date
         self.contributors = contributors
         self.provided_by = provided_by
-        self.comment = comment
+        self.comments = comments
+        self.source_line = source_line
         self.with_from = with_from
         self.id = None
 
@@ -144,13 +145,17 @@ class GoCamEvidence:
         if len(contributors) == 0:
             contributors = [GoCamEvidence.DEFAULT_CONTRIBUTOR]
         provided_by = GROUPS_HELPER.lookup_group_id(annot.assigned_by)  # Needs to be resolved to URI, e.g. ZFIN->http://zfin.org
+        comments = []
+        if "comment" in annot.annotation_properties:
+            comments = annot.annotation_properties["comment"]
 
         return GoCamEvidence(annot.evidence_code, annot.references,
                            contributors=contributors,
                            # "{date}T{time}".format(date=ymd_str(date), time=date.time)
                            date=ymd_str(annot.date, separator="-"),
                            provided_by=provided_by,
-                           comment=source_line)
+                           comments=comments,
+                           source_line=source_line)
 
     @staticmethod
     def create_from_collapsed_association(collapsed_association: CollapsedAssociation):
@@ -311,7 +316,7 @@ class GoCamModel():
         ev_id = self.writer.create_evidence(evidence)
         self.writer.emit(axiom, URIRef("http://geneontology.org/lego/evidence"), ev_id)
         ### Emit ev fields to axiom here TODO: Couple evidence and axiom emitting together
-        self.writer.emit(axiom, RDFS.comment, Literal(evidence.comment))
+        self.writer.emit(axiom, RDFS.comment, Literal(evidence.source_line))
         self.writer.emit(axiom, PAV.providedBy, Literal(evidence.provided_by))
         for c in evidence.contributors:
             self.writer.emit(axiom, DC.contributor, Literal(c))
@@ -895,6 +900,8 @@ class AnnotonCamRdfTransform(CamRdfTransform):
         for ref_to_emit in evidence.references:
             o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
             self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
+        for c in evidence.comments:
+            self.emit(ev_id, RDFS.comment, Literal(c))
         self.evidences.append(evidence)
         return evidence.id
 
