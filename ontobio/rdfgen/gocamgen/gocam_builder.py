@@ -76,6 +76,8 @@ class GoCamBuilder:
                     model.write(out_filename)
                     logger.info("Model for {} written to {} in {} sec".format(gene, out_filename,
                                                                               (time.time() - start_time)))
+                for err in model.errors:
+                    self.errors.add_error(gene, err)
                 return model
             except GocamgenException as ex:
                 self.errors.add_error(gene, ex)
@@ -156,13 +158,13 @@ class GoCamBuilder:
 class AssocExtractor:
     def __init__(self, gpad_file, parser_config: AssocParserConfig):
         self.assocs = []
-        gpad_parser = gpadparser.GpadParser(config=parser_config)
+        self.gpad_parser = gpadparser.GpadParser(config=parser_config)
         with open(gpad_file) as sg:
             lines = sum(1 for line in sg)
 
         with open(gpad_file) as gf:
             click.echo("Making products...")
-            with click.progressbar(iterable=gpad_parser.association_generator(file=gf, skipheader=True),
+            with click.progressbar(iterable=self.gpad_parser.association_generator(file=gf, skipheader=True),
                                    length=lines) as associations:
                 self.assocs = list(associations)
 
