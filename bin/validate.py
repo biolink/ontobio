@@ -197,7 +197,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2"):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -214,7 +214,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         group_metadata=group_metadata,
         extensions_constraints=extensions_constraints,
         rule_contexts=rule_contexts,
-        rule_set=assocparser.RuleSet.ALL
+        rule_set=rule_set,
     )
     logger.info("Producing {}".format(source_gaf))
     # logger.info("AssocParserConfig used: {}".format(config))
@@ -477,7 +477,8 @@ def cli(ctx, verbose):
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
 @click.option("--only-dataset", default=None)
 @click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version):
+@click.option("--rule-set", "-l", "rule_set", default=assocparser.RuleSet.ALL, multiple=True)
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version, rule_set):
 
     logger.info("Logging is verbose")
     products = {
@@ -533,7 +534,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             group_metadata=group_metadata,
             extensions_constraints=extensions_constraints,
             rule_contexts=["import"] if dataset_metadata.get("import", False) else [],
-            gaf_output_version=gaf_output_version
+            gaf_output_version=gaf_output_version,
+            rule_set=rule_set
             )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)

@@ -270,6 +270,11 @@ Parsing assoc files
 The ``ontobio-parse-assocs.py`` command will parse, validate and
 convert association files (GAF, GPAD, HPOA etc)
 
+GO Rules
+^^^^^^^^
+
+``ontobio-parse-assocs.py`` will 
+
 GOlr Queries
 ------------
 
