@@ -213,7 +213,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         annotation_inferences=annotation_inferences,
         group_metadata=group_metadata,
         extensions_constraints=extensions_constraints,
-        rule_contexts=rule_contexts
+        rule_contexts=rule_contexts,
+        rule_set=assocparser.RuleSet.ALL
     )
     logger.info("Producing {}".format(source_gaf))
     # logger.info("AssocParserConfig used: {}".format(config))
@@ -263,11 +264,6 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
 
 @tools.gzips
 def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
-    gafparser = GafParser()
-    gafparser.config = assocparser.AssocParserConfig(
-        ontology=ontology_graph,
-        paint=True
-    )
 
     with open(gaf_path) as sg:
         lines = sum(1 for line in sg)
@@ -283,13 +279,17 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
 
     # def write_gpi_entity(association, bridge, gpiwriter):
     with open(gaf_path) as gf:
+        gafparser = GafParser(config=assocparser.AssocParserConfig(
+            ontology=ontology_graph,
+            paint=True,
+        ))
+
         # gpi info:
         click.echo("Using {} as the gaf to build data products with".format(gaf_path))
         if products["ttl"]:
             click.echo("Setting up {}".format(product_files["ttl"].name))
             rdf_writer = assoc_rdfgen.TurtleRdfWriter(label=os.path.split(product_files["ttl"].name)[1] )
             transformer = assoc_rdfgen.CamRdfTransform(writer=rdf_writer)
-            parser_config = assocparser.AssocParserConfig(ontology=ontology_graph)
 
         if products["gpad"]:
             click.echo("Setting up {}".format(product_files["gpad"].name))
@@ -632,7 +632,8 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
         goref_metadata=goref_metadata,
         entity_idspaces=db_entities,
         group_idspace=group_ids,
-        annotation_inferences=gaferences
+        annotation_inferences=gaferences,
+        rule_set=assocparser.RuleSet.ALL
     )
     all_examples_valid = True
     all_results = []
