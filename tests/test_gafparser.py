@@ -381,7 +381,8 @@ def test_alt_id_repair():
 
 def test_gorule_repair():
     config = assocparser.AssocParserConfig(
-        ontology=OntologyFactory().create("tests/resources/goslim_generic.json")
+        ontology=OntologyFactory().create("tests/resources/goslim_generic.json"),
+        rule_set=assocparser.RuleSet.ALL
     )
     p = GafParser(config=config)
     # Here this gaf line has the wrong aspect, and should be picked up by gorule 28

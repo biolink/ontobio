@@ -75,6 +75,10 @@ def main():
                         help="Allow IBAs in parser")
     parser.add_argument("-g", "--gpi", type=str, required=False, default=None,
                         help="GPI file")
+    parser.add_argument("-l", "--rule", action="append", required=None, default=[], dest="rule_set",
+                        help="Set of rules to be run. Default is no rules to be run, with the exception \
+                            of gorule-0000027 and gorule-0000020. See command line documentation in the \
+                                ontobio project or readthedocs for more information")
 
 
     subparsers = parser.add_subparsers(dest='subcommand', help='sub-command help')
@@ -139,9 +143,9 @@ def main():
         filtered_evidence_file=filtered_evidence_file,
         annotation_inferences=gaferences,
         paint=args.allow_paint,
-        gpi_authority_path=args.gpi
+        gpi_authority_path=args.gpi,
+        rule_set=args.rule_set
     )
-    print(config.gpi_authority_path)
     p = None
     fmt = None
     if args.format is None:

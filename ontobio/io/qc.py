@@ -78,6 +78,12 @@ class GoRule(object):
         return len(self.run_context_tags) == 0 or any(self.run_context_tags & rule_tags_to_match)
 
     def _run_if_context(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        if not config.rule_set.should_run_rule(self.id.split(":")[1]):
+            # We check that this rule can be run based on the ID and what is in the config rule_set.
+            # If we should not run the rule, we'll auto-pass it here.
+            # In the future, we could use a new result type, SKIP here.
+            return TestResult(ResultType.PASS, "", annotation)
+
         result = TestResult(ResultType.PASS, "", annotation)
         if self._is_run_from_context(config):
             result = self.test(annotation, config, group=group)

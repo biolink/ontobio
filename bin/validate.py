@@ -197,7 +197,7 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2"):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -213,7 +213,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
         annotation_inferences=annotation_inferences,
         group_metadata=group_metadata,
         extensions_constraints=extensions_constraints,
-        rule_contexts=rule_contexts
+        rule_contexts=rule_contexts,
+        rule_set=rule_set,
     )
     logger.info("Producing {}".format(source_gaf))
     # logger.info("AssocParserConfig used: {}".format(config))
@@ -263,11 +264,6 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, 
 
 @tools.gzips
 def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
-    gafparser = GafParser()
-    gafparser.config = assocparser.AssocParserConfig(
-        ontology=ontology_graph,
-        paint=True
-    )
 
     with open(gaf_path) as sg:
         lines = sum(1 for line in sg)
@@ -283,13 +279,17 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
 
     # def write_gpi_entity(association, bridge, gpiwriter):
     with open(gaf_path) as gf:
+        gafparser = GafParser(config=assocparser.AssocParserConfig(
+            ontology=ontology_graph,
+            paint=True,
+        ))
+
         # gpi info:
         click.echo("Using {} as the gaf to build data products with".format(gaf_path))
         if products["ttl"]:
             click.echo("Setting up {}".format(product_files["ttl"].name))
             rdf_writer = assoc_rdfgen.TurtleRdfWriter(label=os.path.split(product_files["ttl"].name)[1] )
             transformer = assoc_rdfgen.CamRdfTransform(writer=rdf_writer)
-            parser_config = assocparser.AssocParserConfig(ontology=ontology_graph)
 
         if products["gpad"]:
             click.echo("Setting up {}".format(product_files["gpad"].name))
@@ -477,7 +477,8 @@ def cli(ctx, verbose):
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
 @click.option("--only-dataset", default=None)
 @click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version):
+@click.option("--rule-set", "-l", "rule_set", default=assocparser.RuleSet.ALL, multiple=True)
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version, rule_set):
 
     logger.info("Logging is verbose")
     products = {
@@ -533,7 +534,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             group_metadata=group_metadata,
             extensions_constraints=extensions_constraints,
             rule_contexts=["import"] if dataset_metadata.get("import", False) else [],
-            gaf_output_version=gaf_output_version
+            gaf_output_version=gaf_output_version,
+            rule_set=rule_set
             )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
@@ -632,7 +634,8 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
         goref_metadata=goref_metadata,
         entity_idspaces=db_entities,
         group_idspace=group_ids,
-        annotation_inferences=gaferences
+        annotation_inferences=gaferences,
+        rule_set=assocparser.RuleSet.ALL
     )
     all_examples_valid = True
     all_results = []

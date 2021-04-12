@@ -21,7 +21,7 @@ import dateutil.parser
 from dataclasses import dataclass
 
 from collections import namedtuple, defaultdict
-from typing import Optional, List, Dict, Set, Union
+from typing import ClassVar, Iterable, Optional, List, Dict, Set, Union, Any
 
 from ontobio import ontol
 from ontobio import ecomap
@@ -56,7 +56,7 @@ as the separated by tab list of values. We also tack on the taxon.
 class ValidateResult:
     valid: bool
     original: str
-    parsed: Optional
+    parsed: Optional[Any]
     message: str
 
 @dataclass
@@ -172,12 +172,46 @@ class TaxonValidator(CurieValidator):
 
         return ValidateResult(True, entity, parsed_taxons, "")
 
+@dataclass
+class RuleSet:
+    """
+    This represents the set of GO Rules we want ontobio to run during parsing of annotations.
+
+    If `rules` is None, all rules will be run. If `rules` is an empty set, no rules will be run.
+    Otherwise, the rules set member variable is a set of integers corresponding to the rule IDs
+    that will be run during parse.
+
+    For example, if self.rules == set([6, 13, 20]) then only GORULE:0000006, GORULE:0000013, and 
+    GORULE:0000020 will be run.
+
+    Note that GORULE:0000001 will always be run, as that rule represents succesful parsing a line
+    into ontobio at all.
+    """
+    rules: Optional[Set[int]]
+
+    ALL: ClassVar[str] = "all"
+
+    def __init__(self, rules: Optional[Iterable]):
+        if rules is None:
+            self.rules = None
+        else:
+            self.rules = set(rules)
+    
+    def should_run_rule(self, rule: int) -> bool:
+        if self.rules is None:
+            return True
+        
+        return rule in self.rules
+
+
 
 class AssocParserConfig():
     """
     Configuration for an association parser
 
     rule_metadata: Dictionary of rule IDs to metadata pulled out by yamldown
+
+    rule_sets: an Iterable of integers representing 
     """
     def __init__(self,
                  remove_double_prefixes=False,
@@ -202,7 +236,8 @@ class AssocParserConfig():
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None,
                  extensions_constraints=None,
-                 rule_contexts=[]):
+                 rule_contexts=[],
+                 rule_set=None):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -226,6 +261,14 @@ class AssocParserConfig():
         self.extensions_constraints = AssocParserConfig._compute_constraint_subclasses(extensions_constraints, ontology)
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         self.rule_contexts = rule_contexts
+        # We'll say that the default None should run no rules, so let's set the rule_set to []
+        if rule_set == None:
+            self.rule_set = RuleSet([])
+        elif rule_set == RuleSet.ALL:
+            # None here means all rules
+            self.rule_set = RuleSet(None)
+
+
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
         if self.exclude_relations is None:
             self.exclude_relations = []
