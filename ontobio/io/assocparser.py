@@ -205,36 +205,6 @@ class RuleSet:
         return rule in self.rules
 
 
-# @dataclass
-# class ParserConfig:
-#     remove_double_prefixes: bool = False
-#     ontology: Optional[ontol.Ontology] = None
-#     repair_obsoletes: bool = True
-#     entity_map: NoneType = None
-#     # entity_map is None because it's not used anywhere except hpoaparser currently.
-#     # However this usage is paired with a call to a function that does not exist either.
-#     valid_taxa=Optional[Collection]
-#     class_idspaces=None
-#     entity_idspaces=None
-#     group_idspace=None
-#     ecomap=ecomap.EcoMap()
-#     exclude_relations=None
-#     include_relations=None
-#     filter_out_evidence=None
-#     filtered_evidence_file=None
-#     gpi_authority_path=None
-#     paint=False
-#     rule_metadata=dict()
-#     goref_metadata=None
-#     group_metadata=None
-#     dbxrefs=None
-#     suppress_rule_reporting_tags=[]
-#     annotation_inferences=None
-#     extensions_constraints=None
-#     rule_contexts=[]
-#     rule_set=None
-
-
 class AssocParserConfig():
     """
     Configuration for an association parser
