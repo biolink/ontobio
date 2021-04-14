@@ -7,6 +7,7 @@ All parser objects instantiate a subclass of the abstract `AssocParser` object
 
 # TODO: Refactor - move some stuff out into generic parser object
 
+# from _typeshed import NoneType
 import re
 import requests
 import tempfile
@@ -21,7 +22,7 @@ import dateutil.parser
 from dataclasses import dataclass
 
 from collections import namedtuple, defaultdict
-from typing import ClassVar, Iterable, Optional, List, Dict, Set, Union, Any
+from typing import Callable, ClassVar, Collection, Iterable, Optional, List, Dict, Set, TypeVar, Union, Any
 
 from ontobio import ontol
 from ontobio import ecomap
@@ -204,7 +205,6 @@ class RuleSet:
         return rule in self.rules
 
 
-
 class AssocParserConfig():
     """
     Configuration for an association parser
@@ -262,11 +262,14 @@ class AssocParserConfig():
         self.group_idspace = None if group_idspace is None else set(group_idspace)
         self.rule_contexts = rule_contexts
         # We'll say that the default None should run no rules, so let's set the rule_set to []
+        # print("Rule Set is {}".format(rule_set))
         if rule_set == None:
             self.rule_set = RuleSet([])
         elif rule_set == RuleSet.ALL:
             # None here means all rules
             self.rule_set = RuleSet(None)
+        else:
+            self.rule_set = RuleSet(rule_set)
 
 
         # This is a dictionary from ruleid: `gorule-0000001` to title strings
@@ -307,7 +310,6 @@ class AssocParserConfig():
         s = "AssocParserConfig("
         attribute_values = ["{att}={val}".format(att=att, val=dict([(k, v) for k, v in value.items()][:8]) if isinstance(value, dict) else value) for att, value in vars(self).items()]
         return "AssocParserConfig({})".format(",".join(attribute_values))
-
 
 class Report(object):
     """

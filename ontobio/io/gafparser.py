@@ -188,6 +188,7 @@ class GafParser(assocparser.AssocParser):
             assoc = self.upgrade_empty_qualifier(assoc)
 
         ## Run GO Rules, save split values into individual variables
+        # print("Config is {}".format(self.config.__dict__.keys()))
         go_rule_results = qc.test_go_rules(assoc, self.config, group=self.group)
         for rule, result in go_rule_results.all_results.items():
             if result.result_type == qc.ResultType.WARNING:
