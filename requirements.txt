@@ -1,4 +1,4 @@
-marshmallow==3.0.0b11
+marshmallow>=3.0.0b11
 jsobject>=0.0
 prefixcommons>=0.1.9
 requests>=0.0
@@ -13,7 +13,7 @@ scipy>=1.2.0
 twine
 jsonpickle>=0.0
 jsonpath_rw>=0.0
-PyShEx==0.7.11
+PyShEx>=0.7.11
 pytest>=0.0
 pytest_logging>=0.0
 pydotplus>=0.0
