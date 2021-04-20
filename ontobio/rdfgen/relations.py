@@ -106,7 +106,14 @@ __relation_label_lookup = bidict({
     "imports": "http://purl.obolibrary.org/obo/RO_0002340",
     "directly regulates": "http://purl.obolibrary.org/obo/RO_0002578",
     "regulates o results in division of": "http://purl.obolibrary.org/obo/GOREL_0001024",
-    "regulates o transports or maintains localization of": "http://purl.obolibrary.org/obo/GOREL_0000038"
+    "regulates o transports or maintains localization of": "http://purl.obolibrary.org/obo/GOREL_0000038",
+    "starts": "http://purl.obolibrary.org/obo/RO_0002223",
+    "starts with": "http://purl.obolibrary.org/obo/RO_0002224",
+    "ends": "http://purl.obolibrary.org/obo/RO_0002229",
+    "ends with": "http://purl.obolibrary.org/obo/RO_0002230",
+    "involved in regulation of": "http://purl.obolibrary.org/obo/RO_0002428",
+    "involved in positive regulation of": "http://purl.obolibrary.org/obo/RO_0002429",
+    "involved in negative regulation of": "http://purl.obolibrary.org/obo/RO_0002430"
 })
 
 def lookup_uri(uri, default=None):
