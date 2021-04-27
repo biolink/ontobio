@@ -37,7 +37,6 @@ class SearchResults:
         self.numFound = numFound
         self.facet_counts = facet_counts
         self.highlighting = highlighting
-        return
 
 
 class AutocompleteResult:
@@ -61,7 +60,8 @@ class AutocompleteResult:
                  taxon: str,
                  taxon_label: str,
                  highlight: str,
-                 has_highlight: bool):
+                 has_highlight: bool,
+                 equivalent_ids: List[str]):
         self.id = id
         self.label = label
         self.match = match
@@ -70,4 +70,4 @@ class AutocompleteResult:
         self.taxon_label = taxon_label
         self.highlight = highlight
         self.has_highlight = has_highlight
-        return
+        self.equivalent_ids = equivalent_ids
