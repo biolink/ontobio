@@ -347,6 +347,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                  taxon=None,
                  min_match=None,
                  minimal_tokenizer=False,
+                 include_eqs=False,
+                 exclude_groups=False,
                  user_agent=None):
         self.term = term
         self.category = category
@@ -373,6 +375,8 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.highlight_class = highlight_class
         self.taxon = taxon
         self.min_match = min_match
+        self.include_eqs = include_eqs
+        self.exclude_groups = exclude_groups
         self.minimal_tokenizer = minimal_tokenizer
 
         self.user_agent = get_user_agent(modules=[requests, pysolr], caller_name=__name__)
@@ -490,18 +494,35 @@ class GolrSearchQuery(GolrAbstractQuery):
             params['fq'].append(fq)
 
         if self.prefix is not None:
-            negative_filter = [p_filt for p_filt in self.prefix
+            negative_filter = [p_filt[1:] for p_filt in self.prefix
                                if p_filt.startswith('-')]
             positive_filter = [p_filt for p_filt in self.prefix
                                if not p_filt.startswith('-')]
 
             if negative_filter:
-                neg_filter = '({})'.format(
-                    " AND ".join([filt for filt in negative_filter]))
-                params['fq'].append('prefix:{}'.format(neg_filter))
+                if self.include_eqs:
+                    single_filts = [
+                        f"(-prefix:{prefix} OR -equivalent_curie:{prefix}*)"
+                        for prefix in negative_filter
+                    ]
+                    for filt in single_filts:
+                        params['fq'].append(filt)
+
+                else:
+                    neg_filter = '({})'.format(" OR ".join([filt for filt in negative_filter]))
+                    params['fq'].append('-prefix:{}'.format(neg_filter))
 
             if positive_filter:
-                params['fq'].append('prefix:{}'.format(solr_quotify(positive_filter)))
+                if self.include_eqs:
+                    # fq=((prefix:HP OR equivalent_curie:HP) OR (prefix:MONDO OR equivalent_curie:MONDO))
+                    single_filts = [
+                        f"(prefix:{prefix} OR equivalent_curie:{prefix}*)"
+                        for prefix in positive_filter
+                    ]
+                    pos_filter = '({})'.format(" OR ".join([filt for filt in single_filts]))
+                    params['fq'].append(pos_filter)
+                else:
+                    params['fq'].append('prefix:{}'.format(solr_quotify(positive_filter)))
 
         if self.boost_fx is not None:
             params['bf'] = []
@@ -516,6 +537,9 @@ class GolrSearchQuery(GolrAbstractQuery):
         if self.taxon is not None:
             for tax in self.taxon:
                 params['fq'].append('taxon:"{}"'.format(tax))
+
+        if self.exclude_groups:
+            params['fq'].append('leaf:1')
 
         if self.min_match is not None:
             params['mm'] = self.min_match
@@ -602,6 +626,7 @@ class GolrSearchQuery(GolrAbstractQuery):
 
             doc['taxon'] = doc['taxon'] if 'taxon' in doc else ""
             doc['taxon_label'] = doc['taxon_label'] if 'taxon_label' in doc else ""
+            doc['equivalent_curie'] = doc['equivalent_curie'] if 'equivalent_curie' in doc else []
             doc = AutocompleteResult(
                 id=doc['id'],
                 label=doc['label'],
@@ -610,7 +635,8 @@ class GolrSearchQuery(GolrAbstractQuery):
                 taxon=doc['taxon'],
                 taxon_label=doc['taxon_label'],
                 highlight=hl.highlight,
-                has_highlight=hl.has_highlight
+                has_highlight=hl.has_highlight,
+                equivalent_ids=doc['equivalent_curie']
             )
             docs.append(doc)
 

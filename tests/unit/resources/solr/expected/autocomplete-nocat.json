@@ -12,7 +12,8 @@
          ],
          "match":"food",
          "taxon":"",
-         "taxon_label":""
+         "taxon_label":"",
+         "equivalent_ids": []
       }
    ]
 }
