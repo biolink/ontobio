@@ -502,7 +502,7 @@ class GolrSearchQuery(GolrAbstractQuery):
             if negative_filter:
                 if self.include_eqs:
                     single_filts = [
-                        f"(-prefix:{prefix} OR -equivalent_curie:{prefix}*)"
+                        f'(-prefix:"{prefix}" OR -equivalent_curie:{prefix}\:*)'
                         for prefix in negative_filter
                     ]
                     for filt in single_filts:
@@ -510,13 +510,13 @@ class GolrSearchQuery(GolrAbstractQuery):
 
                 else:
                     neg_filter = '({})'.format(" OR ".join([filt for filt in negative_filter]))
-                    params['fq'].append('-prefix:{}'.format(neg_filter))
+                    params['fq'].append('-prefix:{}'.format(solr_quotify(negative_filter)))
 
             if positive_filter:
                 if self.include_eqs:
                     # fq=((prefix:HP OR equivalent_curie:HP) OR (prefix:MONDO OR equivalent_curie:MONDO))
                     single_filts = [
-                        f"(prefix:{prefix} OR equivalent_curie:{prefix}*)"
+                        f'(prefix:"{prefix}" OR equivalent_curie:{prefix}\:*)'
                         for prefix in positive_filter
                     ]
                     pos_filter = '({})'.format(" OR ".join([filt for filt in single_filts]))

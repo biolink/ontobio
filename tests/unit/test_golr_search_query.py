@@ -168,7 +168,7 @@ class TestGolrLayPersonSearch():
         expected object
         """
         expected_fh = os.path.join(os.path.dirname(__file__),
-                                  'resources/solr/expected/layperson.json')
+                                   'resources/solr/expected/layperson.json')
         processed_docs = json.load(open(expected_fh))
         output_docs = self.manager._process_layperson_results(self.pysolr_results)
 
@@ -210,7 +210,7 @@ class TestGolrSearchParams():
             'MONDO'
         ]
         expected = [
-            '-prefix:(OMIA OR Orphanet)',
+            '-prefix:("OMIA" OR "Orphanet")',
             'prefix:("DO" OR "OMIM" OR "MONDO")'
         ]
         self.manager.prefix = prefix_filter
@@ -230,10 +230,10 @@ class TestGolrSearchParams():
             'MONDO'
         ]
         expected = [
-            '(-prefix:OMIA OR -equivalent_curie:OMIA*)',
-            '(-prefix:Orphanet OR -equivalent_curie:Orphanet*)',
-            '((prefix:DO OR equivalent_curie:DO*) OR (prefix:OMIM OR '
-            'equivalent_curie:OMIM*) OR (prefix:MONDO OR equivalent_curie:MONDO*))'
+            '(-prefix:"OMIA" OR -equivalent_curie:OMIA\:*)',
+            '(-prefix:"Orphanet" OR -equivalent_curie:Orphanet\:*)',
+            '((prefix:"DO" OR equivalent_curie:DO\:*) OR (prefix:"OMIM" OR '
+            'equivalent_curie:OMIM\:*) OR (prefix:"MONDO" OR equivalent_curie:MONDO\:*))'
         ]
         self.manager.prefix = prefix_filter
         self.manager.include_eqs = True
