@@ -210,9 +210,32 @@ class TestGolrSearchParams():
             'MONDO'
         ]
         expected = [
-            'prefix:(-OMIA AND -Orphanet)',
+            '-prefix:(OMIA OR Orphanet)',
             'prefix:("DO" OR "OMIM" OR "MONDO")'
         ]
         self.manager.prefix = prefix_filter
+        params = self.manager.solr_params()
+        assert params['fq'] == expected
+
+    def test_prefix_filters_include_eq(self):
+        """
+        Test that prefix filters are converted
+        properly to solr params
+        """
+        prefix_filter = [
+            '-OMIA',
+            '-Orphanet',
+            'DO',
+            'OMIM',
+            'MONDO'
+        ]
+        expected = [
+            '(-prefix:OMIA OR -equivalent_curie:OMIA*)',
+            '(-prefix:Orphanet OR -equivalent_curie:Orphanet*)',
+            '((prefix:DO OR equivalent_curie:DO*) OR (prefix:OMIM OR '
+            'equivalent_curie:OMIM*) OR (prefix:MONDO OR equivalent_curie:MONDO*))'
+        ]
+        self.manager.prefix = prefix_filter
+        self.manager.include_eqs = True
         params = self.manager.solr_params()
         assert params['fq'] == expected

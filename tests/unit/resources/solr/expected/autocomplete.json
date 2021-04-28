@@ -10,7 +10,8 @@
       "taxon": "NCBITaxon:559292",
       "match": "SHH3",
       "taxon_label": "Saccharomyces cerevisiae S288C",
-      "id": "SGD:S000004724"
+      "id": "SGD:S000004724",
+      "equivalent_ids": ["NCBIGene:855145"]
     },
     {
       "category": [
@@ -22,7 +23,8 @@
       "taxon": "NCBITaxon:559292",
       "match": "SHH4",
       "taxon_label": "Saccharomyces cerevisiae S288C",
-      "id": "SGD:S000004154"
+      "id": "SGD:S000004154",
+      "equivalent_ids": ["NCBIGene:850861"]
     },
     {
       "category": [
@@ -34,7 +36,8 @@
       "taxon": "NCBITaxon:9598",
       "match": "SHH",
       "taxon_label": "Pan troglodytes",
-      "id": "NCBIGene:743371"
+      "id": "NCBIGene:743371",
+      "equivalent_ids": ["ENSEMBL:ENSPTRG00000019912"]
     }
   ]
 }
