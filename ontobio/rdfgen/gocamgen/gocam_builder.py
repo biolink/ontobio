@@ -199,8 +199,8 @@ class AssocExtractor:
         entities = parser.parse(gpi_file)
         for entity in entities:
             entity_id = entity['id']
-            if len(entity['parents']) > 0:
-                entity_parents[entity_id] = entity['parents'][0]  # There may only be one
+            if len(entity['encoded_by']) > 0:
+                entity_parents[entity_id] = entity['encoded_by'][0]  # There may only be one
         return entity_parents
 
 
