@@ -125,12 +125,12 @@ class GoCamEvidence:
     DEFAULT_CONTRIBUTOR = "http://orcid.org/0000-0002-6659-0416"
     DEFAULT_PROVIDED_BY = "http://geneontology.org"  # GO in groups.yaml
 
-    def __init__(self, code, references, contributors=[], date="", comments=[], source_line="", with_from=None, provided_by=[]):
+    def __init__(self, code, references, contributors=[], date="", comments=[], source_line="", with_from=None, provided_bys: List = []):
         self.evidence_code = code
         self.references = references
         self.date = date
         self.contributors = contributors
-        self.provided_by = provided_by
+        self.provided_bys = provided_bys
         self.comments = comments
         self.source_line = source_line
         self.with_from = with_from
@@ -153,7 +153,7 @@ class GoCamEvidence:
                            contributors=contributors,
                            # "{date}T{time}".format(date=ymd_str(date), time=date.time)
                            date=ymd_str(annot.date, separator="-"),
-                           provided_by=provided_by,
+                           provided_bys=[provided_by],
                            comments=comments,
                            source_line=source_line)
 
@@ -252,10 +252,14 @@ class GoCamModel():
             max_date = GoCamEvidence.max_date(evidences)
             self.writer.emit(entity, DC.date, Literal(max_date))
             all_contributors = set()
+            all_provided_bys = set()
             for e in evidences:
                 [all_contributors.add(c) for c in e.contributors]
+                [all_provided_bys.add(pb) for pb in e.provided_bys]
             for c in all_contributors:
                 self.writer.emit(entity, DC.contributor, Literal(c))
+            for pb in all_provided_bys:
+                self.writer.emit(entity, PAV.providedBy, Literal(pb))
         self.individuals[entity_id] = entity
         return entity
 
@@ -317,9 +321,10 @@ class GoCamModel():
         self.writer.emit(axiom, URIRef("http://geneontology.org/lego/evidence"), ev_id)
         ### Emit ev fields to axiom here TODO: Couple evidence and axiom emitting together
         self.writer.emit(axiom, RDFS.comment, Literal(evidence.source_line))
-        self.writer.emit(axiom, PAV.providedBy, Literal(evidence.provided_by))
         for c in evidence.contributors:
             self.writer.emit(axiom, DC.contributor, Literal(c))
+        for pb in evidence.provided_bys:
+            self.writer.emit(axiom, PAV.providedBy, Literal(pb))
         if emit_date:
             self.writer.emit(axiom, DC.date, Literal(evidence.date))
 
@@ -493,7 +498,8 @@ class AssocGoCamModel(GoCamModel):
             for e in evidences:
                 for c in e.contributors:
                     self.contributors.add(c)
-                self.provided_bys.add(e.provided_by)
+                for pb in e.provided_bys:
+                    self.provided_bys.add(pb)
 
             annotation_extensions = a.annot_extensions()
 
@@ -894,6 +900,8 @@ class AnnotonCamRdfTransform(CamRdfTransform):
             self.emit(ev_id, URIRef("http://geneontology.org/lego/evidence-with"), Literal(evidence.with_from))
         for c in evidence.contributors:
             self.emit(ev_id, DC.contributor, Literal(c))
+        for pb in evidence.provided_bys:
+            self.emit(ev_id, PAV.providedBy, Literal(pb))
         for ref_to_emit in evidence.references:
             o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
             self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
