@@ -5,7 +5,7 @@ requests>=0.0
 pip>=9.0.1
 wheel>0.25.0
 pysolr>=3.6.0
-networkx>=2.2
+networkx==2.3
 matplotlib>=2.0.0
 SPARQLWrapper>=1.8.0
 pandas>=0.0
