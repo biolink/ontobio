@@ -1,6 +1,6 @@
 from ontobio.io import assocparser
 from ontobio.io.gpadparser import GpadParser
-from ontobio.io import gafparser
+from ontobio.io import gafparser, gafgpibridge
 from ontobio.io.gafparser import GafParser
 from ontobio.io import GafWriter
 from ontobio.io.assocwriter import GpadWriter
@@ -471,6 +471,15 @@ def test_factory():
 
     assert len(aset.associations_by_subj) > 0
     assert found == 2
+
+def test_gaf_gpi_bridge():
+    gaf = ["MGI", "MGI:1923503", "0610006L08Rik", "enables", "GO:0003674", "MGI:MGI:2156816|GO_REF:0000015", "ND", "",
+           "F", "RIKEN cDNA 0610006L08 gene", "", "gene", "taxon:10090", "20120430", "MGI", "", ""]
+    association = gafparser.to_association(gaf, qualifier_parser=assocparser.Qualifier2_2()).associations[0]
+    bridge = gafgpibridge.GafGpiBridge()
+    entity = bridge.convert_association(association)
+    assert entity.get("type") == ["gene"]
+
 
 if __name__ == "__main__":
     pytest.main(args=["tests/test_gafparser.py::test_parse_gaf"])
