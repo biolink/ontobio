@@ -50,7 +50,8 @@ class GoCamBuilder:
 
     def translate_to_model(self, gene, assocs: List[GoAssociation]):
         model_id = gene.replace(":", "_")
-        model = AssocGoCamModel(gene, assocs, config=self.config, store=self.store, gpi_entities=self.gpi_entities, model_id=model_id)
+        model_title = self.model_title(gene)
+        model = AssocGoCamModel(model_title, assocs, config=self.config, store=self.store, gpi_entities=self.gpi_entities, model_id=model_id)
         model.go_aspector = self.aspector  # TODO: Grab aspect from ontology node
         model.translate()
 
@@ -107,6 +108,11 @@ class GoCamBuilder:
             for gene, errs in self.errors.errors.items():
                 for ex in errs:
                     reportf.write(f"{type(ex).__name__} - {gene}: {ex}\n")
+
+    def model_title(self, gene_id: str) -> str:
+        entity = self.gpi_entities.get(gene_id)
+        model_title = "{} ({})".format(entity["label"], gene_id)
+        return model_title
 
     @staticmethod
     def extract_relations_ontology(ontology_graph):
