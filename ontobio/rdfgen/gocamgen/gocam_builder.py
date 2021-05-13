@@ -49,6 +49,9 @@ class GoCamBuilder:
         self.gpi_entities = self.parse_gpi(parser_config.gpi_authority_path)
 
     def translate_to_model(self, gene, assocs: List[GoAssociation]):
+        if gene not in self.gpi_entities:
+            error_msg = "Gene ID '{}' missing from provided GPI. Skipping model translation.".format(gene)
+            raise GocamgenException(error_msg)
         model_id = gene.replace(":", "_")
         model_title = self.model_title(gene)
         model = AssocGoCamModel(model_title, assocs, config=self.config, store=self.store, gpi_entities=self.gpi_entities, model_id=model_id)
