@@ -265,7 +265,7 @@ class AssocParserConfig():
         # print("Rule Set is {}".format(rule_set))
         if rule_set == None:
             self.rule_set = RuleSet([])
-        elif rule_set == RuleSet.ALL:
+        elif rule_set == [RuleSet.ALL]:
             # None here means all rules
             self.rule_set = RuleSet(None)
         else:
