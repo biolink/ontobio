@@ -132,6 +132,10 @@ def main():
     if args.gaferencer_file:
         gaferences = gaference.build_annotation_inferences(json.load(args.gaferencer_file))
 
+    rule_set = args.rule_set
+    if rule_set == ["all"]:
+        rule_set = assocparser.RuleSet.ALL
+
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
     config = assocparser.AssocParserConfig(
@@ -144,7 +148,7 @@ def main():
         annotation_inferences=gaferences,
         paint=args.allow_paint,
         gpi_authority_path=args.gpi,
-        rule_set=args.rule_set
+        rule_set=rule_set
     )
     p = None
     fmt = None
