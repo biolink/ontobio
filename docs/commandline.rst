@@ -280,16 +280,19 @@ To include a rule in the rule set use the option ``-l`` or ``--rule`` followed b
 For example to include gorule-0000006:
 
 ::
+
     ontobio-parse-assocs.py -f my_assoc.gaf --report-md report.md -l 6 validate
 
 Use multiple ``-l <ID>`` to build up a list of rules that will be used to validate the input file:
 
 ::
+
     ontobio-parse-assocs.py -f my_assoc.gaf --report-md report.md -l 6 -l 13 validate
 
 To turn on all rules at once, use ``-l all``:
 
 ::
+
     ontobio-parse-assocs.py -f my_assoc.gaf --report-md report.md -l all validate
 
 Under the hood, this is all controlled using a parameter, ``rule_set`` attached to the AssocParserConfig class. This accepts a list of integers or the string ``"all"`` or ``None``. Setting to ``None`` (the default) will include no rules, and using ``"all"`` will use all rules.

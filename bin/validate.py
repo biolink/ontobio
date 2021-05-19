@@ -100,6 +100,8 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
     # including scheme and such
     reconstructed_url = urllib.parse.urlunsplit((scheme, urllib.parse.urlparse(joined_url).netloc, urllib.parse.urlparse(joined_url).path, source_url_parsed.query, ""))
 
+    click.echo("Using URL `{}`".format(reconstructed_url))
+
     # Using urllib to download if scheme is ftp or file. Otherwise we can use requests and use a progressbar
     if scheme in ["ftp", "file"]:
         urllib.request.urlretrieve(reconstructed_url, path)
