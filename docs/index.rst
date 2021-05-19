@@ -57,6 +57,7 @@ Documentation
    identifiers
    analyses
    ontologies_advanced
+   go_rules
 
 API Reference
 -------------
