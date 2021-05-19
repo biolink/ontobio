@@ -261,13 +261,26 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         Owlsim2 filtered search, resolves taxon and category to a namespace,
         calls search_by_attribute_set, and converts to SimResult object
         """
+        # Increase the limit so we can rerank non phenodigm metrics accurately
+        limit_buffer = 100
+
         if len(negated_classes) > 0:
             logger.warning("Owlsim2 does not support negation, ignoring neg classes")
 
         namespace_filter = self._get_namespace_filter(taxon_filter, category_filter)
+
+        # Since owlsim only ranks results in order of phenodigm score,
+        # we need to increase the limit when using other methods to make
+        # sure we're able to rerank accurately.  Otherwise, we end up
+        # giving different results depending on the limit param,
+        # see https://github.com/biolink/biolink-api/issues/374
+
+        hard_limit = limit
+        if method != SimAlgorithm.PHENODIGM:
+            hard_limit = limit + limit_buffer
         owlsim_results = search_by_attribute_set(
-            self.url, frozenset(id_list), limit, namespace_filter)
-        return self._simsearch_to_simresult(owlsim_results, method)
+            self.url, frozenset(id_list), hard_limit, namespace_filter)
+        return self._simsearch_to_simresult(owlsim_results, method, limit)
 
     def compare(self,
                 reference_classes: List,
@@ -313,12 +326,17 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
 
         return profile_ic
 
-    def _simsearch_to_simresult(self, sim_resp: Dict, method: SimAlgorithm) -> SimResult:
+    def _simsearch_to_simresult(
+            self,
+            sim_resp: Dict,
+            method: SimAlgorithm,
+            limit: int) -> SimResult:
         """
         Convert owlsim json to SimResult object
 
         :param sim_resp: owlsim response from search_by_attribute_set()
         :param method: SimAlgorithm
+        :param limit: int, number of results to return
         :return: SimResult object
         """
 
@@ -330,8 +348,11 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         id_type_map = get_id_type_map(ids)
 
         matches = []
+        counter = 0
 
         for result in sim_resp['results']:
+            if counter == limit:
+                break
             matches.append(
                 SimMatch(
                     id=result['j']['id'],
@@ -344,6 +365,7 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
                     pairwise_match=OwlSim2Api._make_pairwise_matches(result)
                 )
             )
+            counter += 1
 
         return SimResult(
             query=SimQuery(
