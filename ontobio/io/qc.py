@@ -294,7 +294,7 @@ class GoRule15(GoRule):
 
         # Cache the allowed terms
         if self.allowed_dual_species_terms is None and config.ontology is not None:
-            interaction_terms = config.ontology.descendants("GO:0044419", relations=["subClassOf"], reflexive=True)
+            interaction_terms = config.ontology.descendants("GO:0044419", relations=["subClassOf", "BFO:0000050"], reflexive=True)
             interspecies_interactions_regulation = config.ontology.descendants("GO:0043903", relations=["subClassOf"], reflexive=True)
             host_cellular_component = config.ontology.descendants("GO:0018995", relations=["subClassOf"], reflexive=True)
             self.allowed_dual_species_terms = set(interaction_terms + interspecies_interactions_regulation + host_cellular_component)
