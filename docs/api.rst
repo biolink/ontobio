@@ -85,6 +85,18 @@ Association File Parsers
 .. autoclass:: AssocParserConfig
     :members:
 
+Go Rules
+^^^^^^^^
+
+.. automodule:: ontobio.io.qc
+    :members:
+
+GoAssociation internal Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: ontobio.model.association
+    :members:
+
 
 GOlr Queries
 ------------
