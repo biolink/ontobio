@@ -191,7 +191,7 @@ def test_go_rules_15():
 
     assoc = make_annotation(goid="GO:0044419", taxon="taxon:123|taxon:456").associations[0]
 
-    ontology = ontol_factory.OntologyFactory().create("tests/resources/go-interspecies.owl")
+    ontology = ontol_factory.OntologyFactory().create("tests/resources/go-interspecies.json")
 
     test_result = qc.GoRule15().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
