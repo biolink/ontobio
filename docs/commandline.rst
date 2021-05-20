@@ -268,7 +268,26 @@ Parsing assoc files
 -------------------
 
 The ``ontobio-parse-assocs.py`` command will parse, validate and
-convert association files (GAF, GPAD, HPOA etc)
+convert association files (GAF, GPAD, HPOA etc) of all file types and versions.
+
+
+Top Level Options
+^^^^^^^^^^^^^^^^^
+
+``ontobio-parse-assocs.py`` mostly uses top level options before subcommands to configure parsing.
+
+* ``-r, --resource`` is the ontology file, in OBO JSON format
+* ``-f, --file`` input annotation file
+* ``-F, --format`` is the format of the input file. GAF will be the default if not provided
+* ``--report-md`` and ``--report-json`` are the paths to output the parsing and validation reports to
+
+Use ``validate`` to produce a report validating the input file, ``-f, --file``.
+
+Use ``convert`` to convert the input annotation file into a GPAD or GAF of any version. A report will still be produced.
+* ``-t, --to`` is the format to convert to. ``GAF``, ``GPAD`` are accepted.
+* ``-n, --format-version`` is the version. For GAF, 2.1 or 2.2 are accepted with 1.2 as default. For GPAD 1.2 or 2.0 are accepted with 1.2 default.
+
+
 
 GO Rules
 ^^^^^^^^

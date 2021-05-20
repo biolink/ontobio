@@ -1,3 +1,13 @@
+"""
+This contains the data model for parsing annotations from GAF and GPAD.
+
+The idea is to make it easy to parse text lines of any source into a GoAssociation object
+and then give the GoAssociation object the ability to convert itself into GPAD or GAF 
+of any version. Or any other format that is required.
+
+
+"""
+
 import json
 import typing
 import collections
@@ -62,6 +72,12 @@ def parse_annotation_properties(properties_field: str) -> List[tuple]:
 
 @dataclass(unsafe_hash=True)
 class Curie:
+    """
+    Object representing a Compact URI, with a namespace identifier along with an ID, like GO:1234567.
+
+    Use `from_str` to parse a string like "GO:1234567" into a Curie. The result should be checked for errors
+    with `is_error`
+    """
     namespace: str
     identity: str
 
@@ -251,6 +267,9 @@ def gp_type_label_to_curie(type: Curie) -> str:
 
 @dataclass(unsafe_hash=True)
 class Term:
+    """
+    Represents a Gene Ontology term
+    """
     id: Curie
     taxon: Curie
 
@@ -260,7 +279,12 @@ C = TypeVar("C")
 @dataclass(unsafe_hash=True)
 class ConjunctiveSet:
     """
-    The field `elements` can be a list of Curie or ExtensionUnit.
+    This respresents a comma separated list of objects which can be turned into strings.
+
+    This is used for the with/from and extensions fields in the GoAssociation.
+
+    The field `elements` can be a list of Curie or ExtensionUnit. Curie for with/from, and
+    ExtensionUnit for extensions field.
     """
     elements: List
 
@@ -268,13 +292,25 @@ class ConjunctiveSet:
         return ",".join([str(conj) for conj in self.elements])
 
     def display(self, conjunct_to_str=lambda c: str(c)) -> str:
+        """
+        Convert this ConjunctiveSet to a string separateted by commas.
+
+        This calls `conjunct_to_str` (which defaults to `str`) on each element before joining. To use a different
+        string representation of each element, pass in a different function. This functionality is used to differentiate
+        between GPAD 1.2 and GPAD 2.0, where relations are written differently per version.
+        """
         return ",".join([conjunct_to_str(conj) for conj in self.elements])
 
     @classmethod
     def list_to_str(ConjunctiveSet, conjunctions: List, conjunct_to_str=lambda c: str(c)) -> str:
         """
         List should be a list of ConjunctiveSet
-        Given [ConjunctiveSet, ConjunctiveSet]
+        Given [ConjunctiveSet, ConjunctiveSet], this will call ConjunctiveSet.display() using the `conjunct_to_str` function
+        (which defaults to `str`) and join them with a pipe.
+
+        To have elements of the ConjunctiveSet displayed differently, use a different `conjunct_to_str` function. 
+        This functionality is used to differentiate between GPAD 1.2 and GPAD 2.0, where relations are written 
+        differently per version.
         """
         return "|".join([conj.display(conjunct_to_str=conjunct_to_str) for conj in conjunctions])
 
@@ -319,6 +355,16 @@ relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.:\-]*)\)')
 curie_relation_tuple = re.compile(r"(.+)\((.+)\)")
 @dataclass(unsafe_hash=True)
 class ExtensionUnit:
+    """
+    An ExtensionUnit is a single element of the extensions field of GAF or GPAD. This consists of a relation and a term.
+
+    Create an ExtensionUnit with `from_str` or `from_curie_str`. If there is an error in parsing then `Error` is returned.
+    Results from these functions should be checked for `Error`.
+
+    The string representation will depend on the format, and so the `display` method should be used. By default this
+    will write the relation using the label with undercores (example: part_of) as defined in ontobio.rdfgen.relations.py.
+    To write the relation as a CURIE (as in gpad 2.0), set parameter `use_rel_label` to `True`.
+    """
     relation: Curie
     term: Curie
 
@@ -377,6 +423,10 @@ class ExtensionUnit:
         return self.display()
 
     def display(self, use_rel_label=False):
+        """
+        Turns the ExtensionUnit into a string. By default this uses the ontobio.rdfgen.relations module to lookup the
+        relation label. To use the CURIE instead, pass `use_rel_label=True`.
+        """
         rel = str(self.relation)
         if use_rel_label:
             rel = self.__relation_to_label()
@@ -396,6 +446,17 @@ class ExtensionUnit:
 
 @dataclass(repr=True, unsafe_hash=True)
 class GoAssociation:
+    """
+    The internal model used by the parsers and qc Rules engine that all annotations are parsed into.
+
+    If an annotation textual line cannot be parsed into a GoAssociation then it is not a well formed line.
+
+    This class provides several methods to convert this GoAssociation into other representations, like GAF and GPAD
+    of each version, as well as the old style dictionary Association that this class replaced (for compatibility if needed).
+
+    Each parser has its own function or functions that converts an annotation line into a GoAssociation, and this is the first
+    phase of parsing. In general, GoAssociations are only created by the parsers.
+    """
     source_line: Optional[str]
     subject: Subject
     relation: Curie # This is the relation Curie
@@ -412,6 +473,9 @@ class GoAssociation:
     properties: List[Tuple[str, str]]
 
     def to_gaf_2_1_tsv(self) -> List:
+        """
+        Converts the GoAssociation into a "TSV" columnar GAF 2.1 row as a list of strings.
+        """
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
 
         allowed_qualifiers = {"contributes_to", "colocalizes_with"}
@@ -459,6 +523,9 @@ class GoAssociation:
         ]
 
     def to_gaf_2_2_tsv(self) -> List:
+        """
+        Converts the GoAssociation into a "TSV" columnar GAF 2.2 row as a list of strings.
+        """
         gp_isoforms = "" if not self.subject_extensions else self.subject_extensions[0].term
 
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
@@ -495,7 +562,9 @@ class GoAssociation:
         ]
 
     def to_gpad_1_2_tsv(self) -> List:
-
+        """
+        Converts the GoAssociation into a "TSV" columnar GPAD 1.2 row as a list of strings.
+        """
         # Curie Object -> CURIE Str -> URI -> Label
         qual_labels = [relations.lookup_uri(curie_util.expand_uri(str(q), strict=False)) for q in self.qualifiers]
 
@@ -528,6 +597,9 @@ class GoAssociation:
         ]
 
     def to_gpad_2_0_tsv(self) -> List:
+        """
+        Converts the GoAssociation into a "TSV" columnar GAF 2.0 row as a list of strings.
+        """
 
         props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties]
         return [
@@ -547,6 +619,9 @@ class GoAssociation:
         ]
 
     def to_hash_assoc(self) -> dict:
+        """
+        Converts the GoAssociation into the old style dictionary association for backwards compatibility
+        """
         subject = {
             "id": str(self.subject.id),
             "label": self.subject.label,
