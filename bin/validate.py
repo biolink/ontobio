@@ -479,7 +479,7 @@ def cli(ctx, verbose):
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
 @click.option("--only-dataset", default=None)
 @click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
-@click.option("--rule-set", "-l", "rule_set", default=assocparser.RuleSet.ALL, multiple=True)
+@click.option("--rule-set", "-l", "rule_set", default=[assocparser.RuleSet.ALL], multiple=True)
 def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version, rule_set):
 
     logger.info("Logging is verbose")
@@ -519,6 +519,10 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     gaferences = None
     if gaferencer_file:
         gaferences = gaference.load_gaferencer_inferences_from_file(gaferencer_file)
+
+    # Default comes through as single-element tuple
+    if rule_set == (assocparser.RuleSet.ALL,):
+        rule_set = assocparser.RuleSet.ALL
 
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
