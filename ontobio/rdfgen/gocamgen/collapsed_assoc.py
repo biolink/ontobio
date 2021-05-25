@@ -97,10 +97,8 @@ class CollapsedAssociationSet:
         # Now arrange these into "header" and "line" values
         eco_code = str(annot.evidence.type)
         term = str(annot.object.id)
-        logger.info(term)
         is_binding = eco_code == IPI_ECO_CODE and BINDING_ROOT in self.go_ontology.ancestors(term, reflexive=True)
         if is_binding:
-            logger.info("is binding")
             # Using GPI, check with_froms for taxon equivalency to subj_id
             if self.gpi_entities:
                 subject_id = str(annot.subject.id)
@@ -114,25 +112,20 @@ class CollapsedAssociationSet:
 
                 values_separated: List[GoAssocWithFrom] = []
                 for wf in with_from_ds:
-                    logger.info("withfrom collapsed assoc")
                     wf_separated = GoAssocWithFrom()
                     for wf_id in wf.elements:
-                        logger.info(wf_id)
                         wf_id_str = str(wf_id)
                         wf_entity = self.gpi_entities.get(wf_id_str)
                         if wf_entity and wf_entity.get("taxon") == subject_entity["taxon"]:
                             wf_separated.add_to_header(wf_id_str)
-                            logger.info("added to header")
                         else:
                             wf_separated.add_to_line(wf_id_str)
-                            logger.info("added to line")
                     values_separated.append(wf_separated)
             else:
                 # Everything is defaulted to header if no GPI available
                 values_separated = [GoAssocWithFrom(header=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
                 # values_separated = [GoAssocWithFrom(line=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
         else:
-            logger.info("not binding")
             # Everything is defaulted to line if not binding
             values_separated = [GoAssocWithFrom(line=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
         if len(values_separated) == 0:
@@ -191,8 +184,6 @@ def dedupe_extensions(extensions):
 
 class CollapsedAssociationLine:
     def __init__(self, assoc: GoAssociation, with_from=None):
-        logger.info("i got a withfrom")
-        logger.info(with_from)
         self.source_line = assoc.source_line
         self.references = [str(ref) for ref in sorted(assoc.evidence.has_supporting_reference, key=lambda x: str(x))]
         self.evidence_code = str(assoc.evidence.type)
