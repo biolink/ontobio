@@ -26,7 +26,18 @@ RepairState = enum.Enum("RepairState", {"OKAY": "Okay", "REPAIRED": "Repaired", 
 
 # TestResult = collections.namedtuple("TestResult", ["result_type", "message", "result"])
 class TestResult(object):
-    def __init__(self, result_type: ResultType, message: str, result: List):
+    """
+    Represents the result of a single association.GoAssociation being validated on some rule
+    """
+    def __init__(self, result_type: ResultType, message: str, result):
+        """
+        Create a new TestResult
+
+        Args:
+            result_type (ResultType): enum of PASS, WARNING, ERROR. Both WARNINGs and ERRORs are reported, but ERROR will filter the offending GoAssociation
+            message (str): Description of the failure of GoAssociation to pass a rule. This is usually just the rule title
+            result: [description] True if the GoAssociation passes, False if not. If it's repaired, this is the updated, repaired, GoAssociation
+        """
         self.result_type = result_type
         self.message = message
         self.result = result
@@ -39,6 +50,10 @@ depending on the fail mode it returns either WARNING or ERROR ResultType.
 
 
 def result(passes: bool, fail_mode: FailMode) -> ResultType:
+    """
+    Send True for passes, and this returns the PASS ResultType, and if False, then
+    depending on the fail mode it returns either WARNING or ERROR ResultType.
+    """
     if passes:
         return ResultType.PASS
 
@@ -51,6 +66,18 @@ def result(passes: bool, fail_mode: FailMode) -> ResultType:
 
 
 def repair_result(repair_state: RepairState, fail_mode: FailMode) -> ResultType:
+    """
+    Returns ResultType.PASS if the repair_state is OKAY, and WARNING if REPAIRED.
+
+    This is used by RepairRule implementations.
+
+    Args:
+        repair_state (RepairState): If the GoAssocition was repaired during a rule, then this should be RepairState.REPAIRED, otherwise RepairState.OKAY
+        fail_mode (FailMode): [description]
+
+    Returns:
+        ResultType: [description]
+    """
     if repair_state == RepairState.OKAY:
         return ResultType.PASS
 
@@ -101,7 +128,17 @@ class GoRule(object):
         return result
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        # run_test() -> _run_if_context() -> test()
+        """
+        Subclasses should override this function to implement the logic of the rule.
+
+        Args:
+            annotation (association.GoAssociation): The incoming annotation under test
+            config (assocparser.AssocParserConfig): The configuration object defined for this execution of the rules. This should stay more or less constant across each rule test run as well as across each annotation being passed into the rules engine. This holds things like the ontology, etc.
+            group ([type], optional): The name of the upstream resource group whose annotation is being tested. This may be None.
+
+        Returns:
+            TestResult: See documentation for TestResult above
+        """
         pass
 
 
@@ -268,7 +305,7 @@ class GoRule15(GoRule):
 
         # Cache the allowed terms
         if self.allowed_dual_species_terms is None and config.ontology is not None:
-            interaction_terms = config.ontology.descendants("GO:0044419", relations=["subClassOf"], reflexive=True)
+            interaction_terms = config.ontology.descendants("GO:0044419", relations=["subClassOf", "BFO:0000050"], reflexive=True)
             interspecies_interactions_regulation = config.ontology.descendants("GO:0043903", relations=["subClassOf"], reflexive=True)
             host_cellular_component = config.ontology.descendants("GO:0018995", relations=["subClassOf"], reflexive=True)
             self.allowed_dual_species_terms = set(interaction_terms + interspecies_interactions_regulation + host_cellular_component)

@@ -191,12 +191,18 @@ def test_go_rules_15():
 
     assoc = make_annotation(goid="GO:0044419", taxon="taxon:123|taxon:456").associations[0]
 
+    ontology = ontol_factory.OntologyFactory().create("tests/resources/go-interspecies-20210520.json")
+
     test_result = qc.GoRule15().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
 
     assoc.object.id = Curie.from_str("GO:1234567")
     test_result = qc.GoRule15().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.WARNING
+
+    assoc.object.id = Curie.from_str("GO:0002812")
+    test_result = qc.GoRule15().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
 
     assoc.object.id = Curie.from_str("GO:0044215")
     assoc.object.id = Curie.from_str("NCBITaxon:123")
