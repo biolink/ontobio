@@ -753,7 +753,6 @@ class AssocGoCamModel(GoCamModel):
         with_froms = annotation.with_from()
         if with_froms:
             for wf in with_froms:
-                logger.warning("gocamgen " + wf)
                 wf_n = annot_subgraph.add_instance_of_class(wf)
 
                 annot_subgraph.add_edge(annot_subgraph.get_anchor(), "RO:0002233", wf_n)
