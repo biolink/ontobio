@@ -163,7 +163,6 @@ class GoCamEvidence:
         for line in collapsed_association:
             evidence = GoCamEvidence.create_from_annotation(line)
             if line.with_from:
-                logger.info("got a line with from")
                 evidence.with_from = ",".join(line.with_from)
             evidences.append(evidence)
         return evidences
@@ -322,7 +321,6 @@ class GoCamModel:
         self.writer.emit(axiom, URIRef("http://geneontology.org/lego/evidence"), ev_id)
         ### Emit ev fields to axiom here TODO: Couple evidence and axiom emitting together
         self.writer.emit(axiom, RDFS.comment, Literal(evidence.source_line))
-        logger.info("I'm adding evidnence for: " + evidence.evidence_code)
         for c in evidence.contributors:
             self.writer.emit(axiom, DC.contributor, Literal(c))
         for pb in evidence.provided_bys:
@@ -908,7 +906,6 @@ class AnnotonCamRdfTransform(CamRdfTransform):
         self.emit_type(ev_id, ev_cls)
         self.emit(ev_id, DC.date, Literal(evidence.date))
         if evidence.with_from:
-            logger.info("evidence with from: " + evidence.with_from)
             self.emit(ev_id, URIRef("http://geneontology.org/lego/evidence-with"), Literal(evidence.with_from))
         for c in evidence.contributors:
             self.emit(ev_id, DC.contributor, Literal(c))
