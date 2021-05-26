@@ -6,12 +6,14 @@ from ontobio.rdfgen.gocamgen import collapsed_assoc, gocam_builder, gocamgen
 
 GO_ONTO = OntologyFactory().create("tests/resources/go-binding.json")
 
+
 def test_evidence_max_date():
     ev1 = gocamgen.GoCamEvidence(code="ECO:0000314", references=["PMID:12345"], date="2008-08-14")
     ev2 = gocamgen.GoCamEvidence(code="ECO:0000314", references=["PMID:12345"], date="2011-04-12")
     ev3 = gocamgen.GoCamEvidence(code="ECO:0000314", references=["PMID:12345"], date="2021-03-01")
     max_date = gocamgen.GoCamEvidence.max_date([ev1, ev2, ev3])
     assert max_date == "2021-03-01"
+
 
 def test_get_with_froms():
     gpi_ents = gocam_builder.GoCamBuilder.parse_gpi(gpi_file="tests/resources/mgi2.test_entities.gpi")

@@ -66,10 +66,7 @@ class CollapsedAssociationSet:
             for wf in separated_with_froms:
                 ca = self.find_or_create_collapsed_association(a, wf)
                 association_line = CollapsedAssociationLine(a, wf.line)
-                # adding binding annotation with/from to the evidence line as well
-                association_line2 = CollapsedAssociationLine(a, ca.with_from())
                 ca.lines.append(association_line)
-                ca.lines.append(association_line2)
                 cas.append(ca)
 
     def find_or_create_collapsed_association(self, association: GoAssociation, with_from: GoAssocWithFrom):
@@ -118,8 +115,7 @@ class CollapsedAssociationSet:
                         wf_entity = self.gpi_entities.get(wf_id_str)
                         if wf_entity and wf_entity.get("taxon") == subject_entity["taxon"]:
                             wf_separated.add_to_header(wf_id_str)
-                        else:
-                            wf_separated.add_to_line(wf_id_str)
+                        wf_separated.add_to_line(wf_id_str)
                     values_separated.append(wf_separated)
             else:
                 # Everything is defaulted to header if no GPI available
