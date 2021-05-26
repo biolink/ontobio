@@ -17,15 +17,6 @@ class ShexException(GocamgenException):
     pass
 
 
-class CollapsedAssocGocamgenException(GocamgenException):
-    def __init__(self, message: str, assoc: collapsed_assoc.CollapsedAssociation):
-        self.message = message
-        self.assoc = assoc
-
-    def __str__(self):
-        return "{}\n{}".format(self.message, "\n".join([l.source_line for l in self.assoc.lines]))
-
-
 class GeneErrorSet:
     def __init__(self):
         self.errors = {}

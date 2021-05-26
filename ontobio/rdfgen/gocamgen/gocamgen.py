@@ -15,9 +15,8 @@ import logging
 from typing import List
 from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TriplePatternFinder
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
-from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions, CollapsedAssociationLine
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper, GroupsHelper
-from ontobio.rdfgen.gocamgen import errors
+from ontobio.rdfgen.gocamgen import errors, collapsed_assoc
 from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet, ymd_str
 from ontobio.io.assocparser import AssocParserConfig
 
@@ -137,7 +136,7 @@ class GoCamEvidence:
         self.id = None
 
     @staticmethod
-    def create_from_annotation(annot: CollapsedAssociationLine):
+    def create_from_annotation(annot: collapsed_assoc.CollapsedAssociationLine):
         source_line = annot.source_line.rstrip().replace("\t", " ")
         contributors = []
         if "contributor-id" in annot.annotation_properties:
@@ -158,7 +157,7 @@ class GoCamEvidence:
                            source_line=source_line)
 
     @staticmethod
-    def create_from_collapsed_association(collapsed_association: CollapsedAssociation):
+    def create_from_collapsed_association(collapsed_association: collapsed_assoc.CollapsedAssociation):
         evidences = []
         for line in collapsed_association:
             evidence = GoCamEvidence.create_from_annotation(line)
@@ -465,7 +464,7 @@ class AssocGoCamModel(GoCamModel):
     def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None, model_id=None):
         GoCamModel.__init__(self, modeltitle, connection_relations, store, model_id=model_id)
         self.ontology = config.ontology
-        self.associations = CollapsedAssociationSet(ontology=self.ontology, gpi_entities=gpi_entities)
+        self.associations = collapsed_assoc.CollapsedAssociationSet(ontology=self.ontology, gpi_entities=gpi_entities)
         self.associations.collapse_annotations(assocs)
         self.go_aspector = None  # TODO: Can I always grab aspect from ontology term DS
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
@@ -512,7 +511,7 @@ class AssocGoCamModel(GoCamModel):
                 aspect = self.go_aspector.go_aspect(term)
 
                 # TODO: Handle deduping in collapsed_assoc - need access to extensions_mapper.dedupe_extensions
-                annotation_extensions = dedupe_extensions(annotation_extensions)
+                annotation_extensions = collapsed_assoc.dedupe_extensions(annotation_extensions)
 
                 # Split on those multiple occurs_in(same NS) extensions
                 # TODO: Cleanup/refactor this splitting into separate method
@@ -557,7 +556,7 @@ class AssocGoCamModel(GoCamModel):
 
                     annot_subgraph = self.translate_primary_annotation(a)
 
-                    intersection_extensions: List[ExtensionUnit] = dedupe_extensions(uo.elements)
+                    intersection_extensions: List[ExtensionUnit] = collapsed_assoc.dedupe_extensions(uo.elements)
 
                     # Nesting repeated extension relations (i.e. occurs_in, part_of)
                     ext_rels_to_nest = ['occurs_in', 'part_of']  # Switch to turn on/off extension nesting
@@ -626,7 +625,7 @@ class AssocGoCamModel(GoCamModel):
                             else:
                                 err_msg = "Couldn't get regulates relation from LD of: {}".format(term)
                                 logger.warning(err_msg)
-                                self.errors.append(errors.CollapsedAssocGocamgenException(err_msg, a))
+                                self.errors.append(collapsed_assoc.CollapsedAssocGocamgenException(err_msg, a))
                         elif ext_relation in HAS_REGULATION_TARGET_RELATIONS:
                             if aspect == 'P':
                                 # For BP annotations, translate 'has regulation target' to 'has input'.
@@ -694,7 +693,7 @@ class AssocGoCamModel(GoCamModel):
         for pb in self.provided_bys:
             self.declare_provided_by(pb)
 
-    def translate_primary_annotation(self, annotation: CollapsedAssociation):
+    def translate_primary_annotation(self, annotation: collapsed_assoc.CollapsedAssociation):
         gp_id = str(annotation.subject_id())
         term = str(annotation.object_id())
         annot_subgraph = AnnotationSubgraph()
