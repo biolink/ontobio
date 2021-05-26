@@ -1,6 +1,3 @@
-from ontobio.rdfgen.gocamgen import collapsed_assoc
-
-
 class GocamgenException(Exception):
     def __init__(self, message: str):
         self.message = message

@@ -38,7 +38,7 @@ def test_get_with_froms():
     with_froms = ca_set.get_with_froms(go_assoc)
     assert len(with_froms) == 1 and \
            with_froms[0].header == ["MGI:MGI:1915834"] and \
-           with_froms[0].line == []
+           with_froms[0].line == ["MGI:MGI:1915834"]
 
     vals[6] = "MGI:MGI:1915834|FAKE:12345"
     result = to_association(list(vals), report=report, version="2.0")
@@ -48,7 +48,7 @@ def test_get_with_froms():
     # FAKE:12345 should be on line since not in GPI nor does it have same taxon as subject MGI:MGI:1929608
     assert len(with_froms) == 2 and \
            with_froms[0].header == ["MGI:MGI:1915834"] and \
-           with_froms[0].line == [] and \
+           with_froms[0].line == ["MGI:MGI:1915834"] and \
            with_froms[1].header == [] and \
            with_froms[1].line == ["FAKE:12345"]
 
