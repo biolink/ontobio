@@ -209,6 +209,15 @@ class CollapsedAssociationLine:
         return ds
 
 
+class CollapsedAssocGocamgenException(errors.GocamgenException):
+    def __init__(self, message: str, assoc: CollapsedAssociation):
+        self.message = message
+        self.assoc = assoc
+
+    def __str__(self):
+        return "{}\n{}".format(self.message, "\n".join([l.source_line for l in self.assoc.lines]))
+
+
 def get_annot_extensions(annot: GoAssociation):
     return annot.object_extensions
 
