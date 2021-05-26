@@ -40,6 +40,7 @@ from typing import Dict, Set
 
 logger = logging.getLogger("ontobio")
 
+
 def thispath():
     os.path.normpath(os.path.abspath(__file__))
 
@@ -117,6 +118,7 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
 
     return path
 
+
 def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None, replace_existing_files=True, only_dataset=None):
     """
     This looks at a group metadata dictionary and downloads each GAF source that is not in the exclusions list.
@@ -152,6 +154,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
 
     return downloaded_paths
 
+
 def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None, replace_existing_files=True):
     mixin_dataset = tools.find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
     if mixin_dataset is None:
@@ -164,6 +167,7 @@ def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_di
     unzip(path, unzipped)
     return unzipped
 
+
 def mixin_dataset(mixin_metadata, dataset):
     mixin_dataset_version = tools.find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
     if mixin_dataset_version is None:
@@ -171,8 +175,10 @@ def mixin_dataset(mixin_metadata, dataset):
 
     return mixin_dataset_version
 
+
 def unzip(path, target):
     click.echo("Unzipping {}".format(path))
+
     def chunk_gen():
         with gzip.open(path, "rb") as p:
             while True:
@@ -198,6 +204,7 @@ def create_parser(config, group, dataset, format="gaf"):
 """
 Produce validated gaf using the gaf parser/
 """
+
 @tools.gzips
 def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
@@ -432,6 +439,7 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     return merged_path
 
+
 def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[], gaf_output_version="2.2"):
 
     end_gaf = valid_gaf
@@ -527,7 +535,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
         # Set paint to True when the group is "paint".
-        # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group, like for paint_other.
+        # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group,
+        # like for paint_other.
         valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph,
             paint=(group=="paint"),
             group=group,
@@ -546,7 +555,10 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
-        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target, ontology_graph, gpipath=gpi, base_download_url=base_download_url, rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files, gaf_output_version=gaf_output_version)
+        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target,
+                                  ontology_graph, gpipath=gpi, base_download_url=base_download_url,
+                                  rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
+                                  gaf_output_version=gaf_output_version)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
 
 
@@ -616,7 +628,8 @@ def paint(group, dataset, metadata, target, ontology):
 @click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
 @click.option("--out", type=click.Path(), required=False)
 @click.option("--ontology", type=click.Path(), required=True)
-@click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
+@click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False,
+              help="Path to Gaferencer output to be used for inferences")
 def rule(metadata_dir, out, ontology, gaferencer_file):
     absolute_metadata = os.path.abspath(metadata_dir)
 

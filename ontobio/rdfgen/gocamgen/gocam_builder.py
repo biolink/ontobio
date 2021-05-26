@@ -50,7 +50,12 @@ class GoCamBuilder:
 
     def translate_to_model(self, gene, assocs: List[GoAssociation]):
         model_id = gene.replace(":", "_")
-        model = AssocGoCamModel(gene, assocs, config=self.config, store=self.store, gpi_entities=self.gpi_entities, model_id=model_id)
+        model = AssocGoCamModel(gene,
+                                assocs,
+                                config=self.config,
+                                store=self.store,
+                                gpi_entities=self.gpi_entities,
+                                model_id=model_id)
         model.go_aspector = self.aspector  # TODO: Grab aspect from ontology node
         model.translate()
 

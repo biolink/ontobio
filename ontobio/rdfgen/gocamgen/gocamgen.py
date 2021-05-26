@@ -173,7 +173,7 @@ class GoCamEvidence:
         return mdate
 
 
-class GoCamModel():
+class GoCamModel:
     # TODO: Not using anymore maybe get rid of?
     relations_dict = {
         "has_direct_input": "RO:0002400",
@@ -334,11 +334,13 @@ class GoCamModel():
         self.writer.emit(axiom, DC.date, Literal(max_date))
 
     def add_connection(self, gene_connection, source_annoton):
-        # Switching from reusing existing activity node from annoton to creating new one for each connection - Maybe SPARQL first to check if annoton activity already used for connection?
+        # Switching from reusing existing activity node from annoton to creating new one for each connection -
+        # Maybe SPARQL first to check if annoton activity already used for connection?
         # Check annoton for existing activity.
         # if gene_connection.object_id in source_annoton.individuals:
         #     # If exists and activity has connection relation,
-        #     # Look for two triples: (gene_connection.object_id, ENABLED_BY, source_annoton.enabled_by) and (gene_connection.object_id, connection_relations, anything)
+        #     # Look for two triples: (gene_connection.object_id, ENABLED_BY, source_annoton.enabled_by) and
+        #     (gene_connection.object_id, connection_relations, anything)
         # Annot MF should be declared by now - don't declare object_id if object_id == annot MF?
         if gene_connection.gp_b not in self.individuals:
             return
@@ -352,7 +354,7 @@ class GoCamModel():
                     annot_mf = source_annoton.molecular_function["object"]["id"]
                 except:
                     annot_mf = ""
-                if (u,rel,None) in self.writer.writer.graph and gene_connection.object_id != annot_mf:
+                if (u, rel, None) in self.writer.writer.graph and gene_connection.object_id != annot_mf:
                     source_id = self.declare_individual(gene_connection.object_id)
                     source_annoton.individuals[gene_connection.object_id] = source_id
                     break
@@ -363,7 +365,8 @@ class GoCamModel():
             except KeyError:
                 source_id = self.declare_individual(gene_connection.object_id)
                 source_annoton.individuals[gene_connection.object_id] = source_id
-        # Add enabled by stmt for object_id - this is essentially adding another annoton connecting gene-to-extension/with-MF to the model
+        # Add enabled by stmt for object_id - this is essentially adding another annoton
+        # connecting gene-to-extension/with-MF to the model
         self.writer.emit(source_id, ENABLED_BY, source_annoton.individuals[source_annoton.enabled_by])
         self.writer.emit_axiom(source_id, ENABLED_BY, source_annoton.individuals[source_annoton.enabled_by])
         property_id = URIRef(expand_uri_wrapper(self.connection_relations[gene_connection.relation]))
@@ -404,7 +407,7 @@ class GoCamModel():
         ind_list = []
         graph = self.writer.writer.graph
         for t in graph.triples((uri, RDF.type, None)):
-            if t[2] != OWL.NamedIndividual: # We know OWL.NamedIndividual triple does't contain the label so don't return it
+            if t[2] != OWL.NamedIndividual:  # We know OWL.NamedIndividual triple doesn't contain the label so don't return it
                 ind_list.append(t[2])
         return ind_list
 
@@ -426,13 +429,13 @@ class GoCamModel():
         return axiom_list
 
     def find_bnode(self, triple):
-        (subject,predicate,object_id) = triple
+        (subject, predicate, object_id) = triple
         s_triples = self.writer.writer.graph.triples((None, OWL.annotatedSource, subject))
-        s_bnodes = [s for s,p,o in s_triples]
+        s_bnodes = [s for s, p, o in s_triples]
         p_triples = self.writer.writer.graph.triples((None, OWL.annotatedProperty, predicate))
-        p_bnodes = [s for s,p,o in p_triples]
+        p_bnodes = [s for s, p, o in p_triples]
         o_triples = self.writer.writer.graph.triples((None, OWL.annotatedTarget, object_id))
-        o_bnodes = [s for s,p,o in o_triples]
+        o_bnodes = [s for s, p, o in o_triples]
         bnodes = set(s_bnodes) & set(p_bnodes) & set(o_bnodes)
         if len(bnodes) > 0:
             return list(bnodes)[0]
@@ -519,7 +522,8 @@ class AssocGoCamModel(GoCamModel):
                 for uo in annotation_extensions:
                     # Grab occurs_in's
                     # Make a new uo if situation found
-                    occurs_in_exts: List[ExtensionUnit] = [ext for ext in uo.elements if relation_equals(ext.relation, "occurs_in")]
+                    occurs_in_exts: List[ExtensionUnit] = [ext for ext in uo.elements if relation_equals(ext.relation,
+                                                                                                         "occurs_in")]
                     # onto_grouping = {
                     #     "CL": [{}, {}],
                     #     "EMAPA": [{}]
@@ -597,7 +601,8 @@ class AssocGoCamModel(GoCamModel):
                             # No RO term yet. Try looking up in RO
                             relation_term = self.translate_relation_to_ro(ext_relation)
                             if relation_term:
-                                # print("Ext relation {} auto-mapped to {} in {}".format(ext_relation, relation_term, a.subject_id()))
+                                # print("Ext relation {} auto-mapped to {} in {}".format(ext_relation,
+                                # relation_term, a.subject_id()))
                                 INPUT_RELATIONS[ext_relation] = relation_term
                         if ext_relation in INPUT_RELATIONS:
                             ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
@@ -609,7 +614,8 @@ class AssocGoCamModel(GoCamModel):
                             # Get target MF from primary term (BP) e.g. GO:0007346 regulates some mitotic cell cycle
                             regulates_rel, regulated_term = self.get_rel_and_term_in_logical_definitions(term)
                             if regulates_rel:
-                                # Need to derive chained relation (e.g. "occurs_in") from this ext rel. Just replace("regulates_o_", "")?
+                                # Need to derive chained relation (e.g. "occurs_in") from this ext rel.
+                                # Just replace("regulates_o_", "")?
                                 chained_rel_label = ext_relation.replace("regulates_o_", "")
                                 chained_rel = INPUT_RELATIONS.get(chained_rel_label)
                                 if chained_rel is None:
@@ -646,7 +652,8 @@ class AssocGoCamModel(GoCamModel):
                                             annot_subgraph.add_edge(regulated_mf_n, ro.enabled_by, ext_target_n)
                                             anchor_n = annot_subgraph.get_anchor()
                                             annot_subgraph.add_edge(anchor_n, regulates_rel, regulated_mf_n)
-                                            # TODO: Suppress/delete (GP-A)<-enabled_by-(root MF)-part_of->(term) aka involved_in_translated
+                                            # TODO: Suppress/delete (GP-A)<-enabled_by-(root MF)-part_of->(term)
+                                            #  aka involved_in_translated
                                             # Remove (anchor_uri, None, term)
                                             # Is this anchor_uri always going to the root_mf?
                                             # Will the term individual be used for anything else?
@@ -668,7 +675,8 @@ class AssocGoCamModel(GoCamModel):
                                             # edges(RO:0002213) only returns subProperties. Need superProperties
                                             # Gettin super properties
                                             causally_upstream_relation = self.get_causally_upstream_relation(regulates_rel)
-                                            # GP-A<-enabled_by-[root MF]-part_of->[regulation of Z]-has_input->GP-B,-causally upstream of (positive/negative effect)->[root MF]-enabled_by->GP-B
+                                            # GP-A<-enabled_by-[root MF]-part_of->[regulation of Z]-has_input->GP-B,-causally
+                                            # upstream of (positive/negative effect)->[root MF]-enabled_by->GP-B
                                             ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
                                             anchor_n = annot_subgraph.get_anchor()  # TODO: Gotta find MF. MF no longer anchor if primary term is BP
                                             annot_subgraph.add_edge(anchor_n, INPUT_RELATIONS["has input"], ext_target_n)
@@ -745,8 +753,8 @@ class AssocGoCamModel(GoCamModel):
         if with_froms:
             for wf in with_froms:
                 wf_n = annot_subgraph.add_instance_of_class(wf)
-                annot_subgraph.add_edge(annot_subgraph.get_anchor(), "RO:0002233", wf_n)
 
+                annot_subgraph.add_edge(annot_subgraph.get_anchor(), "RO:0002233", wf_n)
         return annot_subgraph
 
     def translate_relation_to_ro(self, relation_label):

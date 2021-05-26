@@ -23,6 +23,7 @@ FailMode = enum.Enum("FailMode", {"SOFT": "soft", "HARD": "hard"})
 ResultType = enum.Enum("Result", {"PASS": "Pass", "WARNING": "Warning", "ERROR": "Error"})
 RepairState = enum.Enum("RepairState", {"OKAY": "Okay", "REPAIRED": "Repaired", "FAILED": "Failed"})
 
+
 # TestResult = collections.namedtuple("TestResult", ["result_type", "message", "result"])
 class TestResult(object):
     """
@@ -42,6 +43,12 @@ class TestResult(object):
         self.result = result
 
 
+"""
+Send True for passes, and this returns the PASS ResultType, and if False, then
+depending on the fail mode it returns either WARNING or ERROR ResultType.
+"""
+
+
 def result(passes: bool, fail_mode: FailMode) -> ResultType:
     """
     Send True for passes, and this returns the PASS ResultType, and if False, then
@@ -56,6 +63,7 @@ def result(passes: bool, fail_mode: FailMode) -> ResultType:
 
     if fail_mode == FailMode.HARD:
         return ResultType.ERROR
+
 
 def repair_result(repair_state: RepairState, fail_mode: FailMode) -> ResultType:
     """
@@ -119,7 +127,6 @@ class GoRule(object):
         result.result = annotation
         return result
 
-
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         """
         Subclasses should override this function to implement the logic of the rule.
@@ -133,6 +140,7 @@ class GoRule(object):
             TestResult: See documentation for TestResult above
         """
         pass
+
 
 class RepairRule(GoRule):
 
@@ -161,11 +169,11 @@ class GoRule02(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000002", "No 'NOT' annotations to 'protein binding ; GO:0005515'", FailMode.SOFT)
 
-
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
 
         fails = (str(annotation.object.id) == "GO:0005515" and annotation.negated)
         return self._result(not fails)
+
 
 class GoRule06(GoRule):
 
@@ -182,6 +190,7 @@ class GoRule06(GoRule):
         evidence = str(annotation.evidence.type)
         fails = evidence in [self.iep, self.hep] and "biological_process" not in [o["val"] for o in go_namespace]
         return self._result(not fails)
+
 
 class GoRule07(GoRule):
 
@@ -252,6 +261,7 @@ class GoRule11(GoRule):
         success = (evidence == self.nd and goclass in self.root_go_classes) or (evidence != self.nd and goclass not in self.root_go_classes)
         return self._result(success)
 
+
 class GoRule13(GoRule):
 
     def __init__(self):
@@ -283,6 +293,7 @@ class GoRule13(GoRule):
             else:
                 # Only submit a warning/report if we are an experimental evidence
                 return TestResult(ResultType.WARNING, self.title, False)
+
 
 class GoRule15(GoRule):
 
@@ -345,6 +356,7 @@ class GoRule17(GoRule):
         else:
             return self._result(True)
 
+
 class GoRule18(GoRule):
 
     def __init__(self):
@@ -371,6 +383,7 @@ class GoRule26(GoRule):
         # If we see a bad evidence, and we're not in a paint file then fail.
         fails = (evidence in self.offending_evidence and not config.paint)
         return self._result(not fails)
+
 
 class GoRule28(RepairRule):
     def __init__(self):
@@ -441,6 +454,7 @@ class GoRule29(GoRule):
         ## Default results we we get here.
         return self._result(True)
 
+
 class GoRule30(GoRule):
 
     def __init__(self):
@@ -462,6 +476,7 @@ class GoRule30(GoRule):
 
         return self._result(True)
 
+
 class GoRule37(GoRule):
 
     def __init__(self):
@@ -479,6 +494,7 @@ class GoRule37(GoRule):
 
         return result
 
+
 class GoRule39(GoRule):
 
     def __init__(self):
@@ -492,6 +508,7 @@ class GoRule39(GoRule):
 
         fails = (db == "ComplexPortal" and goterm == "GO:0032991")
         return self._result(not fails)
+
 
 class GoRule42(GoRule):
 
@@ -507,6 +524,7 @@ class GoRule42(GoRule):
             result = self._result(annotation.negated)
 
         return result
+
 
 class GoRule43(GoRule):
 
@@ -571,6 +589,7 @@ class GoRule46(GoRule):
 
         return self._result(True)
 
+
 class GoRule50(GoRule):
 
     def __init__(self):
@@ -578,7 +597,8 @@ class GoRule50(GoRule):
         self.the_evidences = ["ECO:0000250", "ECO:0000247", "ECO:0000266"]
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        # should not have the same identifier in the 'gene product column' (column 2) and in the 'with/from' column (column 8)
+        # should not have the same identifier in the 'gene product column' (column 2) and in the 'with/from' column
+        # (column 8)
         evidence = str(annotation.evidence.type)
         result = self._result(True)
         if evidence in self.the_evidences:
@@ -587,6 +607,7 @@ class GoRule50(GoRule):
                 result = self._result(annotation.subject.id not in conj.elements)
 
         return result
+
 
 class GoRule55(GoRule):
 
@@ -632,10 +653,12 @@ class GoRule57(GoRule):
 
         return self._result(True)
 
+
 class GoRule58(RepairRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000058", "Object extensions should conform to the extensions-patterns.yaml file in metadata", FailMode.HARD, tags=["context-import"])
+        super().__init__("GORULE:0000058", "Object extensions should conform to the extensions-patterns.yaml "
+                                           "file in metadata", FailMode.HARD, tags=["context-import"])
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
 
@@ -857,6 +880,8 @@ GoRules = enum.Enum("GoRules", {
 
 
 GoRulesResults = collections.namedtuple("GoRulesResults", ["all_results", "annotation"])
+
+
 def test_go_rules(annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> GoRulesResults:
     all_results = {}
 

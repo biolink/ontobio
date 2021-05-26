@@ -100,7 +100,7 @@ class CollapsedAssociationSet:
             if self.gpi_entities:
                 subject_id = str(annot.subject.id)
                 if subject_id in self.gpi_entities:
-                    subject_entity = self.gpi_entities[subject_id]
+                     subject_entity = self.gpi_entities[subject_id]
                 else:
                     error_message = "Annotation Object ID '{}' missing from provided GPI. Skipping annotation translation.".format(subject_id)
                     logger.warning(error_message)
@@ -115,12 +115,12 @@ class CollapsedAssociationSet:
                         wf_entity = self.gpi_entities.get(wf_id_str)
                         if wf_entity and wf_entity.get("taxon") == subject_entity["taxon"]:
                             wf_separated.add_to_header(wf_id_str)
-                        else:
-                            wf_separated.add_to_line(wf_id_str)
+                        wf_separated.add_to_line(wf_id_str)
                     values_separated.append(wf_separated)
             else:
                 # Everything is defaulted to header if no GPI available
                 values_separated = [GoAssocWithFrom(header=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
+                # values_separated = [GoAssocWithFrom(line=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
         else:
             # Everything is defaulted to line if not binding
             values_separated = [GoAssocWithFrom(line=[str(ele) for ele in wf.elements]) for wf in with_from_ds]

@@ -379,7 +379,6 @@ class Report(object):
 
         self.reporter.message(message, rule)
 
-
     def add_associations(self, associations):
         for a in associations:
             self.add_association(a)
