@@ -832,19 +832,20 @@ class AssocGoCamModel(GoCamModel):
 
 
 class ReferencePreference:
-    def __init__(self):
-        # List order in python should be persistent
-        self.order_of_prefix_preference = [
-            "PMID",
-            "GO_REF",
-            "DOI"
-        ]
+    # List order in python should be persistent
+    order_of_prefix_preference = [
+        "PMID",
+        "GO_REF",
+        "DOI"
+    ]
 
-    def pick(self, references):
-        for pfx in self.order_of_prefix_preference:
+    @classmethod
+    def pick(cls, references):
+        for pfx in cls.order_of_prefix_preference:
             for ref in references:
                 if ref.upper().startswith(pfx.upper()):
                     return ref
+        return references[0]
 
 
 class CamTurtleRdfWriter(TurtleRdfWriter):
@@ -909,9 +910,9 @@ class AnnotonCamRdfTransform(CamRdfTransform):
             self.emit(ev_id, DC.contributor, Literal(c))
         for pb in evidence.provided_bys:
             self.emit(ev_id, PAV.providedBy, Literal(pb))
-        for ref_to_emit in evidence.references:
-            o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
-            self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
+        ref_to_emit = ReferencePreference.pick(evidence.references)
+        o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
+        self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
         for c in evidence.comments:
             self.emit(ev_id, RDFS.comment, Literal(c))
         self.evidences.append(evidence)
