@@ -71,6 +71,15 @@ def test_ref_picker():
     result = gocamgen.ReferencePreference.pick(test_refs)
     assert result == "PMID:9834189"
 
+    test_refs = [
+        "GO_REF:0000483",
+        "doi:485930",
+        "PMID:9834189",
+        "WB_REF:WBPaper00003384",
+    ]
+    result = gocamgen.ReferencePreference.pick(test_refs)
+    assert result == "PMID:9834189"
+
     test_refs = ["ZFIN:ZDB-PUB-170709-3"]
     result = gocamgen.ReferencePreference.pick(test_refs)
     assert result == "ZFIN:ZDB-PUB-170709-3"
