@@ -59,3 +59,27 @@ def test_get_with_froms():
     ca_set.find_or_create_collapsed_association(go_assoc, with_from=header1)
     ca_set.find_or_create_collapsed_association(go_assoc, with_from=header2)
     assert len(ca_set.collapsed_associations) == 1 and ca_set.collapsed_associations[0].with_froms == ["FAKE:12345", "MGI:MGI:1915834"]
+
+
+def test_ref_picker():
+    test_refs = [
+        "GO_REF:0000483",
+        "doi:485930",
+        "WB_REF:WBPaper00003384",
+        "PMID:9834189",
+    ]
+    result = gocamgen.ReferencePreference.pick(test_refs)
+    assert result == "PMID:9834189"
+
+    test_refs = [
+        "GO_REF:0000483",
+        "doi:485930",
+        "PMID:9834189",
+        "WB_REF:WBPaper00003384",
+    ]
+    result = gocamgen.ReferencePreference.pick(test_refs)
+    assert result == "PMID:9834189"
+
+    test_refs = ["ZFIN:ZDB-PUB-170709-3"]
+    result = gocamgen.ReferencePreference.pick(test_refs)
+    assert result == "ZFIN:ZDB-PUB-170709-3"
