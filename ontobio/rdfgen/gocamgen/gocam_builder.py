@@ -48,20 +48,21 @@ class GoCamBuilder:
         self.errors = GeneErrorSet()  # Errors by gene ID
         self.gpi_entities = self.parse_gpi(parser_config.gpi_authority_path)
 
-    def translate_to_model(self, gene, assocs: List[GoAssociation]):
+    def translate_to_model(self, gene, assocs: List[GoAssociation], modelstate=None):
         model_id = gene.replace(":", "_")
         model = AssocGoCamModel(gene,
                                 assocs,
                                 config=self.config,
                                 store=self.store,
                                 gpi_entities=self.gpi_entities,
-                                model_id=model_id)
+                                model_id=model_id,
+                                modelstate=modelstate)
         model.go_aspector = self.aspector  # TODO: Grab aspect from ontology node
         model.translate()
 
         return model
 
-    def make_model(self, gene, annotations: List[GoAssociation], output_directory=None, nquads=False):
+    def make_model(self, gene, annotations: List[GoAssociation], output_directory=None, nquads=False, modelstate=None):
         # All these retry shenanigans are to prevent mid-run crashes due to an external resource simply blipping
         # out for a second.
         retry_count = 0
@@ -69,7 +70,7 @@ class GoCamBuilder:
         while True:
             try:
                 start_time = time.time()
-                model = self.translate_to_model(gene, annotations)
+                model = self.translate_to_model(gene, annotations, modelstate=modelstate)
                 # add_to_conjunctive_graph(model, conjunctive_graph)
                 if nquads:
                     logger.info(
@@ -96,11 +97,11 @@ class GoCamBuilder:
                                  GocamgenException(f"Bailing on model for {gene} after {retry_count} retries"))
             break  # Done with this model. Move on to the next one.
 
-    def make_model_and_add_to_store(self, gene, annotations):
-        return self.make_model(gene, annotations, nquads=True)
+    def make_model_and_add_to_store(self, gene, annotations, modelstate=None):
+        return self.make_model(gene, annotations, nquads=True, modelstate=modelstate)
 
-    def make_model_and_write_out(self, gene, annotations, output_directory=None):
-        return self.make_model(gene, annotations, output_directory=output_directory, nquads=False)
+    def make_model_and_write_out(self, gene, annotations, output_directory=None, modelstate=None):
+        return self.make_model(gene, annotations, output_directory=output_directory, nquads=False, modelstate=modelstate)
 
     def write_out_store_to_nquads(self, filepath):
         cg = ConjunctiveGraph(self.store)
