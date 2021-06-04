@@ -98,10 +98,10 @@ class GoCamBuilder:
                                  GocamgenException(f"Bailing on model for {gene} after {retry_count} retries"))
             break  # Done with this model. Move on to the next one.
 
-    def make_model_and_add_to_store(self, gene, annotations, modelstate=None):
+    def make_model_and_add_to_store(self, gene, annotations):
         return self.make_model(gene, annotations, nquads=True)
 
-    def make_model_and_write_out(self, gene, annotations, output_directory=None, modelstate=None):
+    def make_model_and_write_out(self, gene, annotations, output_directory=None):
         return self.make_model(gene, annotations, output_directory=output_directory, nquads=False)
 
     def write_out_store_to_nquads(self, filepath):
