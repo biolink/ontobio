@@ -591,13 +591,13 @@ def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl, modelstate):
     output_path = os.path.join(absolute_target, output_basename)
     report_path = os.path.join(absolute_target, report_basename)
 
-    builder = GoCamBuilder(parser_config=parser_config)
+    builder = GoCamBuilder(parser_config=parser_config, modelstate=modelstate)
 
     for gene, associations in assocs_by_gene.items():
         if ttl:
-            builder.make_model_and_write_out(gene, annotations=associations, output_directory=absolute_target, modelstate=modelstate)
+            builder.make_model_and_write_out(gene, annotations=associations, output_directory=absolute_target)
         else:
-            builder.make_model_and_add_to_store(gene, annotations=associations, modelstate=modelstate)
+            builder.make_model_and_add_to_store(gene, annotations=associations)
     if not ttl:
         builder.write_out_store_to_nquads(filepath=output_path)
 

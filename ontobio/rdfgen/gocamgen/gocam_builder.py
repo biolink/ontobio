@@ -41,14 +41,15 @@ parser.add_argument('-N', '--nquads', help="Filepath to write model file in N-Qu
 
 
 class GoCamBuilder:
-    def __init__(self, parser_config: AssocParserConfig):
+    def __init__(self, parser_config: AssocParserConfig, modelstate=None):
         self.config = parser_config
         self.aspector = GoAspector(self.config.ontology)
         self.store = plugin.get('IOMemory', Store)()
         self.errors = GeneErrorSet()  # Errors by gene ID
         self.gpi_entities = self.parse_gpi(parser_config.gpi_authority_path)
+        self.modelstate = modelstate
 
-    def translate_to_model(self, gene, assocs: List[GoAssociation], modelstate=None):
+    def translate_to_model(self, gene, assocs: List[GoAssociation]):
         model_id = gene.replace(":", "_")
         model = AssocGoCamModel(gene,
                                 assocs,
@@ -56,13 +57,13 @@ class GoCamBuilder:
                                 store=self.store,
                                 gpi_entities=self.gpi_entities,
                                 model_id=model_id,
-                                modelstate=modelstate)
+                                modelstate=self.modelstate)
         model.go_aspector = self.aspector  # TODO: Grab aspect from ontology node
         model.translate()
 
         return model
 
-    def make_model(self, gene, annotations: List[GoAssociation], output_directory=None, nquads=False, modelstate=None):
+    def make_model(self, gene, annotations: List[GoAssociation], output_directory=None, nquads=False):
         # All these retry shenanigans are to prevent mid-run crashes due to an external resource simply blipping
         # out for a second.
         retry_count = 0
@@ -70,7 +71,7 @@ class GoCamBuilder:
         while True:
             try:
                 start_time = time.time()
-                model = self.translate_to_model(gene, annotations, modelstate=modelstate)
+                model = self.translate_to_model(gene, annotations)
                 # add_to_conjunctive_graph(model, conjunctive_graph)
                 if nquads:
                     logger.info(
@@ -98,10 +99,10 @@ class GoCamBuilder:
             break  # Done with this model. Move on to the next one.
 
     def make_model_and_add_to_store(self, gene, annotations, modelstate=None):
-        return self.make_model(gene, annotations, nquads=True, modelstate=modelstate)
+        return self.make_model(gene, annotations, nquads=True)
 
     def make_model_and_write_out(self, gene, annotations, output_directory=None, modelstate=None):
-        return self.make_model(gene, annotations, output_directory=output_directory, nquads=False, modelstate=modelstate)
+        return self.make_model(gene, annotations, output_directory=output_directory, nquads=False)
 
     def write_out_store_to_nquads(self, filepath):
         cg = ConjunctiveGraph(self.store)
