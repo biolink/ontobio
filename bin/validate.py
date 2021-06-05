@@ -569,7 +569,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=True, multiple=True)
 @click.option("--ttl", default=False, is_flag=True)
-def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl):
+@click.option("--modelstate", "-s", default=None)
+def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl, modelstate):
     # NOTE: Validation on GPAD not included here since it's currently baked into produce() above.
     # Multi-param to accept multiple ontology files, then merge to one (this will make a much smaller ontology
     #  with only what we need, i.e. GO, RO, GOREL)
@@ -590,7 +591,7 @@ def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl):
     output_path = os.path.join(absolute_target, output_basename)
     report_path = os.path.join(absolute_target, report_basename)
 
-    builder = GoCamBuilder(parser_config=parser_config)
+    builder = GoCamBuilder(parser_config=parser_config, modelstate=modelstate)
 
     for gene, associations in assocs_by_gene.items():
         if ttl:

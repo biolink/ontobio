@@ -197,7 +197,7 @@ class GoCamModel:
         "located_in": "RO:0001025",
     }
 
-    def __init__(self, modeltitle, connection_relations=None, store=None, model_id=None):
+    def __init__(self, modeltitle, connection_relations=None, store=None, model_id=None, modelstate=None):
         self.modeltitle = modeltitle
         cam_writer = CamTurtleRdfWriter(self.modeltitle, store=store, model_id=model_id)
         self.writer = AnnotonCamRdfTransform(cam_writer)
@@ -210,6 +210,9 @@ class GoCamModel:
         else:
             self.connection_relations = connection_relations
         self.declare_properties()
+        if modelstate is None:
+            modelstate = "development"
+        self.declare_modelstate(modelstate)
 
     def write(self, filename, format='ttl'):
         if path.splitext(filename)[1] != ".ttl":
@@ -222,6 +225,9 @@ class GoCamModel:
 
     def declare_provided_by(self, provided_by: str):
         self.graph.add((self.writer.writer.base, PAV.providedBy, Literal(provided_by)))
+
+    def declare_modelstate(self, modelstate: str):
+        self.graph.add((self.writer.writer.base, URIRef("http://geneontology.org/lego/modelstate"), Literal(modelstate)))
 
     def declare_properties(self):
         # AnnotionProperty
@@ -464,8 +470,8 @@ def relation_equals(rel_a, rel_b):
 class AssocGoCamModel(GoCamModel):
     ENABLES_O_RELATION_LOOKUP = {}
 
-    def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None, model_id=None):
-        GoCamModel.__init__(self, modeltitle, connection_relations, store, model_id=model_id)
+    def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None, model_id=None, modelstate=None):
+        GoCamModel.__init__(self, modeltitle, connection_relations, store, model_id=model_id, modelstate=modelstate)
         self.ontology = config.ontology
         self.associations = collapsed_assoc.CollapsedAssociationSet(ontology=self.ontology, gpi_entities=gpi_entities)
         self.associations.collapse_annotations(assocs)
@@ -849,7 +855,7 @@ class ReferencePreference:
 
 
 class CamTurtleRdfWriter(TurtleRdfWriter):
-    def __init__(self, modeltitle, store=None, model_id: str=None):
+    def __init__(self, modeltitle, store=None, model_id: str = None):
         base = "http://model.geneontology.org"
         if model_id is not None:
             self.base = URIRef(model_id, base=base)
@@ -870,7 +876,6 @@ class CamTurtleRdfWriter(TurtleRdfWriter):
         # Model attributes TODO: Should move outside init
         self.graph.add((self.base, DC.date, Literal(datetime.date.today().isoformat())))
         self.graph.add((self.base, DC.title, Literal(modeltitle)))
-        self.graph.add((self.base, URIRef("http://geneontology.org/lego/modelstate"), Literal("development")))
         self.graph.add((self.base, OWL.versionIRI, self.base))
 
 
