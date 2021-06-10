@@ -73,8 +73,13 @@ class GafParser(assocparser.AssocParser):
         self.report = assocparser.Report(group=group, dataset=dataset, config=self.config)
         # self.gpi = None
         if self.config.gpi_authority_path is not None:
-            self.bio_entities.merge(collections.BioEntities.load_from_file(self.config.gpi_authority_path))
-            print("Loaded {} entities from {}".format(len(self.bio_entities.entities.keys()), self.config.gpi_authority_path))
+            gpi_paths = self.config.gpi_authority_path
+            if isinstance(gpi_paths, str):
+                gpi_paths = [gpi_paths]
+            for gpi_path in gpi_paths:
+                gpi_bio_entities = collections.BioEntities.load_from_file(gpi_path)
+                self.bio_entities.merge(gpi_bio_entities)
+                print("Loaded {} entities from {}".format(len(gpi_bio_entities.entities.keys()), gpi_path))
 
     def gaf_version(self) -> str:
         if self.version:
