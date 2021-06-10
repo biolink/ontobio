@@ -4,7 +4,9 @@ from ontobio.io.gpadparser import to_association
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.rdfgen.gocamgen import collapsed_assoc, gocam_builder, gocamgen
 
-GO_ONTO = OntologyFactory().create("tests/resources/go-binding.json")
+GO_ONTO = OntologyFactory().create("tests/resources/go-binding.json")  # Placeholder ontology to instantiate models
+PARSER_CONFIG = assocparser.AssocParserConfig(ontology=GO_ONTO,
+                                              gpi_authority_path="tests/resources/mgi2.test_entities.gpi")
 
 
 def test_evidence_max_date():
@@ -83,3 +85,13 @@ def test_ref_picker():
     test_refs = ["ZFIN:ZDB-PUB-170709-3"]
     result = gocamgen.ReferencePreference.pick(test_refs)
     assert result == "ZFIN:ZDB-PUB-170709-3"
+
+
+def test_model_title():
+    builder = gocam_builder.GoCamBuilder(parser_config=PARSER_CONFIG, modelstate="test")
+    title = builder.model_title(gene_id="MGI:MGI:1915834")
+    assert title == "1110020C17Rik (MGI:MGI:1915834)"
+
+    # Fallback to gene_id as title if not found in GPI
+    title = builder.model_title(gene_id="FAKE:1915834")
+    assert title == "FAKE:1915834"

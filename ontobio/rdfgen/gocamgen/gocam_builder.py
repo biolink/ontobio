@@ -50,8 +50,12 @@ class GoCamBuilder:
         self.modelstate = modelstate
 
     def translate_to_model(self, gene, assocs: List[GoAssociation]):
+        if gene not in self.gpi_entities:
+            error_msg = "Gene ID '{}' missing from provided GPI. Skipping model translation.".format(gene)
+            raise GocamgenException(error_msg)
         model_id = gene.replace(":", "_")
-        model = AssocGoCamModel(gene,
+        model_title = self.model_title(gene)
+        model = AssocGoCamModel(model_title,
                                 assocs,
                                 config=self.config,
                                 store=self.store,
@@ -114,6 +118,14 @@ class GoCamBuilder:
             for gene, errs in self.errors.errors.items():
                 for ex in errs:
                     reportf.write(f"{type(ex).__name__} - {gene}: {ex}\n")
+
+    def model_title(self, gene_id: str) -> str:
+        entity = self.gpi_entities.get(gene_id)
+        if entity:
+            model_title = "{} ({})".format(entity["label"], gene_id)
+        else:
+            model_title = gene_id
+        return model_title
 
     @staticmethod
     def extract_relations_ontology(ontology_graph):
