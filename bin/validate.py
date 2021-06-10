@@ -142,9 +142,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
 
         if dataset_metadata.get("compression", None) == "gzip":
             # Unzip any downloaded file that has gzip, strip of the gzip extension
-            unzipped = os.path.splitext(path)[0]
-            unzip(path, unzipped)
-            path = unzipped
+            path = unzip_simple(path)
         else:
             # otherwise file is coming in uncompressed. But we want to make sure
             # to zip up the original source also
@@ -163,8 +161,7 @@ def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_di
     click.echo("Merging mixin dataset {}".format(mixin_dataset["source"]))
     path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
-    unzipped = os.path.splitext(path)[0] # Strip off the .gz extension, leaving just the unzipped filename
-    unzip(path, unzipped)
+    unzipped = unzip_simple(path) # Strip off the .gz extension, leaving just the unzipped filename
     return unzipped
 
 
@@ -193,6 +190,13 @@ def unzip(path, target):
                 tf.write(chunk)
 
 
+def unzip_simple(zipped_path):
+    # 'Simple' meaning no chunking like in unzip()
+    unzipped = os.path.splitext(zipped_path)[0]  # Strip off the .gz extension, leaving just the unzipped filename
+    unzip(zipped_path, unzipped)
+    return unzipped
+
+
 def create_parser(config, group, dataset, format="gaf"):
     if format == "gpad":
         return GpadParser(config=config, group=group, dataset=dataset)
@@ -206,13 +210,13 @@ Produce validated gaf using the gaf parser/
 """
 
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipath=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
         filter_out_evidence=["IEA"],
         filtered_evidence_file=filtered_associations,
-        gpi_authority_path=gpipath,
+        gpi_authority_path=gpipaths,
         paint=paint,
         rule_metadata=rule_metadata,
         goref_metadata=goref_metadata,
@@ -440,7 +444,7 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
     return merged_path
 
 
-def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipath=None, base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[], gaf_output_version="2.2"):
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipaths=None, base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[], gaf_output_version="2.2"):
 
     end_gaf = valid_gaf
     mixin_gaf_paths = []
@@ -452,7 +456,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
             context = ["import"] if mixin_metadata.get("import", False) else []
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipath=gpipath, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=context, gaf_output_version=gaf_output_version)[0]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipaths=gpipaths, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=context, gaf_output_version=gaf_output_version)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
@@ -555,8 +559,19 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
+        gpi_list = [gpi]
+        # Try to find other GPIs in metadata and merge
+        for ds in group_metadata["datasets"]:
+            # Where type=GPI for the same dataset (e.g. "zfin", "goa_cow")
+            if ds["type"] == "gpi" and ds["dataset"] == dataset and ds.get("source"):
+                matching_gpi_path = download_a_dataset_source(group, ds, absolute_target, ds["source"],
+                                                              replace_existing_files=not skip_existing_files)
+                if ds.get("compression", None) == "gzip":
+                    matching_gpi_path = unzip_simple(matching_gpi_path)
+                gpi_list.append(matching_gpi_path)
+
         end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target,
-                                  ontology_graph, gpipath=gpi, base_download_url=base_download_url,
+                                  ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
         make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
