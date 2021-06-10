@@ -601,7 +601,8 @@ class AssocGoCamModel(GoCamModel):
                         if ext_relation == "":
                             # AttributeError: 'NoneType' object has no attribute 'replace'
                             error_msg = "Relation '{}' not found in relations lookup. Skipping annotation translation.".format(str(rel.relation))
-                            raise errors.GocamgenException(error_msg)
+                            self.errors.append(errors.GocamgenException(error_msg))
+                            continue
                         ext_target = str(rel.term)
                         if ext_relation not in list(INPUT_RELATIONS.keys()) + list(HAS_REGULATION_TARGET_RELATIONS.keys()):
                             # No RO term yet. Try looking up in RO
