@@ -49,7 +49,7 @@ class EntityParser(assocparser.AssocParser):
                 continue
 
             parsed_line, new_ents = self.parse_line(line)
-            if self._skipping_line(new_ents): # Skip if there were no ents
+            if self._skipping_line(new_ents):  # Skip if there were no ents
                 logger.warning("SKIPPING: {}".format(line))
                 skipped.append(line)
             else:

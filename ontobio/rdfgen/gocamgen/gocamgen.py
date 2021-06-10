@@ -15,9 +15,8 @@ import logging
 from typing import List
 from ontobio.rdfgen.gocamgen.triple_pattern_finder import TriplePattern, TriplePatternFinder
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
-from ontobio.rdfgen.gocamgen.collapsed_assoc import CollapsedAssociationSet, CollapsedAssociation, dedupe_extensions, CollapsedAssociationLine
 from ontobio.rdfgen.gocamgen.utils import sort_terms_by_ontology_specificity, ShexHelper, GroupsHelper
-from ontobio.rdfgen.gocamgen import errors
+from ontobio.rdfgen.gocamgen import errors, collapsed_assoc
 from ontobio.model.association import GoAssociation, ExtensionUnit, ConjunctiveSet, ymd_str
 from ontobio.io.assocparser import AssocParserConfig
 
@@ -137,7 +136,7 @@ class GoCamEvidence:
         self.id = None
 
     @staticmethod
-    def create_from_annotation(annot: CollapsedAssociationLine):
+    def create_from_annotation(annot: collapsed_assoc.CollapsedAssociationLine):
         source_line = annot.source_line.rstrip().replace("\t", " ")
         contributors = []
         if "contributor-id" in annot.annotation_properties:
@@ -158,7 +157,7 @@ class GoCamEvidence:
                            source_line=source_line)
 
     @staticmethod
-    def create_from_collapsed_association(collapsed_association: CollapsedAssociation):
+    def create_from_collapsed_association(collapsed_association: collapsed_assoc.CollapsedAssociation):
         evidences = []
         for line in collapsed_association:
             evidence = GoCamEvidence.create_from_annotation(line)
@@ -174,7 +173,7 @@ class GoCamEvidence:
         return mdate
 
 
-class GoCamModel():
+class GoCamModel:
     # TODO: Not using anymore maybe get rid of?
     relations_dict = {
         "has_direct_input": "RO:0002400",
@@ -198,7 +197,7 @@ class GoCamModel():
         "located_in": "RO:0001025",
     }
 
-    def __init__(self, modeltitle, connection_relations=None, store=None, model_id=None):
+    def __init__(self, modeltitle, connection_relations=None, store=None, model_id=None, modelstate=None):
         self.modeltitle = modeltitle
         cam_writer = CamTurtleRdfWriter(self.modeltitle, store=store, model_id=model_id)
         self.writer = AnnotonCamRdfTransform(cam_writer)
@@ -211,6 +210,9 @@ class GoCamModel():
         else:
             self.connection_relations = connection_relations
         self.declare_properties()
+        if modelstate is None:
+            modelstate = "development"
+        self.declare_modelstate(modelstate)
 
     def write(self, filename, format='ttl'):
         if path.splitext(filename)[1] != ".ttl":
@@ -223,6 +225,9 @@ class GoCamModel():
 
     def declare_provided_by(self, provided_by: str):
         self.graph.add((self.writer.writer.base, PAV.providedBy, Literal(provided_by)))
+
+    def declare_modelstate(self, modelstate: str):
+        self.graph.add((self.writer.writer.base, URIRef("http://geneontology.org/lego/modelstate"), Literal(modelstate)))
 
     def declare_properties(self):
         # AnnotionProperty
@@ -335,11 +340,13 @@ class GoCamModel():
         self.writer.emit(axiom, DC.date, Literal(max_date))
 
     def add_connection(self, gene_connection, source_annoton):
-        # Switching from reusing existing activity node from annoton to creating new one for each connection - Maybe SPARQL first to check if annoton activity already used for connection?
+        # Switching from reusing existing activity node from annoton to creating new one for each connection -
+        # Maybe SPARQL first to check if annoton activity already used for connection?
         # Check annoton for existing activity.
         # if gene_connection.object_id in source_annoton.individuals:
         #     # If exists and activity has connection relation,
-        #     # Look for two triples: (gene_connection.object_id, ENABLED_BY, source_annoton.enabled_by) and (gene_connection.object_id, connection_relations, anything)
+        #     # Look for two triples: (gene_connection.object_id, ENABLED_BY, source_annoton.enabled_by) and
+        #     (gene_connection.object_id, connection_relations, anything)
         # Annot MF should be declared by now - don't declare object_id if object_id == annot MF?
         if gene_connection.gp_b not in self.individuals:
             return
@@ -353,7 +360,7 @@ class GoCamModel():
                     annot_mf = source_annoton.molecular_function["object"]["id"]
                 except:
                     annot_mf = ""
-                if (u,rel,None) in self.writer.writer.graph and gene_connection.object_id != annot_mf:
+                if (u, rel, None) in self.writer.writer.graph and gene_connection.object_id != annot_mf:
                     source_id = self.declare_individual(gene_connection.object_id)
                     source_annoton.individuals[gene_connection.object_id] = source_id
                     break
@@ -364,7 +371,8 @@ class GoCamModel():
             except KeyError:
                 source_id = self.declare_individual(gene_connection.object_id)
                 source_annoton.individuals[gene_connection.object_id] = source_id
-        # Add enabled by stmt for object_id - this is essentially adding another annoton connecting gene-to-extension/with-MF to the model
+        # Add enabled by stmt for object_id - this is essentially adding another annoton
+        # connecting gene-to-extension/with-MF to the model
         self.writer.emit(source_id, ENABLED_BY, source_annoton.individuals[source_annoton.enabled_by])
         self.writer.emit_axiom(source_id, ENABLED_BY, source_annoton.individuals[source_annoton.enabled_by])
         property_id = URIRef(expand_uri_wrapper(self.connection_relations[gene_connection.relation]))
@@ -405,7 +413,7 @@ class GoCamModel():
         ind_list = []
         graph = self.writer.writer.graph
         for t in graph.triples((uri, RDF.type, None)):
-            if t[2] != OWL.NamedIndividual: # We know OWL.NamedIndividual triple does't contain the label so don't return it
+            if t[2] != OWL.NamedIndividual:  # We know OWL.NamedIndividual triple doesn't contain the label so don't return it
                 ind_list.append(t[2])
         return ind_list
 
@@ -427,13 +435,13 @@ class GoCamModel():
         return axiom_list
 
     def find_bnode(self, triple):
-        (subject,predicate,object_id) = triple
+        (subject, predicate, object_id) = triple
         s_triples = self.writer.writer.graph.triples((None, OWL.annotatedSource, subject))
-        s_bnodes = [s for s,p,o in s_triples]
+        s_bnodes = [s for s, p, o in s_triples]
         p_triples = self.writer.writer.graph.triples((None, OWL.annotatedProperty, predicate))
-        p_bnodes = [s for s,p,o in p_triples]
+        p_bnodes = [s for s, p, o in p_triples]
         o_triples = self.writer.writer.graph.triples((None, OWL.annotatedTarget, object_id))
-        o_bnodes = [s for s,p,o in o_triples]
+        o_bnodes = [s for s, p, o in o_triples]
         bnodes = set(s_bnodes) & set(p_bnodes) & set(o_bnodes)
         if len(bnodes) > 0:
             return list(bnodes)[0]
@@ -462,10 +470,10 @@ def relation_equals(rel_a, rel_b):
 class AssocGoCamModel(GoCamModel):
     ENABLES_O_RELATION_LOOKUP = {}
 
-    def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None, model_id=None):
-        GoCamModel.__init__(self, modeltitle, connection_relations, store, model_id=model_id)
+    def __init__(self, modeltitle, assocs: List[GoAssociation], config: AssocParserConfig=None, connection_relations=None, store=None, gpi_entities=None, model_id=None, modelstate=None):
+        GoCamModel.__init__(self, modeltitle, connection_relations, store, model_id=model_id, modelstate=modelstate)
         self.ontology = config.ontology
-        self.associations = CollapsedAssociationSet(ontology=self.ontology, gpi_entities=gpi_entities)
+        self.associations = collapsed_assoc.CollapsedAssociationSet(ontology=self.ontology, gpi_entities=gpi_entities)
         self.associations.collapse_annotations(assocs)
         self.go_aspector = None  # TODO: Can I always grab aspect from ontology term DS
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
@@ -512,7 +520,7 @@ class AssocGoCamModel(GoCamModel):
                 aspect = self.go_aspector.go_aspect(term)
 
                 # TODO: Handle deduping in collapsed_assoc - need access to extensions_mapper.dedupe_extensions
-                annotation_extensions = dedupe_extensions(annotation_extensions)
+                annotation_extensions = collapsed_assoc.dedupe_extensions(annotation_extensions)
 
                 # Split on those multiple occurs_in(same NS) extensions
                 # TODO: Cleanup/refactor this splitting into separate method
@@ -520,7 +528,8 @@ class AssocGoCamModel(GoCamModel):
                 for uo in annotation_extensions:
                     # Grab occurs_in's
                     # Make a new uo if situation found
-                    occurs_in_exts: List[ExtensionUnit] = [ext for ext in uo.elements if relation_equals(ext.relation, "occurs_in")]
+                    occurs_in_exts: List[ExtensionUnit] = [ext for ext in uo.elements if relation_equals(ext.relation,
+                                                                                                         "occurs_in")]
                     # onto_grouping = {
                     #     "CL": [{}, {}],
                     #     "EMAPA": [{}]
@@ -557,7 +566,7 @@ class AssocGoCamModel(GoCamModel):
 
                     annot_subgraph = self.translate_primary_annotation(a)
 
-                    intersection_extensions: List[ExtensionUnit] = dedupe_extensions(uo.elements)
+                    intersection_extensions: List[ExtensionUnit] = collapsed_assoc.dedupe_extensions(uo.elements)
 
                     # Nesting repeated extension relations (i.e. occurs_in, part_of)
                     ext_rels_to_nest = ['occurs_in', 'part_of']  # Switch to turn on/off extension nesting
@@ -592,13 +601,15 @@ class AssocGoCamModel(GoCamModel):
                         if ext_relation == "":
                             # AttributeError: 'NoneType' object has no attribute 'replace'
                             error_msg = "Relation '{}' not found in relations lookup. Skipping annotation translation.".format(str(rel.relation))
-                            raise errors.GocamgenException(error_msg)
+                            self.errors.append(errors.GocamgenException(error_msg))
+                            continue
                         ext_target = str(rel.term)
                         if ext_relation not in list(INPUT_RELATIONS.keys()) + list(HAS_REGULATION_TARGET_RELATIONS.keys()):
                             # No RO term yet. Try looking up in RO
                             relation_term = self.translate_relation_to_ro(ext_relation)
                             if relation_term:
-                                # print("Ext relation {} auto-mapped to {} in {}".format(ext_relation, relation_term, a.subject_id()))
+                                # print("Ext relation {} auto-mapped to {} in {}".format(ext_relation,
+                                # relation_term, a.subject_id()))
                                 INPUT_RELATIONS[ext_relation] = relation_term
                         if ext_relation in INPUT_RELATIONS:
                             ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
@@ -610,7 +621,8 @@ class AssocGoCamModel(GoCamModel):
                             # Get target MF from primary term (BP) e.g. GO:0007346 regulates some mitotic cell cycle
                             regulates_rel, regulated_term = self.get_rel_and_term_in_logical_definitions(term)
                             if regulates_rel:
-                                # Need to derive chained relation (e.g. "occurs_in") from this ext rel. Just replace("regulates_o_", "")?
+                                # Need to derive chained relation (e.g. "occurs_in") from this ext rel.
+                                # Just replace("regulates_o_", "")?
                                 chained_rel_label = ext_relation.replace("regulates_o_", "")
                                 chained_rel = INPUT_RELATIONS.get(chained_rel_label)
                                 if chained_rel is None:
@@ -626,7 +638,7 @@ class AssocGoCamModel(GoCamModel):
                             else:
                                 err_msg = "Couldn't get regulates relation from LD of: {}".format(term)
                                 logger.warning(err_msg)
-                                self.errors.append(errors.CollapsedAssocGocamgenException(err_msg, a))
+                                self.errors.append(collapsed_assoc.CollapsedAssocGocamgenException(err_msg, a))
                         elif ext_relation in HAS_REGULATION_TARGET_RELATIONS:
                             if aspect == 'P':
                                 # For BP annotations, translate 'has regulation target' to 'has input'.
@@ -647,7 +659,8 @@ class AssocGoCamModel(GoCamModel):
                                             annot_subgraph.add_edge(regulated_mf_n, ro.enabled_by, ext_target_n)
                                             anchor_n = annot_subgraph.get_anchor()
                                             annot_subgraph.add_edge(anchor_n, regulates_rel, regulated_mf_n)
-                                            # TODO: Suppress/delete (GP-A)<-enabled_by-(root MF)-part_of->(term) aka involved_in_translated
+                                            # TODO: Suppress/delete (GP-A)<-enabled_by-(root MF)-part_of->(term)
+                                            #  aka involved_in_translated
                                             # Remove (anchor_uri, None, term)
                                             # Is this anchor_uri always going to the root_mf?
                                             # Will the term individual be used for anything else?
@@ -669,7 +682,8 @@ class AssocGoCamModel(GoCamModel):
                                             # edges(RO:0002213) only returns subProperties. Need superProperties
                                             # Gettin super properties
                                             causally_upstream_relation = self.get_causally_upstream_relation(regulates_rel)
-                                            # GP-A<-enabled_by-[root MF]-part_of->[regulation of Z]-has_input->GP-B,-causally upstream of (positive/negative effect)->[root MF]-enabled_by->GP-B
+                                            # GP-A<-enabled_by-[root MF]-part_of->[regulation of Z]-has_input->GP-B,-causally
+                                            # upstream of (positive/negative effect)->[root MF]-enabled_by->GP-B
                                             ext_target_n = annot_subgraph.add_instance_of_class(ext_target)
                                             anchor_n = annot_subgraph.get_anchor()  # TODO: Gotta find MF. MF no longer anchor if primary term is BP
                                             annot_subgraph.add_edge(anchor_n, INPUT_RELATIONS["has input"], ext_target_n)
@@ -694,7 +708,7 @@ class AssocGoCamModel(GoCamModel):
         for pb in self.provided_bys:
             self.declare_provided_by(pb)
 
-    def translate_primary_annotation(self, annotation: CollapsedAssociation):
+    def translate_primary_annotation(self, annotation: collapsed_assoc.CollapsedAssociation):
         gp_id = str(annotation.subject_id())
         term = str(annotation.object_id())
         annot_subgraph = AnnotationSubgraph()
@@ -746,8 +760,8 @@ class AssocGoCamModel(GoCamModel):
         if with_froms:
             for wf in with_froms:
                 wf_n = annot_subgraph.add_instance_of_class(wf)
-                annot_subgraph.add_edge(annot_subgraph.get_anchor(), "RO:0002233", wf_n)
 
+                annot_subgraph.add_edge(annot_subgraph.get_anchor(), "RO:0002233", wf_n)
         return annot_subgraph
 
     def translate_relation_to_ro(self, relation_label):
@@ -825,23 +839,24 @@ class AssocGoCamModel(GoCamModel):
 
 
 class ReferencePreference:
-    def __init__(self):
-        # List order in python should be persistent
-        self.order_of_prefix_preference = [
-            "PMID",
-            "GO_REF",
-            "DOI"
-        ]
+    # List order in python should be persistent
+    order_of_prefix_preference = [
+        "PMID",
+        "GO_REF",
+        "DOI"
+    ]
 
-    def pick(self, references):
-        for pfx in self.order_of_prefix_preference:
+    @classmethod
+    def pick(cls, references):
+        for pfx in cls.order_of_prefix_preference:
             for ref in references:
                 if ref.upper().startswith(pfx.upper()):
                     return ref
+        return references[0]
 
 
 class CamTurtleRdfWriter(TurtleRdfWriter):
-    def __init__(self, modeltitle, store=None, model_id: str=None):
+    def __init__(self, modeltitle, store=None, model_id: str = None):
         base = "http://model.geneontology.org"
         if model_id is not None:
             self.base = URIRef(model_id, base=base)
@@ -862,7 +877,6 @@ class CamTurtleRdfWriter(TurtleRdfWriter):
         # Model attributes TODO: Should move outside init
         self.graph.add((self.base, DC.date, Literal(datetime.date.today().isoformat())))
         self.graph.add((self.base, DC.title, Literal(modeltitle)))
-        self.graph.add((self.base, URIRef("http://geneontology.org/lego/modelstate"), Literal("development")))
         self.graph.add((self.base, OWL.versionIRI, self.base))
 
 
@@ -902,9 +916,9 @@ class AnnotonCamRdfTransform(CamRdfTransform):
             self.emit(ev_id, DC.contributor, Literal(c))
         for pb in evidence.provided_bys:
             self.emit(ev_id, PAV.providedBy, Literal(pb))
-        for ref_to_emit in evidence.references:
-            o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
-            self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
+        ref_to_emit = ReferencePreference.pick(evidence.references)
+        o = Literal(ref_to_emit)  # Needs to go into Noctua like 'PMID:####' rather than full URL
+        self.emit(ev_id, HAS_SUPPORTING_REFERENCE, o)
         for c in evidence.comments:
             self.emit(ev_id, RDFS.comment, Literal(c))
         self.evidences.append(evidence)

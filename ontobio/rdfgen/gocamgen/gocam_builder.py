@@ -41,12 +41,13 @@ parser.add_argument('-N', '--nquads', help="Filepath to write model file in N-Qu
 
 
 class GoCamBuilder:
-    def __init__(self, parser_config: AssocParserConfig):
+    def __init__(self, parser_config: AssocParserConfig, modelstate=None):
         self.config = parser_config
         self.aspector = GoAspector(self.config.ontology)
         self.store = plugin.get('IOMemory', Store)()
         self.errors = GeneErrorSet()  # Errors by gene ID
         self.gpi_entities = self.parse_gpi(parser_config.gpi_authority_path)
+        self.modelstate = modelstate
 
     def translate_to_model(self, gene, assocs: List[GoAssociation]):
         if gene not in self.gpi_entities:
@@ -54,7 +55,13 @@ class GoCamBuilder:
             raise GocamgenException(error_msg)
         model_id = gene.replace(":", "_")
         model_title = self.model_title(gene)
-        model = AssocGoCamModel(model_title, assocs, config=self.config, store=self.store, gpi_entities=self.gpi_entities, model_id=model_id)
+        model = AssocGoCamModel(model_title,
+                                assocs,
+                                config=self.config,
+                                store=self.store,
+                                gpi_entities=self.gpi_entities,
+                                model_id=model_id,
+                                modelstate=self.modelstate)
         model.go_aspector = self.aspector  # TODO: Grab aspect from ontology node
         model.translate()
 

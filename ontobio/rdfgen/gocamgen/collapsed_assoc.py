@@ -100,7 +100,7 @@ class CollapsedAssociationSet:
             if self.gpi_entities:
                 subject_id = str(annot.subject.id)
                 if subject_id in self.gpi_entities:
-                    subject_entity = self.gpi_entities[subject_id]
+                     subject_entity = self.gpi_entities[subject_id]
                 else:
                     error_message = "Annotation Object ID '{}' missing from provided GPI. Skipping annotation translation.".format(subject_id)
                     logger.warning(error_message)
@@ -115,12 +115,12 @@ class CollapsedAssociationSet:
                         wf_entity = self.gpi_entities.get(wf_id_str)
                         if wf_entity and wf_entity.get("taxon") == subject_entity["taxon"]:
                             wf_separated.add_to_header(wf_id_str)
-                        else:
-                            wf_separated.add_to_line(wf_id_str)
+                        wf_separated.add_to_line(wf_id_str)
                     values_separated.append(wf_separated)
             else:
                 # Everything is defaulted to header if no GPI available
                 values_separated = [GoAssocWithFrom(header=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
+                # values_separated = [GoAssocWithFrom(line=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
         else:
             # Everything is defaulted to line if not binding
             values_separated = [GoAssocWithFrom(line=[str(ele) for ele in wf.elements]) for wf in with_from_ds]
@@ -203,6 +203,15 @@ class CollapsedAssociationLine:
         if self.with_from:
             ds["evidence"]["with_support_from"] = self.with_from
         return ds
+
+
+class CollapsedAssocGocamgenException(errors.GocamgenException):
+    def __init__(self, message: str, assoc: CollapsedAssociation):
+        self.message = message
+        self.assoc = assoc
+
+    def __str__(self):
+        return "{}\n{}".format(self.message, "\n".join([l.source_line for l in self.assoc.lines]))
 
 
 def get_annot_extensions(annot: GoAssociation):

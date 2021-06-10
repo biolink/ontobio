@@ -268,7 +268,26 @@ Parsing assoc files
 -------------------
 
 The ``ontobio-parse-assocs.py`` command will parse, validate and
-convert association files (GAF, GPAD, HPOA etc)
+convert association files (GAF, GPAD, HPOA etc) of all file types and versions.
+
+
+Top Level Options
+^^^^^^^^^^^^^^^^^
+
+``ontobio-parse-assocs.py`` mostly uses top level options before subcommands to configure parsing.
+
+* ``-r, --resource`` is the ontology file, in OBO JSON format
+* ``-f, --file`` input annotation file
+* ``-F, --format`` is the format of the input file. GAF will be the default if not provided
+* ``--report-md`` and ``--report-json`` are the paths to output the parsing and validation reports to
+
+Use ``validate`` to produce a report validating the input file, ``-f, --file``.
+
+Use ``convert`` to convert the input annotation file into a GPAD or GAF of any version. A report will still be produced.
+* ``-t, --to`` is the format to convert to. ``GAF``, ``GPAD`` are accepted.
+* ``-n, --format-version`` is the version. For GAF, 2.1 or 2.2 are accepted with 1.2 as default. For GPAD 1.2 or 2.0 are accepted with 1.2 default.
+
+
 
 GO Rules
 ^^^^^^^^
@@ -280,16 +299,19 @@ To include a rule in the rule set use the option ``-l`` or ``--rule`` followed b
 For example to include gorule-0000006:
 
 ::
+
     ontobio-parse-assocs.py -f my_assoc.gaf --report-md report.md -l 6 validate
 
 Use multiple ``-l <ID>`` to build up a list of rules that will be used to validate the input file:
 
 ::
+
     ontobio-parse-assocs.py -f my_assoc.gaf --report-md report.md -l 6 -l 13 validate
 
 To turn on all rules at once, use ``-l all``:
 
 ::
+
     ontobio-parse-assocs.py -f my_assoc.gaf --report-md report.md -l all validate
 
 Under the hood, this is all controlled using a parameter, ``rule_set`` attached to the AssocParserConfig class. This accepts a list of integers or the string ``"all"`` or ``None``. Setting to ``None`` (the default) will include no rules, and using ``"all"`` will use all rules.

@@ -1,7 +1,7 @@
 import json
 from typing import Dict, NewType, List
 
-from ontobio.model.association import GoAssociation
+from ontobio.model.association import GoAssociation, gp_type_label_to_curie
 
 class Entity(dict):
 
@@ -31,7 +31,7 @@ class GafGpiBridge(object):
                 'label': association.subject.label,  # db_object_symbol,
                 'full_name': association.subject.fullname,  # db_object_name,
                 'synonyms': association.subject.synonyms,
-                'type': [str(t) for t in association.subject.type], #db_object_type,
+                'type': [gp_type_label_to_curie(association.subject.type[0])], #db_object_type,
                 'parents': "", # GAF does not have this field, but it's optional in GPI
                 'xrefs': "", # GAF does not have this field, but it's optional in GPI
                 'taxon': {
