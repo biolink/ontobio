@@ -121,7 +121,10 @@ class GoCamBuilder:
 
     def model_title(self, gene_id: str) -> str:
         entity = self.gpi_entities.get(gene_id)
-        model_title = "{} ({})".format(entity["label"], gene_id)
+        if entity:
+            model_title = "{} ({})".format(entity["label"], gene_id)
+        else:
+            model_title = gene_id
         return model_title
 
     @staticmethod
