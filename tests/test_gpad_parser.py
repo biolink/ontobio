@@ -2,6 +2,7 @@ from ontobio.io.gpadparser import GpadParser, to_association
 from ontobio.io import assocparser
 from ontobio.model import association
 from ontobio.model.association import ConjunctiveSet, ExtensionUnit, Curie
+from ontobio.ontol_factory import OntologyFactory
 
 import yaml
 
@@ -122,3 +123,33 @@ def test_parse_2_0():
     # Test annotation property retrieval
     contributors = result.associations[0].annotation_property_values(property_key="contributor-id")
     assert set(contributors) == {"http://orcid.org/0000-0003-2689-5511"}
+
+ALT_ID_ONT = "tests/resources/obsolete.json"
+
+def test_aspect_fill_for_obsolete_terms():
+    # Test null aspect on an obsolete term
+    # GO:4 is obsolete and has no aspect (hasOBONamespace) in obsolete.json ontology
+    # GO:3 is it's replacement term
+    # Note that GPAD lines contain no aspect data
+    vals = [
+        "MGI",
+        "MGI:105128",
+        "involved_in",
+        "GO:4",
+        "PMID:25901318",
+        "ECO:0000314",
+        "",
+        "",
+        "20190517",
+        "MGI",
+        "",
+        "contributor=http://orcid.org/0000-0002-9796-7693|model-state=production|noctua-model-id=gomodel:5c4605cc00004132"
+    ]
+    ont = OntologyFactory().create(ALT_ID_ONT)
+    config = assocparser.AssocParserConfig(ontology=ont, rule_set=assocparser.RuleSet.ALL)
+    parser = GpadParser(config=config)
+    result = parser.parse_line("\t".join(vals))
+    assoc = result.associations[0]
+
+    assert assoc.object.id == Curie("GO", "3")  # GO:4 should be repaired to its replacement term, GO:3
+    assert assoc.aspect == 'P'  # Aspect should not be empty
