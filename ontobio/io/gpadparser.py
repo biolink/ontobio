@@ -155,6 +155,13 @@ class GpadParser(assocparser.AssocParser):
 
         assoc = parsed.associations[0]
 
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
+
+        valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
+        if valid_goid is None:
+            return assocparser.ParseResult(line, [], True)
+        assoc.object.id = association.Curie.from_str(valid_goid)
+
         go_rule_results = qc.test_go_rules(assoc, self.config)
         for rule, result in go_rule_results.all_results.items():
             if result.result_type == qc.ResultType.WARNING:
@@ -173,18 +180,11 @@ class GpadParser(assocparser.AssocParser):
 
         assoc = go_rule_results.annotation  # type: association.GoAssociation
 
-        split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
-
         if not self._validate_id(str(assoc.subject.id), split_line, context=ENTITY):
             return assocparser.ParseResult(line, [], True)
 
         if not self._validate_id(str(assoc.object.id), split_line, context=ANNOTATION):
             return assocparser.ParseResult(line, [], True)
-
-        valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
-        if valid_goid is None:
-            return assocparser.ParseResult(line, [], True)
-        assoc.object.id = association.Curie.from_str(valid_goid)
 
         if not self._validate_id(str(assoc.evidence.type), split_line):
             return assocparser.ParseResult(line, [], True)
