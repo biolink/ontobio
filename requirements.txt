@@ -25,3 +25,4 @@ dataclasses
 diskcache>=4.0.0
 bidict>=0.20.0
 python-dateutil
+chardet
