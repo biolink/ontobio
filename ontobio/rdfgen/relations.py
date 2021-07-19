@@ -68,6 +68,7 @@ __relation_label_lookup = bidict({
     "located in": "http://purl.obolibrary.org/obo/RO_0001025",
     "is active in": "http://purl.obolibrary.org/obo/RO_0002432",
     "exists during": "http://purl.obolibrary.org/obo/RO_0002491",
+    "existence overlaps": "http://purl.obolibrary.org/obo/RO_0002490",
     "coincident with": "http://purl.obolibrary.org/obo/RO_0002008",
     "has regulation target": "http://purl.obolibrary.org/obo/GOREL_0000015",
     "not happens during": "http://purl.obolibrary.org/obo/GOREL_0000025",
