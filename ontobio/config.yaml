@@ -23,7 +23,7 @@ scigraph_data:
   url: "https://scigraph-data.monarchinitiative.org/scigraph"
   timeout: 15
 owlsim2:
-  url: "https://monarchinitiative.org/owlsim/"
+  url: "https://legacy.monarchinitiative.org/owlsim/"
   timeout: 45
 owlsim3:
   url: "http://owlsim3.monarchinitiative.org/api/"
