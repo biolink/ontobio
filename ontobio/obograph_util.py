@@ -183,7 +183,7 @@ def _get_association_nodes(digraph, sub, predicate, obj):
 
     # A fast way of checking if the triple is reified is seeing if the
     # predicate exists as a node
-    if predicate['pred'] in digraph.nodes(data=True):
+    if predicate['pred'] in digraph.nodes():
         # association_has_subject
         for neighbor, edges in digraph.pred[sub].items():
             for edge in edges.values():
