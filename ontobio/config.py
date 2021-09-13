@@ -1,7 +1,7 @@
 import logging
 import yaml
 import os
-from marshmallow import Schema, fields, pprint, post_load
+from marshmallow import Schema, fields, pprint, post_load, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class OntologyConfigSchema(Schema):
     pre_load = fields.Bool(description="if true, load this ontology at startup")
 
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         return OntologyConfig(**data)
 
 class EndpointSchema(Schema):
@@ -26,7 +26,7 @@ class EndpointSchema(Schema):
     timeout = fields.Int()
 
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         return Endpoint(**data)
 
 class CategorySchema(Schema):
@@ -37,7 +37,7 @@ class CategorySchema(Schema):
     superclass = fields.Str()
 
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         return Category(**data)
 
 class ConfigSchema(Schema):
@@ -61,7 +61,7 @@ class ConfigSchema(Schema):
     use_amigo_for = fields.List(fields.Str(description="category to use amigo for"))
 
     @post_load
-    def make_object(self, data):
+    def make_object(self, data, **kwargs):
         return Config(**data)
 
 class Endpoint():
