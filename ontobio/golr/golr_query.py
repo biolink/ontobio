@@ -47,7 +47,7 @@ from ontobio.vocabulary.relations import HomologyTypes
 from ontobio.model.GolrResults import SearchResults, AutocompleteResult, Highlight
 from ontobio.util.user_agent import get_user_agent
 from prefixcommons.curie_util import expand_uri
-from ontobio.util.scigraph_util import get_curie_map
+from ontobio.util.curie_map import get_curie_map
 
 INVOLVED_IN="involved_in"
 ACTS_UPSTREAM_OF_OR_WITHIN="acts_upstream_of_or_within"

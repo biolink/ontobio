@@ -4,7 +4,7 @@ Mapping between obograph-JSON format and networkx
 
 from ontobio.ontol import LogicalDefinition, PropertyChainAxiom
 from ontobio.vocabulary.relations import map_legacy_pred
-from ontobio.util.scigraph_util import get_curie_map
+from ontobio.util.curie_map import get_curie_map
 from ontobio.golr.golr_associations import search_associations
 
 import json

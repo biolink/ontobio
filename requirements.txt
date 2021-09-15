@@ -26,3 +26,4 @@ diskcache>=4.0.0
 bidict>=0.20.0
 python-dateutil
 chardet
+dacite>=1.6.0
