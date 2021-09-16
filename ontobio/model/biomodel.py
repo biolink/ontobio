@@ -9,7 +9,11 @@ https://raw.githubusercontent.com/biolink/biolink-api/1e81503/biomodel/core.py
 """
 
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
+
+from ontobio.util.curie_map import get_curie_map
+
+from prefixcommons.curie_util import expand_uri
 
 
 @dataclass
@@ -56,21 +60,46 @@ class NamedObject:
          Potential replacement object (if named object is obsoleted)
     """
     id: str = None
-    label: str = None
+    lbl: str = None
     iri: str = None
     category: str = None
     description: str = None
-    types: List[str] = None
-    synonyms: List[str] = None
+    types: List[str] = field(default_factory=list)
+    synonyms: List[str] = field(default_factory=list)
     deprecated: bool = None
-    replaced_by: List[str] = None
-    consider: List[str] = None
+    replaced_by: List[str] = field(default_factory=list)
+    consider: List[str] = field(default_factory=list)
+    meta: Dict = field(default_factory=dict)
 
+    def __post_init__(self):
+        """
+        Logic moved from scigraph_util.map_tuple
+        """
+        if self.lbl:
+            self.label = self.lbl
+
+        if 'category' in self.meta:
+            self.category = self.category or self.meta['category']
+
+        self.iri = self.iri or expand_uri(self.id, [get_curie_map()])
+
+        if 'synonym' in self.meta:
+            self.synonyms = self.synonyms or [
+                SynonymPropertyValue(pred='synonym', val=s) for s in self.meta['synonym']
+            ]
+
+        if 'definition' in self.meta and self.meta['definition']:
+            self.description = self.description or self.meta['definition'][0]
 
 @dataclass
 class Taxon:
     id: str = None
-    label: str = None
+    lbl: str = None
+
+    def __post_init__(self):
+        if self.lbl:
+            self.label = self.lbl
+
 
 
 @dataclass
@@ -83,7 +112,13 @@ class BioObject(NamedObject):
 
     taxon: Taxon = None
     association_counts: int = None
-    xrefs: List[str] = None
+    xrefs: List[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        super().__post_init__()
+
+        if 'http://www.geneontology.org/formats/oboInOwl#hasDbXref' in self.meta:
+            self.xrefs = self.xrefs or self.meta['http://www.geneontology.org/formats/oboInOwl#hasDbXref']
 
 
 @dataclass
@@ -112,9 +147,9 @@ class AbstractPropertyValue:
          Xrefs provenance for property-value
     """
 
-    val: str
-    pred: str
-    xrefs: List[str]
+    val: str = None
+    pred: str = None
+    xrefs: List[str] = field(default_factory=list)
 
 
 @dataclass

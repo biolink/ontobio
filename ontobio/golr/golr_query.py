@@ -40,6 +40,7 @@ import json
 import logging
 import pysolr
 import re
+from dataclasses import asdict
 from typing import Dict, List
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
@@ -587,7 +588,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                 doc['label'] = doc['entity_label']
 
         highlighting = {
-            doc['id']: self._process_highlight(results, doc)._asdict()
+            doc['id']: asdict(self._process_highlight(results, doc))
             for doc in results.docs if results.highlighting
         }
         payload = SearchResults(
@@ -864,6 +865,8 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         See :ref:`Config` for details. The config object can be used
         to set values for the solr instance to be queried
+
+    TODO - Extract params into their own object
 
     """
     def __init__(self,

@@ -88,7 +88,7 @@ class SciGraph:
 
         return from_dict(BioObject, nodes[0])
 
-    def bioobject(self, id, node_type=None, class_name='BioObject', **params):
+    def bioobject(self, id, node_type=None, **params):
         """
         Get a node in a graph and translates it to biomodels datamodel
 
@@ -147,7 +147,7 @@ class SciGraph:
 
         return bio_object
 
-    def graph(self, id=None, depth=0):
+    def graph(self, id=None):
         """
         Extracts a subgraph around a given in
 
@@ -184,7 +184,7 @@ class SciGraph:
         """
         Returns subgraph module extracted using list of node IDs as seed
         """
-        ids = ids if ids else []
+        ids = ids or []
 
         graph = BBOPGraph()
         visited = []
@@ -208,7 +208,7 @@ class SciGraph:
         # default direction is reversed, unless we
         # want to follow in the opposite direction
 
-        rels = rels if rels else []
+        rels = rels or []
 
         rels_ordered = rels.copy()
         if not reverse_direction:
@@ -275,7 +275,7 @@ class SciGraph:
             **args
         }
         response = self.get_response("annotations/entities", None, None, http_method, **params)
-        scigraph_annotations = [from_dict(data_class=SciGraphAnnotation, data=annot) for annot in response.json()]
+        scigraph_annotations = [from_dict(SciGraphAnnotation, annot) for annot in response.json()]
         return EntityAnnotationResults(scigraph_annotations, content)
 
     # Internal wrapper onto requests API
@@ -295,7 +295,7 @@ class SciGraph:
         return request
 
     # Maps bbop-graph model to biomodels datamodel
-    # TODO: consider using biomodels directly
+    # TODO: delete this
     def map_tuple(self, id, lbl, meta):
         obj = {
             'id': id,
@@ -383,7 +383,7 @@ class SciGraph:
         )
         objs = inheres_in + inheres_in_part_of
 
-        return [from_dict(NamedObject, x) for x in objs]
+        return [from_dict(NamedObject, x.as_dict()) for x in objs]
 
     def substance_to_role_associations(self, id):
         """

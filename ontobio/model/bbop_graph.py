@@ -5,6 +5,7 @@ in the scigraph-util
 
 TODO Merge this with OBOGraph
 """
+from typing import Dict
 
 
 class BBOPGraph:
@@ -16,10 +17,12 @@ class BBOPGraph:
 
     nodemap = {}
 
-    def __init__(self, obj):
+    def __init__(self, obj: Dict = None):
+        obj = obj or {}
         self.nodes = []
         self.edges = []
-        self.add_json_graph(obj)
+        if obj:
+            self.add_json_graph(obj)
 
     def add_json_graph(self, obj):
         for node in obj['nodes']:
@@ -40,10 +43,10 @@ class BBOPGraph:
         for edge in graph.edges:
             self.add_edge(edge)
 
-    def get_node(self, id) :
+    def get_node(self, id):
         return self.nodemap[id]
 
-    def get_lbl(self, id) :
+    def get_lbl(self, id):
         return self.nodemap[id].lbl
 
     def get_root_nodes(self, relations):
@@ -70,7 +73,7 @@ class BBOPGraph:
             relations = []
         for edge in self.edges:
             if edge.sub == nid:
-                if len(relations) == 0 or e.pred in relations:
+                if len(relations) == 0 or edge.pred in relations:
                     el.append(edge)
         return el
 
