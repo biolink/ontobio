@@ -154,7 +154,7 @@ class PhenoSimEngine():
                 pheno_list.append(node)
             else:
                 phenotypes = get_objects_for_subject(
-                    subject=node, object_category='phenotype', relation='RO:0002200'
+                    subject=node, object_category='phenotype', relation='RO:0002200', subject_direct=True
                 )
                 pheno_list = pheno_list + phenotypes
         return pheno_list
@@ -177,7 +177,7 @@ class PhenoSimEngine():
                 pheno_list.append(node)
             else:
                 phenotypes = get_objects_for_subject(
-                    subject=node, object_category='phenotype', relation='RO:0002200'
+                    subject=node, object_category='phenotype', relation='RO:0002200', subject_direct=True
                 )
                 pheno_list = pheno_list + phenotypes
         return pheno_list
