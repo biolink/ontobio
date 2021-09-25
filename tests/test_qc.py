@@ -16,6 +16,11 @@ import copy
 
 ontology = ontol_factory.OntologyFactory().create("tests/resources/goslim_generic.json")
 ecomapping = ecomap.EcoMap()
+iea_eco = ecomapping.coderef_to_ecoclass("IEA")
+ic_eco = ecomapping.coderef_to_ecoclass("IC")
+ikr_eco = ecomapping.coderef_to_ecoclass("IKR")
+iba_eco = ecomapping.coderef_to_ecoclass("IBA")
+iso_eco = ecomapping.coderef_to_ecoclass("ISO")
 
 
 def make_annotation(db="blah",
@@ -96,7 +101,7 @@ def test_go_rule_06():
     test_result = qc.GoRule06().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.evidence.type = Curie.from_str("ECO:0000501")
+    assoc.evidence.type = Curie.from_str(iea_eco)
     test_result = qc.GoRule06().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
 
@@ -112,13 +117,11 @@ def test_go_rule_07():
     assert test_result.result_type == qc.ResultType.PASS
 
     assoc.object.id = Curie.from_str("GO:0003824")
-    assoc.evidence.type = "ECO:0000501" # Not IPI
+    assoc.evidence.type = iea_eco # Not IPI
     test_result = qc.GoRule07().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
 
 def test_go_rule08():
-    iea_eco = ecomapping.coderef_to_ecoclass("IEA")
-    ic_eco = ecomapping.coderef_to_ecoclass("IC")
 
     assoc = make_annotation(goid="GO:0006810", evidence="IEA").associations[0]
 
@@ -240,7 +243,7 @@ def test_go_rule_16():
     assert test_result.result_type == qc.ResultType.ERROR
 
     # Not IC
-    assoc.evidence.type = Curie.from_str("ECO:0000501")
+    assoc.evidence.type = Curie.from_str(iea_eco)
     assoc.evidence.with_support_from = association.ConjunctiveSet.str_to_conjunctions("BLAH:5555555|FOO:999999")
 
     test_result = qc.GoRule16().test(assoc, all_rules_config())
@@ -331,8 +334,6 @@ def test_go_rule28():
     assert test_result.message == "Found violation of: `Aspect can only be one of C, P, F` but was repaired"
 
 def test_go_rule29():
-    iea_eco = ecomapping.coderef_to_ecoclass("IEA")
-    ic_eco = ecomapping.coderef_to_ecoclass("IC")
 
     # Nov 11, 1990, more than a year old
     assoc = make_annotation(evidence="IEA", date="19901111").associations[0]
@@ -403,11 +404,11 @@ def test_gorule37():
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.evidence.type = Curie.from_str("ECO:0000305") # Rule doesn't apply, not IBA
+    assoc.evidence.type = Curie.from_str(ic_eco) # Rule doesn't apply, not IBA
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.evidence.type = Curie.from_str("ECO:0000318")
+    assoc.evidence.type = Curie.from_str(iba_eco)
     assoc.evidence.has_supporting_reference = [Curie.from_str("GO_REF:123")]  # IBA, but wrong ref
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.ERROR
@@ -438,11 +439,11 @@ def test_gorule42():
     test_result = qc.GoRule42().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.evidence.type = "ECO:0000305" # Not IKR so this rule is fine
+    assoc.evidence.type = ic_eco # Not IKR so this rule is fine
     test_result = qc.GoRule42().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.evidence.type = "ECO:0000320"
+    assoc.evidence.type = ikr_eco
     assoc.negated = False  # Not negated, so wrong
     test_result = qc.GoRule42().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.ERROR
@@ -455,7 +456,7 @@ def test_gorule43():
             "goref-0000024": {
                 "authors": "Pascale Gaudet, Michael Livstone, Paul Thomas, The Reference Genome Project",
                 "id": "GO_REF:0000024",
-                "evidence_codes": ["ECO:0000266"]
+                "evidence_codes": [iso_eco]
             }
         },
         rule_set=assocparser.RuleSet.ALL
@@ -464,11 +465,11 @@ def test_gorule43():
     test_result = qc.GoRule43().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
 
-    assoc.evidence.type = Curie.from_str("ECO:0000501")
+    assoc.evidence.type = Curie.from_str(iea_eco)
     test_result = qc.GoRule43().test(assoc, config)
     assert test_result.result_type == qc.ResultType.WARNING
 
-    assoc.evidence.type = Curie.from_str("ECO:0000266")
+    assoc.evidence.type = Curie.from_str(iso_eco)
     assoc.evidence.has_supporting_reference = [Curie.from_str("FOO:123")]
     test_result = qc.GoRule43().test(assoc, config)
     assert test_result.result_type == qc.ResultType.PASS
@@ -512,7 +513,7 @@ def test_gorule50():
 
     # Not ISS, so fine to have repeated columns
     assoc.subject.id = Curie.from_str("HELLO:123")
-    assoc.evidence.type = Curie.from_str("ECO:0000501")
+    assoc.evidence.type = Curie.from_str(iea_eco)
     test_result = qc.GoRule50().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
 
@@ -538,17 +539,17 @@ def test_gorule55():
 
 
 def test_gorule57():
-    assoc = make_annotation(db="HELLO", db_id="123", qualifier="contributes_to", goid="GO:0003674", evidence="ECO:0000501", taxon="taxon:2", from_gaf=False).associations[0]
+    assoc = make_annotation(db="HELLO", db_id="123", qualifier="contributes_to", goid="GO:0003674", evidence=iea_eco, taxon="taxon:2", from_gaf=False).associations[0]
     # Look at evidence_code, reference, annotation_properties
     config = assocparser.AssocParserConfig(
         group_metadata={
             "id": "mgi",
             "label": "Mouse Genome Informatics",
             "filter_out": {
-                "evidence": ["ECO:0000501"],
+                "evidence": [iea_eco],
                 "evidence_reference": [
                     {
-                        "evidence": "ECO:0000320",
+                        "evidence": ikr_eco,
                         "reference": "PMID:21873635"
                     }
                 ],
@@ -560,7 +561,7 @@ def test_gorule57():
     test_result = qc.GoRule57().test(assoc, config)
     assert test_result.result_type == qc.ResultType.ERROR
 
-    assoc.evidence.type = Curie.from_str("ECO:0000320")
+    assoc.evidence.type = Curie.from_str(ikr_eco)
     assoc.evidence.has_supporting_reference = [Curie.from_str("PMID:21873635")]
     test_result = qc.GoRule57().test(assoc, config)
     assert test_result.result_type == qc.ResultType.ERROR
@@ -618,30 +619,30 @@ def test_gorule58():
 
 def test_gorule61():
     config = all_rules_config(ontology=ontology)
-    assoc = make_annotation(goid="GO:0005554", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0005554", qualifier="enables", evidence=ikr_eco, from_gaf=False, version="1.2")
     assert assoc.report.reporter.messages.get("gorule-0000001", []) == []
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.PASS
 
     # Using `contributes_to`, but should be repaired to RO:0002327 enables
-    assoc = make_annotation(goid="GO:0005554", qualifier="contributes_to", evidence="ECO:0000320", from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0005554", qualifier="contributes_to", evidence=ikr_eco, from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result.relation == association.Curie("RO", "0002327")
     assert test_result.result_type == qc.ResultType.WARNING
 
     # BP term, qualifier inside allowed BP set
-    assoc = make_annotation(goid="GO:0016192", qualifier="acts_upstream_of_or_within", evidence="ECO:0000320", from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0016192", qualifier="acts_upstream_of_or_within", evidence=ikr_eco, from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.PASS
 
     # BP term, unallowed relation, Repair
-    assoc = make_annotation(goid="GO:0016192", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0016192", qualifier="enables", evidence=ikr_eco, from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.WARNING
     assert test_result.result.relation == association.Curie("RO", "0002264")
 
     # CC complex term, unallowed relation, unrepairable, causes error
-    assoc = make_annotation(goid="GO:0032991", qualifier="enables", evidence="ECO:0000320", from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0032991", qualifier="enables", evidence=ikr_eco, from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.ERROR
 
@@ -653,7 +654,7 @@ def test_gorule61():
     assert test_result.result.relation == association.Curie(namespace="RO", identity="0002432")
 
     # protein complex + repairable relation repairs to part_of
-    assoc = make_annotation(goid="GO:0032991", qualifier="is_active_in", evidence="ECO:0000320", from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0032991", qualifier="is_active_in", evidence=ikr_eco, from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.WARNING
     assert test_result.result.relation == association.Curie(namespace="BFO", identity="0000050")
