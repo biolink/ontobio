@@ -10,11 +10,13 @@ from ontobio.io import gaference
 from ontobio.io import assocparser
 from ontobio.io import gafparser
 from ontobio.io import gpadparser
-from ontobio import ontol, ontol_factory
+from ontobio import ontol, ontol_factory, ecomap
 
 import copy
 
 ontology = ontol_factory.OntologyFactory().create("tests/resources/goslim_generic.json")
+ecomapping = ecomap.EcoMap()
+
 
 def make_annotation(db="blah",
                     db_id="blah12345",
@@ -115,13 +117,15 @@ def test_go_rule_07():
     assert test_result.result_type == qc.ResultType.PASS
 
 def test_go_rule08():
+    iea_eco = ecomapping.coderef_to_ecoclass("IEA")
+    ic_eco = ecomapping.coderef_to_ecoclass("IC")
 
     assoc = make_annotation(goid="GO:0006810", evidence="IEA").associations[0]
 
     test_result = qc.GoRule08().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.WARNING
 
-    assoc.evidence.type = Curie.from_str("ECO:0000305")
+    assoc.evidence.type = Curie.from_str(ic_eco)
     test_result = qc.GoRule08().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.WARNING
 
@@ -130,13 +134,13 @@ def test_go_rule08():
     test_result = qc.GoRule08().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.WARNING
 
-    assoc.evidence.type = Curie.from_str("ECO:0000501") #IEA
+    assoc.evidence.type = Curie.from_str(iea_eco) #IEA
     # IEA, but on not manual, so should pass
     test_result = qc.GoRule08().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
 
     assoc.object.id = Curie.from_str("GO:0034655")  # neither
-    assoc.evidence.type = Curie.from_str("ECO:0000305")
+    assoc.evidence.type = Curie.from_str(ic_eco)
     test_result = qc.GoRule08().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
 
@@ -327,6 +331,9 @@ def test_go_rule28():
     assert test_result.message == "Found violation of: `Aspect can only be one of C, P, F` but was repaired"
 
 def test_go_rule29():
+    iea_eco = ecomapping.coderef_to_ecoclass("IEA")
+    ic_eco = ecomapping.coderef_to_ecoclass("IC")
+
     # Nov 11, 1990, more than a year old
     assoc = make_annotation(evidence="IEA", date="19901111").associations[0]
 
@@ -335,7 +342,7 @@ def test_go_rule29():
     assert test_result.result_type == qc.ResultType.ERROR
 
     ## Pass if not IEA
-    assoc.evidence.type = Curie.from_str("ECO:0000305")  # Not IEA
+    assoc.evidence.type = Curie.from_str(ic_eco)  # Not IEA
     test_result = qc.GoRule29().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
 
@@ -343,7 +350,7 @@ def test_go_rule29():
     now = datetime.datetime.now()
     six_months_ago = now - datetime.timedelta(days=180)
     assoc.date = association.Date(six_months_ago.year, six_months_ago.month, six_months_ago.day, "")
-    assoc.evidence.type = Curie.from_str("ECO:0000501")
+    assoc.evidence.type = Curie.from_str(iea_eco)
     test_result = qc.GoRule29().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
 
@@ -355,7 +362,7 @@ def test_go_rule29():
 
     ## Confirm the test can parse a YYYY-MM-DD date format from GPAD 2.0
     gpad_2_0_vals = assoc.to_gpad_2_0_tsv()  # Cheat to shortcut DB and DB_Object_ID concatenation
-    gpad_2_0_vals[5] = "ECO:0000501"
+    gpad_2_0_vals[5] = iea_eco
     gpad_2_0_vals[8] = "1990-11-11"
     assoc = gpadparser.to_association(gpad_2_0_vals, version="2.0").associations[0]
     test_result = qc.GoRule29().test(assoc, all_rules_config())

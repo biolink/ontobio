@@ -23,6 +23,8 @@ FailMode = enum.Enum("FailMode", {"SOFT": "soft", "HARD": "hard"})
 ResultType = enum.Enum("Result", {"PASS": "Pass", "WARNING": "Warning", "ERROR": "Error"})
 RepairState = enum.Enum("RepairState", {"OKAY": "Okay", "REPAIRED": "Repaired", "FAILED": "Failed"})
 
+ecomapping = ecomap.EcoMap()
+
 
 # TestResult = collections.namedtuple("TestResult", ["result_type", "message", "result"])
 class TestResult(object):
@@ -238,7 +240,8 @@ class GoRule08(GoRule):
         evidence = str(annotation.evidence.type)
 
         auto_annotated = goid in self.do_not_annotate
-        manually_annotated = evidence != "ECO:0000501" and goid in self.do_not_manually_annotate
+        iea = ecomapping.coderef_to_ecoclass("IEA")
+        manually_annotated = evidence != iea and goid in self.do_not_manually_annotate
         not_high_level = not (auto_annotated or manually_annotated)
 
         t = result(not_high_level, self.fail_mode)
@@ -263,10 +266,11 @@ class GoRule11(GoRule):
 
 
 class GoRule13(GoRule):
+    NON_EXPERIMENTAL_EVIDENCE = ["IBA", "IKR", "IRD", "IC", "ISA", "ISM", "ISO", "ISS", "NAS", "RCA", "TAS", "ND", "IEA"]
 
     def __init__(self):
         super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.HARD)
-        self.non_experimental_evidence = set(["ECO:0000318", "ECO:0000320", "ECO:0000321", "ECO:0000305", "ECO:0000247", "ECO:0000255", "ECO:0000266", "ECO:0000250", "ECO:0000303", "ECO:0000245", "ECO:0000304", "ECO:0000307", "ECO:0000501"])
+        self.non_experimental_evidence = self.get_non_experimental_evidence_eco()
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.annotation_inferences is None:
@@ -293,6 +297,12 @@ class GoRule13(GoRule):
             else:
                 # Only submit a warning/report if we are an experimental evidence
                 return TestResult(ResultType.WARNING, self.title, False)
+
+    def get_non_experimental_evidence_eco(self):
+        non_experimental_eco_codes = set()
+        for ev_code in self.NON_EXPERIMENTAL_EVIDENCE:
+            non_experimental_eco_codes.add(ecomapping.coderef_to_ecoclass(ev_code))
+        return non_experimental_eco_codes
 
 
 class GoRule15(GoRule):
@@ -444,7 +454,7 @@ class GoRule29(GoRule):
                                             int(date.day),
                                             0, 0, 0, 0)
 
-        iea = "ECO:0000501"
+        iea = ecomapping.coderef_to_ecoclass("IEA")
         if evidence == iea:
             if time_diff > time_compare_delta_long:
                 return self._result(False)
@@ -530,7 +540,6 @@ class GoRule43(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000043", "Check for valid combination of evidence code and GO_REF", FailMode.SOFT)
-        self.ecomapping = ecomap.EcoMap()
 
     def _ref_curi_to_id(self, goref) -> str:
         """
