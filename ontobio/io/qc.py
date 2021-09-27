@@ -23,6 +23,17 @@ FailMode = enum.Enum("FailMode", {"SOFT": "soft", "HARD": "hard"})
 ResultType = enum.Enum("Result", {"PASS": "Pass", "WARNING": "Warning", "ERROR": "Error"})
 RepairState = enum.Enum("RepairState", {"OKAY": "Okay", "REPAIRED": "Repaired", "FAILED": "Failed"})
 
+ecomapping = ecomap.EcoMap()
+iea_eco = ecomapping.coderef_to_ecoclass("IEA")
+ida_eco = ecomapping.coderef_to_ecoclass("IDA")
+ipi_eco = ecomapping.coderef_to_ecoclass("IPI")
+ic_eco = ecomapping.coderef_to_ecoclass("IC")
+nd_eco = ecomapping.coderef_to_ecoclass("ND")
+ikr_eco = ecomapping.coderef_to_ecoclass("IKR")
+iba_eco = ecomapping.coderef_to_ecoclass("IBA")
+iep_eco = ecomapping.coderef_to_ecoclass("IEP")
+hep_eco = ecomapping.coderef_to_ecoclass("HEP")
+
 
 # TestResult = collections.namedtuple("TestResult", ["result_type", "message", "result"])
 class TestResult(object):
@@ -179,8 +190,6 @@ class GoRule06(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000006", "IEP and HEP usage is restricted to terms from the Biological Process ontology", FailMode.HARD)
-        self.iep = "ECO:0000270"
-        self.hep = "ECO:0007007"
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.ontology is None:
@@ -188,7 +197,7 @@ class GoRule06(GoRule):
 
         go_namespace = [predval for predval in config.ontology.get_graph().nodes.get(str(annotation.object.id), {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
         evidence = str(annotation.evidence.type)
-        fails = evidence in [self.iep, self.hep] and "biological_process" not in [o["val"] for o in go_namespace]
+        fails = evidence in [iep_eco, hep_eco] and "biological_process" not in [o["val"] for o in go_namespace]
         return self._result(not fails)
 
 
@@ -210,7 +219,7 @@ class GoRule07(GoRule):
         fails = False
         if self.children_of_catalytic_activity is not None:
             # We fail if evidence is IPI and the goterm is a subclass of catalytic activity, else we good
-            fails = evidence == "ECO:0000353" and goterm in self.children_of_catalytic_activity
+            fails = evidence == ipi_eco and goterm in self.children_of_catalytic_activity
 
         return self._result(not fails)
 
@@ -238,7 +247,7 @@ class GoRule08(GoRule):
         evidence = str(annotation.evidence.type)
 
         auto_annotated = goid in self.do_not_annotate
-        manually_annotated = evidence != "ECO:0000501" and goid in self.do_not_manually_annotate
+        manually_annotated = evidence != iea_eco and goid in self.do_not_manually_annotate
         not_high_level = not (auto_annotated or manually_annotated)
 
         t = result(not_high_level, self.fail_mode)
@@ -250,7 +259,6 @@ class GoRule11(GoRule):
     def __init__(self):
         super().__init__("GORULE:0000011", "ND annotations to root nodes only", FailMode.HARD)
         self.root_go_classes = ["GO:0003674", "GO:0005575", "GO:0008150"]
-        self.nd = "ECO:0000307"
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         goclass = str(annotation.object.id)
@@ -258,15 +266,16 @@ class GoRule11(GoRule):
 
         # If we see a bad evidence, and we're not in a paint file then fail.
         # We're good if both predicates are true, or neither are true
-        success = (evidence == self.nd and goclass in self.root_go_classes) or (evidence != self.nd and goclass not in self.root_go_classes)
+        success = (evidence == nd_eco and goclass in self.root_go_classes) or (evidence != nd_eco and goclass not in self.root_go_classes)
         return self._result(success)
 
 
 class GoRule13(GoRule):
+    NON_EXPERIMENTAL_EVIDENCE = ["IBA", "IKR", "IRD", "IC", "ISA", "ISM", "ISO", "ISS", "NAS", "RCA", "TAS", "ND", "IEA"]
 
     def __init__(self):
         super().__init__("GORULE:0000013", "Taxon-appropriate annotation check", FailMode.HARD)
-        self.non_experimental_evidence = set(["ECO:0000318", "ECO:0000320", "ECO:0000321", "ECO:0000305", "ECO:0000247", "ECO:0000255", "ECO:0000266", "ECO:0000250", "ECO:0000303", "ECO:0000245", "ECO:0000304", "ECO:0000307", "ECO:0000501"])
+        self.non_experimental_evidence = self.get_non_experimental_evidence_eco()
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         if config.annotation_inferences is None:
@@ -293,6 +302,12 @@ class GoRule13(GoRule):
             else:
                 # Only submit a warning/report if we are an experimental evidence
                 return TestResult(ResultType.WARNING, self.title, False)
+
+    def get_non_experimental_evidence_eco(self):
+        non_experimental_eco_codes = set()
+        for ev_code in self.NON_EXPERIMENTAL_EVIDENCE:
+            non_experimental_eco_codes.add(ecomapping.coderef_to_ecoclass(ev_code))
+        return non_experimental_eco_codes
 
 
 class GoRule15(GoRule):
@@ -335,7 +350,7 @@ class GoRule16(GoRule):
         withfrom = annotation.evidence.with_support_from
 
         okay = True
-        if evidence == "ECO:0000305":
+        if evidence == ic_eco:
             only_go = [t for conjunctions in withfrom for t in conjunctions.elements if t.namespace == "GO"] # Filter terms that aren't GO terms
             okay = len(only_go) >= 1
 
@@ -351,7 +366,7 @@ class GoRule17(GoRule):
         evidence = str(annotation.evidence.type)
         withfrom = annotation.evidence.with_support_from
 
-        if evidence == "ECO:0000314":
+        if evidence == ida_eco:
             return self._result(not bool(withfrom))
         else:
             return self._result(True)
@@ -366,7 +381,7 @@ class GoRule18(GoRule):
         evidence = str(annotation.evidence.type)
         withfrom = annotation.evidence.with_support_from
 
-        if evidence == "ECO:0000353":
+        if evidence == ipi_eco:
             return self._result(bool(withfrom))
         else:
             return self._result(True)
@@ -376,12 +391,13 @@ class GoRule26(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000026", "IBA evidence codes should be filtered from main MOD gaf sources", FailMode.HARD)
-        self.offending_evidence = ["ECO:0000318"]
+        self.offending_evidence = ["IBA"]
+        self.offending_evidence_eco = [ecomapping.coderef_to_ecoclass(ev) for ev in self.offending_evidence]
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
         # If we see a bad evidence, and we're not in a paint file then fail.
-        fails = (evidence in self.offending_evidence and not config.paint)
+        fails = (evidence in self.offending_evidence_eco and not config.paint)
         return self._result(not fails)
 
 
@@ -444,8 +460,7 @@ class GoRule29(GoRule):
                                             int(date.day),
                                             0, 0, 0, 0)
 
-        iea = "ECO:0000501"
-        if evidence == iea:
+        if evidence == iea_eco:
             if time_diff > time_compare_delta_long:
                 return self._result(False)
             elif time_diff > time_compare_delta_short:
@@ -489,7 +504,7 @@ class GoRule37(GoRule):
         assigned_by = annotation.provided_by
 
         result = self._result(True) # By default we pass
-        if evidence == "ECO:0000318":
+        if evidence == iba_eco:
             result = self._result(assigned_by == "GO_Central" and "PMID:21873635" in references)
 
         return result
@@ -519,8 +534,7 @@ class GoRule42(GoRule):
         evidence = str(annotation.evidence.type)
 
         result = self._result(True)
-        ikr = "ECO:0000320"
-        if evidence == ikr:
+        if evidence == ikr_eco:
             result = self._result(annotation.negated)
 
         return result
@@ -530,7 +544,6 @@ class GoRule43(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000043", "Check for valid combination of evidence code and GO_REF", FailMode.SOFT)
-        self.ecomapping = ecomap.EcoMap()
 
     def _ref_curi_to_id(self, goref) -> str:
         """
@@ -594,14 +607,15 @@ class GoRule50(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000050", "Annotations to ISS, ISA and ISO should not be self-referential", FailMode.SOFT)
-        self.the_evidences = ["ECO:0000250", "ECO:0000247", "ECO:0000266"]
+        self.the_evidences = ["ISS", "ISA", "ISO"]
+        self.the_evidences_eco = [ecomapping.coderef_to_ecoclass(ev) for ev in self.the_evidences]
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # should not have the same identifier in the 'gene product column' (column 2) and in the 'with/from' column
         # (column 8)
         evidence = str(annotation.evidence.type)
         result = self._result(True)
-        if evidence in self.the_evidences:
+        if evidence in self.the_evidences_eco:
             # Ensure the gp ID is not an entry in withfrom
             for conj in annotation.evidence.with_support_from:
                 result = self._result(annotation.subject.id not in conj.elements)
