@@ -4,12 +4,16 @@ from ontobio.io import assocparser
 from ontobio.io.gpadparser import GpadParser
 from ontobio.model.association import GoAssociation, Date
 from ontobio.rdfgen.gocamgen import errors
+from ontobio import ecomap
 
 logger = logging.getLogger(__name__)
 
+ecomapping = ecomap.EcoMap()
+ipi_eco = ecomapping.coderef_to_ecoclass("IPI")
+
 GPAD_PARSER = GpadParser()
 BINDING_ROOT = "GO:0005488"  # binding
-IPI_ECO_CODE = "ECO:0000353"
+IPI_ECO_CODE = ipi_eco
 
 
 class GoAssocWithFrom:
