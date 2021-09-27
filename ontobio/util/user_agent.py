@@ -1,5 +1,6 @@
 from ontobio import __version__ as ontobio_version
 
+
 def get_user_agent(name="ontobio", version=ontobio_version, modules=None, caller_name=None):
     """
     Create a User-Agent string

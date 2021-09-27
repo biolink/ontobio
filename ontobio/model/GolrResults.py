@@ -1,14 +1,15 @@
-from typing import Dict, List, Optional, NamedTuple
-
-Highlight = NamedTuple(
-    'Highlight', [
-        ('highlight', str),
-        ('match', str),
-        ('has_highlight', bool)
-    ]
-)
+from dataclasses import dataclass
+from typing import Dict, List, Optional
 
 
+@dataclass(frozen=True)
+class Highlight:
+    highlight: str = None
+    match: str = None
+    has_highlight: bool = None
+
+
+@dataclass
 class SearchResults:
     """
     Search results class from transformed solr results
@@ -27,18 +28,13 @@ class SearchResults:
         ex: {id1: "<em> some highlight </em> some not highlighted"}
 
     """
-
-    def __init__(self,
-                 docs: List[Dict],
-                 numFound: int,
-                 facet_counts: Dict,
-                 highlighting: Optional[Dict[str, str]]):
-        self.docs = docs
-        self.numFound = numFound
-        self.facet_counts = facet_counts
-        self.highlighting = highlighting
+    docs: List[Dict]
+    numFound: int
+    facet_counts: Dict
+    highlighting: Optional[Dict[str, str]] = None
 
 
+@dataclass
 class AutocompleteResult:
     """
     Data class for single autocomplete result
@@ -52,22 +48,13 @@ class AutocompleteResult:
     highlight: solr highlight
     has_highlight: True if highlight can be interpreted as html, else False
     """
-    def __init__(self,
-                 id: str,
-                 label: str,
-                 match: str,
-                 category: List[str],
-                 taxon: str,
-                 taxon_label: str,
-                 highlight: str,
-                 has_highlight: bool,
-                 equivalent_ids: List[str]):
-        self.id = id
-        self.label = label
-        self.match = match
-        self.category = category
-        self.taxon = taxon
-        self.taxon_label = taxon_label
-        self.highlight = highlight
-        self.has_highlight = has_highlight
-        self.equivalent_ids = equivalent_ids
+
+    id: str
+    label: str
+    match: str
+    category: List[str]
+    taxon: str
+    taxon_label: str
+    highlight: str
+    has_highlight: bool
+    equivalent_ids: List[str]

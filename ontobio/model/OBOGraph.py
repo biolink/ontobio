@@ -1,12 +1,9 @@
-__author__ = 'cjm'
+"""
+See https://github.com/geneontology/obographs
+"""
 
-import logging
 
 class OboGraph:
-
-    """
-    See https://github.com/geneontology/obographs
-    """
 
     nodemap = {}
 
@@ -14,6 +11,7 @@ class OboGraph:
         self.nodes = nodes
         self.edges = edges
         return
+
 
 class Node:
     def __init__(self, id, label=None, meta=None, **args):    
@@ -26,6 +24,7 @@ class Node:
     def __str__(self):
         return self.id+' "'+str(self.label)+'"'
 
+
 class Edge:
     def __init__(self, sub, pred, obj, meta=None):    
         self.sub = sub
@@ -34,6 +33,7 @@ class Edge:
     
     def __str__(self):
         return self.sub +"-["+self.pred+"]->"+self.obj
+
 
 class Meta:
     def __init__(self, obj=None):
@@ -44,4 +44,3 @@ class Meta:
         if 'category' in obj:
             self.category_list = obj['category']
         self.pmap = obj
-    
