@@ -1,14 +1,19 @@
 import logging
 from typing import List
+from ontobio.io import assocparser
 from ontobio.io.gpadparser import GpadParser
-from ontobio.model.association import GoAssociation
+from ontobio.model.association import GoAssociation, Date
 from ontobio.rdfgen.gocamgen import errors
+from ontobio import ecomap
 
 logger = logging.getLogger(__name__)
 
+ecomapping = ecomap.EcoMap()
+ipi_eco = ecomapping.coderef_to_ecoclass("IPI")
+
 GPAD_PARSER = GpadParser()
 BINDING_ROOT = "GO:0005488"  # binding
-IPI_ECO_CODE = "ECO:0000353"
+IPI_ECO_CODE = ipi_eco
 
 
 class GoAssocWithFrom:
@@ -234,5 +239,12 @@ def extract_properties(annot: GoAssociation):
     annotation_properties = {}
     property_keys = set([prop[0] for prop in annot.properties])
     for pk in property_keys:
-        annotation_properties[pk] = annot.annotation_property_values(pk)
+        property_values = annot.annotation_property_values(pk)
+        # Check for date fields (ex: "creation-date", "modification-date") and parse to Date
+        if pk.endswith("date"):
+            # Stealing some assocparser stuff here
+            dummy_report = assocparser.Report()
+            annot_line = annot.source_line.split("\t")
+            property_values = [assocparser.parse_iso_date(v, dummy_report, annot_line) for v in property_values]
+        annotation_properties[pk] = property_values
     return annotation_properties

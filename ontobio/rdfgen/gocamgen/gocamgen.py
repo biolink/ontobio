@@ -32,6 +32,7 @@ LEGO = Namespace("http://geneontology.org/lego/")
 LAYOUT = Namespace("http://geneontology.org/lego/hint/layout/")
 PAV = Namespace('http://purl.org/pav/')
 DC = Namespace("http://purl.org/dc/elements/1.1/")
+DCT = Namespace("http://purl.org/dc/terms/")
 RDFS = Namespace("http://www.w3.org/2000/01/rdf-schema#")
 GOREL = Namespace("http://purl.obolibrary.org/obo/GOREL_")
 NCBITAXON = Namespace("http://purl.obolibrary.org/obo/NCBITaxon_")
@@ -124,10 +125,12 @@ class GoCamEvidence:
     DEFAULT_CONTRIBUTOR = "http://orcid.org/0000-0002-6659-0416"
     DEFAULT_PROVIDED_BY = "http://geneontology.org"  # GO in groups.yaml
 
-    def __init__(self, code, references, contributors=[], date="", comments=[], source_line="", with_from=None, provided_bys: List = []):
+    def __init__(self, code, references, contributors=[], date="", comments=[], source_line="", with_from=None, provided_bys: List = [], creation_date=None, import_date=None):
         self.evidence_code = code
         self.references = references
         self.date = date
+        self.creation_date = creation_date
+        self.import_date = import_date
         self.contributors = contributors
         self.provided_bys = provided_bys
         self.comments = comments
@@ -143,6 +146,21 @@ class GoCamEvidence:
             contributors = annot.annotation_properties["contributor-id"]
         if len(contributors) == 0:
             contributors = [GoCamEvidence.DEFAULT_CONTRIBUTOR]
+
+        # modification-date, if present. Otherwise, annot.date
+        date = ymd_str(annot.date, separator="-")  # default value
+        if "modification-date" in annot.annotation_properties:
+            # Get this into Date? For ymd_str? Use general ontobio date parse function?
+            modification_date = annot.annotation_properties["modification-date"][0]
+            date = ymd_str(modification_date, separator="-")
+
+        # creation-date, if present. Otherwise, annot.date
+        creation_date = ymd_str(annot.date, separator="-")
+        if "creation-date" in annot.annotation_properties:
+            creation_date = annot.annotation_properties["creation-date"][0]
+            creation_date = ymd_str(creation_date, separator="-")
+
+        import_date = now.date().isoformat()
         provided_by = GROUPS_HELPER.lookup_group_id(annot.assigned_by)  # Needs to be resolved to URI, e.g. ZFIN->http://zfin.org
         comments = []
         if "comment" in annot.annotation_properties:
@@ -151,10 +169,12 @@ class GoCamEvidence:
         return GoCamEvidence(annot.evidence_code, annot.references,
                            contributors=contributors,
                            # "{date}T{time}".format(date=ymd_str(date), time=date.time)
-                           date=ymd_str(annot.date, separator="-"),
+                           date=date,
                            provided_bys=[provided_by],
                            comments=comments,
-                           source_line=source_line)
+                           source_line=source_line,
+                           creation_date=creation_date,
+                           import_date=import_date)
 
     @staticmethod
     def create_from_collapsed_association(collapsed_association: collapsed_assoc.CollapsedAssociation):
@@ -167,9 +187,28 @@ class GoCamEvidence:
         return evidences
 
     @staticmethod
-    def max_date(evidences: List):
+    def sort_dates(dates: List):
+        return sorted(dates, key=lambda x: dateutil.parser.parse(x))
+
+    @classmethod
+    def sort_date(GoCamEvidence, evidences: List):
         all_dates = [e.date for e in evidences]
-        mdate = sorted(all_dates, key=lambda x: dateutil.parser.parse(x), reverse=True)[0]
+        return GoCamEvidence.sort_dates(all_dates)
+
+    @classmethod
+    def sort_creation_date(GoCamEvidence, evidences: List):
+        all_dates = [e.creation_date for e in evidences if e.creation_date]
+        return GoCamEvidence.sort_dates(all_dates)
+
+    @classmethod
+    def sort_import_date(GoCamEvidence, evidences: List):
+        all_dates = [e.import_date for e in evidences if e.import_date]
+        return GoCamEvidence.sort_dates(all_dates)
+
+    @staticmethod
+    def min_date(evidences: List):
+        all_dates = [e.date for e in evidences]
+        mdate = sorted(all_dates, key=lambda x: dateutil.parser.parse(x))[0]
         return mdate
 
 
@@ -199,6 +238,7 @@ class GoCamModel:
 
     def __init__(self, modeltitle, connection_relations=None, store=None, model_id=None, modelstate=None):
         self.modeltitle = modeltitle
+        self.date = now.date().isoformat()
         cam_writer = CamTurtleRdfWriter(self.modeltitle, store=store, model_id=model_id)
         self.writer = AnnotonCamRdfTransform(cam_writer)
         self.classes = []
@@ -213,6 +253,7 @@ class GoCamModel:
         if modelstate is None:
             modelstate = "development"
         self.declare_modelstate(modelstate)
+        self.declare_model_dates()
 
     def write(self, filename, format='ttl'):
         if path.splitext(filename)[1] != ".ttl":
@@ -229,6 +270,17 @@ class GoCamModel:
     def declare_modelstate(self, modelstate: str):
         self.graph.add((self.writer.writer.base, URIRef("http://geneontology.org/lego/modelstate"), Literal(modelstate)))
 
+    def declare_date(self, date: str = None, field: URIRef = None):
+        # Could be updated to emit type xsd:dateTime
+        if date is None:
+            date = self.date
+        if field is None:
+            field = DC.date
+        self.graph.add((self.writer.writer.base, field, Literal(date)))
+
+    def declare_model_dates(self):
+        self.declare_date()
+
     def declare_properties(self):
         # AnnotionProperty
         self.writer.emit_type(URIRef("http://geneontology.org/lego/evidence"), OWL.AnnotationProperty)
@@ -238,6 +290,8 @@ class GoCamModel:
         self.writer.emit_type(URIRef("http://purl.org/dc/elements/1.1/contributor"), OWL.AnnotationProperty)
         self.writer.emit_type(URIRef("http://purl.org/dc/elements/1.1/date"), OWL.AnnotationProperty)
         self.writer.emit_type(URIRef("http://purl.org/dc/elements/1.1/source"), OWL.AnnotationProperty)
+        self.writer.emit_type(URIRef("http://purl.org/dc/terms/created"), OWL.AnnotationProperty)
+        self.writer.emit_type(URIRef("http://purl.org/dc/terms/dateAccepted"), OWL.AnnotationProperty)
 
     def declare_class(self, class_id):
         if class_id not in self.classes:
@@ -254,8 +308,16 @@ class GoCamModel:
         self.writer.emit_type(entity, OWL.NamedIndividual)
         if evidences:
             # Emit max date all contributors
-            max_date = GoCamEvidence.max_date(evidences)
+            max_date = GoCamEvidence.sort_date(evidences)[-1]  # Effectively max modification-date
             self.writer.emit(entity, DC.date, Literal(max_date))
+            sorted_creation_dates = GoCamEvidence.sort_creation_date(evidences)
+            if sorted_creation_dates:
+                min_creation_date = sorted_creation_dates[0]
+                self.writer.emit(entity, DCT.created, Literal(min_creation_date))
+            sorted_import_dates = GoCamEvidence.sort_import_date(evidences)
+            if sorted_import_dates:
+                max_import_date = sorted_import_dates[-1]
+                self.writer.emit(entity, DCT.dateAccepted, Literal(max_import_date))
             all_contributors = set()
             all_provided_bys = set()
             for e in evidences:
@@ -336,8 +398,16 @@ class GoCamModel:
     def add_evidences(self, axiom, evidences: List[GoCamEvidence]):
         for e in evidences:
             self.add_evidence(axiom, e, emit_date=False)
-        max_date = GoCamEvidence.max_date(evidences)
+        max_date = GoCamEvidence.sort_date(evidences)[-1]
         self.writer.emit(axiom, DC.date, Literal(max_date))
+        sorted_creation_dates = GoCamEvidence.sort_creation_date(evidences)
+        if sorted_creation_dates:
+            min_creation_date = sorted_creation_dates[0]
+            self.writer.emit(axiom, DCT.created, Literal(min_creation_date))
+        sorted_import_dates = GoCamEvidence.sort_import_date(evidences)
+        if sorted_import_dates:
+            max_import_date = sorted_import_dates[-1]
+            self.writer.emit(axiom, DCT.dateAccepted, Literal(max_import_date))
 
     def add_connection(self, gene_connection, source_annoton):
         # Switching from reusing existing activity node from annoton to creating new one for each connection -
@@ -479,6 +549,8 @@ class AssocGoCamModel(GoCamModel):
         self.default_contributor = "http://orcid.org/0000-0002-6659-0416"
         self.contributors = set()
         self.provided_bys = set()
+        self.creation_date = None  # min creation-date or association.date
+        self.import_date = now.date().isoformat()  # today
         self.graph.bind("GOREL", GOREL)  # Because GOREL isn't in context.jsonld's
         self.gpi_entities = gpi_entities
         self.errors: List[errors.GocamgenException] = []
@@ -494,7 +566,14 @@ class AssocGoCamModel(GoCamModel):
             return self.gpi_entities[entity_id]["taxon"]["id"]
         return None
 
+    def declare_model_dates(self):
+        # Override to prevent premature date declaration. Dates will be handled in translate()
+        pass
+
     def translate(self):
+        # Collect all dates while iterating through associations
+        creation_dates = []
+        modification_dates = []
 
         for a in self.associations:
 
@@ -502,12 +581,15 @@ class AssocGoCamModel(GoCamModel):
 
             # Add evidences tied to axiom_ids
             evidences = GoCamEvidence.create_from_collapsed_association(a)
-            # Record all contributors at model level
+            # Record all contributors, provided_bys, and dates at model level
             for e in evidences:
                 for c in e.contributors:
                     self.contributors.add(c)
                 for pb in e.provided_bys:
                     self.provided_bys.add(pb)
+                modification_dates.append(e.date)
+                if e.creation_date:
+                    creation_dates.append(e.creation_date)
 
             annotation_extensions = a.annot_extensions()
 
@@ -708,6 +790,16 @@ class AssocGoCamModel(GoCamModel):
         for pb in self.provided_bys:
             self.declare_provided_by(pb)
 
+        # Date business
+        self.date = sorted(modification_dates)[-1]  # Latest date
+        self.declare_date()  # default emits DC.date self.date
+        if creation_dates:
+            self.creation_date = sorted(creation_dates)[0]  # Earliest date
+        else:
+            self.creation_date = sorted(modification_dates)[0]  # Earliest date
+        self.declare_date(self.creation_date, DCT.created)
+        self.declare_date(self.import_date, DCT.dateAccepted)
+
     def translate_primary_annotation(self, annotation: collapsed_assoc.CollapsedAssociation):
         gp_id = str(annotation.subject_id())
         term = str(annotation.object_id())
@@ -870,12 +962,12 @@ class CamTurtleRdfWriter(TurtleRdfWriter):
         self.graph.bind("owl", OWL)
         self.graph.bind("obo", "http://purl.obolibrary.org/obo/")
         self.graph.bind("dc", DC)
+        self.graph.bind("dct", DCT)
         self.graph.bind("rdfs", RDFS)
 
         self.graph.add((self.base, RDF.type, OWL.Ontology))
 
         # Model attributes TODO: Should move outside init
-        self.graph.add((self.base, DC.date, Literal(datetime.date.today().isoformat())))
         self.graph.add((self.base, DC.title, Literal(modeltitle)))
         self.graph.add((self.base, OWL.versionIRI, self.base))
 

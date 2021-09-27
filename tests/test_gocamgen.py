@@ -1,10 +1,12 @@
 import pytest
+import datetime
 from ontobio.io import assocparser
 from ontobio.io.gpadparser import to_association
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.rdfgen.gocamgen import collapsed_assoc, gocam_builder, gocamgen
 
 GO_ONTO = OntologyFactory().create("tests/resources/go-binding.json")  # Placeholder ontology to instantiate models
+GO_ONTO.merge([OntologyFactory().create("tests/resources/ro-gp2term-20210723.json")])  # Truncated RO
 PARSER_CONFIG = assocparser.AssocParserConfig(ontology=GO_ONTO,
                                               gpi_authority_path="tests/resources/mgi2.test_entities.gpi")
 
@@ -13,7 +15,7 @@ def test_evidence_max_date():
     ev1 = gocamgen.GoCamEvidence(code="ECO:0000314", references=["PMID:12345"], date="2008-08-14")
     ev2 = gocamgen.GoCamEvidence(code="ECO:0000314", references=["PMID:12345"], date="2011-04-12")
     ev3 = gocamgen.GoCamEvidence(code="ECO:0000314", references=["PMID:12345"], date="2021-03-01")
-    max_date = gocamgen.GoCamEvidence.max_date([ev1, ev2, ev3])
+    max_date = gocamgen.GoCamEvidence.sort_date([ev1, ev2, ev3])[-1]
     assert max_date == "2021-03-01"
 
 
@@ -95,3 +97,38 @@ def test_model_title():
     # Fallback to gene_id as title if not found in GPI
     title = builder.model_title(gene_id="FAKE:1915834")
     assert title == "FAKE:1915834"
+
+
+def test_model_dates():
+    model_associations = []
+    version = "2.0"
+    report = assocparser.Report(group="unknown", dataset="unknown")
+    vals = [
+        "MGI:MGI:1915834",
+        "",
+        "RO:0002327",
+        "GO:0003674",
+        "MGI:MGI:2156816|GO_REF:0000015",
+        "ECO:0000307",
+        "",
+        "",
+        "2020-10-09",
+        "MGI",
+        "",
+        "creation-date=2020-09-17|modification-date=2020-10-09|contributor-id=http://orcid.org/0000-0003-2689-5511"
+    ]
+    model_associations = model_associations + to_association(list(vals), report=report, version=version).associations
+
+    # Different term, earlier creation-date
+    vals[3], vals[11] = "GO:0016301", "creation-date=2011-12-13"
+    model_associations = model_associations + to_association(list(vals), report=report, version=version).associations
+
+    # Different term, no annotation properties
+    vals[3], vals[11] = "GO:0001962", ""
+    model_associations = model_associations + to_association(list(vals), report=report, version=version).associations
+
+    builder = gocam_builder.GoCamBuilder(parser_config=PARSER_CONFIG, modelstate="test")
+    model = builder.translate_to_model(gene="MGI:MGI:1915834", assocs=model_associations)
+    assert model.date == "2020-10-09"
+    assert model.creation_date == "2011-12-13"
+    assert model.import_date == datetime.date.today().isoformat()

@@ -49,12 +49,16 @@ from ontobio.model.GolrResults import SearchResults, AutocompleteResult, Highlig
 from ontobio.util.user_agent import get_user_agent
 from prefixcommons.curie_util import expand_uri
 from ontobio.util.curie_map import get_curie_map
+from ontobio import ecomap
 
 INVOLVED_IN="involved_in"
 ACTS_UPSTREAM_OF_OR_WITHIN="acts_upstream_of_or_within"
 
 ISA_PARTOF_CLOSURE="isa_partof_closure"
 REGULATES_CLOSURE="regulates_closure"
+
+ecomapping = ecomap.EcoMap()
+iea_eco = ecomapping.coderef_to_ecoclass("IEA")
 
 logger = logging.getLogger(__name__)
 
@@ -852,7 +856,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
     exclude_automatic_assertions : bool
 
-        If true, then any annotations with evidence of ECO:0000501 (IEA) or
+        If true, then any annotations with ECO evidence code for IEA or
         subclasses will be excluded.
 
     use_compact_associations : bool
@@ -1209,7 +1213,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
                 fq['evidence_object_closure'] = e
 
         if self.exclude_automatic_assertions:
-            fq['-evidence_object_closure'] = 'ECO:0000501'
+            fq['-evidence_object_closure'] = iea_eco
 
         # Homolog service params
         # TODO can we sync with argparse.choices?

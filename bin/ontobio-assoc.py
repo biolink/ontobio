@@ -42,7 +42,13 @@ from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.ontol_renderers import GraphRenderer
 from ontobio.slimmer import get_minimal_subgraph
+from ontobio import ecomap
 import logging
+
+
+ecomapping = ecomap.EcoMap()
+iea_eco = ecomapping.coderef_to_ecoclass("IEA")
+
 
 def main():
     """
@@ -186,7 +192,7 @@ def main():
 
     evidence = args.evidence
     if evidence is not None and evidence.lower() == 'noiea':
-        evidence = "-ECO:0000501"
+        evidence = "-{}".format(iea_eco)
 
 
     # Association Factory
