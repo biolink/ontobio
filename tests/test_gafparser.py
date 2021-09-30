@@ -204,6 +204,14 @@ def test_qualifiers_gaf():
     assert len(list(filter(lambda e: e["obj"] == "involved_in", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
 
 
+def test_gaf_2_1_unknown_qualifier():
+    line = ["UniProtKB", "P0AFI2", "parC", "Contributes_to", "GO:0003916", "PMID:1334483", "IDA", "", "F", "", "", "gene", "taxon:83333", "20081208", "EcoliWiki"]
+    parsed = gafparser.to_association(line)
+
+    assert parsed.skipped is True
+    assert parsed.report.to_report_json()["messages"]["gorule-0000001"][0]["type"] == parsed.report.INVALID_QUALIFIER
+
+
 def test_qualifiers_gaf_2_2():
 
     p = GafParser()
