@@ -391,11 +391,6 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     if gpi_entity is not None and subject != gpi_entity:
         subject = gpi_entity
 
-    aspect = gaf_line[8]
-    negated, relation_label, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
-    # Note: Relation label is grabbed from qualifiers, if any exist in _parse_qualifier
-    qualifiers = [association.Curie.from_str(curie_util.contract_uri(relations.lookup_label(q), strict=False)[0]) for q in qualifiers]
-
     # column 4 is qualifiers -> index 3
     # For allowed, see http://geneontology.org/docs/go-annotations/#annotation-qualifiers
     # We use the below validate to check validaty if qualifiers, not as much to *parse* them into the GoAssociation object.
@@ -405,6 +400,11 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     if not parsed_qualifiers.valid:
         report.error(source_line, Report.INVALID_QUALIFIER, parsed_qualifiers.original, parsed_qualifiers.message, taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
+
+    aspect = gaf_line[8]
+    negated, relation_label, qualifiers = assocparser._parse_qualifier(gaf_line[3], aspect)
+    # Note: Relation label is grabbed from qualifiers, if any exist in _parse_qualifier
+    qualifiers = [association.Curie.from_str(curie_util.contract_uri(relations.lookup_label(q), strict=False)[0]) for q in qualifiers]
 
     object = association.Term(association.Curie.from_str(gaf_line[4]), taxon)
     if isinstance(object, association.Error):
