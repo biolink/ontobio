@@ -485,7 +485,7 @@ class AssocParser(object):
     def is_header(self, line):
         return line.startswith("!")
 
-    def parse(self, file, skipheader=False, outfile=None):
+    def parse(self, file, skipheader = False, outfile=None):
         """Parse a line-oriented association file into a list of association dict objects
 
         Note the returned list is of dict objects. TODO: These will
@@ -678,8 +678,8 @@ class AssocParser(object):
             return id
 
         if not ont.has_node(id):
-            self.report.warning(line.line, Report.UNKNOWN_ID, id, "Class ID {} is not present in the ontology".format(id),
-                taxon=line.taxon, rule=27)
+            self.report.warning(line.line, Report.UNKNOWN_ID, id,
+                                msg="Class ID {} is not present in the ontology".format(id), taxon=line.taxon, rule=27)
             return id
 
         if ont.is_obsolete(id):

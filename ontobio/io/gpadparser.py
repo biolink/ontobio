@@ -34,7 +34,6 @@ class GpadParser(assocparser.AssocParser):
     https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-1_2.md
     """
 
-
     def __init__(self, config=assocparser.AssocParserConfig(), group="unknown", dataset="unknown", bio_entities=None):
         """
         Arguments:
@@ -209,6 +208,23 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         # With/From
+
+        # fixed_id = self._validate_ontology_class_id(self, id, line: SplitLine, subclassof=None)
+        fixed_withfroms = []
+        for with_from in assoc.evidence.with_support_from:
+            for element in with_from.elements:  # element = the curie of the with_from list member.
+                print("line")
+                print(line)
+                print("element")
+                print(element)
+                fixed_id = self._validate_ontology_class_id(self, element, line)
+                fixed_withfroms.append(fixed_id)
+            with_from.elements = fixed_withfroms
+        for wf in assoc.evidence.with_support_from:
+            validated = self.validate_curie_ids(wf.elements, split_line)
+            if validated is None:
+                return assocparser.ParseResult(line, [], True)
+
         for wf in assoc.evidence.with_support_from:
             validated = self.validate_curie_ids(wf.elements, split_line)
             if validated is None:

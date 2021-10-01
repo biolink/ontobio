@@ -7,11 +7,23 @@ from ontobio.ontol_factory import OntologyFactory
 import yaml
 
 POMBASE = "tests/resources/truncated-pombase.gpad"
+ALT_ID_ONT = "tests/resources/obsolete.json"
+
 
 def test_skim():
     p = GpadParser()
     results = p.skim(open(POMBASE,"r"))
     print(str(results))
+
+
+def test_zfin_parse():
+    ont = OntologyFactory().create(ALT_ID_ONT)
+    config = assocparser.AssocParserConfig(ontology=ont, rule_set=assocparser.RuleSet.ALL)
+    parser = GpadParser(config=config)
+    test_gpad_file = "tests/resources/zfin.test.gpad"
+    result = parser.parse(open(test_gpad_file, "r"))
+    print(result)
+    assoc = result.associations[0]
 
 
 def test_parse():
@@ -42,6 +54,7 @@ def test_parse_1_2():
     assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 0
     assert len(result.associations) == 1
 
+
 def test_parse_interacting_taxon():
     report = assocparser.Report(group="unknown", dataset="unknown")
     vals = [
@@ -61,11 +74,13 @@ def test_parse_interacting_taxon():
     result = to_association(list(vals), report=report, version="1.2")
     assert result.associations[0].interacting_taxon == Curie(namespace="NCBITaxon", identity="5678")
 
+
 def test_duplicate_key_annot_properties():
     properties_str = "creation-date=2008-02-07|modification-date=2010-12-01|comment=v-KIND domain binding of Kndc1;MGI:1923734|contributor-id=http://orcid.org/0000-0003-2689-5511|contributor-id=http://orcid.org/0000-0003-3394-9805"
     prop_list = association.parse_annotation_properties(properties_str)
     contributor_ids = [value for key, value in prop_list if key == "contributor-id"]
     assert set(contributor_ids) == {"http://orcid.org/0000-0003-2689-5511", "http://orcid.org/0000-0003-3394-9805"}
+
 
 def test_parse_2_0():
     version = "2.0"
@@ -124,7 +139,6 @@ def test_parse_2_0():
     contributors = result.associations[0].annotation_property_values(property_key="contributor-id")
     assert set(contributors) == {"http://orcid.org/0000-0003-2689-5511"}
 
-ALT_ID_ONT = "tests/resources/obsolete.json"
 
 def test_aspect_fill_for_obsolete_terms():
     # Test null aspect on an obsolete term

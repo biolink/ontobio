@@ -1,0 +1,20 @@
+!gpa-version: 1.1
+!
+!date: 04/03/2019 $
+!
+! from ZFIN
+!
+!       1.  DB                       ZFIN
+!       2.  DB Object ID             ZFIN:xxxx
+!       3.  Qualifier                enables, causally_upstream_of_or_within, part_of
+!       4.  GO ID                    GO:xxxx
+!       5.  DB:Reference(s)          ZFIN:xxxx|PMID:xxxx
+!       6.  Evidence Code            ECO:xxxx
+!       7.  With (or)From            optional
+!       8.  Interacting taxon ID     optional
+!       9.  Date                     YYYYMMDD
+!       10. Assigned By
+!       11. Annotation Extension     optional same as GAF/col 16
+!       12. Annotation Properties    optional
+!
+ZFIN	ZDB-GENE-980526-362	acts_upstream_of_or_within	GO:0007155	PMID:15494018	ECO:0000305	GO:0005913		20041026	ZFIN		contributor=GOC:zfin_curators|model-state=production|noctua-model-id=gomodel:ZFIN_ZDB-GENE-980526-362

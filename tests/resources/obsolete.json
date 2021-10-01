@@ -44,7 +44,22 @@
       "id" : "http://purl.obolibrary.org/obo/IAO_0000115",
       "type" : "PROPERTY",
       "lbl" : "definition"
-    }, {
+    },
+      {
+      "id" : "http://purl.obolibrary.org/obo/GO_0005913",
+      "meta" : {
+        "basicPropertyValues" : [ {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0000231",
+          "val" : "http://purl.obolibrary.org/obo/IAO_0000227"
+        }, {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0100001",
+          "val" : "http://purl.obolibrary.org/obo/GO_0005912"
+        } ],
+        "deprecated" : true
+      },
+      "type" : "CLASS"
+    },
+      {
       "id" : "http://purl.obolibrary.org/obo/GO_4",
       "meta" : {
         "basicPropertyValues" : [ {
