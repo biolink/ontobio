@@ -26,6 +26,29 @@ def test_zfin_parse():
     assoc = result.associations[0]
 
 
+def test_obsolete_term_repair_withfrom():
+
+    vals = ["ZFIN",
+            "ZFIN:ZDB-GENE-980526-362",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "PMID:15494018",
+            "ECO:0000305",
+            "GO:0005913|GO:1,GO:4",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "contributor=GOC:zfin_curators|model-state=production|noctua-model-id=gomodel:ZFIN_ZDB-GENE-980526-362"
+    ]
+    ont = OntologyFactory().create(ALT_ID_ONT)
+    config = assocparser.AssocParserConfig(ontology=ont, rule_set=assocparser.RuleSet.ALL)
+    parser = GpadParser(config=config)
+    result = parser.parse_line("\t".join(vals))
+    assoc = result.associations[0]
+    assert Curie("GO", "0005912") in assoc.qualifiers  # GO:0005913 should be repaired to its replacement term, GO:00005912
+
+
 def test_parse():
     p = GpadParser(config=assocparser.AssocParserConfig(group_metadata=yaml.load(open("tests/resources/mgi.dataset.yaml"), Loader=yaml.FullLoader)))
     test_gpad_file = "tests/resources/mgi.test.gpad"

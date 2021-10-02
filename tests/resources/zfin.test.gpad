@@ -1,6 +1,6 @@
 !gpa-version: 1.1
 !
-!date: 04/03/2019 $
+!date: 10/01/2021 $
 !
 ! from ZFIN
 !
@@ -17,4 +17,7 @@
 !       11. Annotation Extension     optional same as GAF/col 16
 !       12. Annotation Properties    optional
 !
-ZFIN	ZDB-GENE-980526-362	acts_upstream_of_or_within	GO:0007155	PMID:15494018	ECO:0000305	GO:0005913		20041026	ZFIN		contributor=GOC:zfin_curators|model-state=production|noctua-model-id=gomodel:ZFIN_ZDB-GENE-980526-362
+ZFIN	ZFIN:ZDB-GENE-980526-362	acts_upstream_of_or_within	GO:0007155	PMID:15494018	ECO:0000305	GO:0005913,GO:4,GO:1		20041026	ZFIN		contributor=GOC:zfin_curators|model-state=production|noctua-model-id=gomodel:ZFIN_ZDB-GENE-980526-362
+MGI	MGI:109485	acts_upstream_of_or_within	GO:0010629	MGI:MGI:4413515|PMID:19890917	ECO:0000315	MGI:MGI:4414945		20100709	MGI	regulates_o_occurs_in(EMAPA:16910),regulates_o_has_participant(MGI:MGI:98956)|regulates_o_occurs_in(EMAPA:16910),regulates_o_has_participant(MGI:MGI:98958)
+MGI	MGI:98958	acts_upstream_of_or_within	GO:0090090	MGI:MGI:3621828|PMID:16602827	ECO:0000316	MGI:MGI:98956|MGI:MGI:1347521		20100416	MGI
+MGI	MGI:98956	part_of	GO:0098978	MGI:MGI:6189459|PMID:16501258	ECO:0005589			20180711	SynGO	part_of(EMAPA:35405)	contributor=http://orcid.org/0000-0003-0593-3443|model-state=production|noctua-model-id=gomodel:SYNGO_2793

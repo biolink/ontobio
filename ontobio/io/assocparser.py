@@ -8,6 +8,8 @@ All parser objects instantiate a subclass of the abstract `AssocParser` object
 # TODO: Refactor - move some stuff out into generic parser object
 
 # from _typeshed import NoneType
+from prefixcommons.curie_util import expand_uri
+from ontobio.util.curie_map import get_curie_map
 import re
 import requests
 import tempfile
@@ -674,10 +676,11 @@ class AssocParser(object):
     # check the term id is in the ontology, and is not obsolete
     def _validate_ontology_class_id(self, id, line: SplitLine, subclassof=None):
         ont = self.config.ontology
+
         if ont is None:
             return id
 
-        if not ont.has_node(id):
+        if not ont.has_node(str(id)):
             self.report.warning(line.line, Report.UNKNOWN_ID, id,
                                 msg="Class ID {} is not present in the ontology".format(id), taxon=line.taxon, rule=27)
             return id
@@ -710,6 +713,7 @@ class AssocParser(object):
 
     non_id_regex = re.compile(r"[^\.:_\-0-9a-zA-Z]")
     doi_regex = re.compile(r"^doi:", flags=re.IGNORECASE)
+    go_regex = re.compile(r"^GO:", flags=re.IGNORECASE)
 
     def _validate_id(self, id, line: SplitLine, allowed_ids=None, context=None):
 
@@ -771,7 +775,6 @@ class AssocParser(object):
                 valids.append(i)
             else:
                 return None
-
         return valids
 
         # We are only reporting, so just pass it through

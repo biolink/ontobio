@@ -203,6 +203,7 @@ class RemoteScigraphOntology(Ontology):
 
     # Override
     def has_node(self, id):
+        print("using remote scigraph implementation")
         return self.node(id) is not None
 
     # Override

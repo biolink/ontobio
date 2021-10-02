@@ -5,6 +5,7 @@ from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION, Report
 from ontobio.io import parser_version_regex
 from ontobio.io import qc
 from ontobio.model import association, collections
+from ontobio.model.association import ConjunctiveSet
 
 from ontobio.rdfgen import relations
 from prefixcommons import curie_util
@@ -26,6 +27,7 @@ gpad_line_validators = {
     "curie": assocparser.CurieValidator(),
     "taxon": assocparser.TaxonValidator(),
 }
+
 
 class GpadParser(assocparser.AssocParser):
     """
@@ -97,7 +99,6 @@ class GpadParser(assocparser.AssocParser):
             if self._is_exclude_relation(relation):
                 continue
 
-
             id = self._pair_to_id(vals[0], vals[1])
             if not self._validate_id(id, line, context=ENTITY):
                 continue
@@ -139,7 +140,7 @@ class GpadParser(assocparser.AssocParser):
                         logger.info("Detected GPAD version {}, so defaulting to 1.2".format(version))
                         self.version = self.default_version
 
-            return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
+            return assocparser.ParseResult(line, [{"header": True, "line": line.strip()}], False)
 
         # At this point, we should have gone through all the header, and a version number should be established
         if self.version is None:
@@ -149,7 +150,7 @@ class GpadParser(assocparser.AssocParser):
         vals = [el.strip() for el in line.split("\t")]
 
         parsed = to_association(list(vals), report=self.report, version=self.gpad_version(), bio_entities=self.bio_entities)
-        if parsed.associations == []:
+        if not parsed.associations:
             return parsed
 
         assoc = parsed.associations[0]
@@ -209,27 +210,33 @@ class GpadParser(assocparser.AssocParser):
 
         # With/From
 
-        # fixed_id = self._validate_ontology_class_id(self, id, line: SplitLine, subclassof=None)
         fixed_withfroms = []
+        replacement_curies = {}
+        print(assoc.evidence.with_support_from)
         for with_from in assoc.evidence.with_support_from:
             for element in with_from.elements:  # element = the curie of the with_from list member.
-                print("line")
-                print(line)
-                print("element")
-                print(element)
-                fixed_id = self._validate_ontology_class_id(self, element, line)
-                fixed_withfroms.append(fixed_id)
-            with_from.elements = fixed_withfroms
+                fixed_id = self._validate_ontology_class_id(element, split_line)
+                if fixed_id != element:
+                    replacement_curies[element] = association.Curie.from_str(fixed_id)
+        replacer = replacement_curies.get
+        print("replacement curies")
+        print(replacement_curies)
+        print("with support from")
+        print(assoc.evidence.with_support_from)
+        # print([replacer(n, n) for n in a])
+        #print([replacer(n.elements, n) for n in assoc.evidence.with_support_from])
+        for element, in enumerate(assoc.evidence.with_support_from):
+            if i == replacer.key():
+                
+
+
+        #         fixed_withfroms.append(fixed_id)
+        # withfroms = association.ConjunctiveSet.str_to_conjunctions(fixed_withfroms)
+        # assoc.evidence.with_support_from = withfroms
         for wf in assoc.evidence.with_support_from:
             validated = self.validate_curie_ids(wf.elements, split_line)
             if validated is None:
                 return assocparser.ParseResult(line, [], True)
-
-        for wf in assoc.evidence.with_support_from:
-            validated = self.validate_curie_ids(wf.elements, split_line)
-            if validated is None:
-                return assocparser.ParseResult(line, [], True)
-
 
         return assocparser.ParseResult(line, [assoc], False)
 
@@ -238,6 +245,7 @@ class GpadParser(assocparser.AssocParser):
 
 
 relation_tuple = re.compile(r'(.+)\((.+)\)')
+
 
 def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknown", bio_entities=None):
     source_line = "\t".join(gpad_line)

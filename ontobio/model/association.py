@@ -317,14 +317,17 @@ class ConjunctiveSet:
     @classmethod
     def str_to_conjunctions(ConjunctiveSet, entity: str, conjunct_element_builder: Union[C, Error]=lambda el: Curie.from_str(el)) -> Union[List[C], Error]:
         """
-        Takes a field that conforms to the pipe (|) and comma (,) separator type. The parsed version is a list of pipe separated values
-        which are themselves a comma separated list.
+        Takes a field that conforms to the pipe (|) and comma (,) separator type. The parsed version is a list of pipe
+        separated values which are themselves a comma separated list.
 
-        If the elements inside the comma separated list should not just be strings, but be converted into a value of a type, `conjunct_element_builder` can be provided which should take a string and return a parsed value or an instance of an Error type (defined above).
+        If the elements inside the comma separated list should not just be strings,
+        but be converted into a value of a type, `conjunct_element_builder` can be
+        provided which should take a string and return a parsed value or an instance of an Error type (defined above).
 
-        If there is an error in producing the values of the conjunctions, then this function will return early with the error.
+        If there is an error in producing the values of the conjunctions, then this function will return early w
+        ith the error.
 
-        This function will return a List of ConjunctiveSet
+        This function will return a List of ConjunctiveSet objects.
         """
         conjunctions = []
         for conj in filter(None, entity.split("|")):

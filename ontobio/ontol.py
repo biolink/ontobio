@@ -348,6 +348,10 @@ class Ontology():
         """
         True if id identifies a node in the ontology graph
         """
+        print("here are my nodes")
+        print(self.get_graph().nodes())
+        print("here is my id")
+        print(id)
         return id in self.get_graph().nodes()
 
     def sorted_nodes(self):
@@ -712,7 +716,7 @@ class Ontology():
         return None
 
     def _get_meta_prop(self, nid, prop):
-        n = self.node(nid)
+        n = self.node(str(nid))
         if 'meta' in n:
             meta = n['meta']
             if prop in meta:
@@ -745,8 +749,10 @@ class Ontology():
         nid : str
             Node identifier for entity to be queried
         """
+        print("here is my node id")
+        print(nid)
         dep = self._get_meta_prop(nid, 'deprecated')
-        return  dep is not None and dep
+        return dep is not None and dep
 
 
     def replaced_by(self, nid, strict=True):
