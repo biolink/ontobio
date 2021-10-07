@@ -245,6 +245,7 @@ class GafParser(assocparser.AssocParser):
             print("skipping because {} not validated!".format(assoc.object.id))
             return assocparser.ParseResult(line, [], True)
 
+        assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line)
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
@@ -422,6 +423,9 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     if eco_curie is None:
         report.error(source_line, Report.UNKNOWN_EVIDENCE_CLASS, gaf_line[6], msg="Expecting a known ECO GAF code, e.g ISS", rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
+
+    # withfroms = assocparser.AssocParser._unroll_withfrom_and_replair_obsoletes(source_line)
+    # print(withfroms)
 
     withfroms = association.ConjunctiveSet.str_to_conjunctions(gaf_line[7])
     if isinstance(withfroms, association.Error):

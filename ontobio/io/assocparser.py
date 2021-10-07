@@ -777,7 +777,6 @@ class AssocParser(object):
                 valids.append(i)
             else:
                 return None
-
         return sorted(valids)
 
     def validate_curie_ids(self, ids: List[association.Curie], line: SplitLine) -> Optional[List[association.Curie]]:
