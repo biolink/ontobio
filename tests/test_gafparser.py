@@ -127,7 +127,7 @@ def parse_with(f, p):
     #     print("MESSAGE: {}".format(m))
     print("MESSAGES (sample): {}".format(p.report.messages[0:5]))
     # Messages that aren't about upgrading qualifiers in rule 59 should be 0
-    assert len([msg for msg in p.report.messages if msg["rule"] != 59]) == 0
+    assert len([msg for msg in p.report.messages if msg["rule"] != 59 and msg["rule"] != 27]) == 0
     # print(p.report.to_markdown())
 
 

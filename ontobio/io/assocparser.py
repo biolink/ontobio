@@ -679,7 +679,10 @@ class AssocParser(object):
         for element_set in filter(None, withfrom.split("|")):
             grouped_fixed_elements = ''
             for element_individual in filter(None, element_set.split(",")):  # parse the | and ,
-                fixed_element_individual = self._validate_ontology_class_id(str(element_individual), line)
+                if element_individual.startswith("GO:"):
+                    fixed_element_individual = self._validate_ontology_class_id(str(element_individual), line)
+                else:
+                    fixed_element_individual = element_individual
                 if grouped_fixed_elements == '':
                     grouped_fixed_elements = fixed_element_individual
                 else:
