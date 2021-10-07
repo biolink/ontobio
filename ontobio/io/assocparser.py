@@ -671,6 +671,22 @@ class AssocParser(object):
                 self.report.error(line.line, Report.INVALID_TAXON, taxon, taxon=taxon)
                 return False
 
+    def _unroll_withfrom_and_replair_obsoletes(self, line: SplitLine, subclassof=None):
+        regrouped_fixed_elements = ''
+        for element_set in filter(None, line.values[6].split("|")):
+            grouped_fixed_elements = ''
+            for element_individual in filter(None, element_set.split(",")):  # parse the | and ,
+                fixed_element_individual = self._validate_ontology_class_id(str(element_individual), line)
+                if grouped_fixed_elements == '':
+                    grouped_fixed_elements = fixed_element_individual
+                else:
+                    grouped_fixed_elements = grouped_fixed_elements + ',' + fixed_element_individual
+            if regrouped_fixed_elements == '':
+                regrouped_fixed_elements = grouped_fixed_elements
+            else:
+                regrouped_fixed_elements = regrouped_fixed_elements + "|" + grouped_fixed_elements
+        return association.ConjunctiveSet.str_to_conjunctions(regrouped_fixed_elements)
+
     # check the term id is in the ontology, and is not obsolete
     def _validate_ontology_class_id(self, id, line: SplitLine, subclassof=None):
         ont = self.config.ontology

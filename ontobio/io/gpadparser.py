@@ -157,25 +157,9 @@ class GpadParser(assocparser.AssocParser):
 
         split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
 
-        regrouped_fixed_elements = ''
+        # repair any GO terms in the with/from field that may be obsolete
+        assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line)
 
-        # grab the withfroms pre-parsed to avoid the ConjuctiveSet unrolling.
-        for element_set in filter(None, split_line.values[6].split("|")):
-            grouped_fixed_elements = ''
-            for element_individual in filter(None, element_set.split(",")):  # parse the | and ,
-                fixed_element_individual = self._validate_ontology_class_id(str(element_individual), split_line)
-                if grouped_fixed_elements == '':
-                    grouped_fixed_elements = fixed_element_individual
-                else:
-                    grouped_fixed_elements = grouped_fixed_elements + ',' + fixed_element_individual
-            if regrouped_fixed_elements == '':
-                regrouped_fixed_elements = grouped_fixed_elements
-            else:
-                regrouped_fixed_elements = regrouped_fixed_elements + "|" + grouped_fixed_elements
-
-        valid_withfroms = association.ConjunctiveSet.str_to_conjunctions(regrouped_fixed_elements)
-        assoc.evidence.with_support_from = valid_withfroms
-        print(assoc.evidence.with_support_from)
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
