@@ -441,15 +441,10 @@ def test_bad_withfrom():
 
 
 def test_obsolete_replair_of_withfrom():
-    gaf = ["ZFIN", "ZDB-GENE-980526-362", "ctnnb1", "acts_upstream_of_or_within", "GO:0007155",
-           "PMID:15494018", "IC", "GO:0005913",
-           "P", "catenin (cadherin-associated protein), beta 1	ctnnb|id:ibd2058|wu:fb73e10|wu:fi81c06|wu:fk25h01",
-           "", "protein_coding_gene", "taxon:7955", "20041026", "ZFIN", "", ""]
-    ont = OntologyFactory().create(OBSOLETE_ONT)
-    p = GafParser()
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(OBSOLETE_ONT)))
     assocs = p.parse(open(ZFIN_GAF, "r"), skipheader=True)
-    print(assocs)
-    # obsolete with/from values should be repaired
+    
 
 
 def test_subject_extensions_bad_curie():

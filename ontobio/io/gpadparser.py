@@ -158,7 +158,7 @@ class GpadParser(assocparser.AssocParser):
         split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
 
         # repair any GO terms in the with/from field that may be obsolete
-        assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line)
+        assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line, 'gpad')
 
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:

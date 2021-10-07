@@ -670,9 +670,13 @@ class AssocParser(object):
                 self.report.error(line.line, Report.INVALID_TAXON, taxon, taxon=taxon)
                 return False
 
-    def _unroll_withfrom_and_replair_obsoletes(self, line: SplitLine, subclassof=None):
+    def _unroll_withfrom_and_replair_obsoletes(self, line: SplitLine, gaf_or_gpad: str, subclassof=None):
         regrouped_fixed_elements = ''
-        for element_set in filter(None, line.values[6].split("|")):
+        if gaf_or_gpad == 'gaf':
+            withfrom = line.values[7]
+        else:
+            withfrom = line.values[6]
+        for element_set in filter(None, withfrom.split("|")):
             grouped_fixed_elements = ''
             for element_individual in filter(None, element_set.split(",")):  # parse the | and ,
                 fixed_element_individual = self._validate_ontology_class_id(str(element_individual), line)
