@@ -330,8 +330,6 @@ class ConjunctiveSet:
         for conj in filter(None, entity.split("|")):
             conjunct = []
             for el in filter(None, conj.split(",")):
-                print("here is el")
-                print(el)
                 built = conjunct_element_builder(el)
                 if isinstance(built, Error):
                     # Returning an Error instance
