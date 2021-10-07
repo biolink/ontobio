@@ -8,7 +8,7 @@ from ontobio.assoc_factory import AssociationSetFactory
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.model import association
 from ontobio.rdfgen import relations
-
+from ontobio.model.association import ConjunctiveSet, ExtensionUnit, Curie
 from ontobio.ecomap import EcoMap
 
 import tempfile
@@ -444,7 +444,7 @@ def test_obsolete_replair_of_withfrom():
     p = GafParser(config=assocparser.AssocParserConfig(
         ontology=OntologyFactory().create(OBSOLETE_ONT)))
     assocs = p.parse(open(ZFIN_GAF, "r"), skipheader=True)
-    
+    assert assocs[0].evidence.with_support_from == [ConjunctiveSet(elements=[Curie(namespace='GO', identity='0005912')])]
 
 
 def test_subject_extensions_bad_curie():
