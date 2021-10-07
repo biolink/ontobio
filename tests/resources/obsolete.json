@@ -44,7 +44,46 @@
       "id" : "http://purl.obolibrary.org/obo/IAO_0000115",
       "type" : "PROPERTY",
       "lbl" : "definition"
+    },{
+      "id" : "http://purl.obolibrary.org/obo/GO_0005912",
+      "meta" : {
+        "definition" : {
+          "val" : "A cell-cell junction composed of the epithelial cadherin-catenin complex. The epithelial cadherins, or E-cadherins, of each interacting cell extend through the plasma membrane into the extracellular space and bind to each other. The E-cadherins bind to catenins on the cytoplasmic side of the membrane, where the E-cadherin-catenin complex binds to cytoskeletal components and regulatory and signaling molecules.",
+          "xrefs" : [ "GOC:aruk", "GOC:bc", "GOC:mah", "ISBN:0198506732", "PMID:17854762", "PMID:20571587", "PMID:21422226", "PMID:28096264" ]
+        },
+        "xrefs" : [ {
+          "val" : "Wikipedia:Adherens_junction"
+        } ],
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "cell-cell adherens junction",
+          "xrefs" : [ ]
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "GO:0005913"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "cellular_component"
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "adherens junction"
     }, {
+      "id" : "http://purl.obolibrary.org/obo/GO_0005913",
+      "meta" : {
+        "basicPropertyValues" : [ {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0000231",
+          "val" : "http://purl.obolibrary.org/obo/IAO_0000227"
+        }, {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0100001",
+          "val" : "http://purl.obolibrary.org/obo/GO_0005912"
+        } ],
+        "deprecated" : true
+      },
+      "type" : "CLASS"
+    },
+      {
       "id" : "http://purl.obolibrary.org/obo/GO_4",
       "meta" : {
         "basicPropertyValues" : [ {

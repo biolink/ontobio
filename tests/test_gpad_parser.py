@@ -29,9 +29,10 @@ def test_obsolete_term_repair_withfrom():
     parser = GpadParser(config=config)
     result = parser.parse_line("\t".join(vals))
     assoc = result.associations[0]
-    assert Curie("GO", "0005912") in assoc.qualifiers  # GO:0005913 should be repaired to its replacement term, GO:00005912
-
-
+    # GO:0005913 should be repaired to its replacement term, GO:00005912
+    assert [ConjunctiveSet(elements=[Curie(namespace='GO', identity='0005912')]),
+            ConjunctiveSet(elements=[Curie(namespace='GO', identity='2'),
+                                     Curie(namespace='GO', identity='3')])] == assoc.evidence.with_support_from
 
 
 def test_skim():

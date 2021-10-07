@@ -678,8 +678,6 @@ class AssocParser(object):
             return id
 
         if not ont.has_node(id):
-            print("not has node")
-            print(id)
             self.report.warning(line.line, Report.UNKNOWN_ID, id, "Class ID {} is not present in the ontology".format(id),
                 taxon=line.taxon, rule=27)
             return id
