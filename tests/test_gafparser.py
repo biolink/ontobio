@@ -11,19 +11,23 @@ from ontobio.rdfgen import relations
 
 from ontobio.ecomap import EcoMap
 
-ecomap = EcoMap()
-ecomap.mappings()
-
 import tempfile
 import logging
 import pytest
 import io
 import json
 
+ecomap = EcoMap()
+ecomap.mappings()
+
 POMBASE = "tests/resources/truncated-pombase.gaf"
 POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
 ONT = "tests/resources/go-truncated-pombase.json"
 QGAF = "tests/resources/test-qualifiers.gaf"
+ALT_ID_ONT = "tests/resources/obsolete.json"
+ZFIN_GAF = "tests/resources/zfin_test_gaf.gaf"
+OBSOLETE_ONT = "tests/resources/obsolete.json"
+
 
 def test_skim_gaf():
     p = GafParser()
@@ -35,6 +39,7 @@ def test_skim_gaf():
         (s, sn, o) = r
         assert o.startswith('GO:')
         assert s.startswith('PomBase:')
+
 
 def test_skim_gaf_qualifiers():
     p = GafParser()
@@ -56,11 +61,13 @@ def test_skim_gaf_qualifiers():
         assert s.startswith('MGI:') or s.startswith('PomBase')
     assert len(results) == 3 # ensure NOTs and excludes relations skipped
 
+
 def test_one_line():
     p = GafParser(config=assocparser.AssocParserConfig(
         ontology=OntologyFactory().create("tests/resources/goslim_generic.json")))
 
     parsed = p.parse_line("PomBase	SPBC16D10.09	pcn1		GO:0009536	PMID:8663159	IDA		C	PCNA	pcn	protein	taxon:4896	20150326	PomBase")
+
 
 def test_skim_gpad():
     p = GpadParser()
@@ -73,11 +80,14 @@ def test_skim_gpad():
         assert o.startswith('GO:')
         assert s.startswith('PomBase:') or s.startswith('PR:')
 
+
 def test_parse_gaf():
     parse_with(POMBASE, GafParser())
 
+
 def test_parse_gpad():
     parse_with(POMBASE_GPAD, GpadParser())
+
 
 def parse_with(f, p):
     p.config.ecomap = EcoMap()
@@ -120,12 +130,14 @@ def parse_with(f, p):
     assert len([msg for msg in p.report.messages if msg["rule"] != 59]) == 0
     # print(p.report.to_markdown())
 
+
 def test_flag_invalid_id():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
     p.config.ontology = ont
     p._validate_ontology_class_id("FAKE:1", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
     assert len(p.report.messages) == 1
+
 
 def test_no_flag_valid_id():
     ont = OntologyFactory().create(ONT)
@@ -134,12 +146,14 @@ def test_no_flag_valid_id():
     p._validate_ontology_class_id("GO:0000785", assocparser.SplitLine("fake", [""]*17, taxon="foo"))
     assert len(p.report.messages) == 0
 
+
 def test_convert_gaf_to_gpad():
     p = GafParser()
     p.config.ecomap = EcoMap()
     w = GpadWriter()
     p2 = GpadParser()
     convert(POMBASE, p, w, p2)
+
 
 def convert(file, p, w, p2):
     assocs = p.parse(file, skipheader=True)
@@ -166,6 +180,7 @@ def test_invalid_goid_in_gpad():
     assert len(p.report.messages) > 500
     print(p.report.to_markdown())
 
+
 def test_validate_go_idspaces():
     ont = OntologyFactory().create(ONT)
     p = GafParser()
@@ -182,15 +197,11 @@ def test_validate_go_idspaces():
 
     # ensure config is not preserved
     p = GafParser()
-    assert p.config.class_idspaces == None
+    assert p.config.class_idspaces is None
 
-#POMBASE_GPAD = "tests/resources/truncated-pombase.gpad"
 
 def test_qualifiers_gaf():
-    # ont = OntologyFactory().create(ONT)
-
     p = GafParser()
-    # p.config.ontology = ont
     assocs = p.parse(open(QGAF, "r"), skipheader=True)
     neg_assocs = [a for a in assocs if a.negated == True]
     assert len(neg_assocs) == 3
@@ -220,8 +231,6 @@ def test_qualifiers_gaf_2_2():
     # NOT by itself is not allowed
     assert len(list(filter(lambda e: e["obj"] == "NOT", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
     assert len(list(filter(lambda e: e["obj"] == "contributes_to|enables", p.report.to_report_json()["messages"]["gorule-0000001"]))) == 1
-
-
     assert len([a for a in assocs if association.Curie.from_str("RO:0004035") in a.qualifiers]) == 1
 
 
@@ -238,6 +247,7 @@ def test_gaf_2_1_creates_cell_component_closure():
 
     assert "GO:0005840" in p.cell_component_descendants_closure
 
+
 def test_gaf_2_1_qualifiers_upconvert():
     line = ["SGD", "S000000819", "AFG3", "", "GO:0005840", "PMID:8681382|SGD_REF:S000055187", "IMP", "", "P", "Mitochondrial inner membrane m-AAA protease component", "YER017C|AAA family ATPase AFG3|YTA10", "gene", "taxon:559292", "20170428", "SGD"]
     parsed = gafparser.to_association(line)
@@ -250,6 +260,7 @@ def test_gaf_2_1_qualifiers_upconvert():
     assoc = p.upgrade_empty_qualifier(assoc)
     assert assoc.qualifiers[0] == association.Curie(namespace="BFO", identity="0000050")
 
+
 def test_gaf_2_1_upconvert_in_parse():
     gaf = io.StringIO("!gaf-version: 2.1\nSGD\tS000000819\tAFG3\t\tGO:0005840\tPMID:8681382|SGD_REF:S000055187\tIMP\t\tP\tMitochondrial inner membrane m-AAA protease component\tYER017C|AAA family ATPase AFG3|YTA10\tgene\ttaxon:559292\t20170428\tSGD")
     ontology = OntologyFactory().create("tests/resources/goslim_generic.json")
@@ -258,6 +269,7 @@ def test_gaf_2_1_upconvert_in_parse():
     # We're 2.1, qualifier blank, cell component term from above, ontology defined: should upgrade
     assocs = p.parse(gaf, skipheader=True)
     assert assocs[0].relation == association.Curie(namespace="BFO", identity="0000050")
+
 
 def test_gaf_2_1_simple_terms():
     line = ["SGD", "S000000819", "AFG3", "", "GO:0006259", "PMID:8681382|SGD_REF:S000055187", "IMP", "", "P", "Mitochondrial inner membrane m-AAA protease component", "YER017C|AAA family ATPase AFG3|YTA10", "gene", "taxon:559292", "20170428", "SGD"]
@@ -291,6 +303,7 @@ def test_gaf_2_1_simple_terms():
     assoc = p.upgrade_empty_qualifier(parsed.associations[0])
     assert assoc.qualifiers[0] == association.Curie(namespace="RO", identity="0001025")
 
+
 def test_upgrade_qualifiers_for_biological_process():
     line = ["SGD", "S000000819", "AFG3", "", "GO:0008150", "PMID:8681382|SGD_REF:S000055187", "IMP", "", "P",
             "Mitochondrial inner membrane m-AAA protease component", "YER017C|AAA family ATPase AFG3|YTA10", "gene",
@@ -302,6 +315,7 @@ def test_upgrade_qualifiers_for_biological_process():
     parsed = gafparser.to_association(line)
     assoc = p.upgrade_empty_qualifier(parsed.associations[0])
     assert assoc.qualifiers[0] == association.Curie(namespace="RO", identity="0002331")
+
 
 def test_upgrade_qualifiers_for_cell_component():
     line = ["SGD", "S000000819", "AFG3", "", "GO:0008372", "PMID:8681382|SGD_REF:S000055187", "IMP", "", "P",
@@ -318,9 +332,7 @@ def test_upgrade_qualifiers_for_cell_component():
 
 def test_default_gaf_version():
     p = GafParser()
-
     assocs = p.parse(open("tests/resources/test-qualifiers-no-version.gaf"), skipheader=True)
-
     assert p.version == "2.1"
 
 
@@ -335,6 +347,7 @@ def parse_with2(f, p):
         print('REL: {}'.format(a.relation))
     assert len([a for a in assocs if str(a.relation) == relations.lookup_label('involved_in')]) == 1
     assert len([a for a in assocs if str(a.relation) == relations.lookup_label('contributes_to')]) == 1
+
 
 def test_errors_gaf():
     config = assocparser.AssocParserConfig(
@@ -369,7 +382,6 @@ def test_errors_gaf():
                 assert x.term == association.Curie.from_str('X:1')
             assert len(xs) == 1
 
-ALT_ID_ONT = "tests/resources/obsolete.json"
 
 def test_alt_id_repair():
     p = GafParser()
@@ -387,6 +399,7 @@ def test_alt_id_repair():
     # GO:4 is obsolete due to it being merged into GO:3
     assert assocs[0].object.id == association.Curie.from_str("GO:3")
 
+
 def test_gorule_repair():
     config = assocparser.AssocParserConfig(
         ontology=OntologyFactory().create("tests/resources/goslim_generic.json"),
@@ -401,11 +414,13 @@ def test_gorule_repair():
     assert len(p.report.to_report_json()["messages"]["gorule-0000028"]) == 1
     assert p.report.to_report_json()["messages"]["gorule-0000028"][0]["type"] == assocparser.Report.VIOLATES_GO_RULE
 
+
 def test_bad_date():
     p = GafParser()
     assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\tTODAY\tPomBase\tfoo(X:1)")
     assert assoc_result.skipped == True
     assert assoc_result.associations == []
+
 
 def test_subject_extensions():
     p = GafParser()
@@ -416,12 +431,26 @@ def test_subject_extensions():
     gene_product_form_id = subject_extensions[0].term
     assert gene_product_form_id == association.Curie.from_str("UniProtKB:P12345")
 
+
 def test_bad_withfrom():
     p = GafParser()
     # With/from has no identity portion after the namespace
     assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase")
     assert assoc_result.associations == []
     assert p.report.to_report_json()["messages"]["gorule-0000001"][0]["obj"] == "SGD:"
+
+
+def test_obsolete_replair_of_withfrom():
+    gaf = ["ZFIN", "ZDB-GENE-980526-362", "ctnnb1", "acts_upstream_of_or_within", "GO:0007155",
+           "PMID:15494018", "IC", "GO:0005913",
+           "P", "catenin (cadherin-associated protein), beta 1	ctnnb|id:ibd2058|wu:fb73e10|wu:fi81c06|wu:fk25h01",
+           "", "protein_coding_gene", "taxon:7955", "20041026", "ZFIN", "", ""]
+    ont = OntologyFactory().create(OBSOLETE_ONT)
+    p = GafParser()
+    assocs = p.parse(open(ZFIN_GAF, "r"), skipheader=True)
+    print(assocs)
+    # obsolete with/from values should be repaired
+
 
 def test_subject_extensions_bad_curie():
     """
@@ -449,10 +478,12 @@ def test_object_extensions():
     ]
     assert assoc_result.associations[0].object_extensions == object_extensions
 
+
 def test_object_extensions_error():
     p = GafParser()
     assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20181024\tPomBase\tpart_of(X)\tUniProtKB:P12345")
     assert len(p.report.to_report_json()["messages"]["gorule-0000001"]) == 1
+
 
 def test_factory():
     afa = AssociationSetFactory()
@@ -479,6 +510,7 @@ def test_factory():
 
     assert len(aset.associations_by_subj) > 0
     assert found == 2
+
 
 def test_gaf_gpi_bridge():
     gaf = ["MGI", "MGI:1923503", "0610006L08Rik", "enables", "GO:0003674", "MGI:MGI:2156816|GO_REF:0000015", "ND", "",

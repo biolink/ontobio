@@ -588,7 +588,6 @@ class AssocParser(object):
                     else:
                         print(line)
 
-
     def skim(self, file):
         """
         Lightweight parse of a file into tuples.
