@@ -7,6 +7,7 @@ from ontobio.ontol_factory import OntologyFactory
 import yaml
 
 POMBASE = "tests/resources/truncated-pombase.gpad"
+ALT_ID_ONT = "tests/resources/obsolete.json"
 
 
 def test_obsolete_term_repair_withfrom():
@@ -17,7 +18,7 @@ def test_obsolete_term_repair_withfrom():
             "GO:0007155",
             "PMID:15494018",
             "ECO:0000305",
-            "GO:0005913|GO:1,GO:4",
+            "GO:0005913|GO:1,GO:4|ZFIN:ZDB-MRPHLNO-010101-1,MGI:1232453",
             "",
             "20041026",
             "ZFIN",
@@ -31,8 +32,11 @@ def test_obsolete_term_repair_withfrom():
     assoc = result.associations[0]
     # GO:0005913 should be repaired to its replacement term, GO:00005912
     assert [ConjunctiveSet(elements=[Curie(namespace='GO', identity='0005912')]),
-            ConjunctiveSet(elements=[Curie(namespace='GO', identity='2'),
-                                     Curie(namespace='GO', identity='3')])] == assoc.evidence.with_support_from
+            # repaired test GO elements
+            ConjunctiveSet(elements=[Curie(namespace='GO', identity='2'), Curie(namespace='GO', identity='3')]),
+            # non GO elements stay the same, could be obsolete or not
+            ConjunctiveSet(elements=[Curie(namespace='ZFIN', identity='ZDB-MRPHLNO-010101-1'),
+                                     Curie(namespace='MGI', identity='1232453')])] == assoc.evidence.with_support_from
 
 
 def test_skim():
@@ -69,6 +73,7 @@ def test_parse_1_2():
     assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 0
     assert len(result.associations) == 1
 
+
 def test_parse_interacting_taxon():
     report = assocparser.Report(group="unknown", dataset="unknown")
     vals = [
@@ -88,11 +93,13 @@ def test_parse_interacting_taxon():
     result = to_association(list(vals), report=report, version="1.2")
     assert result.associations[0].interacting_taxon == Curie(namespace="NCBITaxon", identity="5678")
 
+
 def test_duplicate_key_annot_properties():
     properties_str = "creation-date=2008-02-07|modification-date=2010-12-01|comment=v-KIND domain binding of Kndc1;MGI:1923734|contributor-id=http://orcid.org/0000-0003-2689-5511|contributor-id=http://orcid.org/0000-0003-3394-9805"
     prop_list = association.parse_annotation_properties(properties_str)
     contributor_ids = [value for key, value in prop_list if key == "contributor-id"]
     assert set(contributor_ids) == {"http://orcid.org/0000-0003-2689-5511", "http://orcid.org/0000-0003-3394-9805"}
+
 
 def test_parse_2_0():
     version = "2.0"
@@ -151,7 +158,6 @@ def test_parse_2_0():
     contributors = result.associations[0].annotation_property_values(property_key="contributor-id")
     assert set(contributors) == {"http://orcid.org/0000-0003-2689-5511"}
 
-ALT_ID_ONT = "tests/resources/obsolete.json"
 
 def test_aspect_fill_for_obsolete_terms():
     # Test null aspect on an obsolete term

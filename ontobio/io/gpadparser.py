@@ -175,7 +175,7 @@ class GpadParser(assocparser.AssocParser):
 
         valid_withfroms = association.ConjunctiveSet.str_to_conjunctions(regrouped_fixed_elements)
         assoc.evidence.with_support_from = valid_withfroms
-
+        print(assoc.evidence.with_support_from)
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
