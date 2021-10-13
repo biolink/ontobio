@@ -1,5 +1,4 @@
 from ontobio.io.gpadparser import GpadParser
-from ontobio.model.association import GoAssociation
 from ontobio import ecomap
 import click
 import logging
