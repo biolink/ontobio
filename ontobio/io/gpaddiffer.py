@@ -1,11 +1,8 @@
 from ontobio.io.gpadparser import GpadParser
-from ontobio.model.association import GoAssociation
-from ontobio.io import assocparser
 from ontobio import ecomap
 import click
 import logging
 import pandas as pd
-from pandasql import sqldf
 import numpy as np
 
 logger = logging.getLogger("INFER")
@@ -65,9 +62,9 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
 def read_csv(filename):
     ecomapping = ecomap.EcoMap()
     data_frame = pd.read_csv(filename,
-                             # comment='!',
+                             comment='!',
                              sep='\t',
-                             header=0,
+                             header=None,
                              na_filter=False,
                              names=["DB",
                                     "DB_Object_ID",
