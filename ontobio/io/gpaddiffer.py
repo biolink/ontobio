@@ -1,11 +1,13 @@
 from ontobio.io.gpadparser import GpadParser
 from ontobio.model.association import GoAssociation
 from ontobio.io import assocparser
+from ontobio import ecomap
 import click
 import logging
 import itertools
 import pandas as pd
 from pandasql import sqldf
+import numpy as np
 
 input_lines = 0
 output_lines = 0
@@ -16,12 +18,13 @@ no_matches = 0
 logger = logging.getLogger("INFER")
 logger.setLevel(logging.WARNING)
 
+ecomapping = ecomap.EcoMap()
 
 @click.command()
 @click.option("--gpad1", "-gp1", type=click.Path(), required=True)
 @click.option("--gpad2", "-gp2", type=click.Path(), required=True)
 @click.option("--output", "-o", type=click.File("a"), required=True)
-@click.option("--count_by", "-cb", required=False)
+@click.option('--count_by', '-cb', multiple=True, required=False)
 def compare_gpad_objects(gpad1, gpad2, output, count_by):
     print("Starting comparison ")
     print("")
@@ -55,7 +58,8 @@ def read_csv(filename):
                              sep='\t',
                              header=0,
                              na_filter=False,
-                             names=["DB_Object_ID",
+                             names=["DB",
+                                    "DB_Object_ID",
                                     "Negation",
                                     "Relation",
                                     "Ontology_Class_ID",
@@ -65,8 +69,13 @@ def read_csv(filename):
                                     "Interacting_taxon_ID",
                                     "Date",
                                     "Assigned_by",
-                                    "Annotation_Extensions",
-                                    "Annotation_Properties"]).fillna("")
+                                    "Annotation_Extensions" # ,
+                                    # "Annotation_Properties"
+                                    ]).fillna("")
+    for eco_code in ecomapping.mappings():
+        data_frame['Evidence_type'] = np.where(data_frame['Evidence_type'] == eco_code[2],
+                                               eco_code[2],
+                                               ecomapping.ecoclass_to_coderef(eco_code[2])[0])
     return data_frame
 
 
@@ -74,7 +83,8 @@ def calculate_file_stats(data_frame, count_by, file):
     stats = []
     print("Filename: %s" % file)
     print("Total rows: %s" % data_frame.shape[0])
-    print(data_frame.groupby(count_by)[count_by].count())
+    for grouper in count_by:
+        print("Counts by: %s" % data_frame.groupby(grouper)[grouper].count())
 
     return stats
 
