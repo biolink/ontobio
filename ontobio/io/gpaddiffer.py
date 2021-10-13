@@ -4,7 +4,6 @@ from ontobio.io import assocparser
 from ontobio import ecomap
 import click
 import logging
-import itertools
 import pandas as pd
 from pandasql import sqldf
 import numpy as np
@@ -84,7 +83,7 @@ def calculate_file_stats(data_frame, count_by, file):
     print("Filename: %s" % file)
     print("Total rows: %s" % data_frame.shape[0])
     for grouper in count_by:
-        print("Counts by: %s" % data_frame.groupby(grouper)[grouper].count())
+        print(type(data_frame.groupby(grouper)[grouper].count()))
 
     return stats
 
