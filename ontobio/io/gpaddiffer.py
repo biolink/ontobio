@@ -16,8 +16,9 @@ logger.setLevel(logging.WARNING)
 @click.option("--gpad1", "-gp1", type=click.Path(), required=True)
 @click.option("--gpad2", "-gp2", type=click.Path(), required=True)
 @click.option("--output", "-o", type=click.File("a"), required=True)
-@click.option('--count_by', '-cb', multiple=True, required=False)
-def compare_gpad_objects(gpad1, gpad2, output, count_by):
+@click.option("--count_by", "-cb", multiple=True, required=False)
+@click.option("--exclude_details", "-ed", type=click.BOOL, default=True, required=False)
+def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
     print("Starting comparison ")
     print("")
     gpad_parser_1 = GpadParser()
@@ -33,7 +34,7 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by):
     exact_matches = 0
     close_matches = 0
     no_matches = 0
-    
+
     stats = calculate_file_stats(df_gpad1, count_by, gpad1)
     print(stats)
     print("")
@@ -45,19 +46,20 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by):
         if association in assocs2:
             continue
         else:
-            print(type(association))
+            print(association.source_line)
             missing_rows.append(association)
-            match = is_assoc_in_list(association, assocs2)
-            print(match)
-            if match.__eq__("exact match"):
-                exact_matches = exact_matches + 1
-            elif match.__eq__("close match"):
-                close_matches = close_matches + 1
-            elif match.__eq__("no match"):
-                no_matches = no_matches + 1
-            # print(match + "\t" + item["source_line"])
-            input_lines = input_lines + 1
-        print('\n gpads', input_lines, ' exact ', exact_matches, ' close ', close_matches, ' none ', no_matches)
+            if not exclude_details:
+                match = is_assoc_in_list(association, assocs2)
+                print(match)
+                if match.__eq__("exact match"):
+                    exact_matches = exact_matches + 1
+                elif match.__eq__("close match"):
+                    close_matches = close_matches + 1
+                elif match.__eq__("no match"):
+                    no_matches = no_matches + 1
+                # print(match + "\t" + item["source_line"])
+                input_lines = input_lines + 1
+                print('\n gpads', input_lines, ' exact ', exact_matches, ' close ', close_matches, ' none ', no_matches)
 
 
 def read_csv(filename):
