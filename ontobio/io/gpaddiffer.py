@@ -24,6 +24,7 @@ logger.setLevel(logging.WARNING)
 @click.option("--count_by", "-cb", required=False)
 def compare_gpad_objects(gpad1, gpad2, output, count_by):
     print("Starting comparison ")
+    print("")
     gpad_parser_1 = GpadParser()
     gpad_parser_2 = GpadParser()
     assocs1 = gpad_parser_1.parse(gpad1, skipheader=True)
@@ -33,6 +34,7 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by):
     df_gpad2 = read_csv(gpad2)
 
     stats = calculate_file_stats(df_gpad1, count_by, gpad1)
+    print("")
     stats = calculate_file_stats(df_gpad2, count_by, gpad2)
 
     missing_rows = []
@@ -41,7 +43,7 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by):
             continue
         else:
             missing_rows.append(association.source_line)
-            # stats = calculate_stats(gpad1, gpad2, assocs1, assocs2)
+
     print("present in %s, missing from %s" % (gpad1, gpad2))
     for item in missing_rows:
         print(item)
@@ -72,22 +74,10 @@ def calculate_file_stats(data_frame, count_by, file):
     stats = []
     print("Filename: %s" % file)
     print("Total rows: %s" % data_frame.shape[0])
-    print("count of rows by %s" % count_by)
     print(data_frame.groupby(count_by)[count_by].count())
 
     return stats
 
-
-# def get_stats_per_evidence_code(file, output_group):
-#     skimmed_tuples_file_1 = GpadParser().skim_include_evidence(file, output_group)
-#     skimmed_tuples_file_1.sort(key=lambda y: y[0])
-#
-#     an_iterator = itertools.groupby(skimmed_tuples_file_1, lambda x: x[0])
-#
-#     print("%s | count" % output_group)
-#     for key, group in an_iterator:
-#         print("%s | %s" % (key, len(list(group))))
-#
 
 if __name__ == '__main__':
     compare_gpad_objects()
