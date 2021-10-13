@@ -30,14 +30,14 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
     exact_matches = 0
     close_matches = 0
     stats = calculate_file_stats(df_gpad1, count_by, gpad1)
+    stats2 = calculate_file_stats(df_gpad2, count_by, gpad2)
+    print(gpad1)
     print(stats)
-    print("")
-    stats = calculate_file_stats(df_gpad2, count_by, gpad2)
-    print(stats)
+    print(gpad2)
+    print(stats2)
 
     for association in assocs1:
         processed_lines = processed_lines + 1
-        print(association.subject.id)
         if not exclude_details:
             for target in assocs2:
                 match_score = 0
@@ -45,11 +45,9 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
                     continue
                 if association.subject.id == target.subject.id and association.object.id == target.object.id:
                     match_score = 1
-                    print("sub/target %s" % match_score)
                     if sorted(str(q).upper() for q in association.qualifiers) == \
                             sorted(str(q).upper() for q in target.qualifiers):
                         match_score = 2
-                        print("qualifier %s" % match_score)
                         if association.evidence.type == target.evidence.type:
                             match_score = 3
                             if sorted(str(w).upper() for w in association.evidence.with_support_from) == \
@@ -63,6 +61,7 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
                     exact_matches = exact_matches + 1
                 if 1 < match_score < 5:
                     close_matches = close_matches + 1
+    print("")
     print("total number of exact matches = %s" % exact_matches)
     print("total number of close matches = %s" % close_matches)
     print("total number of lines processed = %s" % processed_lines)
@@ -77,7 +76,6 @@ def read_csv(filename):
                              na_filter=False,
                              names=["DB",
                                     "DB_Object_ID",
-                                    "Negation",
                                     "Relation",
                                     "Ontology_Class_ID",
                                     "Reference",
@@ -89,9 +87,10 @@ def read_csv(filename):
                                     "Annotation_Extensions",
                                     "Annotation_Properties"]).fillna("")
     for eco_code in ecomapping.mappings():
-        data_frame['Evidence_type'] = np.where(data_frame['Evidence_type'] == eco_code[2],
-                                               eco_code[2],
-                                               ecomapping.ecoclass_to_coderef(eco_code[2])[0])
+        for ev in data_frame['Evidence_type']:
+            if eco_code[2] == ev:
+                data_frame['Evidence_type'] = data_frame['Evidence_type'].replace([eco_code[2]],
+                                                                                  ecomapping.ecoclass_to_coderef(eco_code[2])[0])
     return data_frame
 
 
@@ -101,8 +100,9 @@ def calculate_file_stats(data_frame, count_by, file):
     stats['filename'] = file
     stats['total_rows'] = data_frame.shape[0]
     for grouper in count_by:
+        stats['grouper'] = grouper
         grouped_reports.append(data_frame.groupby(grouper)[grouper].count())
-        print(data_frame.groupby(grouper)[grouper].count())
+        # print(data_frame.groupby(grouper)[grouper].count())
     stats['grouped_reports'] = grouped_reports
     return stats
 
