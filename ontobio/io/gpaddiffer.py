@@ -17,7 +17,7 @@ logger.setLevel(logging.WARNING)
 @click.option("--gpad2", "-gp2", type=click.Path(), required=True)
 @click.option("--output", "-o", type=click.File("a"), required=True)
 @click.option("--count_by", "-cb", multiple=True, required=False)
-@click.option("--exclude_details", "-ed", type=click.BOOL, default=True, required=False)
+@click.option("--exclude_details", "-ed", type=click.BOOL, default=False, required=False)
 def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
     print("Starting comparison ")
     print("")
@@ -46,7 +46,7 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
         if association in assocs2:
             continue
         else:
-            print(association.source_line)
+            # print(association.source_line)
             missing_rows.append(association)
             if not exclude_details:
                 match = is_assoc_in_list(association, assocs2)
