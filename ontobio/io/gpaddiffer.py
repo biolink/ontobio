@@ -3,7 +3,6 @@ from ontobio import ecomap
 import click
 import logging
 import pandas as pd
-import numpy as np
 
 logger = logging.getLogger("INFER")
 logger.setLevel(logging.WARNING)
