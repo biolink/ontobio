@@ -1,0 +1,113 @@
+{
+  "contact": {
+    "href": "http://www.ncbi.nlm.nih.gov/pubmed/22305528",
+    "institution": "Children's Hospital of Eastern Ontario",
+    "name": "Lijia Huang"
+  },
+  "disorders": [
+    {
+      "id": "MIM:610536",
+      "label": "#610536 MANDIBULOFACIAL DYSOSTOSIS, GUION-ALMEIDA TYPE; MFDGA ;;MANDIBULOFACIAL DYSOSTOSIS WITH MICROCEPHALY; MFDM;; GROWTH AND MENTAL RETARDATION, MANDIBULOFACIAL DYSOSTOSIS, MICROCEPHALY, AND CLEFT PALATE"
+    }
+  ],
+  "features": [
+    {
+      "id": "HP:0008773",
+      "label": "Aplasia/Hypoplasia of the middle ear",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0000413",
+      "label": "Atresia of the external auditory canal",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0000453",
+      "label": "Choanal atresia",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0000405",
+      "label": "Conductive hearing impairment",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0011451",
+      "label": "Congenital microcephaly",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0011471",
+      "label": "Gastrostomy tube feeding in infancy",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0010880",
+      "label": "Increased nuchal translucency",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0000272",
+      "label": "Malar flattening",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0000347",
+      "label": "Micrognathia",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0008551",
+      "label": "Microtia",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0011342",
+      "label": "Mild global developmental delay",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0000545",
+      "label": "Myopia",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0000384",
+      "label": "Preauricular skin tag",
+      "observed": "yes"
+    },
+    {
+      "id": "HP:0001622",
+      "label": "Premature birth",
+      "observed": "no"
+    },
+    {
+      "id": "HP:0009623",
+      "label": "Proximal placement of thumb",
+      "observed": "yes"
+    }
+  ],
+  "genomicFeatures": [
+    {
+      "gene": {
+        "id": "EFTUD2"
+      },
+      "type": {
+        "id": "SO:0001587",
+        "label": "STOPGAIN"
+      },
+      "variant": {
+        "alternateBases": "A",
+        "assembly": "GRCh37",
+        "end": 42929131,
+        "referenceBases": "G",
+        "referenceName": "17",
+        "start": 42929130
+      },
+      "zygosity": 1
+    }
+  ],
+  "id": "P0000079",
+  "label": "178_M43377",
+  "test": true
+}
