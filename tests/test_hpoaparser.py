@@ -5,12 +5,14 @@ from ontobio.ontol_factory import OntologyFactory
 ANNFILE = "tests/resources/truncated.hpoa"
 ONT = "tests/resources/hp-truncated-hpoa.json"
 
+
 def test_factory():
     ont = OntologyFactory().create(ONT)
     f = AssociationSetFactory()
     aset = f.create(ontology=ont, fmt='hpoa', file=ANNFILE)
     print("SUBJS: {}".format(aset.subjects))
     assert len(aset.subjects) > 40
+
 
 def test_skim():
     p = HpoaParser()
@@ -21,11 +23,12 @@ def test_skim():
         assert o.startswith('HP:')
         assert s.startswith('DECIPHER:') or s.startswith('OMIM:') or s.startswith('ORPHANET:')
 
+
 def test_parse_hpoa():
     p = HpoaParser()
     f = ANNFILE
     ont = OntologyFactory().create(ONT)
-    results = p.parse(open(f,"r"))
+    results = p.parse(open(f, "r"))
     r1 = results[0]
     assert r1['evidence']['type'] == 'IEA'
     #assert r1['evidence']['has_supporting_reference'] == ['GO_REF:0000024']
@@ -46,11 +49,12 @@ def test_parse_hpoa():
     assert len(p.report.messages) == 0
     print(p.report.to_markdown())
 
+
 def test_validate_hp_idspaces():
     ont = OntologyFactory().create(ONT)
     p = HpoaParser()
     p.config.class_idspaces = ['FOOZ']
-    assocs = p.parse(open(ANNFILE,"r"))
+    assocs = p.parse(open(ANNFILE, "r"))
     for m in p.report.messages:
         print("MESSAGE: {}".format(m))
 
@@ -63,5 +67,5 @@ def test_validate_hp_idspaces():
 
     p = HpoaParser()
     p.config.class_idspaces = ['HP']
-    assocs = p.parse(open(ANNFILE,"r"))
+    assocs = p.parse(open(ANNFILE, "r"))
     assert len(assocs) > 0

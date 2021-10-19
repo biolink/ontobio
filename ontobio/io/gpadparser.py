@@ -140,7 +140,7 @@ class GpadParser(assocparser.AssocParser):
                         logger.info("Detected GPAD version {}, so defaulting to 1.2".format(version))
                         self.version = self.default_version
 
-            return assocparser.ParseResult(line, [{ "header": True, "line": line.strip() }], False)
+            return assocparser.ParseResult(line, [{"header": True, "line": line.strip()}], False)
 
         # At this point, we should have gone through all the header, and a version number should be established
         if self.version is None:
@@ -156,6 +156,9 @@ class GpadParser(assocparser.AssocParser):
         assoc = parsed.associations[0]
 
         split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
+
+        # repair any GO terms in the with/from field that may be obsolete
+        assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line, 'gpad')
 
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
@@ -294,7 +297,7 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
             report.error(source_line, Report.INVALID_SYMBOL, gpad_line[4], "Problem parsing references", taxon=str(taxon), rule=1)
             return assocparser.ParseResult(source_line, [], True, report=report)
 
-    withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])  # Returns a list of ConjuctiveSets or Error
+    withfroms = association.ConjunctiveSet.str_to_conjunctions(gpad_line[6])
     if isinstance(withfroms, association.Error):
         report.error(source_line, Report.INVALID_SYMBOL, gpad_line[6], "Problem parsing With/From column", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)

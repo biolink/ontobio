@@ -175,7 +175,8 @@ class HpoaParser(AssocParser):
 
         # With/From
         withfroms = self.validate_pipe_separated_ids(withfrom, split_line, empty_allowed=True, extra_delims=",")
-        if withfroms == None:
+
+        if withfroms is None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
 

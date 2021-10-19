@@ -72,7 +72,7 @@ class EcoMap():
         mcls = None
         for (this_code, this_ref, cls) in self.mappings():
             if str(this_code) == str(code):
-                if this_ref  == reference:
+                if this_ref == reference:
                     return cls
                 if this_ref is None:
                     mcls = cls
@@ -99,7 +99,7 @@ class EcoMap():
         """
         code = ''
         ref = None
-        for (code,ref,this_cls) in self.mappings():
+        for (code, ref, this_cls) in self.mappings():
             if cls == this_cls:
                 return code, ref
         return None, None

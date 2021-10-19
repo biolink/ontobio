@@ -588,7 +588,6 @@ class AssocParser(object):
                     else:
                         print(line)
 
-
     def skim(self, file):
         """
         Lightweight parse of a file into tuples.
@@ -670,6 +669,29 @@ class AssocParser(object):
             else:
                 self.report.error(line.line, Report.INVALID_TAXON, taxon, taxon=taxon)
                 return False
+
+    def _unroll_withfrom_and_replair_obsoletes(self, line: SplitLine, gaf_or_gpad: str, subclassof=None):
+        regrouped_fixed_elements = ''
+        if gaf_or_gpad == 'gaf':
+            withfrom = line.values[7]
+        else:
+            withfrom = line.values[6]
+        for element_set in filter(None, withfrom.split("|")):
+            grouped_fixed_elements = ''
+            for element_individual in filter(None, element_set.split(",")):  # parse the | and ,
+                if element_individual.startswith("GO:"):
+                    fixed_element_individual = self._validate_ontology_class_id(str(element_individual), line)
+                else:
+                    fixed_element_individual = element_individual
+                if grouped_fixed_elements == '':
+                    grouped_fixed_elements = fixed_element_individual
+                else:
+                    grouped_fixed_elements = grouped_fixed_elements + ',' + fixed_element_individual
+            if regrouped_fixed_elements == '':
+                regrouped_fixed_elements = grouped_fixed_elements
+            else:
+                regrouped_fixed_elements = regrouped_fixed_elements + "|" + grouped_fixed_elements
+        return association.ConjunctiveSet.str_to_conjunctions(regrouped_fixed_elements)
 
     # check the term id is in the ontology, and is not obsolete
     def _validate_ontology_class_id(self, id, line: SplitLine, subclassof=None):
@@ -761,7 +783,6 @@ class AssocParser(object):
                 valids.append(i)
             else:
                 return None
-
         return sorted(valids)
 
     def validate_curie_ids(self, ids: List[association.Curie], line: SplitLine) -> Optional[List[association.Curie]]:
