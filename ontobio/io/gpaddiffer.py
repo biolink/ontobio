@@ -17,16 +17,30 @@ from ontobio.io.assocparser import Report
 @click.option("--file_type", "-file_type", required=True)
 @click.option("--exclude_details", "-ed", type=click.BOOL, default=True, required=False)
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
-    print("Starting comparison ")
     print("")
+    print("Starting comparison of %s and %s" % (file1, file2))
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, file_type)
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
     stats1 = calculate_file_stats(df_file1, count_by, file1)
     stats2 = calculate_file_stats(df_file2, count_by, file2)
-    print(stats1)
-    print(stats2)
+
+    s = "\n\n## GROUP BY SUMMARY \n\n"
+    s += "This report generated on {}\n\n".format(datetime.date.today())
+    s += "  * Group By Columns: " + str(count_by) + "\n"
+    s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
+
+    print(s)
+    for grouped_item in stats1['grouped_reports']:
+        print(stats1['filename'])
+        print(grouped_item)
+        print("\n")
+
+    for grouped_item in stats2['grouped_reports']:
+        print(stats2['filename'])
+        print(grouped_item)
+
     report = Report()
 
     for association in assocs1:
@@ -66,29 +80,26 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
                 report.n_lines = report.n_lines + 1
                 report.error(association.source_line, qc.ResultType.ERROR,
                              "line from file1 has NO match in file2", "")
-
-    print("")
-
-    mdr = markdown_report(report, exact_matches, close_matches, processed_lines)
-    print(mdr)
+    md_report = markdown_report(report, exact_matches, close_matches, processed_lines)
+    print(md_report)
 
 
 def markdown_report(report, exact_matches, close_matches, processed_lines):
 
     json = report.to_report_json()
 
-    s = "\n\n## SUMMARY\n\n"
+    s = "\n\n## DIFF SUMMARY\n\n"
     s += "This report generated on {}\n\n".format(datetime.date.today())
     s += "  * Total Unmatched Associations: {}\n".format(json["associations"])
     s += "  * Total Lines Compared: " + str(processed_lines) + "\n"
-    s += "  * Total Exact matches: " + str(exact_matches) + "\n"
-    s += "\n\n## Contents\n\n"
+    s += "  * Total Exact matches: " + str(exact_matches) + "\n\n"
 
     for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
         s += "### {rule}\n\n".format(rule=rule)
         s += "* total: {amount}\n".format(amount=len(messages))
+        s += "\n"
         if len(messages) > 0:
-            s += "#### Messages\n"
+            s += "#### Messages\n\n"
         for message in messages:
             obj = " ({})".format(message["obj"]) if message["obj"] else ""
             s += "* {level} - {type}: {message}{obj} -- `{line}`\n".format(level=message["level"],
