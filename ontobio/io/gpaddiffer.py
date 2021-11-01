@@ -1,9 +1,12 @@
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.gafparser import GafParser
 from ontobio import ecomap
+from pprint import pprint
 import click
 import logging
 import pandas as pd
+from ontobio.io import qc
+from ontobio.io.assocparser import Report
 
 logger = logging.getLogger("INFER")
 logger.setLevel(logging.WARNING)
@@ -29,6 +32,7 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print(stats)
     print(file2)
     print(stats2)
+    report = Report()
 
     for association in assocs1:
         max_match_score = 0
@@ -58,6 +62,10 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
             exact_matches = exact_matches + 1
         if 1 > max_match_score < 5:
             close_matches = close_matches + 1
+
+            report.warning(association.source_line, qc.ResultType.WARNING, "line found as close match only", "")
+            pprint(report.to_report_json())
+
 
     print("")
     print("total number of exact matches = %s" % exact_matches)
