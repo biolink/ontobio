@@ -19,7 +19,7 @@ logger.setLevel(logging.WARNING)
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print("Starting comparison ")
     print("")
-    df_file1, df_file2, assocs1, assocs2 = get_parser((file1, file2, count_by, exclude_details, file_type))
+    df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, count_by, exclude_details, file_type)
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
@@ -88,26 +88,26 @@ def read_gaf_csv(filename):
                              header=None,
                              na_filter=False,
                              names=["DB",
-                                    "DB Object ID",
-                                    "DB Object Symbol",
+                                    "DB_Object_ID",
+                                    "DB_Object_Symbol",
                                     "Qualifier",
-                                    "GO ID",
-                                    "DB:Reference",
-                                    "Evidence code",
-                                    "With (or) From",
+                                    "GO_ID",
+                                    "DB_Reference",
+                                    "Evidence_code",
+                                    "With_or_From",
                                     "Aspect",
-                                    "DB Object Name",
-                                    "DB Object Synonym",
-                                    "DB Object Type,"
+                                    "DB_Object_Name",
+                                    "DB_Object_Synonym",
+                                    "DB_Object_Type,"
                                     "Taxon",
                                     "Date",
-                                    "Assigned By",
-                                    "Annotation Extension",
-                                    "Gene Product Form ID"]).fillna("")
+                                    "Assigned_By",
+                                    "Annotation_Extension",
+                                    "Gene_Product_Form_ID"]).fillna("")
     for eco_code in ecomapping.mappings():
-        for ev in data_frame['Evidence_type']:
+        for ev in data_frame['Evidence_code']:
             if eco_code[2] == ev:
-                data_frame['Evidence_type'] = data_frame['Evidence_type'].replace([eco_code[2]],
+                data_frame['Evidence_code'] = data_frame['Evidence_code'].replace([eco_code[2]],
                                                                                   ecomapping.ecoclass_to_coderef(
                                                                                       eco_code[2])[0])
     return data_frame
