@@ -15,7 +15,7 @@ from ontobio.io.assocparser import Report
 @click.option("--output", "-o", type=click.File("a"), required=True)
 @click.option("--count_by", "-cb", multiple=True, required=False)
 @click.option("--file_type", "-file_type", required=True)
-@click.option("--exclude_details", "-ed", type=click.BOOL, default=False, required=False)
+@click.option("--exclude_details", "-ed", type=click.BOOL, default=True, required=False)
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print("Starting comparison ")
     print("")
@@ -23,11 +23,9 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
-    stats = calculate_file_stats(df_file1, count_by, file1)
+    stats1 = calculate_file_stats(df_file1, count_by, file1)
     stats2 = calculate_file_stats(df_file2, count_by, file2)
-    print(file1)
-    print(stats)
-    print(file2)
+    print(stats1)
     print(stats2)
     report = Report()
 
@@ -186,10 +184,11 @@ def calculate_file_stats(data_frame, count_by, file):
     grouped_reports = []
     stats['filename'] = file
     stats['total_rows'] = data_frame.shape[0]
-    for grouper in count_by:
-        stats['grouper'] = grouper
-        grouped_reports.append(data_frame.groupby(grouper)[grouper].count())
-    stats['grouped_reports'] = grouped_reports
+    if len(count_by) > 0:
+        for grouper in count_by:
+            stats['grouper'] = grouper
+            grouped_reports.append(data_frame.groupby(grouper)[grouper].count())
+        stats['grouped_reports'] = grouped_reports
     return stats
 
 
