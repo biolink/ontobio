@@ -19,7 +19,7 @@ from ontobio.io.assocparser import Report
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print("Starting comparison ")
     print("")
-    df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, count_by)
+    df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, file_type, exclude_details, count_by)
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
@@ -70,42 +70,39 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
                              "line from file1 has NO match in file2", "")
 
     print("")
-    print("total number of exact matches = %s" % exact_matches)
-    print("total number of close matches = %s" % close_matches)
-    print("total number of lines processed = %s" % processed_lines)
 
-    markdown_report(report)
+    mdr = markdown_report(report, exact_matches, close_matches, processed_lines)
+    print(mdr)
 
 
-def markdown_report(report):
+def markdown_report(report, exact_matches, close_matches, processed_lines):
 
     json = report.to_report_json()
-    s = "# Group: {group} - Dataset: {dataset}\n".format(group=json["group"], dataset=json["dataset"])
-    s += "\n## SUMMARY\n\n"
+
+    s = "\n\n## SUMMARY\n\n"
     s += "This report generated on {}\n\n".format(datetime.date.today())
-    s += "  * Associations: {}\n".format(json["associations"])
-    s += "  * Lines in file (incl headers): {}\n".format(json["lines"])
-    s += "  * Lines skipped: {}\n".format(json["skipped_lines"])
+    s += "  * Total Unmatched Associations: {}\n".format(json["associations"])
+    s += "  * Total Lines Compared: " + str(processed_lines) + "\n"
+    s += "  * Total Exact matches: " + str(exact_matches) + "\n"
     s += "\n\n## Contents\n\n"
 
     for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
-
-            s += "### {rule}\n\n".format(rule=rule)
-            s += "* total: {amount}\n".format(amount=len(messages))
-            if len(messages) > 0:
-                s += "#### Messages\n"
-            for message in messages:
-                obj = " ({})".format(message["obj"]) if message["obj"] else ""
-                s += "* {level} - {type}: {message}{obj} -- `{line}`\n".format(level=message["level"],
-                                                                               type=message["type"],
-                                                                               message=message["message"],
-                                                                               line=message["line"],
-                                                                               obj=obj)
+        s += "### {rule}\n\n".format(rule=rule)
+        s += "* total: {amount}\n".format(amount=len(messages))
+        if len(messages) > 0:
+            s += "#### Messages\n"
+        for message in messages:
+            obj = " ({})".format(message["obj"]) if message["obj"] else ""
+            s += "* {level} - {type}: {message}{obj} -- `{line}`\n".format(level=message["level"],
+                                                                           type=message["type"],
+                                                                           message=message["message"],
+                                                                           line=message["line"],
+                                                                           obj=obj)
 
             return s
 
 
-def get_parser(file1, file2, file_type):
+def get_parser(file1, file2, file_type, exclude_details, count_by):
     if file_type == 'gpad':
         gpad_parser_1 = GpadParser()
         gpad_parser_2 = GpadParser()
