@@ -19,7 +19,7 @@ from ontobio.io.assocparser import Report
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print("Starting comparison ")
     print("")
-    df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, count_by, exclude_details, file_type)
+    df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, count_by)
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
