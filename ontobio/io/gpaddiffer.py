@@ -58,19 +58,26 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
                                     match_score = 5
                 if match_score > max_match_score:
                     max_match_score = match_score
-        if max_match_score > 4:
-            exact_matches = exact_matches + 1
-        if 1 > max_match_score < 5:
-            close_matches = close_matches + 1
-
-            report.warning(association.source_line, qc.ResultType.WARNING, "line found as close match only", "")
-            pprint(report.to_report_json())
-
+            if max_match_score > 4:
+                exact_matches = exact_matches + 1
+            elif 1 > max_match_score < 5:
+                close_matches = close_matches + 1
+                report.add_association(association)
+                report.n_lines = report.n_lines + 1
+                report.warning(association.source_line, qc.ResultType.WARNING,
+                               "line from file1 only has CLOSE match in file2", "")
+            else:
+                report.add_association(association)
+                report.n_lines = report.n_lines + 1
+                report.error(association.source_line, qc.ResultType.ERROR,
+                             "line from file1 has NO match in file2", "")
 
     print("")
     print("total number of exact matches = %s" % exact_matches)
     print("total number of close matches = %s" % close_matches)
     print("total number of lines processed = %s" % processed_lines)
+
+    pprint(report.to_report_json())
 
 
 def get_parser(file1, file2, count_by, exclude_details, file_type):
