@@ -3,13 +3,10 @@ from ontobio.io.gafparser import GafParser
 from ontobio import ecomap
 from pprint import pprint
 import click
-import logging
 import pandas as pd
+import datetime
 from ontobio.io import qc
 from ontobio.io.assocparser import Report
-
-logger = logging.getLogger("INFER")
-logger.setLevel(logging.WARNING)
 
 
 @click.command()
@@ -77,10 +74,38 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print("total number of close matches = %s" % close_matches)
     print("total number of lines processed = %s" % processed_lines)
 
-    pprint(report.to_report_json())
+    markdown_report(report)
 
 
-def get_parser(file1, file2, count_by, exclude_details, file_type):
+def markdown_report(report):
+
+    json = report.to_report_json()
+    s = "# Group: {group} - Dataset: {dataset}\n".format(group=json["group"], dataset=json["dataset"])
+    s += "\n## SUMMARY\n\n"
+    s += "This report generated on {}\n\n".format(datetime.date.today())
+    s += "  * Associations: {}\n".format(json["associations"])
+    s += "  * Lines in file (incl headers): {}\n".format(json["lines"])
+    s += "  * Lines skipped: {}\n".format(json["skipped_lines"])
+    s += "\n\n## Contents\n\n"
+
+    for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
+
+            s += "### {rule}\n\n".format(rule=rule)
+            s += "* total: {amount}\n".format(amount=len(messages))
+            if len(messages) > 0:
+                s += "#### Messages\n"
+            for message in messages:
+                obj = " ({})".format(message["obj"]) if message["obj"] else ""
+                s += "* {level} - {type}: {message}{obj} -- `{line}`\n".format(level=message["level"],
+                                                                               type=message["type"],
+                                                                               message=message["message"],
+                                                                               line=message["line"],
+                                                                               obj=obj)
+
+            return s
+
+
+def get_parser(file1, file2, file_type):
     if file_type == 'gpad':
         gpad_parser_1 = GpadParser()
         gpad_parser_2 = GpadParser()
@@ -167,7 +192,6 @@ def calculate_file_stats(data_frame, count_by, file):
     for grouper in count_by:
         stats['grouper'] = grouper
         grouped_reports.append(data_frame.groupby(grouper)[grouper].count())
-        # print(data_frame.groupby(grouper)[grouper].count())
     stats['grouped_reports'] = grouped_reports
     return stats
 
