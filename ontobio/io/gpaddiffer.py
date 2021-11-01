@@ -108,7 +108,7 @@ def markdown_report(report, exact_matches, close_matches, processed_lines):
                                                                            line=message["line"],
                                                                            obj=obj)
 
-            return s
+        return s
 
 
 def get_parser(file1, file2, file_type):
