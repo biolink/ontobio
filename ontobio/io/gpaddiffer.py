@@ -19,7 +19,7 @@ from ontobio.io.assocparser import Report
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print("Starting comparison ")
     print("")
-    df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, file_type, exclude_details, count_by)
+    df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, file_type)
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
@@ -100,7 +100,7 @@ def markdown_report(report, exact_matches, close_matches, processed_lines):
             return s
 
 
-def get_parser(file1, file2, file_type, exclude_details, count_by):
+def get_parser(file1, file2, file_type):
     if file_type == 'gpad':
         gpad_parser_1 = GpadParser()
         gpad_parser_2 = GpadParser()
