@@ -19,16 +19,13 @@ from ontobio.io.assocparser import Report
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print("")
     print("Comparing %s and %s" % (file1, file2))
+    report = Report()
 
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, file_type)
 
-    exact_matches = 0
-    close_matches = 0
-    report = Report()
-
     if len(count_by) > 0:
-        stats1 = calculate_file_stats(df_file1, count_by, file1)
-        stats2 = calculate_file_stats(df_file2, count_by, file2)
+        file1_groups = group_by(df_file1, count_by, file1)
+        file2_groups = group_by(df_file2, count_by, file2)
 
         s = "\n\n## GROUP BY SUMMARY \n\n"
         s += "This report generated on {}\n\n".format(datetime.date.today())
@@ -36,24 +33,27 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
         s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
 
         print(s)
-        for grouped_item in stats1['grouped_reports']:
-            print(stats1['filename'])
+        for grouped_item in file1_groups['grouped_reports']:
+            print(file1_groups['filename'])
             print(grouped_item)
             print("\n")
 
-        for grouped_item in stats2['grouped_reports']:
-            print(stats2['filename'])
+        for grouped_item in file2_groups['grouped_reports']:
+            print(file2_groups['filename'])
             print(grouped_item)
 
-    compare_assocss, processed_lines = compare_associations(assocs1, assocs2, exclude_details, report)
+    report, processed_lines, exact_matches, close_matches = compare_associations(assocs1, assocs2, exclude_details)
 
     if not exclude_details:
-        md_report = markdown_report(compare_assocss, exact_matches, close_matches, processed_lines)
+        md_report = markdown_report(report, exact_matches, close_matches, processed_lines)
         print(md_report)
 
 
-def compare_associations(assocs1, assocs2, exclude_details, report):
+def compare_associations(assocs1, assocs2, exclude_details):
     processed_lines = 0
+    exact_matches = 0
+    close_matches = 0
+    report = Report()
     for association in assocs1:
         max_match_score = 0
         processed_lines = processed_lines + 1
@@ -91,7 +91,7 @@ def compare_associations(assocs1, assocs2, exclude_details, report):
                 report.n_lines = report.n_lines + 1
                 report.error(association.source_line, qc.ResultType.ERROR,
                              "line from file1 has NO match in file2", "")
-    return report, processed_lines
+    return report, processed_lines, exact_matches, close_matches
 
 
 def markdown_report(report, exact_matches, close_matches, processed_lines):
@@ -102,7 +102,8 @@ def markdown_report(report, exact_matches, close_matches, processed_lines):
     s += "This report generated on {}\n\n".format(datetime.date.today())
     s += "  * Total Unmatched Associations: {}\n".format(json["associations"])
     s += "  * Total Lines Compared: " + str(processed_lines) + "\n"
-    s += "  * Total Exact matches: " + str(exact_matches) + "\n\n"
+    s += "  * Total Exact matches: " + str(exact_matches) + "\n"
+    s += "  * Total Close matches: " + str(close_matches) + "\n\n"
 
     for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
         s += "### {rule}\n\n".format(rule=rule)
@@ -200,7 +201,7 @@ def read_gpad_csv(filename):
     return data_frame
 
 
-def calculate_file_stats(data_frame, count_by, file):
+def group_by(data_frame, count_by, file):
     stats = {}
     grouped_reports = []
     stats['filename'] = file
