@@ -1,4 +1,5 @@
 from ontobio.io.gpadparser import GpadParser
+from ontobio.io.gafparser import GafParser
 from ontobio import ecomap
 import click
 import logging
@@ -9,29 +10,24 @@ logger.setLevel(logging.WARNING)
 
 
 @click.command()
-@click.option("--gpad1", "-gp1", type=click.Path(), required=True)
-@click.option("--gpad2", "-gp2", type=click.Path(), required=True)
+@click.option("--file1", "-file1", type=click.Path(), required=True)
+@click.option("--file2", "-file2", type=click.Path(), required=True)
 @click.option("--output", "-o", type=click.File("a"), required=True)
 @click.option("--count_by", "-cb", multiple=True, required=False)
+@click.option("--file_type", "-file_type", required=True)
 @click.option("--exclude_details", "-ed", type=click.BOOL, default=False, required=False)
-def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
+def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print("Starting comparison ")
     print("")
-    gpad_parser_1 = GpadParser()
-    gpad_parser_2 = GpadParser()
-    assocs1 = gpad_parser_1.parse(gpad1, skipheader=True)
-    assocs2 = gpad_parser_2.parse(gpad2, skipheader=True)
-
-    df_gpad1 = read_csv(gpad1)
-    df_gpad2 = read_csv(gpad2)
+    df_file1, df_file2, assocs1, assocs2 = get_parser((file1, file2, count_by, exclude_details, file_type))
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
-    stats = calculate_file_stats(df_gpad1, count_by, gpad1)
-    stats2 = calculate_file_stats(df_gpad2, count_by, gpad2)
-    print(gpad1)
+    stats = calculate_file_stats(df_file1, count_by, file1)
+    stats2 = calculate_file_stats(df_file2, count_by, file2)
+    print(file1)
     print(stats)
-    print(gpad2)
+    print(file2)
     print(stats2)
 
     for association in assocs1:
@@ -65,7 +61,59 @@ def compare_gpad_objects(gpad1, gpad2, output, count_by, exclude_details):
     print("total number of lines processed = %s" % processed_lines)
 
 
-def read_csv(filename):
+def get_parser(file1, file2, count_by, exclude_details, file_type):
+    if file_type == 'gpad':
+        gpad_parser_1 = GpadParser()
+        gpad_parser_2 = GpadParser()
+        assocs1 = gpad_parser_1.parse(file1, skipheader=True)
+        assocs2 = gpad_parser_2.parse(file2, skipheader=True)
+        df_file1 = read_gpad_csv(file1)
+        df_file2 = read_gpad_csv(file2)
+    else:
+        gaf_parser_1 = GafParser()
+        gaf_parser_2 = GafParser()
+        assocs1 = gaf_parser_1.parse(file1, skipheader=True)
+        assocs2 = gaf_parser_2.parse(file2, skipheader=True)
+
+        df_file1 = read_gaf_csv(file1)
+        df_file2 = read_gaf_csv(file2)
+    return df_file1, df_file2, assocs1, assocs2
+
+
+def read_gaf_csv(filename):
+    ecomapping = ecomap.EcoMap()
+    data_frame = pd.read_csv(filename,
+                             comment='!',
+                             sep='\t',
+                             header=None,
+                             na_filter=False,
+                             names=["DB",
+                                    "DB Object ID",
+                                    "DB Object Symbol",
+                                    "Qualifier",
+                                    "GO ID",
+                                    "DB:Reference",
+                                    "Evidence code",
+                                    "With (or) From",
+                                    "Aspect",
+                                    "DB Object Name",
+                                    "DB Object Synonym",
+                                    "DB Object Type,"
+                                    "Taxon",
+                                    "Date",
+                                    "Assigned By",
+                                    "Annotation Extension",
+                                    "Gene Product Form ID"]).fillna("")
+    for eco_code in ecomapping.mappings():
+        for ev in data_frame['Evidence_type']:
+            if eco_code[2] == ev:
+                data_frame['Evidence_type'] = data_frame['Evidence_type'].replace([eco_code[2]],
+                                                                                  ecomapping.ecoclass_to_coderef(
+                                                                                      eco_code[2])[0])
+    return data_frame
+
+
+def read_gpad_csv(filename):
     ecomapping = ecomap.EcoMap()
     data_frame = pd.read_csv(filename,
                              comment='!',
@@ -106,4 +154,4 @@ def calculate_file_stats(data_frame, count_by, file):
 
 
 if __name__ == '__main__':
-    compare_gpad_objects()
+    compare_files()
