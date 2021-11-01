@@ -1,7 +1,6 @@
 from ontobio.io.gpadparser import GpadParser
 from ontobio.io.gafparser import GafParser
 from ontobio import ecomap
-from pprint import pprint
 import click
 import pandas as pd
 import datetime
@@ -17,20 +16,20 @@ from ontobio.io.assocparser import Report
 @click.option("--file_type", "-file_type", required=True)
 @click.option("--exclude_details", "-ed", type=click.BOOL, default=True, required=False)
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
-    group_by_report_file = open(output + "_group_by_report", "w")
-    compare_report_file = open(output + "_compare_report", "w")
-
+    # decide which parser to instantiate, GAF or GPAD
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, file_type)
 
-    generate_group_report(df_file1, df_file2, count_by, file1, file2, group_by_report_file)
-    compare_associations(assocs1, assocs2, exclude_details, compare_report_file)
+    # if count_by is passed in, generate a report of annotations grouped by count_by
+    # count_by is a list.
+    generate_group_report(df_file1, df_file2, count_by, file1, file2, output)
 
-    group_by_report_file.close()
-    compare_report_file.close()
+    # if exclude_details is False, try to compare files line by line and find matches.
+    compare_associations(assocs1, assocs2, exclude_details, output)
 
 
-def generate_group_report(df_file1, df_file2, count_by, file1, file2, report_file):
+def generate_group_report(df_file1, df_file2, count_by, file1, file2, output):
     if len(count_by) > 0:
+        group_by_report_file = open(output + "_group_by_report", "w")
         file1_groups = group_by(df_file1, count_by, file1)
         file2_groups = group_by(df_file2, count_by, file2)
 
@@ -42,20 +41,22 @@ def generate_group_report(df_file1, df_file2, count_by, file1, file2, report_fil
         print(s)
         for grouped_item in file1_groups['grouped_reports']:
             print(file1_groups['filename'])
-            report_file.write(file1_groups['filename'])
+            group_by_report_file.write(file1_groups['filename'])
             print(grouped_item)
-            report_file.write(str(grouped_item))
+            group_by_report_file.write(str(grouped_item))
             print("\n")
 
         for grouped_item in file2_groups['grouped_reports']:
             print(file2_groups['filename'])
-            report_file.write(file2_groups['filename'])
+            group_by_report_file.write(file2_groups['filename'])
             print(grouped_item)
-            report_file.write(str(grouped_item))
+            group_by_report_file.write(str(grouped_item))
+
+        group_by_report_file.close()
 
 
-def compare_associations(assocs1, assocs2, exclude_details, report_file):
-
+def compare_associations(assocs1, assocs2, exclude_details, report_file, output):
+    compare_report_file = open(output + "_compare_report", "w")
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
@@ -101,7 +102,8 @@ def compare_associations(assocs1, assocs2, exclude_details, report_file):
     if not exclude_details:
         md_report = markdown_report(report, exact_matches, close_matches, processed_lines)
         print(md_report)
-        report_file.write(md_report)
+        compare_report_file.write(md_report)
+        compare_report_file.close()
 
 
 def markdown_report(report, exact_matches, close_matches, processed_lines):
