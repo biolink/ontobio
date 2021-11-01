@@ -12,17 +12,24 @@ from ontobio.io.assocparser import Report
 @click.command()
 @click.option("--file1", "-file1", type=click.Path(), required=True)
 @click.option("--file2", "-file2", type=click.Path(), required=True)
-@click.option("--output", "-o", type=click.File("a"), required=True)
+@click.option("--output", "-o", required=True)
 @click.option("--count_by", "-cb", multiple=True, required=False)
 @click.option("--file_type", "-file_type", required=True)
 @click.option("--exclude_details", "-ed", type=click.BOOL, default=True, required=False)
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
-    print("")
-    print("Comparing %s and %s" % (file1, file2))
-    report = Report()
+    group_by_report_file = open(output + "_group_by_report", "w")
+    compare_report_file = open(output + "_compare_report", "w")
 
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, file_type)
 
+    generate_group_report(df_file1, df_file2, count_by, file1, file2, group_by_report_file)
+    compare_associations(assocs1, assocs2, exclude_details, compare_report_file)
+
+    group_by_report_file.close()
+    compare_report_file.close()
+
+
+def generate_group_report(df_file1, df_file2, count_by, file1, file2, report_file):
     if len(count_by) > 0:
         file1_groups = group_by(df_file1, count_by, file1)
         file2_groups = group_by(df_file2, count_by, file2)
@@ -35,24 +42,24 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
         print(s)
         for grouped_item in file1_groups['grouped_reports']:
             print(file1_groups['filename'])
+            report_file.write(file1_groups['filename'])
             print(grouped_item)
+            report_file.write(str(grouped_item))
             print("\n")
 
         for grouped_item in file2_groups['grouped_reports']:
             print(file2_groups['filename'])
+            report_file.write(file2_groups['filename'])
             print(grouped_item)
-
-    report, processed_lines, exact_matches, close_matches = compare_associations(assocs1, assocs2, exclude_details)
-
-    if not exclude_details:
-        md_report = markdown_report(report, exact_matches, close_matches, processed_lines)
-        print(md_report)
+            report_file.write(str(grouped_item))
 
 
-def compare_associations(assocs1, assocs2, exclude_details):
+def compare_associations(assocs1, assocs2, exclude_details, report_file):
+
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
+
     report = Report()
     for association in assocs1:
         max_match_score = 0
@@ -91,7 +98,10 @@ def compare_associations(assocs1, assocs2, exclude_details):
                 report.n_lines = report.n_lines + 1
                 report.error(association.source_line, qc.ResultType.ERROR,
                              "line from file1 has NO match in file2", "")
-    return report, processed_lines, exact_matches, close_matches
+    if not exclude_details:
+        md_report = markdown_report(report, exact_matches, close_matches, processed_lines)
+        print(md_report)
+        report_file.write(md_report)
 
 
 def markdown_report(report, exact_matches, close_matches, processed_lines):
