@@ -31,6 +31,7 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     print(stats2)
 
     for association in assocs1:
+        max_match_score = 0
         processed_lines = processed_lines + 1
         if not exclude_details:
             for target in assocs2:
@@ -51,10 +52,13 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
                                         str(r).upper() for r in association.evidence.has_supporting_reference) == \
                                         sorted(str(r).upper() for r in target.evidence.has_supporting_reference):
                                     match_score = 5
-                if match_score > 4:
-                    exact_matches = exact_matches + 1
-                if 1 < match_score < 5:
-                    close_matches = close_matches + 1
+                if match_score > max_match_score:
+                    max_match_score = match_score
+        if max_match_score > 4:
+            exact_matches = exact_matches + 1
+        if 1 > max_match_score < 5:
+            close_matches = close_matches + 1
+
     print("")
     print("total number of exact matches = %s" % exact_matches)
     print("total number of close matches = %s" % close_matches)
