@@ -45,28 +45,17 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
         print(s)
 
         for group in group_by_column:
+            print(group)
             file1_groups, file1_counts_df, grouped_frame1 = group_by(df_file1, group, file1)
             file2_groups, file2_counts_df, grouped_frame2 = group_by(df_file2, group, file2)
+            print(grouped_frame1)
+            print(grouped_frame2)
+
             merged_group_frame = pd.concat([grouped_frame1, grouped_frame2], axis=1)
 
             merged_group_frame.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
             print("\n")
             print(merged_group_frame)
-
-        # for grouped_item in file1_groups['grouped_reports']:
-        #     print(file1_groups['filename'])
-        #     group_by_report_file.write(file1_groups['filename'])
-        #     print(grouped_item)
-        #     group_by_report_file.write(str(grouped_item))
-        #     print("\n")
-        #
-        # for grouped_item in file2_groups['grouped_reports']:
-        #     print(file2_groups['filename'])
-        #     group_by_report_file.write(file2_groups['filename'])
-        #     print(grouped_item)
-        #     group_by_report_file.write(str(grouped_item))
-        #
-        # group_by_report_file.close()
 
 
 def compare_associations(assocs1, assocs2,  output):
