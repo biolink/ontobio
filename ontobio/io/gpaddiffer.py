@@ -3,6 +3,7 @@ from ontobio.io.gafparser import GafParser
 from ontobio import ecomap
 import click
 import pandas as pd
+import numpy as np
 import datetime
 from ontobio.io import qc
 from ontobio.io.assocparser import Report
@@ -19,18 +20,22 @@ def compare_files(file1, file2, output, group_by_column, file_type):
     pd.set_option('display.max_rows', 35000)
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2, file_type)
 
+    # get the number of counts per column of each file and summarize.
+    generate_count_report(df_file1, df_file2, file1, file2, output)
+
+    # try to figure out how many Association objects match in each file.
+    compare_associations(assocs1, assocs2, output)
+
     # group_by is a list of strings exactly matching column names.
     generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output)
 
-    compare_associations(assocs1, assocs2, output)
-    generate_count_report(df_file1, df_file2, group_by_column, file1, file2, output)
 
-
-def generate_count_report(df_file1, df_file2, to_group_by, file1, file2, output):
-    file1_groups, counts_frame1, grouped_frame1 = group_by(df_file1, to_group_by, file1)
-    file2_groups, counts_frame2, grouped_frame2 = group_by(df_file2, to_group_by, file2)
+def generate_count_report(df_file1, df_file2, file1, file2, output):
+    file1_groups, counts_frame1 = get_column_count(df_file1, file1)
+    file2_groups, counts_frame2 = get_column_count(df_file2, file2)
 
     merged_frame = pd.concat([counts_frame1, counts_frame2], axis=1)
+    merged_frame.astype('Int64')
     merged_frame.to_csv(output + "_counts_per_column_report", sep='\t')
     print(merged_frame)
 
@@ -45,14 +50,11 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
         print(s)
 
         for group in group_by_column:
-            print(group)
-            file1_groups, file1_counts_df, grouped_frame1 = group_by(df_file1, group, file1)
-            file2_groups, file2_counts_df, grouped_frame2 = group_by(df_file2, group, file2)
-            print(grouped_frame1)
-            print(grouped_frame2)
+            file1_groups, grouped_frame1 = group_by(df_file1, group, file1)
+            file2_groups, grouped_frame2 = group_by(df_file2, group, file2)
 
             merged_group_frame = pd.concat([grouped_frame1, grouped_frame2], axis=1)
-
+            merged_group_frame.astype('Int64')
             merged_group_frame.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
             print("\n")
             print(merged_group_frame)
@@ -216,9 +218,16 @@ def read_gpad_csv(filename):
 
 def group_by(data_frame, group, file):
     stats = {'filename': file, 'total_rows': data_frame.shape[0]}
-    count_frame = data_frame.nunique().to_frame(file)
     grouped_frame = data_frame.groupby(group)[group].count().to_frame()
-    return stats, count_frame, grouped_frame
+    grouped_frame.fillna(-1)
+    return stats, grouped_frame
+
+
+def get_column_count(data_frame, file):
+    stats = {'filename': file, 'total_rows': data_frame.shape[0]}
+    count_frame = data_frame.nunique().to_frame(file)
+    count_frame.fillna(-1)
+    return stats, count_frame
 
 
 if __name__ == '__main__':
