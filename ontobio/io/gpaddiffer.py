@@ -86,6 +86,7 @@ def compare_associations(assocs1, assocs2,  output):
 
     report = Report()
     for association in assocs1:
+        print(association)
         max_match_score = 0
         processed_lines = processed_lines + 1
         for target in assocs2:
@@ -164,7 +165,6 @@ def get_typed_parser(file_handle, filename):
         else:
             continue
     if isinstance(parser, gpadparser.GpadParser):
-        print("here I am")
         df_file = read_gpad_csv(filename)
     else:
         df_file = read_gaf_csv(filename)
@@ -181,7 +181,6 @@ def get_parser(file1, file2):
 
     assocs1 = parser1.parse(file1)
     assocs2 = parser2.parse(file2)
-    print(assocs1)
 
     return df_file1, df_file2, assocs1, assocs2
 
