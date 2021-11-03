@@ -26,7 +26,7 @@ def compare_files(file1, file2, output, count_by, exclude_details, file_type):
 
     # if exclude_details is False, try to compare files line by line and find matches.
     compare_associations(assocs1, assocs2, exclude_details, output)
-    generate_count_report(assocs1, assocs2, exclude_details, output)
+    generate_count_report(df_file1, df_file2, count_by, file1, file2, output)
 
 
 def generate_count_report(df_file1, df_file2, count_by, file1, file2, output):
@@ -37,6 +37,7 @@ def generate_count_report(df_file1, df_file2, count_by, file1, file2, output):
     count_by_report_file.write(str(file1_groups.get("counts_per_column")))
     print(("Counts By Column: %s file: " % "\n" + file2) + "\n" + str(file2_groups.get("counts_per_column")) + "\n")
     count_by_report_file.write(str(file2_groups.get("counts_per_column")))
+
 
 def generate_group_report(df_file1, df_file2, count_by, file1, file2, output):
     if len(count_by) > 0:
