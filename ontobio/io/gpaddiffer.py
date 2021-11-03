@@ -11,9 +11,9 @@ from ontobio.io.assocparser import Report
 @click.command()
 @click.option("--file1", "-file1", type=click.Path(), required=True)
 @click.option("--file2", "-file2", type=click.Path(), required=True)
-@click.option("--output", "-o", required=True)
-@click.option("--count_by", "-cb", multiple=True, required=False)
-@click.option("--file_type", "-file_type", required=True)
+@click.option("--output", "-o", type=click.STRING, required=True)
+@click.option("--count_by", "-cb", type=click.STRING, multiple=True, required=False)
+@click.option("--file_type", "-file_type", type=click.STRING, required=True)
 @click.option("--exclude_details", "-ed", type=click.BOOL, default=True, required=False)
 def compare_files(file1, file2, output, count_by, exclude_details, file_type):
     # decide which parser to instantiate, GAF or GPAD
@@ -33,6 +33,7 @@ def generate_group_report(df_file1, df_file2, count_by, file1, file2, output):
         group_by_report_file = open(output + "_group_by_report", "w")
         file1_groups = group_by(df_file1, count_by, file1)
         file2_groups = group_by(df_file2, count_by, file2)
+        print(file1_groups.get("counts_by_column"))
 
         s = "\n\n## GROUP BY SUMMARY \n\n"
         s += "This report generated on {}\n\n".format(datetime.date.today())
@@ -40,6 +41,9 @@ def generate_group_report(df_file1, df_file2, count_by, file1, file2, output):
         s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
 
         print(s)
+        print(("Counts By Column: %s file: " % "\n" + file1) + "\n" + str(file1_groups.get("counts_per_column")) + "\n")
+        print(("Counts By Column: %s file: " % "\n" + file2) + "\n" + str(file2_groups.get("counts_per_column")) + "\n")
+
         for grouped_item in file1_groups['grouped_reports']:
             print(file1_groups['filename'])
             group_by_report_file.write(file1_groups['filename'])
@@ -219,11 +223,13 @@ def group_by(data_frame, count_by, file):
     grouped_reports = []
     stats['filename'] = file
     stats['total_rows'] = data_frame.shape[0]
+    stats['counts_per_column'] = data_frame.nunique()
     if len(count_by) > 0:
         for grouper in count_by:
             stats['grouper'] = grouper
             grouped_reports.append(data_frame.groupby(grouper)[grouper].count())
         stats['grouped_reports'] = grouped_reports
+
     return stats
 
 
