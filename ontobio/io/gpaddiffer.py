@@ -78,7 +78,7 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
             print(fix_int_df)
 
 
-def compare_associations(assocs1, assocs2,  output):
+def compare_associations(assocs1, assocs2, output):
     compare_report_file = open(output + "_compare_report", "w")
     processed_lines = 0
     exact_matches = 0
@@ -86,26 +86,26 @@ def compare_associations(assocs1, assocs2,  output):
 
     report = Report()
     for association in assocs1:
-        print(association)
         max_match_score = 0
         processed_lines = processed_lines + 1
         for target in assocs2:
             match_score = 0
-            if association.negated != target.negated:
+            if association.get('negated') != target.get('negated'):
                 continue
-            if association.subject.id == target.subject.id and association.object.id == target.object.id:
+            if association.get('subject').get('id') == target.get('subject').get('id') \
+                    and association.get('object').get('id') == target.get('object').get('id'):
                 match_score = 1
-                if sorted(str(q).upper() for q in association.qualifiers) == \
-                        sorted(str(q).upper() for q in target.qualifiers):
+                if sorted(str(q).upper() for q in association.get('qualifiers')) == \
+                        sorted(str(q).upper() for q in target.get('qualifiers')):
                     match_score = 2
-                    if association.evidence.type == target.evidence.type:
+                    if association.get('evidence').get('type') == target.get('evidence').get('type'):
                         match_score = 3
-                        if sorted(str(w).upper() for w in association.evidence.with_support_from) == \
-                                sorted(str(w).upper() for w in target.evidence.with_support_from):
+                        if sorted(str(w).upper() for w in association.get('evidence').get('with_support_from')) == \
+                                sorted(str(w).upper() for w in target.get('evidence').get('with_support_from')):
                             match_score = 4
                             if sorted(
-                                    str(r).upper() for r in association.evidence.has_supporting_reference) == \
-                                    sorted(str(r).upper() for r in target.evidence.has_supporting_reference):
+                                    str(r).upper() for r in association.get('evidence').get('has_supporting_reference')) == \
+                                    sorted(str(r).upper() for r in target.get('evidence').get('has_supporting_reference')):
                                 match_score = 5
             if match_score > max_match_score:
                 max_match_score = match_score
