@@ -191,6 +191,9 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         },
         '7955': {
             'gene': 'ZFIN'
+        },
+        '8353': {
+            'gene': 'Xenbase'
         }
     }
 
