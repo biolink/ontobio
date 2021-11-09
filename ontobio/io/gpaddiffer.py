@@ -164,7 +164,9 @@ def get_typed_parser(file_handle, filename):
 
     for line in file_handle:
         if assocparser.AssocParser().is_header(line):
-            parser = collections.create_parser_from_header(line, assocparser.AssocParserConfig())
+            returned_parser = collections.create_parser_from_header(line, assocparser.AssocParserConfig())
+            if returned_parser is not None:
+                parser = returned_parser
         else:
             continue
     if isinstance(parser, gpadparser.GpadParser):
