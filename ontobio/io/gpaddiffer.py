@@ -67,8 +67,8 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
         print(s)
 
         for group in group_by_column:
-            file1_groups, grouped_frame1 = group_by(df_file1, group, file1)
-            file2_groups, grouped_frame2 = group_by(df_file2, group, file2)
+            file1_groups, grouped_frame1 = get_group_by(df_file1, group, file1)
+            file2_groups, grouped_frame2 = get_group_by(df_file2, group, file2)
 
             merged_group_frame = pd.concat([grouped_frame1, grouped_frame2], axis=1)
             merged_group_frame_no_nulls = merged_group_frame.fillna(0)
@@ -86,26 +86,29 @@ def compare_associations(assocs1, assocs2, output):
 
     report = Report()
     for association in assocs1:
+        if (type(association)) == dict:
+            continue
         max_match_score = 0
         processed_lines = processed_lines + 1
         for target in assocs2:
-            match_score = 0
-            if association.get('negated') != target.get('negated'):
+            if (type(target)) == dict:
                 continue
-            if association.get('subject').get('id') == target.get('subject').get('id') \
-                    and association.get('object').get('id') == target.get('object').get('id'):
+            match_score = 0
+            if association.negated != target.negated:
+                continue
+            if association.subject.id == target.subject.id and association.object.id == target.object.id:
                 match_score = 1
-                if sorted(str(q).upper() for q in association.get('qualifiers')) == \
-                        sorted(str(q).upper() for q in target.get('qualifiers')):
+                if sorted(str(q).upper() for q in association.qualifiers) == \
+                        sorted(str(q).upper() for q in target.qualifiers):
                     match_score = 2
-                    if association.get('evidence').get('type') == target.get('evidence').get('type'):
+                    if association.evidence.type == target.evidence.type:
                         match_score = 3
-                        if sorted(str(w).upper() for w in association.get('evidence').get('with_support_from')) == \
-                                sorted(str(w).upper() for w in target.get('evidence').get('with_support_from')):
+                        if sorted(str(w).upper() for w in association.evidence.with_support_from) == \
+                                sorted(str(w).upper() for w in target.evidence.with_support_from):
                             match_score = 4
                             if sorted(
-                                    str(r).upper() for r in association.get('evidence').get('has_supporting_reference')) == \
-                                    sorted(str(r).upper() for r in target.get('evidence').get('has_supporting_reference')):
+                                    str(r).upper() for r in association.evidence.has_supporting_reference) == \
+                                    sorted(str(r).upper() for r in target.evidence.has_supporting_reference):
                                 match_score = 5
             if match_score > max_match_score:
                 max_match_score = match_score
@@ -247,7 +250,7 @@ def read_gpad_csv(filename):
     return new_df
 
 
-def group_by(data_frame, group, file):
+def get_group_by(data_frame, group, file):
     stats = {'filename': file, 'total_rows': data_frame.shape[0]}
     grouped_frame = data_frame.groupby(group)[group].count().to_frame()
     without_nulls = grouped_frame.fillna(0)
