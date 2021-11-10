@@ -81,15 +81,12 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
 def compare_associations(assocs1, assocs2, output):
     compare_report_file = open(output + "_compare_report", "w")
     processed_lines = 0
-    exact_matches = 0
-    close_matches = 0
-    failed_matches = 0
 
     report = Report()
 
     set1 = set((str(x.subject.id),
                 str(x.object.id),
-                x.relation,
+                #x.relation,
                 x.negated,
                 x.evidence.type,
                 x.evidence._supporting_reference_to_str(),
@@ -98,7 +95,7 @@ def compare_associations(assocs1, assocs2, output):
     difference = [x for x in assocs2 if type(x) != dict
                   if (str(x.subject.id),
                       str(x.object.id),
-                      x.relation,
+                      #x.relation,
                       x.negated,
                       x.evidence.type,
                       x.evidence._supporting_reference_to_str(),
