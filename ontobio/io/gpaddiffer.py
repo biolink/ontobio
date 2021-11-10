@@ -114,6 +114,7 @@ def compare_associations(assocs1, assocs2, output):
     compare_report_file.write(md_report)
     compare_report_file.close()
 
+
 def markdown_report(report, failed_matches, processed_lines):
 
     json = report.to_report_json()
