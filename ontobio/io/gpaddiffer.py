@@ -224,33 +224,6 @@ def read_gaf_csv(filename, version):
     return new_df
 
 
-gpad_1_2_format = ["DB",
-                   "subject",
-                   "qualifiers",
-                   "object",
-                   "reference",
-                   "evidence_code",
-                   "with_or_from",
-                   "interacting_taxon",
-                   "date",
-                   "provided_by",
-                   "annotation_extensions",
-                   "properties"]
-
-gpad_2_0_format = ["subject",
-                   "negated",
-                   "relation",
-                   "object",
-                   "reference",
-                   "evidence_code",
-                   "with_or_from",
-                   "interacting_taxon",
-                   "date",
-                   "provided_by",
-                   "annotation_extensions",
-                   "properties"]
-
-
 def read_gpad_csv(filename, version):
     if version.startswith("1"):
         data_frame = pd.read_csv(filename,
@@ -289,6 +262,32 @@ def get_column_count(data_frame, file):
     count_frame = data_frame.nunique().to_frame(file)
     return stats, count_frame
 
+
+gpad_1_2_format = ["DB",
+                   "subject",
+                   "qualifiers",
+                   "object",
+                   "reference",
+                   "evidence_code",
+                   "with_or_from",
+                   "interacting_taxon",
+                   "date",
+                   "provided_by",
+                   "annotation_extensions",
+                   "properties"]
+
+gpad_2_0_format = ["subject",
+                   "negated",
+                   "relation",
+                   "object",
+                   "reference",
+                   "evidence_code",
+                   "with_or_from",
+                   "interacting_taxon",
+                   "date",
+                   "provided_by",
+                   "annotation_extensions",
+                   "properties"]
 
 gaf_format = ["DB",
               "DB_Object_ID",
