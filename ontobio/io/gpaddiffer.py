@@ -86,7 +86,7 @@ def compare_associations(assocs1, assocs2, output):
 
     set1 = set((str(x.subject.id),
                 str(x.object.id),
-                #x.relation,
+                normalize_relation(x.relation),
                 x.negated,
                 x.evidence.type,
                 x.evidence._supporting_reference_to_str(),
@@ -95,7 +95,7 @@ def compare_associations(assocs1, assocs2, output):
     difference = [x for x in assocs2 if type(x) != dict
                   if (str(x.subject.id),
                       str(x.object.id),
-                      #x.relation,
+                      normalize_relation(x.relation),
                       x.negated,
                       x.evidence.type,
                       x.evidence._supporting_reference_to_str(),
@@ -158,6 +158,13 @@ def get_typed_parser(file_handle, filename):
         df_file = read_gaf_csv(filename, parser.version)
 
     return df_file, parser
+
+
+def normalize_relation(relation: str) -> str:
+    if ":" in relation:
+        return relation
+    else:
+        return romap.keys()[romap.values().index(relation)]
 
 
 def get_parser(file1, file2):
@@ -254,6 +261,20 @@ def get_column_count(data_frame, file):
     count_frame = data_frame.nunique().to_frame(file)
     return stats, count_frame
 
+
+romap = {"RO:0002327":"enables",
+         "RO:0002326":"contributes_to",
+         "RO:0002331":"involved_in",
+         "RO:0002263":"acts_upstream_of",
+         "RO:0004034":"acts_upstream_of_positive_effect",
+         "RO:0004035":"acts_upstream_of_negative_effect",
+         "RO:0002264":"acts_upstream_of_or_within",
+         "RO:0004032":"acts_upstream_of_or_within_postitive_effect",
+         "RO:0004033":"acts_upstream_of_or_within_negative_effect",
+         "RO:0001025":"located_in",
+         "BFO:0000050":"part_of",
+         "RO:0002432":"is_active_in",
+         "RO:0002325":"colocalizes_with"}
 
 gpad_1_2_format = ["DB",
                    "subject",
