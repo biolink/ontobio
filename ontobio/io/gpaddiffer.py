@@ -41,7 +41,7 @@ def compare_files(file1, file2, output, group_by_column):
     # generate_count_report(df_file1, df_file2, file1, file2, output)
 
     # try to figure out how many Association objects match in each file.
-    compare_associations(assocs1, assocs2, output)
+    compare_associations(assocs1, assocs2, output, file1, file2)
 
     # group_by is a list of strings exactly matching column names.
     # generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output)
@@ -78,9 +78,9 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
             print(fix_int_df)
 
 
-def compare_associations(assocs1, assocs2, output):
+def compare_associations(assocs1, assocs2, output, file1, file2):
     compare_report_file = open(output + "_compare_report", "w")
-    processed_lines = 0
+    processed_associations = len(assocs1)
 
     report = Report()
 
@@ -107,9 +107,9 @@ def compare_associations(assocs1, assocs2, output):
     for x in difference:
         report.add_association(x)
         report.n_lines = report.n_lines + 1
-        report.error(x.source_line, qc.ResultType.ERROR, "line from file1 has NO match in file2", "")
+        report.error(x.source_line, qc.ResultType.ERROR, "line from file1 has NO match in file2" % file1, file2, "")
 
-    md_report = markdown_report(report, failed_matches, processed_lines)
+    md_report = markdown_report(report, failed_matches, processed_associations)
     print(md_report)
     compare_report_file.write(md_report)
     compare_report_file.close()
@@ -122,8 +122,7 @@ def markdown_report(report, failed_matches, processed_lines):
     s = "\n\n## DIFF SUMMARY\n\n"
     s += "This report generated on {}\n\n".format(datetime.date.today())
     s += "  * Total Unmatched Associations: {}\n".format(json["associations"])
-    s += "  * Total Lines Compared: " + str(processed_lines) + "\n"
-    s += "  * Total Failed matches: " + str(failed_matches) + "\n\n"
+    s += "  * Total Associations Compared: " + str(processed_lines) + "\n"
 
     for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
         s += "### {rule}\n\n".format(rule=rule)
@@ -161,10 +160,10 @@ def get_typed_parser(file_handle, filename):
 
 
 def normalize_relation(relation: str) -> str:
-    if ":" in relation:
-        return relation
+    if ":" in str(relation):
+        return str(relation)
     else:
-        return romap.keys()[romap.values().index(relation)]
+        return romap.keys()[romap.values().index(str(relation))]
 
 
 def get_parser(file1, file2):
