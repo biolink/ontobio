@@ -114,55 +114,6 @@ def compare_associations(assocs1, assocs2, output):
     compare_report_file.write(md_report)
     compare_report_file.close()
 
-    # for association in assocs1:
-    #     if (type(association)) == dict:
-    #         continue
-    #     max_match_score = 0
-    #     processed_lines = processed_lines + 1
-    #     for target in assocs2:
-    #         if (type(target)) == dict:
-    #             continue
-    #         match_score = 0
-    #         if association.negated != target.negated:
-    #             print("negated doesn't match")
-    #             print(association)
-    #             continue
-    #         if association.subject.id == target.subject.id and association.object.id == target.object.id:
-    #             match_score = 1
-    #             print("subject_object_match")
-    #             if sorted(str(q).upper() for q in association.qualifiers) == \
-    #                     sorted(str(q).upper() for q in target.qualifiers):
-    #                 print("qualifiers_match")
-    #                 match_score = 2
-    #                 if association.evidence.type == target.evidence.type:
-    #                     print("evidence_match")
-    #                     match_score = 3
-    #                     if sorted(str(w).upper() for w in association.evidence.with_support_from) == \
-    #                             sorted(str(w).upper() for w in target.evidence.with_support_from):
-    #                         print("withfrom_match")
-    #                         match_score = 4
-    #                         if sorted(
-    #                                 str(r).upper() for r in association.evidence.has_supporting_reference) == \
-    #                                 sorted(str(r).upper() for r in target.evidence.has_supporting_reference):
-    #                             print("reference_match")
-    #                             match_score = 5
-    #         if match_score > max_match_score:
-    #             max_match_score = match_score
-    #     if max_match_score > 4:
-    #         exact_matches = exact_matches + 1
-    #     elif 1 > max_match_score < 5:
-    #         close_matches = close_matches + 1
-    #         report.add_association(association)
-    #         report.n_lines = report.n_lines + 1
-    #         report.warning(association.source_line, qc.ResultType.WARNING,
-    #                        "line from file1 only has CLOSE match in file2", "")
-    #     else:
-    #         report.add_association(association)
-    #         report.n_lines = report.n_lines + 1
-    #         report.error(association.source_line, qc.ResultType.ERROR,
-    #                      "line from file1 has NO match in file2", "")
-
-
 def markdown_report(report, failed_matches, processed_lines):
 
     json = report.to_report_json()
