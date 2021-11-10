@@ -29,7 +29,7 @@ from ontobio.model import collections
               type=click.STRING,
               multiple=True,
               required=False,
-              help='Options to group by include: subject, relation, object, and/or evidence_code.'
+              help='Options to group by include: subject, object, and/or evidence_code.'
                    'If more than one of these parameters is listed (ie: -gb = evidence_code, -gb entity_identifier, '
                    'the grouping report will group by evidence_code and entity_identifier)')
 def compare_files(file1, file2, output, group_by_column):
@@ -247,6 +247,15 @@ def read_gpad_csv(filename, version):
             if eco_code[2] == ev:
                 new_df['evidence_code'] = new_df['evidence_code'].replace([eco_code[2]],
                                                                           ecomapping.ecoclass_to_coderef(eco_code[2])[0])
+
+    # normalize MGI ids
+    config = assocparser.AssocParserConfig()
+    config.remove_double_prefixes = True
+    parser = gpadparser.GpadParser(config=config)
+    for i, r in enumerate(new_df['subject']):
+        r1 = parser._normalize_id(r)
+        new_df.at[i, 'subject'] = r1
+
     return new_df
 
 
