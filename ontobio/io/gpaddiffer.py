@@ -29,7 +29,7 @@ from ontobio.model import collections
               type=click.STRING,
               multiple=True,
               required=False,
-              help='Options to group by include: entity_identifier, relation, go_term_identifier, and/or evidence_code.'
+              help='Options to group by include: subject, relation, object, and/or evidence_code.'
                    'If more than one of these parameters is listed (ie: -gb = evidence_code, -gb entity_identifier, '
                    'the grouping report will group by evidence_code and entity_identifier)')
 def compare_files(file1, file2, output, group_by_column):
@@ -170,9 +170,9 @@ def get_typed_parser(file_handle, filename):
         else:
             continue
     if isinstance(parser, gpadparser.GpadParser):
-        df_file = read_gpad_csv(filename)
+        df_file = read_gpad_csv(filename, parser.version)
     else:
-        df_file = read_gaf_csv(filename)
+        df_file = read_gaf_csv(filename, parser.version)
 
     return df_file, parser
 
@@ -190,7 +190,7 @@ def get_parser(file1, file2):
     return df_file1, df_file2, assocs1, assocs2
 
 
-def read_gaf_csv(filename):
+def read_gaf_csv(filename, version):
     ecomapping = ecomap.EcoMap()
     data_frame = pd.read_csv(filename,
                              comment='!',
@@ -224,30 +224,55 @@ def read_gaf_csv(filename):
     return new_df
 
 
-def read_gpad_csv(filename):
+gpad_1_2_format = ["DB",
+                   "subject",
+                   "qualifiers",
+                   "object",
+                   "reference",
+                   "evidence_code",
+                   "with_or_from",
+                   "interacting_taxon",
+                   "date",
+                   "provided_by",
+                   "annotation_extensions",
+                   "properties"]
+
+gpad_2_0_format = ["subject",
+                   "negated",
+                   "relation",
+                   "object",
+                   "reference",
+                   "evidence_code",
+                   "with_or_from",
+                   "interacting_taxon",
+                   "date",
+                   "provided_by",
+                   "annotation_extensions",
+                   "properties"]
+
+
+def read_gpad_csv(filename, version):
+    if version.startswith("1"):
+        data_frame = pd.read_csv(filename,
+                                 comment='!',
+                                 sep='\t',
+                                 header=None,
+                                 na_filter=False,
+                                 names=gpad_1_2_format).fillna("")
+        new_df = data_frame.filter(['subject', 'qualifiers', 'relation', 'object', 'evidence_code', 'reference'], axis=1)
+    else:
+        data_frame = pd.read_csv(filename,
+                                 comment='!',
+                                 sep='\t',
+                                 header=None,
+                                 na_filter=False,
+                                 names=gpad_2_0_format).fillna("")
+        new_df = data_frame.filter(['subject', 'negation', 'relation', 'object', 'evidence_code', 'reference'], axis=1)
     ecomapping = ecomap.EcoMap()
-    data_frame = pd.read_csv(filename,
-                             comment='!',
-                             sep='\t',
-                             header=None,
-                             na_filter=False,
-                             names=["DB",
-                                    "DB_Object_ID",
-                                    "Relation",
-                                    "Ontology_Class_ID",
-                                    "Reference",
-                                    "Evidence_type",
-                                    "With_or_From",
-                                    "Interacting_taxon_ID",
-                                    "Date",
-                                    "Assigned_by",
-                                    "Annotation_Extensions",
-                                    "Annotation_Properties"]).fillna("")
-    new_df = data_frame.filter(['DB_Object_ID', 'Relation', 'Ontology_Class_ID', 'Evidence_type', 'Reference'], axis=1)
     for eco_code in ecomapping.mappings():
-        for ev in new_df['Evidence_type']:
+        for ev in new_df['evidence_code']:
             if eco_code[2] == ev:
-                new_df['Evidence_type'] = new_df['Evidence_type'].replace([eco_code[2]],
+                new_df['evidence_code'] = new_df['evidence_code'].replace([eco_code[2]],
                                                                           ecomapping.ecoclass_to_coderef(eco_code[2])[0])
     return new_df
 
@@ -263,6 +288,25 @@ def get_column_count(data_frame, file):
     stats = {'filename': file, 'total_rows': data_frame.shape[0]}
     count_frame = data_frame.nunique().to_frame(file)
     return stats, count_frame
+
+
+gaf_format = ["DB",
+              "DB_Object_ID",
+              "DB_Object_Symbol",
+              "Qualifier",
+              "GO_ID",
+              "DB_Reference",
+              "Evidence_code",
+              "With_or_From",
+              "Aspect",
+              "DB_Object_Name",
+              "DB_Object_Synonym",
+              "DB_Object_Type",
+              "Taxon",
+              "Date",
+              "Assigned_By",
+              "Annotation_Extension",
+              "Gene_Product_Form_ID"]
 
 
 if __name__ == '__main__':
