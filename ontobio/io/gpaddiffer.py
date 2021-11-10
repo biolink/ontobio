@@ -38,13 +38,13 @@ def compare_files(file1, file2, output, group_by_column):
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2)
 
     # get the number of counts per column of each file and summarize.
-    generate_count_report(df_file1, df_file2, file1, file2, output)
+    # generate_count_report(df_file1, df_file2, file1, file2, output)
 
     # try to figure out how many Association objects match in each file.
     compare_associations(assocs1, assocs2, output)
 
     # group_by is a list of strings exactly matching column names.
-    generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output)
+    # generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output)
 
 
 def generate_count_report(df_file1, df_file2, file1, file2, output):
@@ -83,55 +83,90 @@ def compare_associations(assocs1, assocs2, output):
     processed_lines = 0
     exact_matches = 0
     close_matches = 0
+    failed_matches = 0
 
     report = Report()
-    for association in assocs1:
-        if (type(association)) == dict:
-            continue
-        max_match_score = 0
-        processed_lines = processed_lines + 1
-        for target in assocs2:
-            if (type(target)) == dict:
-                continue
-            match_score = 0
-            if association.negated != target.negated:
-                continue
-            if association.subject.id == target.subject.id and association.object.id == target.object.id:
-                match_score = 1
-                if sorted(str(q).upper() for q in association.qualifiers) == \
-                        sorted(str(q).upper() for q in target.qualifiers):
-                    match_score = 2
-                    if association.evidence.type == target.evidence.type:
-                        match_score = 3
-                        if sorted(str(w).upper() for w in association.evidence.with_support_from) == \
-                                sorted(str(w).upper() for w in target.evidence.with_support_from):
-                            match_score = 4
-                            if sorted(
-                                    str(r).upper() for r in association.evidence.has_supporting_reference) == \
-                                    sorted(str(r).upper() for r in target.evidence.has_supporting_reference):
-                                match_score = 5
-            if match_score > max_match_score:
-                max_match_score = match_score
-        if max_match_score > 4:
-            exact_matches = exact_matches + 1
-        elif 1 > max_match_score < 5:
-            close_matches = close_matches + 1
-            report.add_association(association)
-            report.n_lines = report.n_lines + 1
-            report.warning(association.source_line, qc.ResultType.WARNING,
-                           "line from file1 only has CLOSE match in file2", "")
-        else:
-            report.add_association(association)
-            report.n_lines = report.n_lines + 1
-            report.error(association.source_line, qc.ResultType.ERROR,
-                         "line from file1 has NO match in file2", "")
-    md_report = markdown_report(report, exact_matches, close_matches, processed_lines)
+
+    set1 = set((str(x.subject.id),
+                str(x.object.id),
+                x.relation,
+                x.negated,
+                x.evidence.type,
+                x.evidence._supporting_reference_to_str(),
+                x.evidence._with_support_from_to_str()
+                ) for x in assocs1 if type(x) != dict)
+    difference = [x for x in assocs2 if type(x) != dict
+                  if (str(x.subject.id),
+                      str(x.object.id),
+                      x.relation,
+                      x.negated,
+                      x.evidence.type,
+                      x.evidence._supporting_reference_to_str(),
+                      x.evidence._with_support_from_to_str()
+                      ) not in set1]
+    print(difference[:1])
+    failed_matches = len(difference)
+
+    for x in difference:
+        report.add_association(x)
+        report.n_lines = report.n_lines + 1
+        report.error(x.source_line, qc.ResultType.ERROR, "line from file1 has NO match in file2", "")
+
+    md_report = markdown_report(report, failed_matches, processed_lines)
     print(md_report)
     compare_report_file.write(md_report)
     compare_report_file.close()
 
+    # for association in assocs1:
+    #     if (type(association)) == dict:
+    #         continue
+    #     max_match_score = 0
+    #     processed_lines = processed_lines + 1
+    #     for target in assocs2:
+    #         if (type(target)) == dict:
+    #             continue
+    #         match_score = 0
+    #         if association.negated != target.negated:
+    #             print("negated doesn't match")
+    #             print(association)
+    #             continue
+    #         if association.subject.id == target.subject.id and association.object.id == target.object.id:
+    #             match_score = 1
+    #             print("subject_object_match")
+    #             if sorted(str(q).upper() for q in association.qualifiers) == \
+    #                     sorted(str(q).upper() for q in target.qualifiers):
+    #                 print("qualifiers_match")
+    #                 match_score = 2
+    #                 if association.evidence.type == target.evidence.type:
+    #                     print("evidence_match")
+    #                     match_score = 3
+    #                     if sorted(str(w).upper() for w in association.evidence.with_support_from) == \
+    #                             sorted(str(w).upper() for w in target.evidence.with_support_from):
+    #                         print("withfrom_match")
+    #                         match_score = 4
+    #                         if sorted(
+    #                                 str(r).upper() for r in association.evidence.has_supporting_reference) == \
+    #                                 sorted(str(r).upper() for r in target.evidence.has_supporting_reference):
+    #                             print("reference_match")
+    #                             match_score = 5
+    #         if match_score > max_match_score:
+    #             max_match_score = match_score
+    #     if max_match_score > 4:
+    #         exact_matches = exact_matches + 1
+    #     elif 1 > max_match_score < 5:
+    #         close_matches = close_matches + 1
+    #         report.add_association(association)
+    #         report.n_lines = report.n_lines + 1
+    #         report.warning(association.source_line, qc.ResultType.WARNING,
+    #                        "line from file1 only has CLOSE match in file2", "")
+    #     else:
+    #         report.add_association(association)
+    #         report.n_lines = report.n_lines + 1
+    #         report.error(association.source_line, qc.ResultType.ERROR,
+    #                      "line from file1 has NO match in file2", "")
 
-def markdown_report(report, exact_matches, close_matches, processed_lines):
+
+def markdown_report(report, failed_matches, processed_lines):
 
     json = report.to_report_json()
 
@@ -139,8 +174,7 @@ def markdown_report(report, exact_matches, close_matches, processed_lines):
     s += "This report generated on {}\n\n".format(datetime.date.today())
     s += "  * Total Unmatched Associations: {}\n".format(json["associations"])
     s += "  * Total Lines Compared: " + str(processed_lines) + "\n"
-    s += "  * Total Exact matches: " + str(exact_matches) + "\n"
-    s += "  * Total Close matches: " + str(close_matches) + "\n\n"
+    s += "  * Total Failed matches: " + str(failed_matches) + "\n\n"
 
     for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
         s += "### {rule}\n\n".format(rule=rule)

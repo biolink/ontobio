@@ -350,9 +350,31 @@ class Evidence:
     has_supporting_reference: List[Curie]
     with_support_from: List[ConjunctiveSet]
 
+    def _supporting_reference_to_str(self) -> Optional[str]:
+        references = []
+        stringed_references = ''
+        if self.has_supporting_reference is not None:
+            for reference in self.has_supporting_reference:
+                references.append(str(reference))
+            for item in references:
+                stringed_references += item
+        return stringed_references
+
+    def _with_support_from_to_str(self) -> Optional[str]:
+        withfroms = []
+        stringed_withfroms = ''
+        if self.with_support_from is not None:
+            for withfrom in self.with_support_from:
+                withfroms.append(str(withfrom))
+            for item in withfroms:
+                stringed_withfroms += item
+        return stringed_withfroms
 
 relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.:\-]*)\)')
 curie_relation_tuple = re.compile(r"(.+)\((.+)\)")
+
+
+
 @dataclass(unsafe_hash=True)
 class ExtensionUnit:
     """
