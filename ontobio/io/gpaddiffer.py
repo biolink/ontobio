@@ -102,20 +102,19 @@ def compare_associations(assocs1, assocs2, output, file1, file2):
                       x.evidence._with_support_from_to_str()
                       ) not in set1]
     print(difference[:1])
-    failed_matches = len(difference)
 
     for x in difference:
         report.add_association(x)
         report.n_lines = report.n_lines + 1
-        report.error(x.source_line, qc.ResultType.ERROR, "line from file1 has NO match in file2" % file1, file2, "")
+        report.error(x.source_line, qc.ResultType.ERROR, "line from %s has NO match in %s" % (file1, file2), "")
 
-    md_report = markdown_report(report, failed_matches, processed_associations)
+    md_report = markdown_report(report, processed_associations)
     print(md_report)
     compare_report_file.write(md_report)
     compare_report_file.close()
 
 
-def markdown_report(report, failed_matches, processed_lines):
+def markdown_report(report, processed_lines):
 
     json = report.to_report_json()
 
