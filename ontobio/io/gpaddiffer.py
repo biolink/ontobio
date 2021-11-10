@@ -38,13 +38,13 @@ def compare_files(file1, file2, output, group_by_column):
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2)
 
     # get the number of counts per column of each file and summarize.
-    # generate_count_report(df_file1, df_file2, file1, file2, output)
+    generate_count_report(df_file1, df_file2, file1, file2, output)
 
     # try to figure out how many Association objects match in each file.
     compare_associations(assocs1, assocs2, output, file1, file2)
 
     # group_by is a list of strings exactly matching column names.
-    # generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output)
+    generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output)
 
 
 def generate_count_report(df_file1, df_file2, file1, file2, output):
