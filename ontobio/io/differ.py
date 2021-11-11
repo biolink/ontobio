@@ -1,4 +1,4 @@
-from ontobio.io import assocparser, gafparser, gpadparser, entityparser
+from ontobio.io import assocparser, gpadparser
 from ontobio import ecomap
 import click
 import pandas as pd
@@ -6,7 +6,9 @@ import datetime
 from ontobio.io import qc
 from ontobio.io.assocparser import Report
 from ontobio.model import collections
-
+import warnings
+from pandas.core.common import SettingWithCopyWarning
+warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 @click.command()
 @click.option("--file1",
@@ -32,7 +34,12 @@ from ontobio.model import collections
               help='Options to group by include: subject, object, and/or evidence_code.'
                    'If more than one of these parameters is listed (ie: -gb = evidence_code, -gb entity_identifier, '
                    'the grouping report will group by evidence_code and entity_identifier)')
-def compare_files(file1, file2, output, group_by_column):
+@click.option("--restrict_to_decreases",
+              "-rtd",
+              type=click.BOOL,
+              required=False,
+              help='Only report group by results when the second file shows a decrease in number by grouping column')
+def compare_files(file1, file2, output, group_by_column, restrict_to_decreases):
     # decide which parser to instantiate, GAF or GPAD
     pd.set_option('display.max_rows', 35000)
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2)
@@ -44,7 +51,7 @@ def compare_files(file1, file2, output, group_by_column):
     compare_associations(assocs1, assocs2, output, file1, file2)
 
     # group_by is a list of strings exactly matching column names.
-    generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output)
+    generate_group_report(df_file1, df_file2, group_by_column, file1, file2, restrict_to_decreases, output)
 
 
 def generate_count_report(df_file1, df_file2, file1, file2, output):
@@ -62,7 +69,7 @@ def generate_count_report(df_file1, df_file2, file1, file2, output):
     print(merged_frame)
 
 
-def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output):
+def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, restrict_to_decreases, output):
     if len(group_by_column) > 0:
 
         s = "\n\n## GROUP BY SUMMARY \n\n"
@@ -81,13 +88,23 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
             column2 = fix_int_df.columns[1]+"2"
             fix_int_df.columns.values[1] = column2
             df = fix_int_df.query("{0}".format(column1) + " != " + "{0}".format(column2))
-            df.rename(columns={list(df)[0]: file1}, inplace=True)
-            df.rename(columns={list(df)[1]: file2}, inplace=True)
-            s += "  * Number of " + group + "s that show differences: " + str(len(df.index)) + "\n"
-            s += "  * See output file " + output + "_" + group + "_counts_per_column_report" + "\n"
-            df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
-            print(s)
-            print("\n\n")
+            if restrict_to_decreases:
+                print("restricted!")
+                df_restricted = df.query("{0}".format(column1) + " > " + "{0}".format(column2))
+                df_restricted.rename(columns={list(df)[0]: file1}, inplace=True)
+                df_restricted.rename(columns={list(df)[1]: file2}, inplace=True)
+                df_restricted.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
+                s += "  * Number of unqiue " + group + "s that show less in file2 compared to file1: " + str(len(df.index)) + "\n"
+                s += "  * See output file " + output + "_" + group + "_counts_per_column_report" + "\n"
+                print(s)
+            else:
+                s += "  * Number of unqiue " + group + "s that show differences: " + str(len(df.index)) + "\n"
+                s += "  * See output file " + output + "_" + group + "_counts_per_column_report" + "\n"
+                df.rename(columns={list(df)[0]: file1}, inplace=True)
+                df.rename(columns={list(df)[1]: file2}, inplace=True)
+                df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
+                print(s)
+                print("\n\n")
 
 
 def compare_associations(assocs1, assocs2, output, file1, file2):
