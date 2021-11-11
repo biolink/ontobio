@@ -105,7 +105,6 @@ def compare_associations(assocs1, assocs2, output, file1, file2):
                       x.evidence._supporting_reference_to_str(),
                       x.evidence._with_support_from_to_str()
                       ) not in set1]
-    print(difference[:1])
 
     for x in difference:
         report.add_association(x)
@@ -224,7 +223,12 @@ def read_gpad_csv(filename, version):
                                  header=None,
                                  na_filter=False,
                                  names=gpad_1_2_format).fillna("")
-        new_df = data_frame.filter(['subject', 'qualifiers', 'relation', 'object', 'evidence_code', 'reference'], axis=1)
+        df = data_frame.filter(['db', 'subject', 'qualifiers', 'relation', 'object', 'evidence_code', 'reference'], axis=1)
+        concat_column = df['db'] + ":" + df['subject']
+        df['concat_column'] = concat_column
+        filtered_df = df.filter(['concat_column', 'qualifiers', 'relation', 'object', 'evidence_code', 'reference'])
+        filtered_df.rename(columns={'concat_column': 'subject'}, inplace=True)
+        new_df = filtered_df
     else:
         data_frame = pd.read_csv(filename,
                                  comment='!',
@@ -247,7 +251,6 @@ def read_gpad_csv(filename, version):
     for i, r in enumerate(new_df['subject']):
         r1 = parser._normalize_id(r)
         new_df.at[i, 'subject'] = r1
-
     return new_df
 
 
@@ -278,7 +281,7 @@ romap = {"RO:0002327": "enables",
          "RO:0002432": "is_active_in",
          "RO:0002325": "colocalizes_with"}
 
-gpad_1_2_format = ["DB",
+gpad_1_2_format = ["db",
                    "subject",
                    "qualifiers",
                    "object",
