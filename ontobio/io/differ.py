@@ -118,10 +118,12 @@ def compare_associations(assocs1, assocs2, output, file1, file2):
         report.error(diff.source_line, qc.ResultType.ERROR, "line from %s has NO match in %s" % (file1, file2), "")
 
     md_report, number_of_messages = markdown_report(report, processed_associations)
-    s = "\n\n## GoAssociation Object DIFF SUMMARY\n\n"
+    s = "\n\n## DIFF SUMMARY\n\n"
     s += "This report generated on {}\n\n".format(datetime.date.today())
-    s += "  * Number of association differences between file1 and file2: %s" % number_of_messages + "\n"
+    s += "  * Total Unmatched Associations: {}\n".format(number_of_messages)
+    s += "  * Total Associations Compared: " + str(len(assocs1)) + "\n"
     s += "  * See report: " + output + "_compare_report" + "\n"
+    
     print(s)
     compare_report_file.write(md_report)
     compare_report_file.close()
@@ -149,6 +151,11 @@ def markdown_report(report, processed_lines) -> (str, str):
                                                                            message=message["message"],
                                                                            line=message["line"],
                                                                            obj=obj)
+
+        s = "\n\n## DIFF SUMMARY\n\n"
+        s += "This report generated on {}\n\n".format(datetime.date.today())
+        s += "  * Total Unmatched Associations: {}\n".format(len(messages))
+        s += "  * Total Associations Compared: " + str(processed_lines) + "\n"
 
         return s, len(messages)
 
