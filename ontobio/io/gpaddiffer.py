@@ -73,9 +73,13 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
             merged_group_frame = pd.concat([grouped_frame1, grouped_frame2], axis=1)
             merged_group_frame_no_nulls = merged_group_frame.fillna(0)
             fix_int_df = merged_group_frame_no_nulls.astype(int)
-            fix_int_df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
+            column1 = fix_int_df.columns[0]
+            column2 = fix_int_df.columns[1]+"2"
+            fix_int_df.columns.values[1] = column2
+            df = fix_int_df.query("{0}".format(column1) + " != " + "{0}".format(column2))
+            print(df)
+            df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
             print("\n")
-            print(fix_int_df)
 
 
 def compare_associations(assocs1, assocs2, output, file1, file2):
