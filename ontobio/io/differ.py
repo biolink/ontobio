@@ -139,7 +139,7 @@ def markdown_report(report, processed_lines) -> (str, str):
 
     for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
         s += "### {rule}\n\n".format(rule=rule)
-        s += "* total: {amount}\n".format(amount=len(messages))
+        s += "* total missing annotations: {amount}\n".format(amount=len(messages))
         s += "\n"
         if len(messages) > 0:
             s += "#### Messages\n\n"
