@@ -54,6 +54,11 @@ def generate_count_report(df_file1, df_file2, file1, file2, output):
     merged_frame = pd.concat([counts_frame1, counts_frame2], axis=1)
     merged_frame.astype('Int64')
     merged_frame.to_csv(output + "_counts_per_column_report", sep='\t')
+    s = "\n\n## COLUMN COUNT SUMMARY \n\n"
+    s += "This report generated on {}\n\n".format(datetime.date.today())
+    s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
+    s += "  * See Report File: " + output + "_counts_per_column_report"
+    print(s)
     print(merged_frame)
 
 
@@ -63,7 +68,7 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
         s = "\n\n## GROUP BY SUMMARY \n\n"
         s += "This report generated on {}\n\n".format(datetime.date.today())
         s += "  * Group By Columns: " + str(group_by_column) + "\n"
-        s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
+        s += "  * Compared Files: " + file1 + ", " + file2 + "\n\n"
         print(s)
 
         for group in group_by_column:
@@ -77,7 +82,8 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
             column2 = fix_int_df.columns[1]+"2"
             fix_int_df.columns.values[1] = column2
             df = fix_int_df.query("{0}".format(column1) + " != " + "{0}".format(column2))
-            print(df)
+            print("number of " + group + "s that show differences: " + str(len(df.index)))
+            print("see output file: " + output + "_" + group + "_counts_per_column_report")
             df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
             print("\n")
 
@@ -95,29 +101,33 @@ def compare_associations(assocs1, assocs2, output, file1, file2):
                 x.evidence.type,
                 x.evidence._supporting_reference_to_str(),
                 x.evidence._with_support_from_to_str()
-                ) for x in assocs1 if type(x) != dict)
-    difference = [x for x in assocs2 if type(x) != dict
-                  if (str(x.subject.id),
-                      str(x.object.id),
-                      normalize_relation(x.relation),
-                      x.negated,
-                      x.evidence.type,
-                      x.evidence._supporting_reference_to_str(),
-                      x.evidence._with_support_from_to_str()
+                ) for x in assocs2 if type(x) != dict)
+    difference = [y for y in assocs1 if type(y) != dict
+                  if (str(y.subject.id),
+                      str(y.object.id),
+                      normalize_relation(y.relation),
+                      y.negated,
+                      y.evidence.type,
+                      y.evidence._supporting_reference_to_str(),
+                      y.evidence._with_support_from_to_str()
                       ) not in set1]
 
-    for x in difference:
-        report.add_association(x)
+    for diff in difference:
+        report.add_association(diff)
         report.n_lines = report.n_lines + 1
-        report.error(x.source_line, qc.ResultType.ERROR, "line from %s has NO match in %s" % (file1, file2), "")
+        report.error(diff.source_line, qc.ResultType.ERROR, "line from %s has NO match in %s" % (file1, file2), "")
 
-    md_report = markdown_report(report, processed_associations)
-    print(md_report)
+    md_report, number_of_messages = markdown_report(report, processed_associations)
+    s = "\n\n## GoAssociation Object DIFF SUMMARY\n\n"
+    s += "This report generated on {}\n\n".format(datetime.date.today())
+    s += "  * Number of association differences between %s and %s: %s" % (file1, file2, number_of_messages)
+    s += "  * See report: " + output + "_compare_report"
+    print(s)
     compare_report_file.write(md_report)
     compare_report_file.close()
 
 
-def markdown_report(report, processed_lines):
+def markdown_report(report, processed_lines) -> (str, str):
 
     json = report.to_report_json()
 
@@ -140,7 +150,7 @@ def markdown_report(report, processed_lines):
                                                                            line=message["line"],
                                                                            obj=obj)
 
-        return s
+        return s, len(messages)
 
 
 def get_typed_parser(file_handle, filename):
