@@ -81,6 +81,8 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
             column2 = fix_int_df.columns[1]+"2"
             fix_int_df.columns.values[1] = column2
             df = fix_int_df.query("{0}".format(column1) + " != " + "{0}".format(column2))
+            df.rename(columns={list(df)[0]: file1}, inplace=True)
+            df.rename(columns={list(df)[1]: file2}, inplace=True)
             s += "  * Number of " + group + "s that show differences: " + str(len(df.index)) + "\n"
             s += "  * See output file " + output + "_" + group + "_counts_per_column_report" + "\n"
             df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
