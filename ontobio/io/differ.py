@@ -69,7 +69,6 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
         s += "This report generated on {}\n\n".format(datetime.date.today())
         s += "  * Group By Columns: " + str(group_by_column) + "\n"
         s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
-        print(s)
 
         for group in group_by_column:
             file1_groups, grouped_frame1 = get_group_by(df_file1, group, file1)
@@ -85,6 +84,7 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
             s += "  * Number of " + group + "s that show differences: " + str(len(df.index))
             s += "  * See output file " + output + "_" + group + "_counts_per_column_report" + "\n"
             df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
+            print(s)
             print("\n\n")
 
 
