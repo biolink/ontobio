@@ -123,7 +123,7 @@ def compare_associations(assocs1, assocs2, output, file1, file2):
     s += "  * Total Unmatched Associations: {}\n".format(number_of_messages)
     s += "  * Total Associations Compared: " + str(len(assocs1)) + "\n"
     s += "  * See report: " + output + "_compare_report" + "\n"
-    
+
     print(s)
     compare_report_file.write(md_report)
     compare_report_file.close()
@@ -135,7 +135,6 @@ def markdown_report(report, processed_lines) -> (str, str):
 
     s = "\n\n## DIFF SUMMARY\n\n"
     s += "This report generated on {}\n\n".format(datetime.date.today())
-    s += "  * Total Unmatched Associations: {}\n".format(json["associations"])
     s += "  * Total Associations Compared: " + str(processed_lines) + "\n"
 
     for (rule, messages) in sorted(json["messages"].items(), key=lambda t: t[0]):
@@ -151,11 +150,6 @@ def markdown_report(report, processed_lines) -> (str, str):
                                                                            message=message["message"],
                                                                            line=message["line"],
                                                                            obj=obj)
-
-        s = "\n\n## DIFF SUMMARY\n\n"
-        s += "This report generated on {}\n\n".format(datetime.date.today())
-        s += "  * Total Unmatched Associations: {}\n".format(len(messages))
-        s += "  * Total Associations Compared: " + str(processed_lines) + "\n"
 
         return s, len(messages)
 
