@@ -57,7 +57,7 @@ def generate_count_report(df_file1, df_file2, file1, file2, output):
     s = "\n\n## COLUMN COUNT SUMMARY \n\n"
     s += "This report generated on {}\n\n".format(datetime.date.today())
     s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
-    s += "  * See Report File: " + output + "_counts_per_column_report"
+    s += "  * See Report File: " + output + "_counts_per_column_report" +"\n\n"
     print(s)
     print(merged_frame)
 
@@ -68,7 +68,7 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
         s = "\n\n## GROUP BY SUMMARY \n\n"
         s += "This report generated on {}\n\n".format(datetime.date.today())
         s += "  * Group By Columns: " + str(group_by_column) + "\n"
-        s += "  * Compared Files: " + file1 + ", " + file2 + "\n\n"
+        s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
         print(s)
 
         for group in group_by_column:
@@ -82,10 +82,10 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, out
             column2 = fix_int_df.columns[1]+"2"
             fix_int_df.columns.values[1] = column2
             df = fix_int_df.query("{0}".format(column1) + " != " + "{0}".format(column2))
-            print("number of " + group + "s that show differences: " + str(len(df.index)))
-            print("see output file: " + output + "_" + group + "_counts_per_column_report")
+            s += "  * Number of " + group + "s that show differences: " + str(len(df.index))
+            s += "  * See output file " + output + "_" + group + "_counts_per_column_report" + "\n"
             df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
-            print("\n")
+            print("\n\n")
 
 
 def compare_associations(assocs1, assocs2, output, file1, file2):
@@ -120,8 +120,8 @@ def compare_associations(assocs1, assocs2, output, file1, file2):
     md_report, number_of_messages = markdown_report(report, processed_associations)
     s = "\n\n## GoAssociation Object DIFF SUMMARY\n\n"
     s += "This report generated on {}\n\n".format(datetime.date.today())
-    s += "  * Number of association differences between %s and %s: %s" % (file1, file2, number_of_messages)
-    s += "  * See report: " + output + "_compare_report"
+    s += "  * Number of association differences between file1 and file2: %s" % number_of_messages + "\n"
+    s += "  * See report: " + output + "_compare_report" + "\n"
     print(s)
     compare_report_file.write(md_report)
     compare_report_file.close()
