@@ -7,10 +7,9 @@ from json.decoder import JSONDecodeError
 from ontobio.model.similarity import Node, TypedNode
 from ontobio.neo.scigraph_ontology import RemoteScigraphOntology
 from ontobio.util.user_agent import get_user_agent
-from ontobio.util.curie_map import get_curie_map
 from ontobio.model.bbop_graph import BBOPGraph
 from ontobio.model.nlp import EntityAnnotationResults, SciGraphAnnotation
-from ontobio.model.biomodel import BioObject, SynonymPropertyValue, Taxon, NamedObject
+from ontobio.model.biomodel import BioObject, Taxon, NamedObject
 from ontobio.config import get_config
 
 from prefixcommons.curie_util import expand_uri
@@ -293,23 +292,6 @@ class SciGraph:
             raise RequestException
 
         return request
-
-    # Maps bbop-graph model to biomodels datamodel
-    # TODO: delete this
-    def map_tuple(self, id, lbl, meta):
-        obj = {
-            'id': id,
-            'label': lbl,
-            'category': meta.get('category'),
-            'xrefs': meta.get('http://www.geneontology.org/formats/oboInOwl#hasDbXref'),
-            'iri': expand_uri(id, [get_curie_map()])
-        }
-        if 'synonym' in meta:
-            obj['synonyms'] = [SynonymPropertyValue(pred='synonym', val=s) for s in meta['synonym']]
-        if 'definition' in meta:
-            obj['description'] = meta.get('definition')[0]
-
-        return obj
 
     ## Domain-specific methods
     ## Note some of these may be redundant with https://github.com/monarch-initiative/monarch-cypher-queries/tree/master/src/main/cypher/golr-loader

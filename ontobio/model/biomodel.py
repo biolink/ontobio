@@ -9,7 +9,7 @@ https://raw.githubusercontent.com/biolink/biolink-api/1e81503/biomodel/core.py
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from ontobio.util.curie_map import get_curie_map
 
@@ -60,16 +60,16 @@ class NamedObject:
          Potential replacement object (if named object is obsoleted)
     """
     id: str = None
-    lbl: str = None
-    iri: str = None
-    category: str = None
-    description: str = None
-    types: List[str] = field(default_factory=list)
-    synonyms: List[str] = field(default_factory=list)
-    deprecated: bool = None
-    replaced_by: List[str] = field(default_factory=list)
-    consider: List[str] = field(default_factory=list)
-    meta: Dict = field(default_factory=dict)
+    lbl: Optional[str] = None
+    iri: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    types: Optional[List[str]] = field(default_factory=list)
+    synonyms: Optional[List[str]] = field(default_factory=list)
+    deprecated: Optional[bool] = None
+    replaced_by: Optional[List[str]] = field(default_factory=list)
+    consider: Optional[List[str]] = field(default_factory=list)
+    meta: Optional[Dict] = field(default_factory=dict)
 
     def __post_init__(self):
         """
@@ -93,8 +93,8 @@ class NamedObject:
 
 @dataclass
 class Taxon:
-    id: str = None
-    lbl: str = None
+    id: Optional[str] = None
+    lbl: Optional[str] = None
 
     def __post_init__(self):
         if self.lbl:
@@ -110,9 +110,9 @@ class BioObject(NamedObject):
     Superclass: NamedObject
     """
 
-    taxon: Taxon = None
-    association_counts: int = None
-    xrefs: List[str] = field(default_factory=list)
+    taxon: Optional[Taxon] = None
+    association_counts: Optional[int] = None
+    xrefs: Optional[List[str]] = field(default_factory=list)
 
     def __post_init__(self):
         super().__post_init__()
@@ -123,8 +123,8 @@ class BioObject(NamedObject):
 
 @dataclass
 class Disease(BioObject):
-    inheritance: List[NamedObject] = field(default_factory=list)
-    clinical_modifiers: List[NamedObject] = field(default_factory=list)
+    inheritance: Optional[List[NamedObject]] = field(default_factory=list)
+    clinical_modifiers: Optional[List[NamedObject]] = field(default_factory=list)
 
 
 @dataclass
@@ -147,9 +147,9 @@ class AbstractPropertyValue:
          Xrefs provenance for property-value
     """
 
-    val: str = None
-    pred: str = None
-    xrefs: List[str] = field(default_factory=list)
+    val: Optional[str] = None
+    pred: Optional[str] = None
+    xrefs: Optional[List[str]] = field(default_factory=list)
 
 
 @dataclass
@@ -159,4 +159,4 @@ class SynonymPropertyValue(AbstractPropertyValue):
 
     Superclass: AbstractPropertyValue
     """
-    id: str = None
+    id: Optional[str] = None
