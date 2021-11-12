@@ -7,10 +7,11 @@ from ontobio.io import qc
 from ontobio.io.assocparser import Report
 from ontobio.model.association import GoAssociation
 from ontobio.model import collections
+from typing import List
 import warnings
 from pandas.core.common import SettingWithCopyWarning
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
-from typing import Dict, List
+
 
 @click.command()
 @click.option("--file1",
