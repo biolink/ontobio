@@ -41,21 +41,54 @@ warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
               required=False,
               help='Only report group by results when the second file shows a decrease in number by grouping column')
 def compare_files(file1, file2, output, group_by_column, restrict_to_decreases):
-    # decide which parser to instantiate, GAF or GPAD
+    """
+
+    Method to compare two GPAD or GAF files and report differences on a file level and via converting
+    file-based rows to GoAssociation objects.
+
+    :param file1: Name of the source file to compare
+    :type file1: str
+    :param file2: Name of the target/second file to compare
+    :type file2: str
+    :param output: The prefix that will be appended to all the output files/reports created by this script.
+    :type output: str
+    :param group_by_column: Name of the target/second file to compare
+    :type group_by_column: List
+    :param restrict_to_decreases: An optional boolean flag that allows the grouping column counts to be returned only
+        if they show a decrease in number beteween file1 and file2
+    :type restrict_to_decreases: bool
+
+    """
     pd.set_option('display.max_rows', 35000)
+
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2)
-
-    # get the number of counts per column of each file and summarize.
     generate_count_report(df_file1, df_file2, file1, file2, output)
-
-    # try to figure out how many Association objects match in each file.
     compare_associations(assocs1, assocs2, output, file1, file2)
-
-    # group_by is a list of strings exactly matching column names.
     generate_group_report(df_file1, df_file2, group_by_column, file1, file2, restrict_to_decreases, output)
 
 
 def generate_count_report(df_file1, df_file2, file1, file2, output):
+    """
+
+    Method to generate a report of the number of distinct values of each of the columns
+    in a GAF or GPAD file.  Currently restricted to the following columns: subject, qualifiers, object, evidence_code
+    and reference.
+
+    Uses pandas internal functions like merge and nunique to count and display metrics.
+
+    :param df_file1: data frame representing a normalized columnar represenation of file1
+    :type df_file1: pd
+    :param df_file2: data frame representing a normalized columnar represenation of file2
+    :type df_file2: pd
+    :param file1: The file name of the file provided in the click for reporting purposes.
+    :type file1: str
+    :param file2: The file name of the file provided in the click for reporting purposes.
+    :type file2: str
+    :param output: Prefix of the reported files for reporting purposes.
+    :type output: str
+
+    """
+
     file1_groups, counts_frame1 = get_column_count(df_file1, file1)
     file2_groups, counts_frame2 = get_column_count(df_file2, file2)
 
@@ -71,6 +104,29 @@ def generate_count_report(df_file1, df_file2, file1, file2, output):
 
 
 def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, restrict_to_decreases, output):
+    """
+
+    Method to generate a report of the number of distinct values of each of the provided group_by columns
+    in a GAF or GPAD file.  Currently restricted to the following columns: subject, object, evidence_code.
+
+    :param df_file1: data frame representing a normalized columnar represenation of file1
+    :type df_file1: pd
+    :param df_file2: data frame representing a normalized columnar represenation of file2
+    :type df_file2: pd
+    :param group_by_column: the columns to group by
+    :type group_by_column: List[str]
+    :param file1: The file name of the file provided in the click for reporting purposes.
+    :type file1: str
+    :param file2: The file name of the file provided in the click for reporting purposes.
+    :type file2: str
+    :param restrict_to_decreases: An optional boolean flag that allows the grouping column counts to be returned only
+        if they show a decrease in number beteween file1 and file2
+    :type restrict_to_decreases: bool
+    :param output: Prefix of the reported files for reporting purposes.
+    :type output: str
+
+    """
+
     if len(group_by_column) > 0:
 
         s = "\n\n## GROUP BY SUMMARY \n\n"
@@ -103,6 +159,25 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, res
 
 
 def compare_associations(assocs1, assocs2, output, file1, file2):
+    """
+
+    Method to compare files by turning them into collections of GoAssociation objects and comparing the
+    content of the GoAssociations for matches between collections.
+
+    :param assocs1: List of GoAssociations to compare from file1
+    :type assocs1: List[GoAssociation]
+    :param assocs2: List of GoAssociations to compare from file2
+    :type assocs2: List[GoAssociation]
+    :param file1: The file name of the file provided in the click for reporting purposes.
+    :type file1: str
+    :param file2: The file name of the file provided in the click for reporting purposes.
+    :type file2: str
+    :param output: Prefix of the reported files for reporting purposes.
+    :type output: str
+
+    """
+
+
     compare_report_file = open(output + "_compare_report", "w")
     processed_associations = len(assocs1)
 
