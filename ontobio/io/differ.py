@@ -10,6 +10,7 @@ import warnings
 from pandas.core.common import SettingWithCopyWarning
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
+
 @click.command()
 @click.option("--file1",
               "-file1",
@@ -20,7 +21,7 @@ warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
               "-file2",
               type=click.Path(),
               required=True,
-              help='file2 is the file that is the result of a transformation.')
+              help='file2 is the file that is the result of a transformation, or the target file.')
 @click.option("--output",
               "-o",
               type=click.STRING,
