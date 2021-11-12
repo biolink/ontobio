@@ -5,11 +5,12 @@ import pandas as pd
 import datetime
 from ontobio.io import qc
 from ontobio.io.assocparser import Report
+from ontobio.model.association import GoAssociation
 from ontobio.model import collections
 import warnings
 from pandas.core.common import SettingWithCopyWarning
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
-
+from typing import Dict, List
 
 @click.command()
 @click.option("--file1",
@@ -166,7 +167,7 @@ def markdown_report(report, processed_lines) -> (str, str):
         return s, len(messages)
 
 
-def get_typed_parser(file_handle, filename):
+def get_typed_parser(file_handle, filename) -> [str, assocparser.AssocParser]:
     parser = assocparser.AssocParser()
 
     for line in file_handle:
@@ -191,7 +192,7 @@ def normalize_relation(relation: str) -> str:
         return romap.keys()[romap.values().index(str(relation))]
 
 
-def get_parser(file1, file2):
+def get_parser(file1, file2) -> (str, str, List[GoAssociation], List[GoAssociation]):
 
     file1_obj = assocparser.AssocParser()._ensure_file(file1)
     df_file1, parser1 = get_typed_parser(file1_obj, file1)
@@ -204,7 +205,7 @@ def get_parser(file1, file2):
     return df_file1, df_file2, assocs1, assocs2
 
 
-def read_gaf_csv(filename, version):
+def read_gaf_csv(filename, version) -> pd:
     ecomapping = ecomap.EcoMap()
     data_frame = pd.read_csv(filename,
                              comment='!',
@@ -238,7 +239,7 @@ def read_gaf_csv(filename, version):
     return new_df
 
 
-def read_gpad_csv(filename, version):
+def read_gpad_csv(filename, version) -> pd:
     if version.startswith("1"):
         data_frame = pd.read_csv(filename,
                                  comment='!',
@@ -277,14 +278,14 @@ def read_gpad_csv(filename, version):
     return new_df
 
 
-def get_group_by(data_frame, group, file):
+def get_group_by(data_frame, group, file) -> (pd, pd):
     stats = {'filename': file, 'total_rows': data_frame.shape[0]}
     grouped_frame = data_frame.groupby(group)[group].count().to_frame()
     without_nulls = grouped_frame.fillna(0)
     return stats, without_nulls
 
 
-def get_column_count(data_frame, file):
+def get_column_count(data_frame, file) -> (pd, pd):
     stats = {'filename': file, 'total_rows': data_frame.shape[0]}
     count_frame = data_frame.nunique().to_frame(file)
     return stats, count_frame
