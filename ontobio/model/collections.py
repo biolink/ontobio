@@ -74,7 +74,7 @@ def create_parser_from_header(line: str, config: assocparser.AssocParserConfig, 
         filetype, version, _ = parsed_version[0]
         if filetype in ["gpad", "gpa"]:
             parser = gpadparser.GpadParser(config=config, bio_entities=bio_entities, group=group, dataset=dataset)
-            if version in ["1.2", "2.0"]:
+            if version in ["1.1", "1.2", "2.0"]:
                 parser.version = version
         elif filetype == "gaf":
             parser = gafparser.GafParser(config=config, bio_entities=bio_entities, group=group, dataset=dataset)
