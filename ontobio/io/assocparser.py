@@ -691,7 +691,10 @@ class AssocParser(object):
                 regrouped_fixed_elements = grouped_fixed_elements
             else:
                 regrouped_fixed_elements = regrouped_fixed_elements + "|" + grouped_fixed_elements
-        return association.ConjunctiveSet.str_to_conjunctions(regrouped_fixed_elements)
+        if regrouped_fixed_elements:
+            return association.ConjunctiveSet.str_to_conjunctions(regrouped_fixed_elements)
+        else:
+            return []
 
     # check the term id is in the ontology, and is not obsolete
     def _validate_ontology_class_id(self, id, line: SplitLine, subclassof=None):
