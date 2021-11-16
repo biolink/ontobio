@@ -1002,6 +1002,8 @@ class AnnotonCamRdfTransform(CamRdfTransform):
         self.emit_type(ev_id, OWL.NamedIndividual)
         self.emit_type(ev_id, ev_cls)
         self.emit(ev_id, DC.date, Literal(evidence.date))
+        if evidence.creation_date:
+            self.emit(ev_id, DCT.created, Literal(evidence.creation_date))
         if evidence.with_from:
             self.emit(ev_id, URIRef("http://geneontology.org/lego/evidence-with"), Literal(evidence.with_from))
         for c in evidence.contributors:
