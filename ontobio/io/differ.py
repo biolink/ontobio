@@ -177,7 +177,6 @@ def compare_associations(assocs1, assocs2, output, file1, file2):
 
     """
 
-
     compare_report_file = open(output + "_compare_report", "w")
     processed_associations = len(assocs1)
 
