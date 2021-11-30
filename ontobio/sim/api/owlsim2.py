@@ -191,6 +191,9 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
         },
         '7955': {
             'gene': 'ZFIN'
+        },
+        '8353': {
+            'gene': 'Xenbase'
         }
     }
 
@@ -479,7 +482,8 @@ class OwlSim2Api(SimApi, InformationContentStore, FilteredSearchable):
             '9606':  'disease',
             '7227':  'gene',
             '6239':  'gene',
-            '7955':  'gene'
+            '7955':  'gene',
+            '8353':  'gene'
         }
         if category_filter is not None and taxon_filter is None:
             raise ValueError("Must provide taxon filter along with category")

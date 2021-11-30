@@ -235,6 +235,7 @@ def test_subontology():
     print(str(ancs))
     assert len(ancs) > 0
 
+
 def test_obsolete():
     """
     Test obsoletion metadata
@@ -254,4 +255,5 @@ def test_obsolete():
             print("REPLACED BY: {} {}".format(rb, ont.label(rb)))
     assert ont.replaced_by('GO:1') == ['GO:2']
     assert ont.replaced_by('GO:4') == ['GO:3']
-    assert n_obs == 2
+    assert ont.replaced_by('GO:0005913') == ['GO:0005912']
+    assert n_obs == 3

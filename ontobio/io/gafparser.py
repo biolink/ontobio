@@ -260,7 +260,7 @@ class GafParser(assocparser.AssocParser):
             validated = self.validate_curie_ids(wf.elements, split_line)
             if validated is None:
                 return assocparser.ParseResult(line, [], True)
-
+        assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line, 'gaf')
         # validation
         self._validate_symbol(assoc.subject.label, split_line)
 
@@ -332,6 +332,7 @@ class GafParser(assocparser.AssocParser):
 
 ecomap = EcoMap()
 ecomap.mappings()
+
 
 def to_association(gaf_line: List[str], report=None, group="unknown", dataset="unknown", qualifier_parser=assocparser.Qualifier2_1(), bio_entities=None) -> assocparser.ParseResult:
     report = Report(group=group, dataset=dataset) if report is None else report
