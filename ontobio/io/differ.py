@@ -343,13 +343,14 @@ def read_gpad_csv(filename, version) -> pd:
                 new_df['evidence_code'] = new_df['evidence_code'].replace([eco_code[2]],
                                                                           ecomapping.ecoclass_to_coderef(eco_code[2])[0])
 
-    # normalize MGI ids
+    # normalize ids
     config = assocparser.AssocParserConfig()
     config.remove_double_prefixes = True
     parser = gpadparser.GpadParser(config=config)
     for i, r in enumerate(new_df['subject']):
         r1 = parser._normalize_id(r)
         new_df.at[i, 'subject'] = r1
+
     return new_df
 
 
