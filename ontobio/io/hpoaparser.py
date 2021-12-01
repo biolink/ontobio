@@ -2,6 +2,7 @@ from ontobio.io.assocparser import AssocParser
 from ontobio.io import assocparser
 from ontobio.io.assocparser import ENTITY, EXTENSION, ANNOTATION
 
+
 class HpoaParser(AssocParser):
     """
     Parser for HPOA format
