@@ -342,7 +342,7 @@ class GoCamModel:
         self.writer.emit_type(property_id, OWL.ObjectProperty)
 
         if evidence:
-            self.add_evidence(stmt_id, evidence.evidence_code, evidence.references)
+            self.add_evidence(stmt_id, evidence)
 
         return stmt_id
 
