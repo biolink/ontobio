@@ -12,7 +12,6 @@ import warnings
 from pandas.core.common import SettingWithCopyWarning
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
-
 @click.command()
 @click.option("--file1",
               "-file1",
@@ -35,12 +34,7 @@ warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
               multiple=True,
               required=False,
               help='Options to group by include: subject, object, and/or evidence_code.')
-@click.option("--restrict_to_decreases",
-              "-rtd",
-              type=click.BOOL,
-              required=False,
-              help='Only report group by results when the second file shows a decrease in number by grouping column')
-def compare_files(file1, file2, output, group_by_column, restrict_to_decreases):
+def compare_files(file1, file2, output, group_by_column):
     """
 
     Method to compare two GPAD or GAF files and report differences on a file level and via converting
@@ -54,17 +48,13 @@ def compare_files(file1, file2, output, group_by_column, restrict_to_decreases):
     :type output: str
     :param group_by_column: Name of the target/second file to compare
     :type group_by_column: List
-    :param restrict_to_decreases: An optional boolean flag that allows the grouping column counts to be returned only
-        if they show a decrease in number beteween file1 and file2
-    :type restrict_to_decreases: bool
-
     """
     pd.set_option('display.max_rows', 35000)
 
     df_file1, df_file2, assocs1, assocs2 = get_parser(file1, file2)
     generate_count_report(df_file1, df_file2, file1, file2, output)
     compare_associations(assocs1, assocs2, output, file1, file2)
-    generate_group_report(df_file1, df_file2, group_by_column, file1, file2, restrict_to_decreases, output)
+    generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output)
 
 
 def generate_count_report(df_file1, df_file2, file1, file2, output):
@@ -76,9 +66,9 @@ def generate_count_report(df_file1, df_file2, file1, file2, output):
 
     Uses pandas internal functions like merge and nunique to count and display metrics.
 
-    :param df_file1: data frame representing a normalized columnar represenation of file1
+    :param df_file1: data frame representing a normalized columnar representation of file1
     :type df_file1: pd
-    :param df_file2: data frame representing a normalized columnar represenation of file2
+    :param df_file2: data frame representing a normalized columnar representation of file2
     :type df_file2: pd
     :param file1: The file name of the file provided in the click for reporting purposes.
     :type file1: str
@@ -98,20 +88,20 @@ def generate_count_report(df_file1, df_file2, file1, file2, output):
     s = "\n\n## COLUMN COUNT SUMMARY \n\n"
     s += "This report generated on {}\n\n".format(datetime.date.today())
     s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
-    s += "  * See Report File: " + output + "_counts_per_column_report" +"\n\n"
+    s += "  * See Report File: " + output + "_counts_per_column_report" + "\n\n"
     print(s)
     print(merged_frame)
 
 
-def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, restrict_to_decreases, output):
+def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, output):
     """
 
     Method to generate a report of the number of distinct values of each of the provided group_by columns
     in a GAF or GPAD file.  Currently restricted to the following columns: subject, object, evidence_code.
 
-    :param df_file1: data frame representing a normalized columnar represenation of file1
+    :param df_file1: data frame representing a normalized columnar representation of file1
     :type df_file1: pd
-    :param df_file2: data frame representing a normalized columnar represenation of file2
+    :param df_file2: data frame representing a normalized columnar representation of file2
     :type df_file2: pd
     :param group_by_column: the columns to group by
     :type group_by_column: List[str]
@@ -119,20 +109,10 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, res
     :type file1: str
     :param file2: The file name of the file provided in the click for reporting purposes.
     :type file2: str
-    :param restrict_to_decreases: An optional boolean flag that allows the grouping column counts to be returned only
-        if they show a decrease in number beteween file1 and file2
-    :type restrict_to_decreases: bool
-    :param output: Prefix of the reported files for reporting purposes.
-    :type output: str
 
     """
 
     if len(group_by_column) > 0:
-
-        s = "\n\n## GROUP BY SUMMARY \n\n"
-        s += "This report generated on {}\n\n".format(datetime.date.today())
-        s += "  * Group By Columns: " + str(group_by_column) + "\n"
-        s += "  * Compared Files: " + file1 + ", " + file2 + "\n"
 
         for group in group_by_column:
             file1_groups, grouped_frame1 = get_group_by(df_file1, group, file1)
@@ -144,18 +124,24 @@ def generate_group_report(df_file1, df_file2, group_by_column, file1, file2, res
             column1 = fix_int_df.columns[0]
             column2 = fix_int_df.columns[1]+"2"
             fix_int_df.columns.values[1] = column2
-            if restrict_to_decreases:
-                df = fix_int_df.query("{0}".format(column1) + " > " + "{0}".format(column2))
-            else:
-                df = fix_int_df.query("{0}".format(column1) + " != " + "{0}".format(column2))
 
-            s += "  * Number of unqiue " + group + "s that show differences: " + str(len(df.index)) + "\n"
-            s += "  * See output file " + output + "_" + group + "_counts_per_column_report" + "\n"
-            df.rename(columns={list(df)[0]: file1}, inplace=True)
-            df.rename(columns={list(df)[1]: file2}, inplace=True)
-            df.to_csv(output + "_" + group + "_counts_per_column_report", sep='\t')
-            print(s)
-            print("\n\n")
+            generate_counts_per_column_reports(file1, file2, column1, column2, "<", fix_int_df, group, output)
+            generate_counts_per_column_reports(file1, file2, column1, column2, ">", fix_int_df, group, output)
+            generate_counts_per_column_reports(file1, file2, column1, column2, "!=", fix_int_df, group, output)
+
+
+def generate_counts_per_column_reports(file1, file2, column1, column2, direction, fix_int_df, group, output):
+    df = fix_int_df.query("{0}".format(column1) + direction + "{0}".format(column2))
+
+    if direction == "<":
+        direction = "increase_between"
+    elif direction == ">":
+        direction = "decrease_between"
+    else:
+        direction = "different_than"
+    df.rename(columns={list(df)[0]: file1}, inplace=True)
+    df.rename(columns={list(df)[1]: file2}, inplace=True)
+    df.to_csv(output + "_" + direction + "_" + group + "_counts_per_column_report", sep='\t')
 
 
 def compare_associations(assocs1, assocs2, output, file1, file2):
@@ -255,7 +241,7 @@ def get_typed_parser(file_handle, filename) -> [str, assocparser.AssocParser]:
     if isinstance(parser, gpadparser.GpadParser):
         df_file = read_gpad_csv(filename, parser.version)
     else:
-        df_file = read_gaf_csv(filename, parser.version)
+        df_file = read_gaf_csv(filename)
 
     return df_file, parser
 
@@ -280,7 +266,7 @@ def get_parser(file1, file2) -> (str, str, List[GoAssociation], List[GoAssociati
     return df_file1, df_file2, assocs1, assocs2
 
 
-def read_gaf_csv(filename, version) -> pd:
+def read_gaf_csv(filename) -> pd:
     ecomapping = ecomap.EcoMap()
     data_frame = pd.read_csv(filename,
                              comment='!',
@@ -309,8 +295,8 @@ def read_gaf_csv(filename, version) -> pd:
         for ev in new_df['Evidence_code']:
             if eco_code[2] == ev:
                 new_df['Evidence_code'] = new_df['Evidence_code'].replace([eco_code[2]],
-                                                                              ecomapping.ecoclass_to_coderef(
-                                                                                  eco_code[2])[0])
+                                                                          ecomapping.ecoclass_to_coderef(
+                                                                              eco_code[2])[0])
     return new_df
 
 
@@ -322,7 +308,8 @@ def read_gpad_csv(filename, version) -> pd:
                                  header=None,
                                  na_filter=False,
                                  names=gpad_1_2_format).fillna("")
-        df = data_frame.filter(['db', 'subject', 'qualifiers', 'relation', 'object', 'evidence_code', 'reference'], axis=1)
+        df = data_frame.filter(['db', 'subject', 'qualifiers', 'relation', 'object', 'evidence_code', 'reference'],
+                               axis=1)
         concat_column = df['db'] + ":" + df['subject']
         df['concat_column'] = concat_column
         filtered_df = df.filter(['concat_column', 'qualifiers', 'relation', 'object', 'evidence_code', 'reference'])
@@ -374,7 +361,7 @@ romap = {"RO:0002327": "enables",
          "RO:0004034": "acts_upstream_of_positive_effect",
          "RO:0004035": "acts_upstream_of_negative_effect",
          "RO:0002264": "acts_upstream_of_or_within",
-         "RO:0004032": "acts_upstream_of_or_within_postitive_effect",
+         "RO:0004032": "acts_upstream_of_or_within_positive_effect",
          "RO:0004033": "acts_upstream_of_or_within_negative_effect",
          "RO:0001025": "located_in",
          "BFO:0000050": "part_of",
