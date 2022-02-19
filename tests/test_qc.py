@@ -222,7 +222,7 @@ def test_go_rule_16():
     assoc = make_annotation(evidence="IC", withfrom="BLAH:12345").associations[0]
 
     test_result = qc.GoRule16().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
     # withfrom has GO term
     assoc.evidence.with_support_from = association.ConjunctiveSet.str_to_conjunctions("GO:0023456")
@@ -240,7 +240,7 @@ def test_go_rule_16():
     assoc.evidence.with_support_from = []
 
     test_result = qc.GoRule16().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
     # Not IC
     assoc.evidence.type = Curie.from_str(iea_eco)
