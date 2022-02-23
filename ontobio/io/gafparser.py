@@ -260,7 +260,10 @@ class GafParser(assocparser.AssocParser):
             validated = self.validate_curie_ids(wf.elements, split_line)
             if validated is None:
                 return assocparser.ParseResult(line, [], True)
-        assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line, 'gaf')
+        with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line, 'gaf')
+        if with_support_from is None:
+            return assocparser.ParseResult(line, [], True)
+        assoc.evidence.with_support_from = with_support_from
         # validation
         self._validate_symbol(assoc.subject.label, split_line)
 
