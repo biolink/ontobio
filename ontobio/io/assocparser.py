@@ -311,6 +311,7 @@ class AssocParserConfig():
         attribute_values = ["{att}={val}".format(att=att, val=dict([(k, v) for k, v in value.items()][:8]) if isinstance(value, dict) else value) for att, value in vars(self).items()]
         return "AssocParserConfig({})".format(",".join(attribute_values))
 
+
 class Report(object):
     """
     A report object that is generated as a result of a parse
@@ -344,7 +345,6 @@ class Report(object):
     VIOLATES_GO_RULE = "Violates GO Rule"
     RULE_PASS = "Passes GO Rule"
     INVALID_REFERENCES = "Only one reference per ID space allowed"
-
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
         self.messages = []
