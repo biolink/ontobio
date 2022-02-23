@@ -681,6 +681,8 @@ class AssocParser(object):
             for element_individual in filter(None, element_set.split(",")):  # parse the | and ,
                 if element_individual.startswith("GO:"):
                     fixed_element_individual = self._validate_ontology_class_id(str(element_individual), line)
+                    if fixed_element_individual is None:
+                        return None
                 else:
                     fixed_element_individual = element_individual
                 if grouped_fixed_elements == '':
@@ -691,7 +693,10 @@ class AssocParser(object):
                 regrouped_fixed_elements = grouped_fixed_elements
             else:
                 regrouped_fixed_elements = regrouped_fixed_elements + "|" + grouped_fixed_elements
-        return association.ConjunctiveSet.str_to_conjunctions(regrouped_fixed_elements)
+        if regrouped_fixed_elements:
+            return association.ConjunctiveSet.str_to_conjunctions(regrouped_fixed_elements)
+        else:
+            return []
 
     # check the term id is in the ontology, and is not obsolete
     def _validate_ontology_class_id(self, id, line: SplitLine, subclassof=None):
@@ -715,7 +720,7 @@ class AssocParser(object):
                         taxon=line.taxon, rule=20)
                     id = rb[0]
                 else:
-                    self.report.warning(line.line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020",
+                    self.report.error(line.line, Report.OBSOLETE_CLASS_NO_REPLACEMENT, id, msg="Violates GORULE:0000020",
                         taxon=line.taxon, rule=20)
                     id = None
             else:

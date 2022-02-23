@@ -446,6 +446,15 @@ def test_obsolete_replair_of_withfrom():
     assocs = p.parse(open(ZFIN_GAF, "r"), skipheader=True)
     assert assocs[0].evidence.with_support_from == [ConjunctiveSet(elements=[Curie(namespace='GO', identity='0005912')])]
 
+    # Reset parser report
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(OBSOLETE_ONT)))
+    p.version = "2.2"
+    obsolete_no_replacement_line = "FB\tFBgn0003334\tScm\tlocated_in\tGO:0005634\tFB:FBrf0179383|PMID:15280237\tIC\tGO:0016458\tC\tSex comb on midleg\tCG9495|SCM|Sex Comb on Midleg|Sex Comb on the Midleg|Sex combs on midleg|Sex combs on midlegs|Su(z)302|l(3)85Ef|scm|sex comb on midleg\tprotein\ttaxon:7227\t20050203\tUniProt\t\t"
+    assoc_result = p.parse_line(obsolete_no_replacement_line)
+    assert assoc_result.associations == []
+    assert p.report.to_report_json()["messages"]["gorule-0000020"][0]["obj"] == "GO:0016458"
+
 
 def test_subject_extensions_bad_curie():
     """
