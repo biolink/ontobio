@@ -602,10 +602,11 @@ class GolrSearchQuery(GolrAbstractQuery):
         # inject the taxon map (aka a facet pivot) into the returned facets
         if self.taxon_map:
             translated_facets['_taxon_map'] = {
-                x['value']: {
-                    y['value']: y['count'] for y in x['pivot']
+                taxon['value']: {
+                    taxon_label['value']: taxon_label['count']
+                    for taxon_label in taxon['pivot']
                 }
-                for x in results.facets['facet_pivot']['taxon,taxon_label']
+                for taxon in results.facets['facet_pivot']['taxon,taxon_label']
             }
 
         highlighting = {
