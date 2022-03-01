@@ -343,6 +343,7 @@ class GolrSearchQuery(GolrAbstractQuery):
                  facet_fields=None,
                  facet=True,
                  search_fields=None,
+                 taxon_map=True,
                  rows=100,
                  start=None,
                  prefix=None,
@@ -365,6 +366,7 @@ class GolrSearchQuery(GolrAbstractQuery):
         self.facet = facet
         self.facet_fields = facet_fields
         self.search_fields = search_fields
+        self.taxon_map = taxon_map
         self.rows = rows
         self.start = start
         # test if client explicitly passes a URL; do not override
@@ -423,7 +425,7 @@ class GolrSearchQuery(GolrAbstractQuery):
     def solr_params(self, mode=None):
 
         if self.facet_fields is None and self.facet:
-            self.facet_fields = ['category', 'taxon_label']
+            self.facet_fields = ['category', 'taxon', 'taxon_label']
 
         if self.category is not None:
             self.fq['category'] = self.category
@@ -479,6 +481,10 @@ class GolrSearchQuery(GolrAbstractQuery):
             params['facet.field'] = self.facet_fields
             params['facet.limit'] = 25
             params['facet.mincount'] = 1
+
+        if self.taxon_map:
+            params["facet.pivot.mincount"] =1
+            params["facet.pivot"] = "taxon,taxon_label"
 
         if self.start is not None:
             params['start'] = self.start
@@ -591,12 +597,23 @@ class GolrSearchQuery(GolrAbstractQuery):
                 doc['id'] = doc['entity']
                 doc['label'] = doc['entity_label']
 
+        translated_facets = translate_facet_field(results.facets)
+
+        # inject the taxon map (aka a facet pivot) into the returned facets
+        if self.taxon_map:
+            translated_facets['_taxon_map'] = {
+                x['value']: {
+                    y['value']: y['count'] for y in x['pivot']
+                }
+                for x in results.facets['facet_pivot']['taxon,taxon_label']
+            }
+
         highlighting = {
             doc['id']: asdict(self._process_highlight(results, doc))
             for doc in results.docs if results.highlighting
         }
         payload = SearchResults(
-            facet_counts=translate_facet_field(results.facets),
+            facet_counts=translated_facets,
             highlighting=highlighting,
             docs=results.docs,
             numFound=results.hits
@@ -1000,6 +1017,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
         if self.facet_fields is None:
             if self.facet:
                 self.facet_fields = [
+                    M.SUBJECT_TAXON,
                     M.SUBJECT_TAXON_LABEL,
                     M.OBJECT_CLOSURE
                 ]
