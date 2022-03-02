@@ -1,6 +1,6 @@
 solr_assocs:
-  # url: "http://unreal_url/solr"
-  url: "http://golr-aux.geneontology.io/solr"
+  url: "http://unreal_url/solr"
+  # url: "http://golr-aux.geneontology.io/solr"
   timeout: 60
 amigo_solr_assocs:
   url: "http://golr-aux.geneontology.io/solr"
