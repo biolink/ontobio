@@ -115,7 +115,10 @@ __relation_label_lookup = bidict({
     "ends with": "http://purl.obolibrary.org/obo/RO_0002230",
     "involved in regulation of": "http://purl.obolibrary.org/obo/RO_0002428",
     "involved in positive regulation of": "http://purl.obolibrary.org/obo/RO_0002429",
-    "involved in negative regulation of": "http://purl.obolibrary.org/obo/RO_0002430"
+    "involved in negative regulation of": "http://purl.obolibrary.org/obo/RO_0002430",
+    "exports": "http://purl.obolibrary.org/obo/RO_0002345",
+    "has primary input": "http://purl.obolibrary.org/obo/RO_0004009",
+    "has primary output": "http://purl.obolibrary.org/obo/RO_0004008",
 })
 
 def lookup_uri(uri, default=None):
