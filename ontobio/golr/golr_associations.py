@@ -34,6 +34,7 @@ def search_associations(**kwargs):
     :rtype:
     """
     logger.info("CREATING_GOLR_QUERY {}".format(kwargs))
+    print(kwargs)
     q = GolrAssociationQuery(**kwargs)
     return q.exec()
 
