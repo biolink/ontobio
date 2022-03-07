@@ -72,7 +72,10 @@ INPUT_RELATIONS = {
     "has input": "RO:0002233",
     "has_input": "RO:0002233",
     "occurs_in": "BFO:0000066",
-    "has_agent": "RO:0002218"
+    "has_agent": "RO:0002218",
+    "transports_or_maintains_localization_of": "RO:0004009",
+    "imports": "RO:0004009",
+    "exports": "RO:0004009",
 }
 ACTS_UPSTREAM_OF_RELATIONS = {
     "acts_upstream_of": "RO:0002263",
