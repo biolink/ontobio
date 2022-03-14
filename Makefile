@@ -61,3 +61,9 @@ nb:
 # used to make assoc_schema.py
 mm:
 	./bin/flask2marshmallow.pl ../biolink-api/biolink/datamodel/serializers.py
+
+VERSION = "v0.0.1" 
+IM = cmungall/ontobio
+build-docker:
+	@docker build -t $(IM):$(VERSION) . \
+	&& docker tag $(IM):$(VERSION) $(IM):latest
