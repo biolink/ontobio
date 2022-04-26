@@ -11,7 +11,7 @@ class TestGolrSearchQuery():
 
     @classmethod
     def setup_class(self):
-        self.manager = GolrSearchQuery()
+        self.manager = GolrSearchQuery(taxon_map=False)
 
         # Mock the PySolr search function to
         # return our test docs
