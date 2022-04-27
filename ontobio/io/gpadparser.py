@@ -167,6 +167,10 @@ class GpadParser(assocparser.AssocParser):
 
         go_rule_results = qc.test_go_rules(assoc, self.config)
         for rule, result in go_rule_results.all_results.items():
+            if isinstance(rule, qc.GoRule28):
+                # ignore result of GORULE:0000028 since aspect check will always fail for GPAD and get repaired
+                continue
+
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
                                     msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
