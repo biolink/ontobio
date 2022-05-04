@@ -50,7 +50,7 @@ class EDocState(Enum):
 # TODO
 # for now we assume ontobee
 ontol_sources = {
-    'go': "http://rdf.geneontology.org/sparql",
+    'go': "http://rdf.geneontology.org/blazegraph/sparql",
     '': "http://sparql.hegroup.org/sparql"
     }
 
@@ -370,6 +370,7 @@ def batch_fetch_labels(ids):
     """
     m = {}
     for id in ids:
+        print(id)
         label = anyont_fetch_label(id)
         if label is not None:
             m[id] = label
