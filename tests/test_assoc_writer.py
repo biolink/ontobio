@@ -119,7 +119,7 @@ def test_roundtrip():
 
 def test_gpad_qualifier_removed_in_gaf_2_1():
     # Qualifier is `part_of` and should be returned blank instead of removing the whole line
-    line = "PomBase\tSPBC1348.01\tpart_of\tGO:0009897\tGO_REF:0000051\tECO:0000201\t\t\t20060201\tPomBase\t\t"
+    line = "PomBase\tSPBC1348.01\tpart_of\tGO:0009897\tGO_REF:0000051\tECO:0000266\t\t\t20060201\tPomBase\t\t"
     parser = gpadparser.GpadParser()
     out = io.StringIO()
     writer = assocwriter.GafWriter(file=out, version="2.1")  # Write out to gaf 2.1
@@ -130,7 +130,7 @@ def test_gpad_qualifier_removed_in_gaf_2_1():
     assert gpad_to_gaf_line.split("\t")[3] == ""
 
     # Test with a `NOT`
-    line = "PomBase\tSPBC1348.01\tNOT|part_of\tGO:0009897\tGO_REF:0000051\tECO:0000201\t\t\t20060201\tPomBase\t\t"
+    line = "PomBase\tSPBC1348.01\tNOT|part_of\tGO:0009897\tGO_REF:0000051\tECO:0000266\t\t\t20060201\tPomBase\t\t"
     parser = gpadparser.GpadParser()
     out = io.StringIO()
     writer = assocwriter.GafWriter(file=out, version="2.1")  # Write out to gaf 2.1

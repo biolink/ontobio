@@ -73,6 +73,8 @@ def main():
                         help='Increase output verbosity')
     parser.add_argument("--allow_paint", required=False, action="store_const", const=True,
                         help="Allow IBAs in parser")
+    parser.add_argument("--allow_unmapped_eco", required=False, action="store_const", const=True,
+                        help="When parsing GPAD, allow ECO class IDs that do not map to an ECO GAF code")
     parser.add_argument("-g", "--gpi", type=str, required=False, default=None,
                         help="GPI file")
     parser.add_argument("-l", "--rule", action="append", required=None, default=[], dest="rule_set",
@@ -147,6 +149,7 @@ def main():
         filtered_evidence_file=filtered_evidence_file,
         annotation_inferences=gaferences,
         paint=args.allow_paint,
+        allow_unmapped_eco=args.allow_unmapped_eco,
         gpi_authority_path=args.gpi,
         rule_set=rule_set
     )
