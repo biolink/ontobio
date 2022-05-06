@@ -73,7 +73,7 @@ def main():
                         help='Increase output verbosity')
     parser.add_argument("--allow_paint", required=False, action="store_const", const=True,
                         help="Allow IBAs in parser")
-    parser.add_argument("--allow_unmapped_eco", required=False, action="store_const", const=True,
+    parser.add_argument("--allow_unmapped_eco", required=False, action="store_const", const=True, default=False,
                         help="When parsing GPAD, allow ECO class IDs that do not map to an ECO GAF code")
     parser.add_argument("-g", "--gpi", type=str, required=False, default=None,
                         help="GPI file")
