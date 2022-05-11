@@ -27,15 +27,23 @@ class EcoMap():
     """
 
     PURL = 'http://purl.obolibrary.org/obo/eco/gaf-eco-mapping.txt'
+    PURL_DERIVED = 'http://purl.obolibrary.org/obo/eco/gaf-eco-mapping-derived.txt'
 
     def __init__(self):
         self._mappings = None
+        self._derived_mappings = None
     
     def mappings(self):
         if self._mappings is None:
             s = get_ecomap_str(self.PURL)
             self._mappings = self.parse_ecomap_str(s)
         return self._mappings
+
+    def derived_mappings(self):
+        if self._derived_mappings is None:
+            s = get_ecomap_str(self.PURL_DERIVED)
+            self._derived_mappings = self.parse_derived_ecomap_str(s)
+        return self._derived_mappings
 
     def parse_ecomap_str(self, str):
         lines = str.split("\n")
@@ -51,7 +59,22 @@ class EcoMap():
                 ref = None
             tups.append( (code, ref, cls) )
         return tups
-                
+
+    def parse_derived_ecomap_str(self, str):
+        lines = str.split("\n")
+        tups = []
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            if line == "":
+                continue
+            logger.debug("LINE={}".format(line))
+            [cls, code, default] = line.split("\t")
+            if default == 'Default':
+                default = None
+            tups.append((code, default, cls))
+        return tups
+
     def coderef_to_ecoclass(self, code, reference=None):
         """
         Map a GAF code to an ECO class
@@ -79,7 +102,7 @@ class EcoMap():
                     
         return mcls
                 
-    def ecoclass_to_coderef(self, cls):
+    def ecoclass_to_coderef(self, cls, derived=False):
         """
         Map an ECO class to a GAF code
 
@@ -99,7 +122,11 @@ class EcoMap():
         """
         code = ''
         ref = None
-        for (code, ref, this_cls) in self.mappings():
+        if derived:
+            mappings = self.derived_mappings()
+        else:
+            mappings = self.mappings()
+        for (code, ref, this_cls) in mappings:
             if cls == this_cls:
                 return code, ref
         return None, None
