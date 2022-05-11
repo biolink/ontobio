@@ -370,6 +370,12 @@ class Evidence:
                 stringed_withfroms += item
         return stringed_withfroms
 
+    def gaf_evidence_code(self):
+        gaf_ev_code = ecomap.ecoclass_to_coderef(str(self.type))[0]
+        if gaf_ev_code is None:
+            gaf_ev_code = ecomap.ecoclass_to_coderef(str(self.type), derived=True)[0]
+        return gaf_ev_code
+
 relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.:\-]*)\)')
 curie_relation_tuple = re.compile(r"(.+)\((.+)\)")
 
@@ -530,7 +536,7 @@ class GoAssociation:
             qualifier,
             str(self.object.id),
             "|".join([str(ref) for ref in self.evidence.has_supporting_reference]),
-            ecomap.ecoclass_to_coderef(str(self.evidence.type))[0],
+            self.evidence.gaf_evidence_code(),
             ConjunctiveSet.list_to_str(self.evidence.with_support_from),
             self.aspect if self.aspect else "",
             self.subject.fullname_field(),
@@ -569,7 +575,7 @@ class GoAssociation:
             qualifier,
             str(self.object.id),
             "|".join([str(ref) for ref in self.evidence.has_supporting_reference]),
-            ecomap.ecoclass_to_coderef(str(self.evidence.type))[0],
+            self.evidence.gaf_evidence_code(),
             ConjunctiveSet.list_to_str(self.evidence.with_support_from),
             self.aspect if self.aspect else "",
             self.subject.fullname_field(),
