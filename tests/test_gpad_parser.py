@@ -196,7 +196,7 @@ def test_unmapped_eco_to_gaf_codes():
         "is_active_in",
         "GO:0098831",
         "PMID:8909549",
-        "ECO:0006003",
+        "ECO:0000164",
         "",
         "",
         "20180711",
@@ -216,5 +216,9 @@ def test_unmapped_eco_to_gaf_codes():
 
     parser.config.allow_unmapped_eco = False
     vals[5] = "ECO:0000314"  # maps to IDA
+    result = parser.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+
+    vals[5] = "ECO:0006003"  # indirectly maps to IDA via gaf-eco-mapping-derived.txt
     result = parser.parse_line("\t".join(vals))
     assert len(result.associations) == 1
