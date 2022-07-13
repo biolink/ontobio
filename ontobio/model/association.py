@@ -234,7 +234,6 @@ __default_entity_type_to_curie_mapping = bidict.bidict({
     "hammerhead_ribozyme": Curie.from_str("SO:0000380"),
     "protein": Curie.from_str("PR:000000001"),
     "marker or uncloned locus": Curie.from_str("SO:0001645"),
-    "gene segment": Curie.from_str("SO:3000000"),
     "pseudogene": Curie.from_str("SO:0000336"),
     "gene": Curie.from_str("SO:0000704"),
     "biological region": Curie.from_str("SO:0001411"),
