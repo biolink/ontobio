@@ -243,15 +243,12 @@ __default_entity_type_to_curie_mapping = bidict.bidict({
     "ncRNA-coding gene": Curie.from_str("SO:0001263"),
     "antisense_lncRNA": Curie.from_str("SO:0001904"),
     "transposable_element_gene": Curie.from_str("SO:0000111"),
-    "gene": Curie.from_str("SO:0000704"),
     "gene_segment": Curie.from_str("SO:3000000"),
     "genetic_marker": Curie.from_str("SO:0001645"),
     "lincRNA_gene": Curie.from_str("SO:0001641"),
     "lncRNA_gene": Curie.from_str("SO:0002127"),
     "miRNA_gene": Curie.from_str("SO:0001265"),
     "ncRNA_gene": Curie.from_str("SO:0001263"),
-    "protein_coding_gene": Curie.from_str("SO:0001217"),
-    "pseudogene": Curie.from_str("SO:0000336"),
     "RNase_MRP_RNA_gene": Curie.from_str("SO:0001640"),
     "RNase_P_RNA_gene": Curie.from_str("SO:0001639"),
     "rRNA_gene": Curie.from_str("SO:0001637"),
@@ -262,7 +259,7 @@ __default_entity_type_to_curie_mapping = bidict.bidict({
     "snRNA_gene": Curie.from_str("SO:0001268"),
     "SRP_RNA_gene": Curie.from_str("SO:0001269"),
     "telomerase_RNA_gene": Curie.from_str("SO:0001643"),
-    "tRNA_gene": Curie.from_str("SO:0001272 ")
+    "tRNA_gene": Curie.from_str("SO:0001272")
 })
 
 def map_gp_type_label_to_curie(type_label: str) -> Curie:
