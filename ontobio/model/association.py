@@ -239,7 +239,6 @@ __default_entity_type_to_curie_mapping = bidict.bidict({
     "protein_complex": Curie.from_str("GO:0032991"),
     "transcript": Curie.from_str("SO:0000673"),
     "gene_product": Curie.from_str("CHEBI:33695"),
-    "ncRNA-coding gene": Curie.from_str("SO:0001263"),
     "antisense_lncRNA": Curie.from_str("SO:0001904"),
     "transposable_element_gene": Curie.from_str("SO:0000111"),
     "gene_segment": Curie.from_str("SO:3000000"),
