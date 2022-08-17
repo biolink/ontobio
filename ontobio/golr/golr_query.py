@@ -276,9 +276,9 @@ def goassoc_fieldmap(relationship_type=ACTS_UPSTREAM_OF_OR_WITHIN):
         M.OBJECT: 'annotation_class',
         M.OBJECT_CLOSURE: REGULATES_CLOSURE if relationship_type == ACTS_UPSTREAM_OF_OR_WITHIN else ISA_PARTOF_CLOSURE,
         M.OBJECT_LABEL: 'annotation_class_label',
-        M.OBJECT_TAXON: 'object_taxon',
-        M.OBJECT_TAXON_LABEL: 'object_taxon_label',
-        M.OBJECT_TAXON_CLOSURE: 'object_taxon_closure',
+        M.OBJECT_TAXON: 'taxon',
+        M.OBJECT_TAXON_LABEL: 'taxon_label',
+        M.OBJECT_TAXON_CLOSURE: 'taxon_closure',
         M.OBJECT_CATEGORY: None,
         M.EVIDENCE_OBJECT_CLOSURE: 'evidence_subset_closure',
         M.IS_DEFINED_BY: 'assigned_by'
