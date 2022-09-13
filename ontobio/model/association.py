@@ -233,17 +233,31 @@ __default_entity_type_to_curie_mapping = bidict.bidict({
     "guide_RNA": Curie.from_str("SO:0000602"),
     "hammerhead_ribozyme": Curie.from_str("SO:0000380"),
     "protein": Curie.from_str("PR:000000001"),
-    "marker or uncloned locus": Curie.from_str("SO:0001645"),
-    "gene segment": Curie.from_str("SO:3000000"),
     "pseudogene": Curie.from_str("SO:0000336"),
     "gene": Curie.from_str("SO:0000704"),
     "biological region": Curie.from_str("SO:0001411"),
     "protein_complex": Curie.from_str("GO:0032991"),
     "transcript": Curie.from_str("SO:0000673"),
     "gene_product": Curie.from_str("CHEBI:33695"),
-    "ncRNA-coding gene": Curie.from_str("SO:0001263"),
     "antisense_lncRNA": Curie.from_str("SO:0001904"),
-    "transposable_element_gene": Curie.from_str("SO:0000111")
+    "transposable_element_gene": Curie.from_str("SO:0000111"),
+    "gene_segment": Curie.from_str("SO:3000000"),
+    "genetic_marker": Curie.from_str("SO:0001645"),
+    "lincRNA_gene": Curie.from_str("SO:0001641"),
+    "lncRNA_gene": Curie.from_str("SO:0002127"),
+    "miRNA_gene": Curie.from_str("SO:0001265"),
+    "ncRNA_gene": Curie.from_str("SO:0001263"),
+    "RNase_MRP_RNA_gene": Curie.from_str("SO:0001640"),
+    "RNase_P_RNA_gene": Curie.from_str("SO:0001639"),
+    "rRNA_gene": Curie.from_str("SO:0001637"),
+    "scRNA_gene": Curie.from_str("SO:0001266"),
+    "sense_intronic_ncRNA_gene": Curie.from_str("SO:0002184"),
+    "sense_overlap_ncRNA_gene": Curie.from_str("SO:0002183"),
+    "snoRNA_gene": Curie.from_str("SO:0001267"),
+    "snRNA_gene": Curie.from_str("SO:0001268"),
+    "SRP_RNA_gene": Curie.from_str("SO:0001269"),
+    "telomerase_RNA_gene": Curie.from_str("SO:0001643"),
+    "tRNA_gene": Curie.from_str("SO:0001272")
 })
 
 def map_gp_type_label_to_curie(type_label: str) -> Curie:
@@ -369,6 +383,12 @@ class Evidence:
             for item in withfroms:
                 stringed_withfroms += item
         return stringed_withfroms
+
+    def gaf_evidence_code(self):
+        gaf_ev_code = ecomap.ecoclass_to_coderef(str(self.type))[0]
+        if gaf_ev_code is None:
+            gaf_ev_code = ecomap.ecoclass_to_coderef(str(self.type), derived=True)[0]
+        return gaf_ev_code
 
 relation_tuple = re.compile(r'([\w]+)\((\w+:[\w][\w\.:\-]*)\)')
 curie_relation_tuple = re.compile(r"(.+)\((.+)\)")
@@ -530,7 +550,7 @@ class GoAssociation:
             qualifier,
             str(self.object.id),
             "|".join([str(ref) for ref in self.evidence.has_supporting_reference]),
-            ecomap.ecoclass_to_coderef(str(self.evidence.type))[0],
+            self.evidence.gaf_evidence_code(),
             ConjunctiveSet.list_to_str(self.evidence.with_support_from),
             self.aspect if self.aspect else "",
             self.subject.fullname_field(),
@@ -569,7 +589,7 @@ class GoAssociation:
             qualifier,
             str(self.object.id),
             "|".join([str(ref) for ref in self.evidence.has_supporting_reference]),
-            ecomap.ecoclass_to_coderef(str(self.evidence.type))[0],
+            self.evidence.gaf_evidence_code(),
             ConjunctiveSet.list_to_str(self.evidence.with_support_from),
             self.aspect if self.aspect else "",
             self.subject.fullname_field(),

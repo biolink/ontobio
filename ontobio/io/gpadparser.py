@@ -167,6 +167,10 @@ class GpadParser(assocparser.AssocParser):
 
         go_rule_results = qc.test_go_rules(assoc, self.config)
         for rule, result in go_rule_results.all_results.items():
+            if isinstance(rule, qc.GoRule28):
+                # ignore result of GORULE:0000028 since aspect check will always fail for GPAD and get repaired
+                continue
+
             if result.result_type == qc.ResultType.WARNING:
                 self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
                                     msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
@@ -197,14 +201,14 @@ class GpadParser(assocparser.AssocParser):
                 self.report.error(line, assocparser.Report.INVALID_TAXON, str(assoc.interacting_taxon), "Taxon ID is invalid", rule=27)
                 return assocparser.ParseResult(line, [], True)
 
-
-        #TODO: ecomap is currently one-way only
-        #ecomap = self.config.ecomap
-        #if ecomap != None:
-        #    if ecomap.ecoclass_to_coderef(evidence) == (None,None):
-        #        self.report.error(line, Report.UNKNOWN_EVIDENCE_CLASS, evidence,
-        #                          msg="Expecting a known ECO class ID")
-
+        # By default, ECO codes in GPAD need to be convertible to an ECO GAF code (e.g. IDA, ISO)
+        # ecomap is currently one-way only
+        ecomap = self.config.ecomap
+        if ecomap != None:
+            if not self.config.allow_unmapped_eco and ecomap.ecoclass_to_coderef(str(assoc.evidence.type), derived=True) == (None,None):
+                self.report.error(line, assocparser.Report.UNKNOWN_EVIDENCE_CLASS, str(assoc.evidence.type),
+                                  msg="Expecting a known ECO class ID that maps to an ECO GAF code", rule=1)
+                return assocparser.ParseResult(line, [], True)
 
         # Reference Column
         references = self.validate_curie_ids(assoc.evidence.has_supporting_reference, split_line)

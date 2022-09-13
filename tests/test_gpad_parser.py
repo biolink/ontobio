@@ -186,3 +186,39 @@ def test_aspect_fill_for_obsolete_terms():
 
     assert assoc.object.id == Curie("GO", "3")  # GO:4 should be repaired to its replacement term, GO:3
     assert assoc.aspect == 'P'  # Aspect should not be empty
+
+
+def test_unmapped_eco_to_gaf_codes():
+    # By default, ECO codes in GPAD need to be convertible to an ECO GAF code (e.g. IDA, ISO)
+    vals = [
+        "MGI",
+        "MGI:88276",
+        "is_active_in",
+        "GO:0098831",
+        "PMID:8909549",
+        "ECO:0000164",
+        "",
+        "",
+        "20180711",
+        "SynGO",
+        "part_of(UBERON:0000956)",
+        ""
+    ]
+    parser = GpadParser(config=assocparser.AssocParserConfig())
+    result = parser.parse_line("\t".join(vals))
+    assert len(result.associations) == 0
+    messages = parser.report.messages
+    assert messages[0]["type"] == parser.report.UNKNOWN_EVIDENCE_CLASS
+
+    parser.config.allow_unmapped_eco = True
+    result = parser.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+
+    parser.config.allow_unmapped_eco = False
+    vals[5] = "ECO:0000314"  # maps to IDA
+    result = parser.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+
+    vals[5] = "ECO:0006003"  # indirectly maps to IDA via gaf-eco-mapping-derived.txt
+    result = parser.parse_line("\t".join(vals))
+    assert len(result.associations) == 1

@@ -237,7 +237,8 @@ class AssocParserConfig():
                  annotation_inferences=None,
                  extensions_constraints=None,
                  rule_contexts=[],
-                 rule_set=None):
+                 rule_set=None,
+                 allow_unmapped_eco=False):
 
         self.remove_double_prefixes=remove_double_prefixes
         self.ontology=ontology
@@ -270,6 +271,7 @@ class AssocParserConfig():
             self.rule_set = RuleSet(None)
         else:
             self.rule_set = RuleSet(rule_set)
+        self.allow_unmapped_eco = allow_unmapped_eco
 
 
         # This is a dictionary from ruleid: `gorule-0000001` to title strings

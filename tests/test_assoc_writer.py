@@ -119,7 +119,7 @@ def test_roundtrip():
 
 def test_gpad_qualifier_removed_in_gaf_2_1():
     # Qualifier is `part_of` and should be returned blank instead of removing the whole line
-    line = "PomBase\tSPBC1348.01\tpart_of\tGO:0009897\tGO_REF:0000051\tECO:0000201\t\t\t20060201\tPomBase\t\t"
+    line = "PomBase\tSPBC1348.01\tpart_of\tGO:0009897\tGO_REF:0000051\tECO:0000266\t\t\t20060201\tPomBase\t\t"
     parser = gpadparser.GpadParser()
     out = io.StringIO()
     writer = assocwriter.GafWriter(file=out, version="2.1")  # Write out to gaf 2.1
@@ -130,7 +130,7 @@ def test_gpad_qualifier_removed_in_gaf_2_1():
     assert gpad_to_gaf_line.split("\t")[3] == ""
 
     # Test with a `NOT`
-    line = "PomBase\tSPBC1348.01\tNOT|part_of\tGO:0009897\tGO_REF:0000051\tECO:0000201\t\t\t20060201\tPomBase\t\t"
+    line = "PomBase\tSPBC1348.01\tNOT|part_of\tGO:0009897\tGO_REF:0000051\tECO:0000266\t\t\t20060201\tPomBase\t\t"
     parser = gpadparser.GpadParser()
     out = io.StringIO()
     writer = assocwriter.GafWriter(file=out, version="2.1")  # Write out to gaf 2.1
@@ -243,3 +243,37 @@ def test_writing_assoc_properties():
     written_gpad_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     written_props = written_gpad_line.split("\t")[11]
     assert len(written_props.split("|")) == 5
+
+def test_gpad_eco_to_gaf_evidence_code():
+    def parse_gpad_vals_to_gaf_io(gpad_vals):
+        parser = gpadparser.GpadParser()
+        gaf_out = io.StringIO()
+        writer = assocwriter.GafWriter(file=gaf_out)
+
+        assoc = parser.parse_line("\t".join(gpad_vals)).associations[0]
+        writer.write_assoc(assoc)
+        return gaf_out
+
+    vals = [
+        "MGI",
+        "MGI:88276",
+        "is_active_in",
+        "GO:0098831",
+        "PMID:8909549",
+        "ECO:0006003",  # indirectly maps to IDA via gaf-eco-mapping-derived.txt
+        "",
+        "",
+        "20180711",
+        "SynGO",
+        "part_of(UBERON:0000956)",
+        ""
+    ]
+
+    out = parse_gpad_vals_to_gaf_io(vals)
+    gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    assert gpad_to_gaf_line.split("\t")[6] == "IDA"
+
+    vals[5] = "ECO:0000314"  # test direct mapping still works
+    out = parse_gpad_vals_to_gaf_io(vals)
+    gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
+    assert gpad_to_gaf_line.split("\t")[6] == "IDA"
