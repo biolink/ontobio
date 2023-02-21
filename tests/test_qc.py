@@ -361,6 +361,18 @@ def test_go_rule29():
     test_result = qc.GoRule29().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.WARNING
 
+    ## Warning if two and a half years old.
+    thirty_months_ago = now - datetime.timedelta(days=(30 * 30))
+    assoc.date = association.Date(thirty_months_ago.year, thirty_months_ago.month, thirty_months_ago.day, "")
+    test_result = qc.GoRule29().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.WARNING
+
+    ## Error if three and a half years old.
+    forty_two_months_ago = now - datetime.timedelta(days=(30 * 42))
+    assoc.date = association.Date(forty_two_months_ago.year, forty_two_months_ago.month, forty_two_months_ago.day, "")
+    test_result = qc.GoRule29().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.ERROR
+
     ## Confirm the test can parse a YYYY-MM-DD date format from GPAD 2.0
     gpad_2_0_vals = assoc.to_gpad_2_0_tsv()  # Cheat to shortcut DB and DB_Object_ID concatenation
     gpad_2_0_vals[5] = iea_eco
