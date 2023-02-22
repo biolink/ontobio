@@ -443,9 +443,9 @@ class GoRule28(RepairRule):
 class GoRule29(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000029", "All IEAs over a year are warned, all IEAs over two are removed", FailMode.HARD)
+        super().__init__("GORULE:0000029", "All IEAs over a year are warned, all IEAs over three are removed", FailMode.HARD)
         self.one_year = datetime.timedelta(days=365)
-        self.two_years = datetime.timedelta(days=730)
+        self.three_years = datetime.timedelta(days=1095)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
@@ -454,7 +454,7 @@ class GoRule29(GoRule):
         now = datetime.datetime.today()
 
         time_compare_delta_short = self.one_year
-        time_compare_delta_long = self.two_years
+        time_compare_delta_long = self.three_years
         time_diff = now - datetime.datetime(int(date.year),
                                             int(date.month),
                                             int(date.day),
