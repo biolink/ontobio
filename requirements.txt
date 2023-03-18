@@ -21,7 +21,7 @@ plotly>=2.0.7
 pyyaml
 yamldown>=0.1.7
 click
-dataclasses
+dataclasses>=0.7;python_version<'3.7'
 diskcache>=4.0.0
 bidict>=0.20.0
 python-dateutil
