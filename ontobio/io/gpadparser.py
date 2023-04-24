@@ -159,6 +159,18 @@ class GpadParser(assocparser.AssocParser):
 
         # repair any GO terms in the with/from field that may be obsolete
         assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line, 'gpad')
+        
+        # repair, if possible any GO terms in the extensions that may be obsolete
+        if (0 < len(assoc.object_extensions)):
+            for ext in assoc.object_extensions:
+                validated = self.validate_curie_ids([e.term for e in ext.elements], split_line)
+                if validated is None:
+                    return assocparser.ParseResult(line, [], True)
+            repaired = self._repair_extensions(assoc.object_extensions, split_line)
+            if repaired is None:
+                    assoc.object_extensions = []
+                    return assocparser.ParseResult(line, [], True)
+            assoc.object_extensions = repaired 
 
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
