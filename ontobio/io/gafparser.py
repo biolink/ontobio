@@ -264,6 +264,20 @@ class GafParser(assocparser.AssocParser):
         if with_support_from is None:
             return assocparser.ParseResult(line, [], True)
         assoc.evidence.with_support_from = with_support_from
+        
+        # Extension
+        # repair, if possible any GO terms in the extensions that may be obsolete
+        if (0 < len(assoc.object_extensions)):
+            for ext in assoc.object_extensions:
+                validated = self.validate_curie_ids([e.term for e in ext.elements], split_line)
+                if validated is None:
+                    return assocparser.ParseResult(line, [], True)
+            repaired = self._repair_extensions(assoc.object_extensions, split_line)
+            if repaired is None:
+                    assoc.object_extensions = []        
+                    return assocparser.ParseResult(line, [], True)
+            assoc.object_extensions = repaired    
+        
         # validation
         self._validate_symbol(assoc.subject.label, split_line)
 

@@ -417,6 +417,14 @@ class Report(object):
         """
 
         return self.reporter.json(self.n_lines, self.n_assocs, self.skipped)
+    
+    def sort_messages(self, r, messages):
+        if len(messages) > 0:
+            # Messages for GORULE:0000020 are sorted by level (Error before Warning), then by GO id 
+            if r != "GORULE:0000020":
+                return None
+            messages.sort(key=lambda x: x.get('level'))
+            messages.sort(key=lambda x: x.get('obj'))
 
     def to_markdown(self):
         """
@@ -463,6 +471,8 @@ class Report(object):
             s += "* total: {amount}\n".format(amount=len(messages))
             if len(messages) > 0:
                 s += "#### Messages\n"
+                
+            self.sort_messages(rule, messages)    
             for message in messages:
                 obj = " ({})".format(message["obj"]) if message["obj"] else ""
                 s += "* {level} - {type}: {message}{obj} -- `{line}`\n".format(level=message["level"], type=message["type"], message=message["message"], line=message["line"], obj=obj)
@@ -731,6 +741,30 @@ class AssocParser(object):
                 id = None
 
         return id
+    
+            
+    # repair extensions
+    def _repair_extensions(self, extensions, line: SplitLine, subclassof=None):
+        # nothing to repair
+        if len(extensions) == 0:
+            return extensions
+        
+        grouped_set = []
+        for ext in extensions:
+            curSet = []
+            for e in ext.elements:               
+                if e.term.namespace =='GO':
+                    fixed_element_individual = self._validate_ontology_class_id(str(e.term), line)
+                    if fixed_element_individual is None:
+                        return None
+                    else:         
+                        curSet.append(association.ExtensionUnit(relation = association.Curie(e.relation.namespace, e.relation.identity), term = association.Curie.from_str(fixed_element_individual)))
+                else:
+                    curSet.append(association.ExtensionUnit(relation = association.Curie(e.relation.namespace, e.relation.identity), term = association.Curie(e.term.namespace, e.term.identity)))        
+
+            grouped_set.append(association.ConjunctiveSet(curSet))
+                         
+        return grouped_set
 
     def _validate_symbol(self, symbol, line: SplitLine):
         if symbol is None or symbol == "":

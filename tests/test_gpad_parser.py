@@ -39,6 +39,36 @@ def test_obsolete_term_repair_withfrom():
                                      Curie(namespace='MGI', identity='1232453')])] == assoc.evidence.with_support_from
 
 
+def test_obsolete_term_repair_extensions():
+
+    vals = ["ZFIN",
+            "ZFIN:ZDB-GENE-980526-362",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "PMID:15494018",
+            "ECO:0000305",
+            "ZFIN:ZDB-MRPHLNO-010101-1,MGI:1232453",
+            "",
+            "20041026",
+            "ZFIN",
+            "part_of(GO:0005913)|occurs_in(GO:1),has_input(GO:4)|enables(ZFIN:ZDB-MRPHLNO-010101-1),enables(MGI:1232453)",
+            "contributor=GOC:zfin_curators|model-state=production|noctua-model-id=gomodel:ZFIN_ZDB-GENE-980526-362"
+            ]
+    ont = OntologyFactory().create(ALT_ID_ONT)
+    config = assocparser.AssocParserConfig(ontology=ont, rule_set=assocparser.RuleSet.ALL)
+    parser = GpadParser(config=config)
+    result = parser.parse_line("\t".join(vals))
+    assoc = result.associations[0]
+    # GO:0005913 should be repaired to its replacement term, GO:00005912
+    object_extensions = [association.ConjunctiveSet([association.ExtensionUnit(association.Curie("BFO", "0000050"), association.Curie("GO", "0005912"))]),
+            # repaired test GO elements
+            association.ConjunctiveSet([association.ExtensionUnit(association.Curie("BFO", "0000066"), association.Curie(namespace='GO', identity='2')),association.ExtensionUnit(association.Curie("RO", "0002233"), association.Curie(namespace='GO', identity='3'))]),
+            # non GO elements stay the same, could be obsolete or not
+            association.ConjunctiveSet([association.ExtensionUnit(association.Curie("RO", "0002327"), association.Curie(namespace='ZFIN', identity='ZDB-MRPHLNO-010101-1')),association.ExtensionUnit(association.Curie("RO", "0002327"), association. Curie(namespace='MGI', identity='1232453'))])
+            ]
+    assert object_extensions == assoc.object_extensions
+
+
 def test_skim():
     p = GpadParser()
     results = p.skim(open(POMBASE,"r"))

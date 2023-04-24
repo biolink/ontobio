@@ -489,6 +489,49 @@ def test_object_extensions_error():
     assert len(p.report.to_report_json()["messages"]["gorule-0000001"]) == 1
 
 
+def test_obsolete_replair_of_extensions():
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(OBSOLETE_ONT))) 
+    assoc_result = p.parse_line("ZFIN\tZDB-GENE-980526-362\tctnnb1\t\tGO:0007155\tPMID:15494018\tIC\tGO:0005913\tP\tcatenin (cadherin-associated protein), beta 1\tctnnb|id:ibd2058|wu:fb73e10|wu:fi81c06|wu:fk25h01\tprotein_coding_gene\ttaxon:7955\t20041026\tZFIN\tpart_of(GO:0005913)\tUniProtKB:P12345")
+    print(p.report.to_markdown())
+    assert len(assoc_result.associations[0].object_extensions) > 0
+    object_extensions = [
+        association.ConjunctiveSet([
+            association.ExtensionUnit(association.Curie("BFO", "0000050"), association.Curie("GO", "0005912"))
+        ])
+    ]
+    assert assoc_result.associations[0].object_extensions == object_extensions
+    
+    #Reset the report
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(OBSOLETE_ONT))) 
+    assoc_result = p.parse_line("ZFIN\tZDB-GENE-980526-362\tctnnb1\t\tGO:0007155\tPMID:15494018\tIC\tGO:0005912\tP\tcatenin (cadherin-associated protein), beta 1\tctnnb|id:ibd2058|wu:fb73e10|wu:fi81c06|wu:fk25h01\tprotein_coding_gene\ttaxon:7955\t20041026\tZFIN\tpart_of(GO:0005913)|part_of(GO:0016458)\tUniProtKB:P12345")
+    print(p.report.to_markdown())
+    assert assoc_result.associations == []
+    assert p.report.to_report_json()["messages"]["gorule-0000020"][0]["obj"] == "GO:0005913"    
+    assert p.report.to_report_json()["messages"]["gorule-0000020"][1]["obj"] == "GO:0016458"          
+    
+    #Reset the report
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(OBSOLETE_ONT))) 
+    assoc_result = p.parse_line("ZFIN\tZDB-GENE-980526-362\tctnnb1\t\tGO:0007155\tPMID:15494018\tIC\tGO:0005912\tP\tcatenin (cadherin-associated protein), beta 1\tctnnb|id:ibd2058|wu:fb73e10|wu:fi81c06|wu:fk25h01\tprotein_coding_gene\ttaxon:7955\t20041026\tZFIN\tpart_of(GO:0005913)|part_of(GO:0007155),occurs_in(Y:1)\tUniProtKB:P12345")
+    print(p.report.to_markdown())
+    assert len(assoc_result.associations[0].object_extensions) > 0
+    object_extensions = [
+        association.ConjunctiveSet([association.ExtensionUnit(association.Curie("BFO", "0000050"), association.Curie("GO", "0005912"))]),
+        association.ConjunctiveSet([association.ExtensionUnit(association.Curie("BFO", "0000050"), association.Curie("GO", "0007155")),association.ExtensionUnit(association.Curie("BFO", "0000066"), association.Curie("Y", "1"))])        
+    ]
+    assert assoc_result.associations[0].object_extensions == object_extensions    
+    
+    #Reset the report
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(OBSOLETE_ONT)))
+    assoc_result = p.parse_line("ZFIN\tZDB-GENE-980526-362\tctnnb1\t\tGO:0007155\tPMID:15494018\tIC\tGO:0005912\tP\tcatenin (cadherin-associated protein), beta 1\tctnnb|id:ibd2058|wu:fb73e10|wu:fi81c06|wu:fk25h01\tprotein_coding_gene\ttaxon:7955\t20041026\tZFIN\tpart_of(GO:0016458)\tUniProtKB:P12345")
+    print(p.report.to_markdown())
+    assert assoc_result.associations == []
+    assert p.report.to_report_json()["messages"]["gorule-0000020"][0]["obj"] == "GO:0016458"    
+    
+
 def test_factory():
     afa = AssociationSetFactory()
     ont = OntologyFactory().create(ONT)
