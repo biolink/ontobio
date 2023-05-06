@@ -421,10 +421,11 @@ class Report(object):
     def sort_messages(self, r, messages):
         if len(messages) > 0:
             # Messages for GORULE:0000020 are sorted by level (Error before Warning), then by GO id 
-            if r != "GORULE:0000020":
+            if r != "gorule-0000020":
                 return None
-            messages.sort(key=lambda x: x.get('level'))
             messages.sort(key=lambda x: x.get('obj'))
+            messages.sort(key=lambda x: x.get('level'))
+
 
     def to_markdown(self):
         """
