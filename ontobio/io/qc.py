@@ -514,15 +514,27 @@ class GoRule39(GoRule):
 
     def __init__(self):
         super().__init__("GORULE:0000039", "Protein complexes can not be annotated to GO:0032991 (protein-containing complex) or its descendants", FailMode.HARD)
+        self.protein_containing_complex_descendents = None
+        
+    def make_protein_complex_descendents_if_not_present(self, ontology: Optional[ontol.Ontology]) -> Set:
+        if ontology is not None and self.protein_containing_complex_descendents is None:
+            closure = gafparser.protein_complex_sublcass_closure(ontology)
+            self.protein_containing_complex_descendents = closure
+
+        return {} if self.protein_containing_complex_descendents is None else self.protein_containing_complex_descendents    
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        # An implementation note: This is done by testing if the DB (column 1) is ComplexPortal.
-        # This will grab a subset of all actual Protein Complexes. This is noted in the rule description
+        # An implementation note: This is done by testing if the DB (column 1) is ComplexPortal or DB Object type (column 12) is protein_complex
         db = annotation.subject.id.namespace
+        objecttype = annotation.subject.type
         goterm = str(annotation.object.id)
-
-        fails = (db == "ComplexPortal" and goterm == "GO:0032991")
-        return self._result(not fails)
+        namespace = config.ontology.obo_namespace(goterm)
+        
+        if namespace == "cellular_component":
+            if goterm in self.make_protein_complex_descendents_if_not_present(config.ontology):
+                fails = (db == "ComplexPortal" or (objecttype.namespace == "GO" and objecttype.identity == "0032991"))
+                return self._result(not fails)
+        return self._result(True)    
 
 
 class GoRule42(GoRule):
