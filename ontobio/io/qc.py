@@ -528,12 +528,12 @@ class GoRule39(GoRule):
         db = annotation.subject.id.namespace
         objecttype = annotation.subject.type
         goterm = str(annotation.object.id)
-        namespace = config.ontology.obo_namespace(goterm)
-        
-        if namespace == "cellular_component":
-            if goterm in self.make_protein_complex_descendents_if_not_present(config.ontology):
-                fails = (db == "ComplexPortal" or (objecttype.namespace == "GO" and objecttype.identity == "0032991"))
-                return self._result(not fails)
+        namespace = config.ontology.obo_namespace(goterm)      
+ 
+        if namespace == "cellular_component" and goterm in self.make_protein_complex_descendents_if_not_present(config.ontology):
+            for ot in objecttype:
+                if db == "ComplexPortal" or (ot.namespace == "GO" and ot.identity == "0032991"):
+                    return self._result(False)
         return self._result(True)    
 
 
