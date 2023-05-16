@@ -439,18 +439,18 @@ def test_gorule39():
 
     # test descendant of GO:0032991
     assoc = make_annotation(db="bla", goid="GO:0005840").associations[0]
-    assoc.subject.type = association.map_gp_type_label_to_curie("protein_complex")
+    assoc.subject.type = [association.map_gp_type_label_to_curie("protein_complex")]  
     test_result = qc.GoRule39().test(assoc,  config)
     assert test_result.result_type == qc.ResultType.ERROR    
     
     # test protein complex
     assoc = make_annotation(db="bla", goid="GO:0032991").associations[0]
-    assoc.subject.type=association.map_gp_type_label_to_curie("protein_complex")
+    assoc.subject.type= [association.map_gp_type_label_to_curie("protein_complex")]
     test_result = qc.GoRule39().test(assoc,  config)
     assert test_result.result_type == qc.ResultType.ERROR   
     
     assoc.subject.id = association.Curie("FB", "1234")
-    assoc.subject.type = association.Curie("CHEBI", "33695")
+    assoc.subject.type = [association.Curie("CHEBI", "33695")]
     assoc.object.id = association.Curie("GO", "0032991")       
     test_result = qc.GoRule39().test(assoc,  config)
     assert test_result.result_type == qc.ResultType.PASS
@@ -459,6 +459,9 @@ def test_gorule39():
     assoc.object.id = association.Curie("GO", "0000023")
     test_result = qc.GoRule39().test(assoc,  config)
     assert test_result.result_type == qc.ResultType.PASS
+    
+    #test actual GAF file
+    
 
 def test_gorule42():
     assoc = make_annotation(qualifier="NOT", evidence="IKR").associations[0]
