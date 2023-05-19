@@ -17,6 +17,7 @@ import copy
 ontology = ontol_factory.OntologyFactory().create("tests/resources/goslim_generic.json")
 ecomapping = ecomap.EcoMap()
 iea_eco = ecomapping.coderef_to_ecoclass("IEA")
+hep_eco = ecomapping.coderef_to_ecoclass("HEP")
 ic_eco = ecomapping.coderef_to_ecoclass("IC")
 ikr_eco = ecomapping.coderef_to_ecoclass("IKR")
 iba_eco = ecomapping.coderef_to_ecoclass("IBA")
@@ -104,7 +105,18 @@ def test_go_rule_06():
     assoc.evidence.type = Curie.from_str(iea_eco)
     test_result = qc.GoRule06().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
+    
+    assoc.evidence.type = Curie.from_str(hep_eco)
+    assoc.provided_by = "GOC"
+    assoc.aspect = "F"
+    assoc.object.id = Curie.from_str("GO:0003674");    
+    test_result = qc.GoRule06().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS    
 
+    assoc.provided_by = "WB"  
+    test_result = qc.GoRule06().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.ERROR
+    
 def test_go_rule_07():
 
     assoc = make_annotation(goid="GO:0003824", evidence="IPI").associations[0]

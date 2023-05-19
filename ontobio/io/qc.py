@@ -195,8 +195,12 @@ class GoRule06(GoRule):
         if config.ontology is None:
             return self._result(True)
 
-        go_namespace = [predval for predval in config.ontology.get_graph().nodes.get(str(annotation.object.id), {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
         evidence = str(annotation.evidence.type)
+        assigned_by = annotation.provided_by
+        #Annotations with code IEP and HEP assigned by GOC are not restricted to Biological Process terms
+        if evidence in [iep_eco, hep_eco] and assigned_by == "GOC":
+            return self._result(True)
+        go_namespace = [predval for predval in config.ontology.get_graph().nodes.get(str(annotation.object.id), {}).get("meta", {}).get("basicPropertyValues", []) if predval["pred"]=="OIO:hasOBONamespace"]
         fails = evidence in [iep_eco, hep_eco] and "biological_process" not in [o["val"] for o in go_namespace]
         return self._result(not fails)
 
