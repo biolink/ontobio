@@ -525,6 +525,9 @@ class GoRule39(GoRule):
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # An implementation note: This is done by testing if the DB (column 1) is ComplexPortal or DB Object type (column 12) is protein_complex
+        if config.ontology is None:
+            return self._result(True)
+                
         db = annotation.subject.id.namespace
         objecttype = annotation.subject.type
         goterm = str(annotation.object.id)
