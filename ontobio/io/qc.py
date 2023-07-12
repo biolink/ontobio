@@ -335,11 +335,16 @@ class GoRule15(GoRule):
         if self.allowed_dual_species_terms is not None:
             dual = annotation.interacting_taxon is not None
             goterm = str(annotation.object.id)
+            term_in_allowed_dual_species_terms = goterm in self.allowed_dual_species_terms
+            
+            # dual species have to be unique for multi-organism interactions
+            if dual and term_in_allowed_dual_species_terms and annotation.interacting_taxon == annotation.subject.taxon:
+               return self._result(False) 
 
             # We fail if we are a dual taxon and then the term is not in this list
             # This is the same as dual -> goterm in list
             # Implication rewritten is Not P OR Q
-            passes = not dual or (goterm in self.allowed_dual_species_terms)
+            passes = not dual or (term_in_allowed_dual_species_terms) 
 
         return self._result(passes)
 
