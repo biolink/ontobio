@@ -71,3 +71,6 @@ poetry:
 	rm pyproject.toml.bak
 	poetry add $$( cat requirements.txt )
 	poetry install
+
+poetry-test:
+	poetry run make travis_test
