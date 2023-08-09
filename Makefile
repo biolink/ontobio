@@ -61,3 +61,15 @@ nb:
 # used to make assoc_schema.py
 mm:
 	./bin/flask2marshmallow.pl ../biolink-api/biolink/datamodel/serializers.py
+
+poetry:
+	poetry config virtualenvs.in-project true
+	rm -f pyproject.toml
+	rm -f poetry.lock
+	poetry init --name "ontobio" --no-interaction
+	poetry add $$( cat requirements.txt )
+	poetry install
+
+poetry-update:
+	poetry update
+	poetry install

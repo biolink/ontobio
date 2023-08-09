@@ -28,4 +28,3 @@ python-dateutil
 chardet
 dacite>=1.6.0
 pyparsing==2.4.7
-pysolr
