@@ -67,9 +67,7 @@ poetry:
 	rm -f pyproject.toml
 	rm -f poetry.lock
 	poetry init --name "ontobio" --no-interaction
+	sed -i.bak 's/readme = "README\.md"/readme = "README\.rst"/' pyproject.toml
+	rm pyproject.toml.bak
 	poetry add $$( cat requirements.txt )
-	poetry install
-
-poetry-update:
-	poetry update
 	poetry install
