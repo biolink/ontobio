@@ -54,3 +54,17 @@ python setup.py sdist bdist_wheel bdist_egg
 twine upload --repository-url https://upload.pypi.org/legacy/ --username PYPI_USERNAME dist/*
 ```
 
+### to use a poetry development environment
+
+1. create the pyproject.toml file and generate the .venv directory
+```bash
+make poetry
+```
+this command deletes any existing pyproject.toml and poetry.lock files as well as the .venv virtual environment
+if it finds one.  It then creates a new pyproject.toml file out of the requirements.txt file, 
+creates a .venv directory, and finally installs the dependencies into it.  This also creates a poetry.lock file.
+At the moment, the poetry.lock and pyproject.toml files are both in .gitignore so that the source of truth for
+the built environment is still requirements.txt.
+
+2. 
+```bash

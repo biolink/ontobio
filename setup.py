@@ -5,8 +5,8 @@ import subprocess
 
 import setuptools
 
-if sys.version_info.major < 3:
-    sys.exit("Error: Python 3 is required")
+if sys.version_info.major >= 3.10:
+    sys.exit("Error: Python 3.10 or later is required")
 
 directory = os.path.dirname(os.path.abspath(__file__))
 
