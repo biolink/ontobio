@@ -64,9 +64,9 @@ class Skos(object):
 
     def _uri2id(self, uri):
         s = "{:s}".format(str(uri))
-        for prefix,uribase in self.prefixmap.items():
-            if (s.startswith(uribase)):
-                s = s.replace(uribase,prefix+":")
+        for prefix, uribase in self.prefixmap.items():
+            if s.startswith(uribase):
+                s = s.replace(uribase, prefix+":")
                 return s
         curies = contract_uri(uri)
         if len(curies) > 0:
