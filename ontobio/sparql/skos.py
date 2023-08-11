@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def _preferred_label(rg, concept, lang):
     """
-    Return a list of (labelProp, label) pairs, where labelProp is either skos:prefLabel or rdfs:label.
+    Return a list of (label_prop, label) pairs, where label_prop is either skos:prefLabel or rdfs:label.
 
     :param: rg: rdflib.Graph object
     :param: concept: rdflib.URIRef object
@@ -29,21 +29,21 @@ def _preferred_label(rg, concept, lang):
     if lang is not None:
         if lang == "":  # we only want not language-tagged literals
 
-            def langfilter(l_):
+            def language_filter(l_):
                 return l_.language is None
 
         else:
 
-            def langfilter(l_):
+            def language_filter(l_):
                 return l_.language == lang
 
     else:  # we don't care about language tags
 
-        def langfilter(l_):
+        def language_filter(l_):
             return True
 
     for label_prop in SKOS.prefLabel:
-        labels = list(filter(langfilter, rg.objects(concept, label_prop)))
+        labels = list(filter(language_filter, rg.objects(concept, label_prop)))
         if len(labels) == 0:
             continue
         else:
