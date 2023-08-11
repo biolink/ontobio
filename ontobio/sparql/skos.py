@@ -71,7 +71,7 @@ class Skos(object):
         
     def process_rdfgraph(self, rg, ont=None):
         """
-        Transform a skos terminology expressed in a rdf graph into an Ontology object
+        Transform a skos terminology expressed in an rdf graph into an Ontology object
 
         Arguments
         ---------
