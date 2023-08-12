@@ -54,7 +54,9 @@ python setup.py sdist bdist_wheel bdist_egg
 twine upload --repository-url https://upload.pypi.org/legacy/ --username PYPI_USERNAME dist/*
 ```
 
-### to use a poetry development environment
+****************************************************************************************************
+
+#### to use a poetry development environment
 
 1. create the pyproject.toml file and generate the .venv directory
 ```bash
@@ -66,5 +68,28 @@ creates a .venv directory, and finally installs the dependencies into it.  This 
 At the moment, the poetry.lock and pyproject.toml files are both in .gitignore so that the source of truth for
 the built environment is still requirements.txt.
 
-2. 
+2. to recreate the poetry virtual environment, just run the same `make poetry` command again, or if you want to avoid
+reinstalling all the dependencies, just `rm -rf .venv` which will remove the local virtual environment and then
+run `poetry install` to install via the `poetry.lock` file created in step 1 above. 
+
+helpful poetry commands:
 ```bash
+poetry install # install dependencies from poetry.lock
+poetry run <command> # run a command in the poetry virtual environment
+poetry env list # list all virtual environments and tags the one currently in use for the project
+poetry show --why --tree [pypi_package_name] # show the dependency tree for pypi_package_name
+poetry show [pypi_package_name] # show the version of pypi_package_name that is install in the current venv.
+```
+
+If we use a pyproject.toml file then we can use poetry to manage the dependencies and the virtual environment.
+But for now, managing the dependencies in the requirements.txt file means that we don't want to add/update/remove
+dependencies from pyproject.toml directly, nor do we want it to ever be the source of truth for the dependencies.
+
+```bash
+poetry add <package> # add a package to the pyproject.toml file and install it in the virtual environment
+poetry remove <package> # remove a package from the pyproject.toml file and uninstall it from the virtual environment
+poetry update # update all packages in the pyproject.toml file and the poetry.lock file
+poetry update <package> # update the specified package in the pyproject.toml file and the poetry.lock file
+poetry lock --no-update # update the poetry.lock file without updating the pyproject.toml file -- used when editing the 
+# pyproject.toml file directly. 
+```
