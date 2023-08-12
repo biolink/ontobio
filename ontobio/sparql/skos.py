@@ -7,12 +7,30 @@ from rdflib.namespace import RDF
 from rdflib.namespace import SKOS
 from prefixcommons.curie_util import contract_uri
 
-from ontobio.ontol import Ontology, Synonym
+from ontobio.ontol import Ontology, Synonym, TextDefinition
 
 # TODO: make configurable
 GEMET = Namespace('http://www.eionet.europa.eu/gemet/2004/06/gemet-schema.rdf#')
 
 logger = logging.getLogger(__name__)
+
+
+def _preferred_label(rg, concept):
+    """
+    Return a list of (label_prop, label) pairs, where label_prop is either skos:prefLabel or rdfs:label.
+
+    :param: rg: rdflib.Graph object
+    :param: concept: rdflib.URIRef object
+    :param: lang: language code
+
+    """
+
+    labels = list(rg.objects(concept, SKOS.prefLabel))
+    if len(labels) == 0:
+        print("No labels for {}".format(concept))
+
+    else:
+        return [(SKOS.prefLabel, l_) for l_ in labels]
 
 
 class Skos(object):
@@ -29,9 +47,9 @@ class Skos(object):
 
     def _uri2id(self, uri):
         s = "{:s}".format(str(uri))
-        for prefix,uribase in self.prefixmap.items():
-            if (s.startswith(uribase)):
-                s = s.replace(uribase,prefix+":")
+        for prefix, uribase in self.prefixmap.items():
+            if s.startswith(uribase):
+                s = s.replace(uribase, prefix+":")
                 return s
         curies = contract_uri(uri)
         if len(curies) > 0:
@@ -57,8 +75,8 @@ class Skos(object):
 
         Arguments
         ---------
-        rg: rdflib.Graph
-            graph object
+        :param: rg: rdflib.Graph object
+        :param: ont: ontobio.ontol.Ontology object
 
         Returns
         -------
@@ -79,14 +97,13 @@ class Skos(object):
                 subset_map[self._uri2id(s)] = s
                 
         for concept in sorted(list(rg.subjects(RDF.type, SKOS.Concept))):
-            concept_uri = str(concept)
             id=self._uri2id(concept)
             logger.info("ADDING: {}".format(id))
-            ont.add_node(id, self._get_label(rg,concept))
+            ont.add_node(id, self._get_label(rg, concept))
                     
             for defn in rg.objects(concept, SKOS.definition):
-                if (defn.language == self.lang):
-                    td = TextDefinition(id, escape_value(defn.value))
+                if defn.language == self.lang:
+                    td = TextDefinition(id, defn.value)
                     ont.add_text_definition(td)
                     
             for s in rg.objects(concept, SKOS.broader):
@@ -112,12 +129,12 @@ class Skos(object):
         schemes.update(rg.objects(concept, GEMET.group))
         return schemes
     
-    def _get_label(self, rg,concept):
-        labels = sorted(rg.preferredLabel(concept, lang=self.lang))
-        if len(labels) == 0:
+    def _get_label(self, rg, concept):
+        if _preferred_label(rg, concept) is not None:
+            labels = sorted(_preferred_label(rg, concept))
+        else:
             return None
         if len(labels) > 1:
             logger.warning(">1 label for {} : {}".format(concept, labels))
         return labels[0][1].value
-    
-    
+

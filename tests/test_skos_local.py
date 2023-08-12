@@ -3,6 +3,7 @@ from ontobio.sparql.skos import Skos
 from ontobio import GraphRenderer
 import logging
 
+
 def test_skos():
     """
     Load ontology from SKOS
@@ -10,7 +11,6 @@ def test_skos():
     prefixmap = {'LTER': 'http://vocab.lternet.edu?tema=', 'SKOS': 'http://www.w3.org/2004/02/skos/core#'}
     skos = Skos(prefixmap=prefixmap)
 
-    
     fn = 'tests/resources/skos_example.rdf'
     ont = skos.process_file(fn, format='ttl')
 

@@ -1,3 +1,4 @@
+rdflib>=6.0.0
 marshmallow>=3.0.0b11,<4.0
 jsobject>=0.0
 prefixcommons>=0.1.9
@@ -21,11 +22,9 @@ plotly>=2.0.7
 pyyaml
 yamldown>=0.1.7
 click
-dataclasses
 diskcache>=4.0.0
 bidict>=0.20.0
 python-dateutil
 chardet
 dacite>=1.6.0
 pyparsing==2.4.7
-pysolr
