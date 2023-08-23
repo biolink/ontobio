@@ -224,10 +224,15 @@ def test_go_rules_15():
     assert test_result.result_type == qc.ResultType.PASS
 
     assoc.object.id = Curie.from_str("GO:0044215")
-    assoc.object.id = Curie.from_str("NCBITaxon:123")
+    assoc.object.taxon = Curie.from_str("NCBITaxon:123")
     assoc.interacting_taxon = None # This is the important part, no interacting taxon
     test_result = qc.GoRule15().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.PASS
+    
+    assoc.object.id = Curie.from_str("GO:0044419")
+    assoc.interacting_taxon = Curie.from_str("NCBITaxon:123") # Taxon and interacting taxon are same
+    test_result = qc.GoRule15().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.WARNING    
 
 def test_go_rule_16():
     # No GO term w/ID
