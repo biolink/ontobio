@@ -737,7 +737,7 @@ class AssocParser(object):
                         taxon=line.taxon, rule=20)
                     id = None
             else:
-                self.report.warning(line.line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
+                self.report.error(line.line, Report.OBSOLETE_CLASS, id, msg="Violates GORULE:0000020",
                     taxon=line.taxon, rule=20)
                 id = None
 
