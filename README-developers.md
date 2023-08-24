@@ -46,12 +46,13 @@ git push --tags
 
 > To ensure this is successful, make sure you have relevant permissions to Ontobio package on [PyPI](https://pypi.org/project/ontobio/)
 
-Run the following commands:
+Run the following commands (note, you will need a pypi token to do this work, see: https://pypi.org/help/#apitoken
+and make a ~/.pypirc file to store your token):
 
 ```sh
 make cleandist
-python setup.py sdist bdist_wheel bdist_egg
-twine upload --repository-url https://upload.pypi.org/legacy/ --username PYPI_USERNAME dist/*
+python setup.py sdist bdist_wheel
+twine upload --repository-url https://upload.pypi.org/legacy/ --username __token__ dist/*
 ```
 
 ****************************************************************************************************
