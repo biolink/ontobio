@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-__version__ = '2.8.9'
+__version__ = '2.8.10'
 
 
 from .ontol_factory import OntologyFactory
