@@ -79,7 +79,7 @@ def test_go_rule02():
     assoc = make_annotation(qualifier="NOT", goid="GO:0005515").associations[0]
 
     test_result = qc.GoRule02().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.WARNING
+    assert test_result.result_type == qc.ResultType.ERROR
 
     assoc.negated = False
     test_result = qc.GoRule02().test(assoc, all_rules_config())
