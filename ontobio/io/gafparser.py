@@ -379,6 +379,7 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     ## We use indeces here because we run GO RULES before we split the vals into individual variables
     DB_INDEX = 0
     DB_OBJECT_INDEX = 1
+    DB_OBJECT_SYMBOL = 2
     TAXON_INDEX = 12
     REFERENCE_INDEX = 5
     if gaf_line[DB_INDEX] == "":
@@ -387,6 +388,9 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     if gaf_line[DB_OBJECT_INDEX] == "":
         report.error(source_line, Report.INVALID_ID, "EMPTY", "col2 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
+    if gaf_line[DB_OBJECT_SYMBOL] == "":
+        report.error(source_line, Report.INVALID_ID, "EMPTY", "col3 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)    
     if gaf_line[REFERENCE_INDEX] == "":
         report.error(source_line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
