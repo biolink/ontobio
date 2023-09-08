@@ -38,10 +38,19 @@ gaf_line_validators = {
 }
 
 
+def subclass_closure(ontology: Ontology, curieNamespace: str, curieIdentity: str)-> Set[str]:
+    curie = association.Curie(namespace=curieNamespace, identity=curieIdentity)
+    children_of_curie = set(ontology.descendants(str(curie), relations=["subClassOf"], reflexive=True))
+    return children_of_curie
+
 def protein_complex_sublcass_closure(ontology: Ontology) -> Set[str]:
-    protein_containing_complex = association.Curie(namespace="GO", identity="0032991")
-    children_of_complexes = set(ontology.descendants(str(protein_containing_complex), relations=["subClassOf"], reflexive=True))
-    return children_of_complexes
+    return subclass_closure(ontology, "GO", "0032991")
+
+def cellular_anatomical_entity_subclass_closure(ontology: Ontology) -> Set[str]:
+    return subclass_closure(ontology, "GO", "0110165")
+
+def virion_component_subclass_closure(ontology: Ontology) -> Set[str]:
+    return subclass_closure(ontology, "GO", "0044423")
 
 
 class GafParser(assocparser.AssocParser):

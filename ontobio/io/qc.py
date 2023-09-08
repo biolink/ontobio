@@ -775,13 +775,14 @@ class GoRule61(RepairRule):
     def __init__(self):
         super().__init__("GORULE:0000061", "Only certain gene product to term relations are allowed for a given GO term", FailMode.HARD)
         self.protein_containing_complex_descendents = None
+        self.cellular_anatomical_entity_subclass_closure = None
+        self.virion_component_subclass_closure = None
 
         self.allowed_mf = set([association.Curie(namespace="RO", identity="0002327"), association.Curie(namespace="RO", identity="0002326")])
         self.allowed_bp = set([association.Curie("RO", "0002331"), association.Curie("RO", "0002264"),
                             association.Curie("RO", "0004032"), association.Curie("RO", "0004033"), association.Curie("RO", "0002263"),
                             association.Curie("RO", "0004034"), association.Curie("RO", "0004035")])
         self.allowed_cc_complex = set([association.Curie("BFO", "0000050")])
-        self.repairable_cc_complex = set([association.Curie("RO", "0002432"), association.Curie("RO", "0001025")])
         self.allowed_cc_other = set([association.Curie("RO", "0001025"), association.Curie("RO", "0002432"), association.Curie("RO", "0002325")])
 
     def make_protein_complex_descendents_if_not_present(self, ontology: Optional[ontol.Ontology]) -> Set:
@@ -790,20 +791,36 @@ class GoRule61(RepairRule):
             self.protein_containing_complex_descendents = closure
 
         return {} if self.protein_containing_complex_descendents is None else self.protein_containing_complex_descendents
+    
+    
+    def make_cellular_anatomical_entity_descendents_if_not_present(self, ontology: Optional[ontol.Ontology]) -> Set:
+        if ontology is not None and self.cellular_anatomical_entity_subclass_closure is None:
+            closure = gafparser.cellular_anatomical_entity_subclass_closure(ontology)
+            self.cellular_anatomical_entity_subclass_closure = closure
 
+        return {} if self.cellular_anatomical_entity_subclass_closure is None else self.cellular_anatomical_entity_subclass_closure
+    
+    
+    def make_virion_component_descendents_if_not_present(self, ontology: Optional[ontol.Ontology]) -> Set:
+        if ontology is not None and self.virion_component_subclass_closure is None:
+            closure = gafparser.virion_component_subclass_closure(ontology)
+            self.virion_component_subclass_closure = closure
+
+        return {} if self.virion_component_subclass_closure is None else self.virion_component_subclass_closure
+    
+    
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         """
         * GO:0003674 "molecular function"
-            * Term: GO:0005554 => relation is RO:0002327 "enables" + repair,
-            * Term: subclass of GO:0005554 => relations: {RO:0002327 "enables", RO:0002326 "contributes_to"} + filter
+            * Term: GO:0005554 => relation is RO:0002327 "enables", else relation is RO:0002327 "enables" + repair,
+            * Term: subclass of GO:0005554 => relations: {RO:0002327 "enables", RO:0002326 "contributes_to"}, else relation is RO:0002327 "enables" + repair
         * GO:0008150 "biological process"
             * Term: GO:0008150 => RO:0002331 "involved_in" + repair
-            * Term: subclass of GO:0008150 => relations: {RO:0002331 "involved_in", RO:0002264 "acts upstream or within", RO:0004032 "acts upstream of or within, positive effect", RO:0004033 "acts upstream of or within, negative effect", RO:0002263 "acts upstream of", RO:0004034 "acts upstream of, positive effect", RO:0004035 "acts upstream of, negative effect"} + filter
+            * Term: subclass of GO:0008150 => relations: {RO:0002331 "involved_in", RO:0002264 "acts upstream or within", RO:0004032 "acts upstream of or within, positive effect", RO:0004033 "acts upstream of or within, negative effect", RO:0002263 "acts upstream of", RO:0004034 "acts upstream of, positive effect", RO:0004035 "acts upstream of, negative effect"} else relation is RO:0002264 "acts upstream of or within" + repair
         * GO:0005575 "cellular component"
             * Term: GO:0005575 => relation is RO:0002432 "is_active_in" + repair
-            * If term is subclass of `GO:0032991 "protein-containing complex"` with relation one of {RO:0002432 "is_active_in", RO:0001025 "located in"} => relation should be repaired to `BFO:0000050 "part of"`
-            * If term is subclass of `GO:0032991` and any other relation, then it should be filtered
-            * Term: any other subclass of `GO:0008372` => allowed relations are {`RO:0001025 "located in"`, `RO:0002432 "is_active_in"`, `RO:0002325 "colocalizes_with"`} and other relations repaired to `RO:0001025 "located in"`.
+            * If term is subclass of `GO:0032991 "protein-containing complex"` => relation is BFO:0000050 "part of" + repair
+            * If term is subclass of `GO:0110165 "cellular anatomical entity"` or  `GO:0044423 "virion component"` => relation is one of {`RO:0001025 "located in"`, `RO:0002432 "is_active_in"`, `RO:0002325 "colocalizes_with"`} else relation is RO:0001025 "located in" + repair
         """
         if config.ontology is None:
             return TestResult(ResultType.PASS, "", annotation)
@@ -856,21 +873,16 @@ class GoRule61(RepairRule):
                 allowed = set([is_active_in])
                 repair_state = RepairState.REPAIRED
         elif namespace == "cellular_component":
-            if term in self.make_protein_complex_descendents_if_not_present(config.ontology):
+            if term == "GO:0032991" or term in self.make_protein_complex_descendents_if_not_present(config.ontology):
                 part_of = association.Curie(namespace="BFO", identity="0000050")
                 if relation not in self.allowed_cc_complex:
-                    if relation in self.repairable_cc_complex:
-                        repaired_annotation = copy.deepcopy(annotation)
-                        repaired_annotation.relation = part_of
-                        repaired_annotation.qualifiers = [part_of]
-                        allowed = self.allowed_cc_complex
-                        repair_state = RepairState.REPAIRED
-                    else:
-                        # Not repairable to part_of, so filter
-                        repaired_annotation = annotation
-                        allowed = self.allowed_cc_complex
-                        repair_state = RepairState.FAILED
-            else:
+                    repaired_annotation = copy.deepcopy(annotation)
+                    repaired_annotation.relation = part_of
+                    repaired_annotation.qualifiers = [part_of]
+                    allowed = self.allowed_cc_complex
+                    repair_state = RepairState.REPAIRED
+                    
+            elif term == "GO:0110165" or term in self.make_cellular_anatomical_entity_descendents_if_not_present(config.ontology) or term == "GO:0044423" or term in self.make_virion_component_descendents_if_not_present(config.ontology):
                 located_in = association.Curie(namespace="RO", identity="0001025")
                 if relation not in self.allowed_cc_other:
                     repaired_annotation = copy.deepcopy(annotation)
@@ -881,8 +893,7 @@ class GoRule61(RepairRule):
         else:
             # If we reach here, we're in a weird case where a term is not in either
             # of the three main GO branches, or does not have a namespace defined.
-            # If this is the case we should just pass along as if the ontology is missing
-            return TestResult(repair_result(RepairState.OKAY, self.fail_mode), "{}: {}".format(self.message(repair_state), "GO term has no namespace"), repaired_annotation)
+            return TestResult(repair_result(RepairState.FAILED, self.fail_mode), "{}: {}".format(self.message(repair_state), "GO term has no namespace"), repaired_annotation)
 
         allowed_str = ", ".join([str(a) for a in allowed])
         return TestResult(repair_result(repair_state, self.fail_mode), "{}: {} should be one of {}".format(self.message(repair_state), relation, allowed_str), repaired_annotation)
