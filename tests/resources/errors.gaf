@@ -5,7 +5,7 @@
 !
 ! bad GO ID
 PomBase	SPAC25B8.17	ypf1		BAD_GO_ID	GO_REF:0000024	ISO	SGD:S000001583	C	intramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)	ppp81	protein	taxon:4896	20150305	PomBase
-! No gene symbol
+! No gene symbol, fail since gene symbol is a required field
 PomBase	SPAC977.10			GO:1990578	PMID:19171118	IDA		C	plasma membrane sodium ion/proton antiporter Nhe1/Sod2	sod2	protein	taxon:4896	20151201	PomBase
 ! Blank lines
 
