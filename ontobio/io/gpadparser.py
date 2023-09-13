@@ -294,6 +294,12 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     if entity is not None:
         subject = entity
         taxon = subject.taxon
+        
+    #Ensure taxon is valid, if we are reading from bioentity
+    if len(bio_entities.entities) > 0:
+        if taxon.identity is None or taxon.identity == '0':
+            report.error(source_line, Report.INVALID_TAXON, "None or 0", "Taxon is invalid", rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)    
 
     go_term = association.Curie.from_str(gpad_line[3])
     if go_term.is_error():
@@ -425,6 +431,12 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
         # If we found a subject entity, then set `subject` to the found entity
         subject = entity
         taxon = subject.taxon
+        
+    #Ensure taxon is valid, if we are reading from bioentity
+    if len(bio_entities.entities) > 0:
+        if taxon.identity is None or taxon.identity == '0':
+            report.error(source_line, Report.INVALID_TAXON, "None or 0", "Taxon is invalid", rule=1)
+            return assocparser.ParseResult(source_line, [], True, report=report)     
 
     negated = gpad_line[1] == "NOT"
 
