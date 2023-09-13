@@ -3,6 +3,8 @@ from ontobio.io import assocparser
 from ontobio.model import association
 from ontobio.model.association import ConjunctiveSet, ExtensionUnit, Curie
 from ontobio.ontol_factory import OntologyFactory
+from ontobio.model import collections
+from ontobio.model.association import Curie, Subject
 
 import yaml
 
@@ -252,3 +254,79 @@ def test_unmapped_eco_to_gaf_codes():
     vals[5] = "ECO:0006003"  # indirectly maps to IDA via gaf-eco-mapping-derived.txt
     result = parser.parse_line("\t".join(vals))
     assert len(result.associations) == 1
+    
+def test_gpi_check():
+    report = assocparser.Report(group="unknown", dataset="unknown")
+    vals = [
+        "ZFIN",
+        "ZDB-GENE-070117-1552",
+        "acts_upstream_of_or_within",
+        "GO:0045601",
+        "PMID:17531218",
+        "ECO:0000307",
+        "",
+        "",
+        "20080326",
+        "ZFIN",
+        "",
+        "creation-date=2020-09-17|modification-date=2020-09-17|contributor-id=http://orcid.org/0000-0003-2689-5511"
+    ]
+    
+    bioentities = {'ZFIN:ZDB-GENE-070117-1552'  : {
+            'id': "ZDB-GENE-070117-1552",
+            'label': "ZDB-GENE-070117-1552",
+            'full_name': "fullnames",
+            'synonyms': "synonyms",
+            'type': "gene_product",
+            'taxon': "taxon:0"
+        }
+        }
+    
+    bioentities = collections.BioEntities({
+        Curie("ZFIN", "ZDB-GENE-070117-1552"): Subject(Curie.from_str("ZFIN:ZDB-GENE-070117-1552"), "ste4", ["adaptor protein Ste4"], [], ["protein"], Curie.from_str("taxon:0"))
+        })
+    
+    
+    
+    result = to_association(list(vals), report=report, version="1.2", bio_entities=bioentities)
+    assert result.skipped == True
+    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 1
+    assert len(result.associations) == 0 
+    
+    vals = [
+        "ZFIN:ZDB-GENE-070117-1552",
+        "ZFIN:ZDB-GENE-070117-1552",
+        "RO:12345",
+        "GO:0045601",
+        "PMID:17531218",
+        "ECO:0000307",
+        "",
+        "",
+        "2008-03-26",
+        "ZFIN",
+        "",
+        "creation-date=2020-09-17|modification-date=2020-09-17|contributor-id=http://orcid.org/0000-0003-2689-5511"
+    ]
+    result = to_association(list(vals), report=report, version="2.0", bio_entities=bioentities)
+    assert result.skipped == True
+    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 2
+    assert len(result.associations) == 0     
+    
+    
+    bioentities = collections.BioEntities({"bla": 'blabla'})
+
+    result = to_association(list(vals), report=report, version="2.0", bio_entities=bioentities)
+    assert result.skipped == True
+    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 3
+    assert len(result.associations) == 0    
+    
+    bioentities = collections.BioEntities({
+        Curie("ZFIN", "ZDB-GENE-070117-1552"): Subject(Curie.from_str("ZFIN:ZDB-GENE-070117-1552"), "ste4", ["adaptor protein Ste4"], [], ["protein"], Curie.from_str("NCBITaxon:12345"))
+        })
+
+    result = to_association(list(vals), report=report, version="2.0", bio_entities=bioentities)
+    assert result.skipped == 0
+    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 3
+    assert len(result.associations) == 1 
+        
+     
