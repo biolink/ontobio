@@ -646,6 +646,17 @@ class GoRule50(GoRule):
 
         return result
 
+class GoRule51(GoRule):
+
+    def __init__(self):
+            super().__init__("GORULE:0000051", "Some GO terms require a value in the Annotation Extension field", FailMode.SOFT)
+            
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+       
+        term = str(annotation.object.id)
+        no_extensions = (annotation.object_extensions is None or len(annotation.object_extensions) == 0)
+        fails = (term == "GO:0005488" or term == "GO:0005515") and no_extensions
+        return self._result(not fails)
 
 class GoRule55(GoRule):
 
@@ -919,6 +930,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule43": GoRule43(),
     "GoRule46": GoRule46(),
     "GoRule50": GoRule50(),
+    "GoRule51": GoRule51(),   
     "GoRule55": GoRule55(),
     "GoRule57": GoRule57(),
     "GoRule58": GoRule58(),

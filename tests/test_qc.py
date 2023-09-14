@@ -563,6 +563,16 @@ def test_gorule50():
     assoc.evidence.type = Curie.from_str(iea_eco)
     test_result = qc.GoRule50().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
+    
+def test_gorule51():
+    assoc = make_annotation(goid="GO:0005515", extension="has_input(GO:0003674),occurs_in(CL:123456)").associations[0]
+
+    test_result = qc.GoRule51().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.PASS
+
+    assoc = make_annotation(goid="GO:0005488").associations[0]
+    test_result = qc.GoRule51().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.WARNING      
 
 def test_gorule55():
     a = ["blah"] * 15
@@ -727,7 +737,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 24
+    assert len(test_results.keys()) == 25
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 

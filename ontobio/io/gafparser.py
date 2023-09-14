@@ -410,7 +410,10 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         return assocparser.ParseResult(source_line, [], True, report=report)
 
     taxon = parsed_taxons_result.parsed[0]
-
+    if taxon.identity is None or taxon.identity == '0':
+        report.error(source_line, Report.INVALID_TAXON, parsed_taxons_result.original, parsed_taxons_result.message, taxon=parsed_taxons_result.original, rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    
     date = assocparser.parse_date(gaf_line[13], report, source_line)
     if date is None:
         return assocparser.ParseResult(source_line, [], True, report=report)
