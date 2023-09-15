@@ -904,7 +904,7 @@ class GoRule61(RepairRule):
         else:
             # If we reach here, we're in a weird case where a term is not in either
             # of the three main GO branches, or does not have a namespace defined.
-            return TestResult(repair_result(RepairState.FAILED, self.fail_mode), "{}: {}".format(self.message(repair_state), "GO term has no namespace"), repaired_annotation)
+            return TestResult(repair_result(RepairState.FAILED, self.fail_mode), "{}: {}".format(self.message(repair_state), "GO term has no namespace"), annotation)
 
         allowed_str = ", ".join([str(a) for a in allowed])
         return TestResult(repair_result(repair_state, self.fail_mode), "{}: {} should be one of {}".format(self.message(repair_state), relation, allowed_str), repaired_annotation)
