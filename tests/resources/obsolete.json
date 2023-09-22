@@ -172,6 +172,42 @@
       "type" : "CLASS",
       "lbl" : "nucleus"
     }, {
+      "id" : "http://purl.obolibrary.org/obo/GO_0007155",
+      "meta" : {
+        "definition" : {
+          "val" : "The attachment of a cell, either to another cell or to an underlying substrate such as the extracellular matrix, via cell adhesion molecules.",
+          "xrefs" : [ "GOC:hb", "GOC:pf" ]
+        },
+        "subsets" : [ "http://purl.obolibrary.org/obo/go#goslim_candida", "http://purl.obolibrary.org/obo/go#goslim_generic", "http://purl.obolibrary.org/obo/go#prokaryote_subset", "http://purl.obolibrary.org/obo/go#goslim_pombe", "http://purl.obolibrary.org/obo/go#goslim_pir", "http://purl.obolibrary.org/obo/go#goslim_drosophila", "http://purl.obolibrary.org/obo/go#goslim_chembl", "http://purl.obolibrary.org/obo/go#goslim_metagenomics" ],
+        "xrefs" : [ {
+          "val" : "Wikipedia:Cell_adhesion"
+        } ],
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "single organism cell adhesion",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "cell adhesion molecule activity",
+          "xrefs" : [ ]
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "GO:0098602"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#created_by",
+          "val" : "dos"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#creation_date",
+          "val" : "2014-04-15T15:59:10Z"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "biological_process"
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "cell adhesion"
+    },{
       "id" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
       "type" : "PROPERTY",
       "lbl" : "has_alternative_id"

@@ -698,10 +698,15 @@ def test_gorule61():
     assert test_result.result_type == qc.ResultType.WARNING
     assert test_result.result.relation == association.Curie("RO", "0002264")
 
-    # CC complex term, unallowed relation, unrepairable, causes error
+    # CC complex term, qualifier is allowed
+    assoc = make_annotation(goid="GO:0032991", qualifier="part_of", evidence=ikr_eco, from_gaf=False, version="1.2")
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result_type == qc.ResultType.PASS
+
+    # CC complex term, unallowed relation, repairable, causes warning
     assoc = make_annotation(goid="GO:0032991", qualifier="enables", evidence=ikr_eco, from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
     # CC root repairs to is_active_in
     assoc = make_annotation(goid="GO:0005575", qualifier="located_in", evidence="ND", from_gaf=True, version="2.2")
