@@ -17,9 +17,21 @@ class BioEntities:
     def merge(self, other):
         """
         Merge another BioEntity set into this one. The `other` set will
-        override any collisions in this BioEntities
+        override any collisions in this BioEntities except for
+        any specific fields (e.g., label) handled below
         """
-        self.entities.update(other.entities)
+        # self.entities.update(other.entities)
+        for ent in other.entities:
+            if ent in self.entities:
+                # Handle specific field merges here
+                merged_ent = other.entities[ent]
+
+                # Carry forward existing label if other label is blank string or None
+                if not merged_ent.label:
+                    merged_ent.label = self.entities[ent].label
+                self.entities[ent] = merged_ent
+            else:
+                self.entities[ent] = other.entities[ent]
         return self
 
     def get(self, entity_id: Curie) -> Optional[Subject]:

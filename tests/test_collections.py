@@ -26,6 +26,15 @@ def test_bioentities_merge():
         Curie("BAR", "987"): Subject(Curie("BAR", "987"), "goodbye", "world", [], "protien", Curie("NCBITaxon", "999"))
     })
 
+    # Test that blank label does not overwrite existing label
+    p = collections.BioEntities({
+        Curie("BAR", "987"): Subject(Curie("BAR", "987"), "", "world", [], "protien", Curie("NCBITaxon", "999"))
+    })
+
+    assert o.merge(p) == collections.BioEntities({
+        Curie("BAR", "987"): Subject(Curie("BAR", "987"), "goodbye", "world", [], "protien", Curie("NCBITaxon", "999"))
+    })
+
 def test_bioentities_merge_clobber():
     e = collections.BioEntities({
         Curie("FOO", "123"): Subject(Curie("FOO", "123"), "hello", "world", [], "protien", Curie("NCBITaxon", "12345"))
