@@ -721,6 +721,13 @@ def test_gorule61():
     assert test_result.result_type == qc.ResultType.WARNING
     assert test_result.result.relation == association.Curie(namespace="BFO", identity="0000050")
 
+    # obsoleted term - these won't have namespace in ontology so ensure they aren't failed by this rule 61
+    # instead should be handled by rule 20
+    assoc = make_annotation(goid="GO:1902361", qualifier="involved_in", evidence="ISS", from_gaf=True,
+                            version="2.2")
+    test_result = qc.GoRule61().test(assoc.associations[0], config)
+    assert test_result.result_type == qc.ResultType.PASS
+
 
 def test_all_rules():
     # pass
