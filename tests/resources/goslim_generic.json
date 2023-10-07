@@ -4940,6 +4940,63 @@
       "type" : "CLASS",
       "lbl" : "oxidoreductase activity"
     }, {
+      "id" : "http://purl.obolibrary.org/obo/GO_0006850",
+      "meta" : {
+        "definition" : {
+          "val" : "The process in which pyruvate is transported across a mitochondrial membrane, into or out of the mitochondrion.",
+          "xrefs" : [ "GOC:vw", "PMID:22628558" ]
+        },
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "pyruvate transmembrane transport in mitochondria",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "pyruvate transmembrane transport in mitochondrion",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "mitochondrial pyruvate transport",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "pyruvate membrane transport in mitochondria",
+          "xrefs" : [ ]
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "pyruvate membrane transport in mitochondrion",
+          "xrefs" : [ ]
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#creation_date",
+          "val" : "2013-08-15T11:19:35Z"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "GO:1902361"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "biological_process"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#created_by",
+          "val" : "dph"
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "mitochondrial pyruvate transmembrane transport"
+    }, {
+      "id" : "http://purl.obolibrary.org/obo/GO_1902361",
+      "meta" : {
+        "basicPropertyValues" : [ {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0100001",
+          "val" : "http://purl.obolibrary.org/obo/GO_0006850"
+        }, {
+          "pred" : "http://purl.obolibrary.org/obo/IAO_0000231",
+          "val" : "http://purl.obolibrary.org/obo/IAO_0000227"
+        } ],
+        "deprecated" : true
+      },
+      "type" : "CLASS"
+    }, {
       "id" : "http://www.geneontology.org/formats/oboInOwl#hasScope",
       "type" : "PROPERTY",
       "lbl" : "has_scope"
