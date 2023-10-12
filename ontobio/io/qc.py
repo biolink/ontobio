@@ -163,7 +163,7 @@ class RepairRule(GoRule):
         if state == RepairState.REPAIRED:
             message = "Found violation of: `{}` but was repaired".format(self.title)
         elif state == RepairState.FAILED:
-            message = "Found violatoin of: `{}` and could not be repaired".format(self.title)
+            message = "Found violation of: `{}` and could not be repaired".format(self.title)
 
         return message
 

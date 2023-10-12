@@ -82,8 +82,8 @@ ACTS_UPSTREAM_OF_RELATIONS = {
     "acts_upstream_of_or_within": "RO:0002264",
     "acts upstream of or within, positive effect": "RO:0004032",
     "acts upstream of or within, negative effect": "RO:0004033",
-    "acts_upstream_of_positive_effect": "RO:0004034",
-    "acts_upstream_of_negative_effect": "RO:0004035",
+    "acts_upstream_of,_positive_effect": "RO:0004034",
+    "acts_upstream_of,_negative_effect": "RO:0004035",
 }
 HAS_REGULATION_TARGET_RELATIONS = {
     # WB:WBGene00013591 involved_in GO:0042594
@@ -230,12 +230,12 @@ class GoCamModel:
         "contributes_to": "RO:0002326",
         "part_of": "BFO:0000050",
         "acts_upstream_of": "RO:0002263",
-        "acts_upstream_of_negative_effect": "RO:0004035",
+        "acts_upstream_of,_negative_effect": "RO:0004035",
         "acts_upstream_of_or_within": "RO:0002264",
-        "acts_upstream_of_positive_effect": "RO:0004034",
+        "acts_upstream_of,_positive_effect": "RO:0004034",
         "acts upstream of, negative effect": "RO:0004035",
-        "acts_upstream_of_or_within_negative_effect": "RO:0004033",
-        "acts_upstream_of_or_within_positive_effect": "RO:0004032",
+        "acts_upstream_of_or_within,_negative_effect": "RO:0004033",
+        "acts_upstream_of_or_within,_positive_effect": "RO:0004032",
         "located_in": "RO:0001025",
     }
 
