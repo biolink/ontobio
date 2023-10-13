@@ -178,11 +178,11 @@ class RepairRule(GoRule):
 class GoRule02(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000002", "No 'NOT' annotations to 'protein binding ; GO:0005515'", FailMode.HARD)
+        super().__init__("GORULE:0000002", "No 'NOT' annotations to 'binding ; GO:0005488' or 'protein binding ; GO:0005515'", FailMode.HARD)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-
-        fails = (str(annotation.object.id) == "GO:0005515" and annotation.negated)
+        annotation_obj_id = str(annotation.object.id)
+        fails = ((annotation_obj_id == "GO:0005488" or annotation_obj_id == "GO:0005515") and annotation.negated)
         return self._result(not fails)
 
 
