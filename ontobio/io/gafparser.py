@@ -201,55 +201,8 @@ class GafParser(assocparser.AssocParser):
         if self.gaf_version() == "2.1" and (vals[3] == "" or vals[3] == "NOT") and self.config.ontology:
             assoc = self.upgrade_empty_qualifier(assoc)
 
-        ## Run GO Rules, save split values into individual variables
-        # print("Config is {}".format(self.config.__dict__.keys()))
-        go_rule_results = qc.test_go_rules(assoc, self.config, group=self.group)
-        for rule, result in go_rule_results.all_results.items():
-            if result.result_type == qc.ResultType.WARNING:
-                self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
-                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
-
-            if result.result_type == qc.ResultType.ERROR:
-                self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, "",
-                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
-                # Skip the annotation
-                return assocparser.ParseResult(line, [], True)
-
-            if result.result_type == qc.ResultType.PASS:
-                self.report.message(assocparser.Report.INFO, line, Report.RULE_PASS, "",
-                                    msg="Passing Rule", rule=int(rule.id.split(":")[1]))
-
-        assoc = go_rule_results.annotation  # type: association.GoAssociation
-        split_line = assocparser.SplitLine(line=line, values=vals, taxon=str(assoc.object.taxon))
-
-        if self.config.group_idspace is not None and assoc.provided_by not in self.config.group_idspace:
-            self.report.warning(line, Report.INVALID_ID, assoc.provided_by,
-                "GORULE:0000027: assigned_by is not present in groups reference", taxon=str(assoc.object.taxon), rule=27)
-
-        db = assoc.subject.id.namespace
-        if self.config.entity_idspaces is not None and db not in self.config.entity_idspaces:
-            # Are we a synonym?
-            upgrade = self.config.entity_idspaces.reverse(db)
-            if upgrade is not None:
-                # If we found a synonym
-                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "GORULE:0000027: {} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=str(assoc.object.taxon), rule=27)
-                assoc.subject.id.namespace = upgrade
-
-        ## --
-        ## db + db_object_id. CARD=1
-        ## --assigned_by
-        if not self._validate_id(str(assoc.subject.id), split_line, allowed_ids=self.config.entity_idspaces):
-            return assocparser.ParseResult(line, [], True)
-
-        # Using a given gpi file to validate the gene object
-        # if self.gpi is not None:
-        #     entity = self.gpi.get(str(assoc.subject.id), None)
-        #     if entity is not None:
-        #         assoc.subject.label = entity["symbol"]
-        #         assoc.subject.fullname = entity["name"]
-        #         assoc.subject.synonyms = entity["synonyms"].split("|")
-        #         assoc.subject.type = entity["type"]
-
+        # Check for valid GO id and repair if necessary
+        split_line = assocparser.SplitLine(line=line, values=vals, taxon=str(assoc.object.taxon))        
         if not self._validate_id(str(assoc.object.id), split_line, context=ANNOTATION):
             print("skipping because {} not validated!".format(assoc.object.id))
             return assocparser.ParseResult(line, [], True)
@@ -285,8 +238,49 @@ class GafParser(assocparser.AssocParser):
             if repaired is None:
                     assoc.object_extensions = []        
                     return assocparser.ParseResult(line, [], True)
-            assoc.object_extensions = repaired    
-        
+            assoc.object_extensions = repaired   
+
+
+        ## Run GO Rules, save split values into individual variables
+        # print("Config is {}".format(self.config.__dict__.keys()))
+        go_rule_results = qc.test_go_rules(assoc, self.config, group=self.group)
+        for rule, result in go_rule_results.all_results.items():
+            if result.result_type == qc.ResultType.WARNING:
+                self.report.warning(line, assocparser.Report.VIOLATES_GO_RULE, "",
+                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
+
+            if result.result_type == qc.ResultType.ERROR:
+                self.report.error(line, assocparser.Report.VIOLATES_GO_RULE, "",
+                                    msg="{id}: {message}".format(id=rule.id, message=result.message), rule=int(rule.id.split(":")[1]))
+                # Skip the annotation
+                return assocparser.ParseResult(line, [], True)
+
+            if result.result_type == qc.ResultType.PASS:
+                self.report.message(assocparser.Report.INFO, line, Report.RULE_PASS, "",
+                                    msg="Passing Rule", rule=int(rule.id.split(":")[1]))
+
+        assoc = go_rule_results.annotation  # type: association.GoAssociation
+        #split_line = assocparser.SplitLine(line=line, values=vals, taxon=str(assoc.object.taxon))
+
+        if self.config.group_idspace is not None and assoc.provided_by not in self.config.group_idspace:
+            self.report.warning(line, Report.INVALID_ID, assoc.provided_by,
+                "GORULE:0000027: assigned_by is not present in groups reference", taxon=str(assoc.object.taxon), rule=27)
+
+        db = assoc.subject.id.namespace
+        if self.config.entity_idspaces is not None and db not in self.config.entity_idspaces:
+            # Are we a synonym?
+            upgrade = self.config.entity_idspaces.reverse(db)
+            if upgrade is not None:
+                # If we found a synonym
+                self.report.warning(line, Report.INVALID_ID_DBXREF, db, "GORULE:0000027: {} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=str(assoc.object.taxon), rule=27)
+                assoc.subject.id.namespace = upgrade
+
+        ## --
+        ## db + db_object_id. CARD=1
+        ## --assigned_by
+        if not self._validate_id(str(assoc.subject.id), split_line, allowed_ids=self.config.entity_idspaces):
+            return assocparser.ParseResult(line, [], True)
+   
         # validation
         self._validate_symbol(assoc.subject.label, split_line)
 
