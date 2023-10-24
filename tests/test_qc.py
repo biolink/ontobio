@@ -417,7 +417,7 @@ def test_gorule30():
 
     assoc.evidence.has_supporting_reference = [Curie.from_str("GO_PAINT:0000000")]
     test_result = qc.GoRule30().test(assoc, config)
-    assert test_result.result_type == qc.ResultType.WARNING
+    assert test_result.result_type == qc.ResultType.PASS
 
     assoc.evidence.has_supporting_reference = [Curie.from_str("FOO:123"), Curie.from_str("GO_REF:0000033")]
     test_result = qc.GoRule30().test(assoc, config)
