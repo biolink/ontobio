@@ -256,4 +256,5 @@ def test_obsolete():
     assert ont.replaced_by('GO:1') == ['GO:2']
     assert ont.replaced_by('GO:4') == ['GO:3']
     assert ont.replaced_by('GO:0005913') == ['GO:0005912']
-    assert n_obs == 4
+    assert ont.replaced_by('GO:0006758') == ['GO:0006754']
+    assert n_obs == 5
