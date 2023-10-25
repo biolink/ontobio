@@ -29,6 +29,8 @@ from ontobio.io.assocwriter import GafWriter, GpadWriter
 from ontobio.io import assocparser
 from ontobio.io import gaference
 from ontobio.slimmer import get_minimal_subgraph
+from ontobio.validation import metadata
+import os
 import sys
 import json
 import logging
@@ -77,6 +79,8 @@ def main():
                         help="When parsing GPAD, allow ECO class IDs that do not map to an ECO GAF code")
     parser.add_argument("-g", "--gpi", type=str, required=False, default=None,
                         help="GPI file")
+    parser.add_argument("-m", "--metadata_dir", type=dir_path, required=False,
+                        help="Path to metadata directory")
     parser.add_argument("-l", "--rule", action="append", required=None, default=[], dest="rule_set",
                         help="Set of rules to be run. Default is no rules to be run, with the exception \
                             of gorule-0000027 and gorule-0000020. See command line documentation in the \
@@ -137,6 +141,11 @@ def main():
     rule_set = args.rule_set
     if rule_set == ["all"]:
         rule_set = assocparser.RuleSet.ALL
+    
+    goref_metadata = None
+    if args.metadata_dir:
+        absolute_metadata = os.path.abspath(args.metadata_dir)
+        goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))    
 
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
@@ -151,6 +160,7 @@ def main():
         paint=args.allow_paint,
         allow_unmapped_eco=args.allow_unmapped_eco,
         gpi_authority_path=args.gpi,
+        goref_metadata=goref_metadata,
         rule_set=rule_set
     )
     p = None
@@ -235,6 +245,13 @@ def map2slim(ont, file, outfile, p, args):
     assocs = p.map_to_subset(open(file, "r"),
                              ontology=ont, outfile=outfile, subset=args.subset, relations=args.properties)
     #write_assocs(assocs, outfile, args)
+    
+def dir_path(path):
+    if os.path.isdir(path):
+        return path
+    else:
+        raise argparse.ArgumentTypeError(f"readable_dir:{path} is not a valid path")
+    
 
 def _default(something, default):
     if something is None:

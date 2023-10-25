@@ -494,8 +494,8 @@ class GoRule30(GoRule):
         references = annotation.evidence.has_supporting_reference
         for ref in references:
             ref = str(ref)
-            # Not allowed is obsolete and GO_PAINT:x
-            if ref.startswith("GO_PAINT") or (config.goref_metadata is not None and config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("is_obsolete", False)):
+            # Not allowed for obsolete GOREFs
+            if (config.goref_metadata is not None and config.goref_metadata.get(self._ref_curi_to_id(ref), {}).get("is_obsolete", False)):
                 return self._result(False)
 
         return self._result(True)
