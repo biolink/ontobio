@@ -9,6 +9,7 @@ from ontobio.io import qc
 from ontobio.io import gaference
 from ontobio.io import assocparser
 from ontobio.io import gafparser
+from ontobio.io.gafparser import GafParser
 from ontobio.io import gpadparser
 from ontobio import ontol, ontol_factory, ecomap
 
@@ -116,6 +117,17 @@ def test_go_rule_06():
     assoc.provided_by = "WB"  
     test_result = qc.GoRule06().test(assoc, all_rules_config(ontology=ontology))
     assert test_result.result_type == qc.ResultType.ERROR
+    
+    #Ensure obsoleted GO id is repaired with alternate id first before Gorule06
+    line = ["GeneDB", "PF3D7_0507500", "SUB1", "enables", "GO:0006758", "PMID:12764150", "IEP", "PANTHER:PTN000623979|TAIR:locus:2099478", "C", "GORULE:0000006-6", "protease 1", "gene", "NCBITaxon:36329", "20090624", "GeneDB", "", ""]
+    obs_ontology = ontol_factory.OntologyFactory().create("tests/resources/obsolete.json")
+    p = GafParser(config=assocparser.AssocParserConfig(ontology=obs_ontology, rule_set = assocparser.RuleSet.ALL))
+    p.version = "2.2"
+    parsed = p.parse_line("\t".join(line))
+    assoc = parsed.associations[0]
+    assert assoc.object.id == Curie.from_str("GO:0006754")
+    test_result = qc.GoRule06().test(assoc, all_rules_config(ontology=obs_ontology))
+    assert test_result.result_type == qc.ResultType.PASS
     
 def test_go_rule_07():
 
