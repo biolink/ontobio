@@ -767,7 +767,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 25
+    assert len(test_results.keys()) == 24
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
