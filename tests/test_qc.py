@@ -250,9 +250,15 @@ def test_go_rule_16():
     # GO term same as with/ID
     assoc = make_annotation(goid="GO:0044419", evidence="IC", withfrom="GO:0044419").associations[0]
 
+    #GO term same as withfrom
     test_result = qc.GoRule16().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.WARNING
-        
+    
+    #GO term same as one of the withfrom terms
+    assoc = make_annotation(goid="GO:0044419", evidence="IC", withfrom="GO:0044419|GO:0035821").associations[0]
+    test_result = qc.GoRule16().test(assoc, all_rules_config())    
+    assert test_result.result_type == qc.ResultType.PASS
+            
     # No GO term w/ID
     assoc = make_annotation(evidence="IC", withfrom="BLAH:12345").associations[0]
     test_result = qc.GoRule16().test(assoc, all_rules_config())

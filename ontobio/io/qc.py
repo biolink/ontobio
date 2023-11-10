@@ -357,11 +357,12 @@ class GoRule16(GoRule):
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
         withfrom = annotation.evidence.with_support_from
-        goId = annotation.object.id
+
 
         okay = True
         if evidence == ic_eco:
-            only_go = [t for conjunctions in withfrom for t in conjunctions.elements if (t.namespace == "GO" and goId is not None and t.identity != goId.identity)] # Filter terms that aren't GO terms and different from GO ID
+            go_id = annotation.object.id
+            only_go = [t for conjunctions in withfrom for t in conjunctions.elements if (t.namespace == "GO" and go_id.namespace == "GO" and t.identity != go_id.identity)] # Filter terms that aren't GO terms and different from GO ID
             okay = len(only_go) >= 1
 
         return self._result(okay)
