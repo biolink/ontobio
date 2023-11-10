@@ -305,6 +305,10 @@ def from_1_2(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     if go_term.is_error():
         report.error(source_line, Report.INVALID_SYMBOL, gpad_line[3], "Problem parsing GO Term", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
+    
+    if go_term.namespace != "GO" or go_term.identity.isnumeric == False:
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[3], "Namespace should be \"GO\" and identity a numeric value greater than \"0\"", taxon=str(taxon), rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)    
 
     object = association.Term(go_term, taxon)
 
@@ -449,7 +453,11 @@ def from_2_0(gpad_line: List[str], report=None, group="unknown", dataset="unknow
     if go_term.is_error():
         report.error(source_line, Report.INVALID_SYMBOL, gpad_line[ONTOLOGY_CLASS_INDEX], "Problem parsing GO Term", taxon=str(taxon), rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
-
+    
+    if go_term.namespace != "GO" or go_term.identity.isnumeric == False:
+        report.error(source_line, Report.INVALID_SYMBOL, gpad_line[ONTOLOGY_CLASS_INDEX], "Namespace should be \"GO\" and identity a numeric value greater than \"0\"", taxon=str(taxon), rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    
     object = association.Term(go_term, taxon)
 
     evidence_type = association.Curie.from_str(gpad_line[EVIDENCE_INDEX])
