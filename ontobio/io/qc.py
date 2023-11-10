@@ -352,15 +352,17 @@ class GoRule15(GoRule):
 class GoRule16(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", FailMode.SOFT)
+        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column that is also different from the entry in the \"GO ID\" column", FailMode.SOFT)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
         withfrom = annotation.evidence.with_support_from
 
+
         okay = True
         if evidence == ic_eco:
-            only_go = [t for conjunctions in withfrom for t in conjunctions.elements if t.namespace == "GO"] # Filter terms that aren't GO terms
+            go_id = annotation.object.id
+            only_go = [t for conjunctions in withfrom for t in conjunctions.elements if (t.namespace == "GO" and go_id.namespace == "GO" and t.identity != go_id.identity)] # Filter terms that aren't GO terms and different from GO ID
             okay = len(only_go) >= 1
 
         return self._result(okay)
