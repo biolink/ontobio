@@ -435,8 +435,15 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     qualifiers = [association.Curie.from_str(curie_util.contract_uri(relations.lookup_label(q), strict=False)[0]) for q in qualifiers]
 
     object = association.Term(association.Curie.from_str(gaf_line[4]), taxon)
-    if isinstance(object, association.Error):
+    if isinstance(object, association.Error) or isinstance(object.id, association.Error):
         report.error(source_line, Report.INVALID_SYMBOL, gaf_line[4], "Problem parsing GO Term", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)         
+        
+    # Check GO Term namespace and identifier
+    go_term = object.id
+    if go_term.namespace != "GO" or go_term.identity.isnumeric == False:
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[4], "Namespace should be \"GO\" and identity a numeric value greater than \"0\"", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)      
 
     # References
     references = [association.Curie.from_str(e) for e in gaf_line[5].split("|") if e]
