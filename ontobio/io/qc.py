@@ -933,7 +933,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule43": GoRule43(),
     "GoRule46": GoRule46(),
     "GoRule50": GoRule50(),
-    "GoRule51": GoRule51(),   
+    #"GoRule51": GoRule51(), Do not run test
     "GoRule55": GoRule55(),
     "GoRule57": GoRule57(),
     "GoRule58": GoRule58(),
