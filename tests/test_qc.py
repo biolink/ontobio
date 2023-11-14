@@ -451,7 +451,7 @@ def test_gorule30():
     assert test_result.result_type == qc.ResultType.PASS
 
 def test_gorule37():
-    assoc = make_annotation(evidence="IBA", references="PMID:21873635", assigned_by="GO_Central").associations[0]
+    assoc = make_annotation(evidence="IBA", references="GOREF:0000033", assigned_by="GO_Central").associations[0]
 
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
@@ -465,7 +465,7 @@ def test_gorule37():
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.ERROR
 
-    assoc.evidence.has_supporting_reference = [Curie.from_str("PMID:21873635")]
+    assoc.evidence.has_supporting_reference = [Curie.from_str("GOREF:0000033")]
     assoc.provided_by = "Pascale"  # IBA, but wrong assigned_by
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.ERROR
