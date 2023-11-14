@@ -163,7 +163,7 @@ class RepairRule(GoRule):
         if state == RepairState.REPAIRED:
             message = "Found violation of: `{}` but was repaired".format(self.title)
         elif state == RepairState.FAILED:
-            message = "Found violatoin of: `{}` and could not be repaired".format(self.title)
+            message = "Found violation of: `{}` and could not be repaired".format(self.title)
 
         return message
 
@@ -910,7 +910,8 @@ class GoRule61(RepairRule):
             return TestResult(repair_result(RepairState.OKAY, self.fail_mode), "{}: {}".format(self.message(repair_state), "GO term has no namespace"), annotation)
 
         allowed_str = ", ".join([str(a) for a in allowed])
-        return TestResult(repair_result(repair_state, self.fail_mode), "{}: {} should be one of {}".format(self.message(repair_state), relation, allowed_str), repaired_annotation)
+        repaired_str = ", ".join([str(a) for a in repaired_annotation.qualifiers])
+        return TestResult(repair_result(repair_state, self.fail_mode), "{}: {} should be one of {}. Repaired to {}".format(self.message(repair_state), relation, allowed_str, repaired_str), repaired_annotation)
 
 
 GoRules = enum.Enum("GoRules", {
