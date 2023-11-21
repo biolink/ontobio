@@ -124,6 +124,27 @@ def test_parse_interacting_taxon():
     ]
     result = to_association(list(vals), report=report, version="1.2")
     assert result.associations[0].interacting_taxon == Curie(namespace="NCBITaxon", identity="5678")
+    
+def test_parse_go_id_1_2():
+    report = assocparser.Report(group="unknown", dataset="unknown")
+    vals = [
+        "MGI",
+        "MGI:1918911",
+        "enables",
+        "UBERON:1234",
+        "MGI:MGI:2156816|GO_REF:0000015",
+        "ECO:0000307",
+        "",
+        "",
+        "20100209",
+        "MGI",
+        "",
+        "creation-date=2020-09-17|modification-date=2020-09-17|contributor-id=http://orcid.org/0000-0003-2689-5511"
+    ]
+    result = to_association(list(vals), report=report, version="1.2")
+    assert result.skipped == 1
+    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 1
+    assert len(result.associations) == 0    
 
 
 def test_duplicate_key_annot_properties():
@@ -189,6 +210,29 @@ def test_parse_2_0():
     # Test annotation property retrieval
     contributors = result.associations[0].annotation_property_values(property_key="contributor-id")
     assert set(contributors) == {"http://orcid.org/0000-0003-2689-5511"}
+    
+    
+def test_parse_go_id_2_0():
+    version = "2.0"
+    report = assocparser.Report(group="unknown", dataset="unknown")
+    vals = [
+        "MGI:MGI:1918911",
+        "",
+        "RO:0002327",
+        "UBERON:5678",
+        "MGI:MGI:2156816|GO_REF:0000015",
+        "ECO:0000307",
+        "",
+        "",
+        "2020-09-17",
+        "MGI",
+        "",
+        "creation-date=2020-09-17|modification-date=2020-09-17|contributor-id=http://orcid.org/0000-0003-2689-5511"
+    ]
+    result = to_association(list(vals), report=report, version=version)
+    assert result.skipped == 1
+    assert len([m for m in result.report.messages if m["level"] == "ERROR"]) == 1
+    assert len(result.associations) == 0    
 
 
 def test_aspect_fill_for_obsolete_terms():

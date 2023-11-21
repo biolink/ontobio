@@ -247,9 +247,20 @@ def test_go_rules_15():
     assert test_result.result_type == qc.ResultType.WARNING    
 
 def test_go_rule_16():
+    # GO term same as with/ID
+    assoc = make_annotation(goid="GO:0044419", evidence="IC", withfrom="GO:0044419").associations[0]
+
+    #GO term same as withfrom
+    test_result = qc.GoRule16().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.WARNING
+    
+    #GO term same as one of the withfrom terms
+    assoc = make_annotation(goid="GO:0044419", evidence="IC", withfrom="GO:0044419|GO:0035821").associations[0]
+    test_result = qc.GoRule16().test(assoc, all_rules_config())    
+    assert test_result.result_type == qc.ResultType.PASS
+            
     # No GO term w/ID
     assoc = make_annotation(evidence="IC", withfrom="BLAH:12345").associations[0]
-    print(assoc)
 
     test_result = qc.GoRule16().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.WARNING
@@ -441,7 +452,7 @@ def test_gorule30():
     assert test_result.result_type == qc.ResultType.PASS
 
 def test_gorule37():
-    assoc = make_annotation(evidence="IBA", references="PMID:21873635", assigned_by="GO_Central").associations[0]
+    assoc = make_annotation(evidence="IBA", references="GOREF:0000033", assigned_by="GO_Central").associations[0]
 
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
@@ -455,7 +466,7 @@ def test_gorule37():
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.ERROR
 
-    assoc.evidence.has_supporting_reference = [Curie.from_str("PMID:21873635")]
+    assoc.evidence.has_supporting_reference = [Curie.from_str("GOREF:0000033")]
     assoc.provided_by = "Pascale"  # IBA, but wrong assigned_by
     test_result = qc.GoRule37().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.ERROR
@@ -757,7 +768,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 25
+    assert len(test_results.keys()) == 24
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 

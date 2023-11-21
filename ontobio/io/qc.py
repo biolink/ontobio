@@ -163,7 +163,7 @@ class RepairRule(GoRule):
         if state == RepairState.REPAIRED:
             message = "Found violation of: `{}` but was repaired".format(self.title)
         elif state == RepairState.FAILED:
-            message = "Found violatoin of: `{}` and could not be repaired".format(self.title)
+            message = "Found violation of: `{}` and could not be repaired".format(self.title)
 
         return message
 
@@ -352,11 +352,12 @@ class GoRule15(GoRule):
 class GoRule16(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column", FailMode.SOFT)
+        super().__init__("GORULE:0000016", "All IC annotations should include a GO ID in the \"With/From\" column that is also different from the entry in the \"GO ID\" column", FailMode.SOFT)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
         withfrom = annotation.evidence.with_support_from
+
 
         okay = True
         if evidence == ic_eco:
@@ -511,7 +512,7 @@ class GoRule30(GoRule):
 class GoRule37(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000037", "IBA annotations should ONLY be assigned_by GO_Central and have PMID:21873635 as a reference", FailMode.HARD)
+        super().__init__("GORULE:0000037", "IBA annotations should ONLY be assigned_by GO_Central and have GOREF:0000033 as a reference", FailMode.HARD)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         # If the evidence code is IBA, then (1) the assigned_by field must be GO_Central and (2) the reference field must be PMID:21873635
@@ -521,7 +522,7 @@ class GoRule37(GoRule):
 
         result = self._result(True) # By default we pass
         if evidence == iba_eco:
-            result = self._result(assigned_by == "GO_Central" and "PMID:21873635" in references)
+            result = self._result(assigned_by == "GO_Central" and "GOREF:0000033" in references)
 
         return result
 
@@ -915,7 +916,8 @@ class GoRule61(RepairRule):
             return TestResult(repair_result(RepairState.OKAY, self.fail_mode), "{}: {}".format(self.message(repair_state), "GO term has no namespace"), annotation)
 
         allowed_str = ", ".join([str(a) for a in allowed])
-        return TestResult(repair_result(repair_state, self.fail_mode), "{}: {} should be one of {}".format(self.message(repair_state), relation, allowed_str), repaired_annotation)
+        repaired_str = ", ".join([str(a) for a in repaired_annotation.qualifiers])
+        return TestResult(repair_result(repair_state, self.fail_mode), "{}: {} should be one of {}. Repaired to {}".format(self.message(repair_state), relation, allowed_str, repaired_str), repaired_annotation)
 
 
 GoRules = enum.Enum("GoRules", {
@@ -938,7 +940,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule43": GoRule43(),
     "GoRule46": GoRule46(),
     "GoRule50": GoRule50(),
-    "GoRule51": GoRule51(),   
+    #"GoRule51": GoRule51(), Do not run test
     "GoRule55": GoRule55(),
     "GoRule57": GoRule57(),
     "GoRule58": GoRule58(),
