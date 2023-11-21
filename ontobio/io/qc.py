@@ -360,8 +360,15 @@ class GoRule16(GoRule):
 
         okay = True
         if evidence == ic_eco:
-            only_go = [t for conjunctions in withfrom for t in conjunctions.elements if t.namespace == "GO"] # Filter terms that aren't GO terms
-            okay = len(only_go) >= 1
+            if len(withfrom) == 0:
+                okay = False
+            else:
+                for conjunctive_set in withfrom:
+                    if conjunctive_set is None or len(conjunctive_set.elements) == 0:
+                        okay = False
+                    else:
+                        only_go = [t for conjunctions in withfrom for t in conjunctions.elements if t.namespace == "GO"] # Filter terms that aren't GO terms
+                        okay = len(only_go) >= 1
 
         return self._result(okay)
 
