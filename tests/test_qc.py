@@ -249,6 +249,7 @@ def test_go_rules_15():
 def test_go_rule_16():
     # No GO term w/ID
     assoc = make_annotation(evidence="IC", withfrom="BLAH:12345").associations[0]
+    print(assoc)
 
     test_result = qc.GoRule16().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.WARNING

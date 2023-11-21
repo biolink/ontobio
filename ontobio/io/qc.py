@@ -360,7 +360,7 @@ class GoRule16(GoRule):
 
         okay = True
         if evidence == ic_eco:
-            if len(withfrom) == 0:
+            if len(withfrom) == 0 or withfrom is None:
                 okay = False
             else:
                 for conjunctive_set in withfrom:
