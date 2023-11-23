@@ -228,10 +228,11 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         # With/From
-        for wf in assoc.evidence.with_support_from:
-            validated = self.validate_curie_ids(wf.elements, split_line)
-            if validated is None:
-                return assocparser.ParseResult(line, [], True)
+        if assoc.evidence.with_support_from is not None:
+            for wf in assoc.evidence.with_support_from:
+                validated = self.validate_curie_ids(wf.elements, split_line)
+                if validated is None:
+                    return assocparser.ParseResult(line, [], True)
 
 
         return assocparser.ParseResult(line, [assoc], False)
