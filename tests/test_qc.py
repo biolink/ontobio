@@ -714,13 +714,13 @@ def test_gorule58():
 
 def test_gorule61():
     config = all_rules_config(ontology=ontology)
-    assoc = make_annotation(goid="GO:0005554", qualifier="enables", evidence=ikr_eco, from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0003674", qualifier="enables", evidence=ikr_eco, from_gaf=False, version="1.2")
     assert assoc.report.reporter.messages.get("gorule-0000001", []) == []
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.PASS
 
     # Using `contributes_to`, but should be repaired to RO:0002327 enables
-    assoc = make_annotation(goid="GO:0005554", qualifier="contributes_to", evidence=ikr_eco, from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0003674", qualifier="contributes_to", evidence=ikr_eco, from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result.relation == association.Curie("RO", "0002327")
     assert test_result.result_type == qc.ResultType.WARNING
