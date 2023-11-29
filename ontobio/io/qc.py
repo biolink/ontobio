@@ -836,8 +836,8 @@ class GoRule61(RepairRule):
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         """
         * GO:0003674 "molecular function"
-            * Term: GO:0005554 => relation is RO:0002327 "enables", else relation is RO:0002327 "enables" + repair,
-            * Term: subclass of GO:0005554 => relations: {RO:0002327 "enables", RO:0002326 "contributes_to"}, else relation is RO:0002327 "enables" + repair
+            * Term: GO:0003674 => relation is RO:0002327 "enables", else relation is RO:0002327 "enables" + repair,
+            * Term: subclass of GO:0003674 => relations: {RO:0002327 "enables", RO:0002326 "contributes_to"}, else relation is RO:0002327 "enables" + repair
         * GO:0008150 "biological process"
             * Term: GO:0008150 => RO:0002331 "involved_in" + repair
             * Term: subclass of GO:0008150 => relations: {RO:0002331 "involved_in", RO:0002264 "acts upstream or within", RO:0004032 "acts upstream of or within, positive effect", RO:0004033 "acts upstream of or within, negative effect", RO:0002263 "acts upstream of", RO:0004034 "acts upstream of, positive effect", RO:0004035 "acts upstream of, negative effect"} else relation is RO:0002264 "acts upstream of or within" + repair
@@ -856,7 +856,7 @@ class GoRule61(RepairRule):
         allowed = set()
 
         repaired_annotation = annotation
-        if term == "GO:0005554":
+        if term == "GO:0003674":
             enables = association.Curie(namespace="RO", identity="0002327")
             if relation != enables:
                 repaired_annotation = copy.deepcopy(annotation)
