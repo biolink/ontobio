@@ -264,7 +264,7 @@ class GafParser(assocparser.AssocParser):
 
         if self.config.group_idspace is not None and assoc.provided_by not in self.config.group_idspace:
             self.report.warning(line, Report.INVALID_ID, assoc.provided_by,
-                "GORULE:0000027: assigned_by is not present in groups reference", taxon=str(assoc.object.taxon), rule=27)
+                "GORULE:0000027: {assigned_by} is not present in groups reference".format(assigned_by=assoc.provided_by), taxon=str(assoc.object.taxon), rule=27)            
 
         db = assoc.subject.id.namespace
         if self.config.entity_idspaces is not None and db not in self.config.entity_idspaces:
@@ -274,6 +274,24 @@ class GafParser(assocparser.AssocParser):
                 # If we found a synonym
                 self.report.warning(line, Report.INVALID_ID_DBXREF, db, "GORULE:0000027: {} is a synonym for the correct ID {}, and has been updated".format(db, upgrade), taxon=str(assoc.object.taxon), rule=27)
                 assoc.subject.id.namespace = upgrade
+                
+            else:
+                self.report.warning(line, Report.INVALID_ID, assoc.subject.id.namespace,
+                "GORULE:0000027: {subject_id_namespace} is not present in dbxrefs".format(subject_id_namespace=assoc.subject.id.namespace), taxon=str(assoc.object.taxon), rule=27)    
+
+        if self.config.db_type_name_syntax is not None and assoc.subject.id.identity is not None:
+            if db in self.config.db_type_name_syntax:
+                type_name_patterns = self.config.db_type_name_syntax[db]
+                identity_matches_pattern = False
+                for pattern in type_name_patterns.values():
+                    p = re.compile(pattern)
+                    if p.match(assoc.subject.id.identity):
+                        identity_matches_pattern = True
+                        break
+                if identity_matches_pattern == False:
+                    self.report.warning(line, Report.INVALID_ID, assoc.subject.id.identity,
+                    "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(assoc.subject.id.identity, db), taxon=str(assoc.object.taxon), rule=27)    
+                    
 
         ## --
         ## db + db_object_id. CARD=1

@@ -233,6 +233,7 @@ class AssocParserConfig():
                  goref_metadata=None,
                  group_metadata=None,
                  dbxrefs=None,
+                 db_type_name_syntax=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None,
                  extensions_constraints=None,
@@ -256,6 +257,7 @@ class AssocParserConfig():
         self.rule_metadata = rule_metadata
         self.goref_metadata = goref_metadata
         self.group_metadata = group_metadata
+        self.db_type_name_syntax = db_type_name_syntax
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces

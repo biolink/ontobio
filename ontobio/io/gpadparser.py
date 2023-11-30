@@ -207,7 +207,21 @@ class GpadParser(assocparser.AssocParser):
 
         if not self._validate_id(str(assoc.evidence.type), split_line):
             return assocparser.ParseResult(line, [], True)
-
+        
+        #Ensure db and dbid are valid
+        if self.config.db_type_name_syntax is not None and assoc.subject.id.identity is not None:
+            if assoc.subject.id.namespace in self.config.db_type_name_syntax:
+                type_name_patterns = self.config.db_type_name_syntax[assoc.subject.id.namespace]
+                identity_matches_pattern = False
+                for pattern in type_name_patterns.values():
+                    p = re.compile(pattern)
+                    if p.match(assoc.subject.id.identity):
+                        identity_matches_pattern = True
+                        break
+                if identity_matches_pattern == False:
+                    self.report.warning(line, assocparser.Report.INVALID_ID, assoc.subject.id.identity,
+                    "{} does not match any id_syntax patterns for {} in dbxrefs".format(assoc.subject.id.identity, assoc.subject.id.namespace), rule=27)           
+        
         if assoc.interacting_taxon:
             if not self._validate_taxon(str(assoc.interacting_taxon), split_line):
                 self.report.error(line, assocparser.Report.INVALID_TAXON, str(assoc.interacting_taxon), "Taxon ID is invalid", rule=27)

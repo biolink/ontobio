@@ -143,9 +143,11 @@ def main():
         rule_set = assocparser.RuleSet.ALL
     
     goref_metadata = None
+    db_type_name_syntax = None
     if args.metadata_dir:
         absolute_metadata = os.path.abspath(args.metadata_dir)
-        goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))    
+        goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
+        db_type_name_syntax = metadata.database_type_name_syntax(absolute_metadata)    
 
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
@@ -161,6 +163,7 @@ def main():
         allow_unmapped_eco=args.allow_unmapped_eco,
         gpi_authority_path=args.gpi,
         goref_metadata=goref_metadata,
+        db_type_name_syntax=db_type_name_syntax,
         rule_set=rule_set
     )
     p = None
