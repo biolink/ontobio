@@ -41,6 +41,25 @@ def test_obsolete_term_repair_withfrom():
                                      Curie(namespace='MGI', identity='1232453')])] == assoc.evidence.with_support_from
 
 
+    obsolete_go_with_from_no_replacement = ["ZFIN",
+            "ZFIN:ZDB-GENE-980526-362",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "PMID:15494018",
+            "ECO:0000305",
+            "GO:0016458|GO:1,GO:4|ZFIN:ZDB-MRPHLNO-010101-1,MGI:1232453",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "contributor=GOC:zfin_curators|model-state=production|noctua-model-id=gomodel:ZFIN_ZDB-GENE-980526-362"
+            ]
+    ont = OntologyFactory().create(ALT_ID_ONT)
+    config = assocparser.AssocParserConfig(ontology=ont, rule_set=assocparser.RuleSet.ALL)
+    parser = GpadParser(config=config)
+    result = parser.parse_line("\t".join(obsolete_go_with_from_no_replacement))
+    assert result.associations == []
+
 def test_obsolete_term_repair_extensions():
 
     vals = ["ZFIN",
