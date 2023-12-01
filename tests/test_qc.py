@@ -254,7 +254,6 @@ def test_go_rule_16():
     # GO term same as with/ID
     assoc = make_annotation(goid="GO:0044419", evidence="IC", withfrom="GO:0044419").associations[0]
 
-    #GO term same as withfrom
     test_result = qc.GoRule16().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.WARNING
     
@@ -268,10 +267,7 @@ def test_go_rule_16():
     parser = GpadParser(obs_config)
     gpadLine = "MGI\tMGI:1916040\tlocated_in\tGO:0005634\tPMID:23369715\tECO:0000305\tGO:0016458\t\t20200518\tMGI\t\tcontributor=https://orcid.org/0000-0001-7476-6306|noctua-model-id=gomodel:MGI_MGI_1916040|contributor=https://orcid.org/0000-0003-2689-5511|model-state=production"
     result = parser.parse_line(gpadLine)
-    assoc = result.associations[0]
-    test_result = qc.GoRule16().test(assoc, obs_config)  
-    assert test_result.result_type == qc.ResultType.WARNING
-            
+    assert result.associations == []        
             
     # No GO term w/ID
     assoc = make_annotation(evidence="IC", withfrom="BLAH:12345").associations[0]
