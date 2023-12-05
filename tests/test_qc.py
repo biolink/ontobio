@@ -5,6 +5,7 @@ import json
 
 from ontobio.model import association
 from ontobio.model.association import Curie
+from ontobio.io.gpadparser import GpadParser
 from ontobio.io import qc
 from ontobio.io import gaference
 from ontobio.io import assocparser
@@ -16,6 +17,7 @@ from ontobio import ontol, ontol_factory, ecomap
 import copy
 
 ontology = ontol_factory.OntologyFactory().create("tests/resources/goslim_generic.json")
+ontology_obsolete = ontol_factory.OntologyFactory().create("tests/resources/obsolete.json")
 ecomapping = ecomap.EcoMap()
 iea_eco = ecomapping.coderef_to_ecoclass("IEA")
 hep_eco = ecomapping.coderef_to_ecoclass("HEP")
@@ -23,6 +25,8 @@ ic_eco = ecomapping.coderef_to_ecoclass("IC")
 ikr_eco = ecomapping.coderef_to_ecoclass("IKR")
 iba_eco = ecomapping.coderef_to_ecoclass("IBA")
 iso_eco = ecomapping.coderef_to_ecoclass("ISO")
+
+
 
 
 def make_annotation(db="blah",
@@ -250,17 +254,24 @@ def test_go_rule_16():
     # GO term same as with/ID
     assoc = make_annotation(goid="GO:0044419", evidence="IC", withfrom="GO:0044419").associations[0]
 
-    #GO term same as withfrom
     test_result = qc.GoRule16().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.WARNING
     
     #GO term same as one of the withfrom terms
     assoc = make_annotation(goid="GO:0044419", evidence="IC", withfrom="GO:0044419|GO:0035821").associations[0]
     test_result = qc.GoRule16().test(assoc, all_rules_config())    
-    assert test_result.result_type == qc.ResultType.PASS
+    assert test_result.result_type == qc.ResultType.PASS    
+    
+    #withfrom is obsolete
+    obs_config = config=assocparser.AssocParserConfig(ontology=ontology_obsolete,rule_set=assocparser.RuleSet.ALL)
+    parser = GpadParser(obs_config)
+    gpadLine = "MGI\tMGI:1916040\tlocated_in\tGO:0005634\tPMID:23369715\tECO:0000305\tGO:0016458\t\t20200518\tMGI\t\tcontributor=https://orcid.org/0000-0001-7476-6306|noctua-model-id=gomodel:MGI_MGI_1916040|contributor=https://orcid.org/0000-0003-2689-5511|model-state=production"
+    result = parser.parse_line(gpadLine)
+    assert result.associations == []        
             
     # No GO term w/ID
     assoc = make_annotation(evidence="IC", withfrom="BLAH:12345").associations[0]
+
     test_result = qc.GoRule16().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.WARNING
 
@@ -699,13 +710,13 @@ def test_gorule58():
 
 def test_gorule61():
     config = all_rules_config(ontology=ontology)
-    assoc = make_annotation(goid="GO:0005554", qualifier="enables", evidence=ikr_eco, from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0003674", qualifier="enables", evidence=ikr_eco, from_gaf=False, version="1.2")
     assert assoc.report.reporter.messages.get("gorule-0000001", []) == []
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.PASS
 
     # Using `contributes_to`, but should be repaired to RO:0002327 enables
-    assoc = make_annotation(goid="GO:0005554", qualifier="contributes_to", evidence=ikr_eco, from_gaf=False, version="1.2")
+    assoc = make_annotation(goid="GO:0003674", qualifier="contributes_to", evidence=ikr_eco, from_gaf=False, version="1.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result.relation == association.Curie("RO", "0002327")
     assert test_result.result_type == qc.ResultType.WARNING

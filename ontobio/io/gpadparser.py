@@ -157,8 +157,17 @@ class GpadParser(assocparser.AssocParser):
 
         split_line = assocparser.SplitLine(line=line, values=vals, taxon="")
 
+        #With/From
+        for wf in assoc.evidence.with_support_from:
+            validated = self.validate_curie_ids(wf.elements, split_line)
+            if validated is None:
+                return assocparser.ParseResult(line, [], True)
+
         # repair any GO terms in the with/from field that may be obsolete
-        assoc.evidence.with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line, 'gpad')
+        with_support_from = self._unroll_withfrom_and_replair_obsoletes(split_line, 'gpad')
+        if with_support_from is None:
+            return assocparser.ParseResult(line, [], True)
+        assoc.evidence.with_support_from = with_support_from
         
         # repair, if possible any GO terms in the extensions that may be obsolete
         if (0 < len(assoc.object_extensions)):
@@ -242,10 +251,11 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         # With/From
-        for wf in assoc.evidence.with_support_from:
-            validated = self.validate_curie_ids(wf.elements, split_line)
-            if validated is None:
-                return assocparser.ParseResult(line, [], True)
+        if assoc.evidence.with_support_from is not None:
+            for wf in assoc.evidence.with_support_from:
+                validated = self.validate_curie_ids(wf.elements, split_line)
+                if validated is None:
+                    return assocparser.ParseResult(line, [], True)
 
 
         return assocparser.ParseResult(line, [assoc], False)
