@@ -216,6 +216,8 @@ class GafParser(assocparser.AssocParser):
         if references is None:
             # Reporting occurs in above function call
             return assocparser.ParseResult(line, [], True)
+        for reference in references:
+            self._validate_curie_using_db_xrefs(reference, str(reference), split_line)
 
         # With/From
         for wf in assoc.evidence.with_support_from:
@@ -279,19 +281,8 @@ class GafParser(assocparser.AssocParser):
                 self.report.warning(line, Report.INVALID_ID, assoc.subject.id.namespace,
                 "GORULE:0000027: {subject_id_namespace} is not present in dbxrefs".format(subject_id_namespace=assoc.subject.id.namespace), taxon=str(assoc.object.taxon), rule=27)    
 
-        if self.config.db_type_name_syntax is not None and assoc.subject.id.identity is not None:
-            if db in self.config.db_type_name_syntax:
-                type_name_patterns = self.config.db_type_name_syntax[db]
-                identity_matches_pattern = False
-                for pattern in type_name_patterns.values():
-                    p = re.compile(pattern)
-                    if p.match(assoc.subject.id.identity):
-                        identity_matches_pattern = True
-                        break
-                if identity_matches_pattern == False:
-                    self.report.warning(line, Report.INVALID_ID, assoc.subject.id.identity,
-                    "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(assoc.subject.id.identity, db), taxon=str(assoc.object.taxon), rule=27)    
-                    
+        # Validate against db-xref id_syntax
+        self._validate_curie_using_db_xrefs(assoc.subject.id, str(assoc.subject.id), split_line)                   
 
         ## --
         ## db + db_object_id. CARD=1

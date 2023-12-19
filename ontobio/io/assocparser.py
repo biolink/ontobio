@@ -233,7 +233,7 @@ class AssocParserConfig():
                  goref_metadata=None,
                  group_metadata=None,
                  dbxrefs=None,
-                 db_type_name_syntax=None,
+                 db_type_name_regex_id_syntax=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None,
                  extensions_constraints=None,
@@ -257,7 +257,7 @@ class AssocParserConfig():
         self.rule_metadata = rule_metadata
         self.goref_metadata = goref_metadata
         self.group_metadata = group_metadata
-        self.db_type_name_syntax = db_type_name_syntax
+        self.db_type_name_regex_id_syntax = db_type_name_regex_id_syntax
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
@@ -769,6 +769,34 @@ class AssocParser(object):
                          
         return grouped_set
 
+    def _validate_curie_using_db_xrefs(self, curie, curieStr, line: SplitLine):
+        if curie is None:
+            self.report.warning(line.line, Report.INVALID_ID, curieStr,"GORULE:0000027: curie is empty", taxon=line.taxon, rule=27)
+            return False            
+        if  isinstance(curie, association.Curie) is False:
+            self.report.warning(line.line, Report.INVALID_ID, curieStr,"GORULE:0000027: Not a curie", taxon=line.taxon, rule=27)
+            return False
+        if curie.namespace is None:
+            self.report.warning(line.line, Report.INVALID_ID, curie.namespace, "GORULE:0000027: Curie namespace is empty", taxon=line.taxon, rule=27)
+            return False        
+        if curie.identity is None:
+            self.report.warning(line.line, Report.INVALID_ID, curie.identity, "GORULE:0000027: Curie identity is empty", taxon=line.taxon, rule=27)
+            return False
+        
+        if self.config.db_type_name_regex_id_syntax is not None:
+            if curie.namespace in self.config.db_type_name_regex_id_syntax:
+                type_name_regex_patterns = self.config.db_type_name_regex_id_syntax[curie.namespace]
+                identity_matches_pattern = False
+                for regex in type_name_regex_patterns.values():
+                    if regex.match(curie.identity):
+                        identity_matches_pattern = True
+                        break
+                if identity_matches_pattern == False:
+                    self.report.warning(line, Report.INVALID_ID, curie.identity,
+                    "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(str(curie), curie.namespace), taxon=line.taxon, rule=27)    
+                    return False        
+        return True
+        
     def _validate_symbol(self, symbol, line: SplitLine):
         if symbol is None or symbol == "":
             self.report.warning(line.line, Report.INVALID_SYMBOL, symbol, "GORULE:0000027: symbol is empty",

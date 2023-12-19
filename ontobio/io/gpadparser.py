@@ -179,8 +179,8 @@ class GpadParser(assocparser.AssocParser):
             if repaired is None:
                     assoc.object_extensions = []
                     return assocparser.ParseResult(line, [], True)
-            assoc.object_extensions = repaired 
-
+            assoc.object_extensions = repaired
+           
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
@@ -218,19 +218,7 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
         
         #Ensure db and dbid are valid
-        if self.config.db_type_name_syntax is not None and assoc.subject.id.identity is not None:
-            if assoc.subject.id.namespace in self.config.db_type_name_syntax:
-                type_name_patterns = self.config.db_type_name_syntax[assoc.subject.id.namespace]
-                identity_matches_pattern = False
-                for pattern in type_name_patterns.values():
-                    p = re.compile(pattern)
-                    if p.match(assoc.subject.id.identity):
-                        identity_matches_pattern = True
-                        break
-                if identity_matches_pattern == False:
-                    self.report.warning(line, assocparser.Report.INVALID_ID, assoc.subject.id.identity,
-                    "{} does not match any id_syntax patterns for {} in dbxrefs".format(assoc.subject.id.identity, assoc.subject.id.namespace), rule=27)           
-        
+        self._validate_curie_using_db_xrefs(assoc.subject.id, str(assoc.subject.id), split_line)        
         if assoc.interacting_taxon:
             if not self._validate_taxon(str(assoc.interacting_taxon), split_line):
                 self.report.error(line, assocparser.Report.INVALID_TAXON, str(assoc.interacting_taxon), "Taxon ID is invalid", rule=27)
@@ -249,14 +237,15 @@ class GpadParser(assocparser.AssocParser):
         references = self.validate_curie_ids(assoc.evidence.has_supporting_reference, split_line)
         if references is None:
             return assocparser.ParseResult(line, [], True)
+        for reference in references:
+            self._validate_curie_using_db_xrefs(reference, str(reference), split_line)        
 
         # With/From
         if assoc.evidence.with_support_from is not None:
             for wf in assoc.evidence.with_support_from:
                 validated = self.validate_curie_ids(wf.elements, split_line)
                 if validated is None:
-                    return assocparser.ParseResult(line, [], True)
-
+                    return assocparser.ParseResult(line, [], True)     
 
         return assocparser.ParseResult(line, [assoc], False)
 
