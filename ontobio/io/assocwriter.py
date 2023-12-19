@@ -119,7 +119,7 @@ class GpadWriter(AssocWriter):
         else:
             self.version = GPAD_1_2
 
-        self._write("!gpa-version: {}\n".format(self.version))
+        self._write("!gpad-version: {}\n".format(self.version))
         self.ecomap = ecomap.EcoMap()
 
     def as_tsv(self, assoc: Union[association.GoAssociation, dict]):
