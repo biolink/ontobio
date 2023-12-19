@@ -120,6 +120,8 @@ class GpadWriter(AssocWriter):
             self.version = GPAD_1_2
 
         self._write("!gpad-version: {}\n".format(self.version))
+        self._write("!generated-by: {}\n".format("GO Central"))
+        self._write("!date-generated: {}\n".format(str(datetime.datetime.now().strftime("%Y-%m-%dT%H:%M"))))
         self.ecomap = ecomap.EcoMap()
 
     def as_tsv(self, assoc: Union[association.GoAssociation, dict]):
