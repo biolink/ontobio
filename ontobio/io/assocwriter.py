@@ -108,6 +108,7 @@ class AssocWriter():
 GPAD_2_0 = "2.0"
 GPAD_1_2 = "1.2"
 
+
 class GpadWriter(AssocWriter):
     """
     Writes Associations in GPAD format

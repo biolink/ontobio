@@ -306,7 +306,7 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
 
         if products["gpad"]:
             click.echo("Setting up {}".format(product_files["gpad"].name))
-            gpadwriter = GpadWriter(file=product_files["gpad"])
+            gpadwriter = GpadWriter(file=product_files["gpad"], version="GPAD_2_0")
 
         click.echo("Making products...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
