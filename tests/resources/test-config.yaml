@@ -2,13 +2,13 @@ solr_assocs:
   url: "https://example.org"
   timeout: 999
 amigo_solr_assocs:
-  url: "http://golr-aux.geneontology.io/solr"
+  url: "http://golr.geneontology.org/solr"
   timeout: 2
 solr_search:
   url: "https://solr-dev.monarchinitiative.org/solr/search"
   timeout: 2
 amigo_solr_search:
-  url: "http://golr-aux.geneontology.io/solr"
+  url: "http://golr.geneontology.org/solr"
   timeout: 2
 sparql:
   url: "http://sparql.hegroup.org/sparql"
