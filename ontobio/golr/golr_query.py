@@ -1852,7 +1852,7 @@ from enum import Enum
 
 ## Should take those URLs from config.yaml
 class ESOLR(Enum):
-    GOLR = "http://golr.geneontology.io/solr/"
+    GOLR = "http://golr.geneontology.org/solr/"
     MOLR = "https://solr.monarchinitiative.org/solr/search"
 
 class ESOLRDoc(Enum):
