@@ -631,11 +631,18 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
                     matching_gpi_path = unzip_simple(matching_gpi_path)
                 gpi_list.append(matching_gpi_path)
 
+        noctua_gpad_src = check_and_download_mixin_source(noctua_metadata, group_metadata["id"], dataset, target,
+                                                    base_download_url=base_download_url,
+                                                    replace_existing_files=not skip_existing_files)
+
+
         end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target,
                                   ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
         make_products(dataset, end_gaf, products, ontology_graph)
+
+        make_gpads(dataset, end_gaf, products, ontology_graph, noctua_gpad_src)
 
 
 @cli.command()
