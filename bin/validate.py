@@ -352,16 +352,17 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
     outfile = open(validated_gpad_path, "w")
     gpadwriter = GpadWriter(file=outfile, version="GPAD_2_0")
 
-    with open(noctua_gpad_file) as nf:
-        gpadparser = GpadParser(config=assocparser.AssocParserConfig(
-            ontology=ontology_graph,
-            paint=False,
-        ))
+    if noctua_gpad_file is not None:
+        with open(noctua_gpad_file) as nf:
+            gpadparser = GpadParser(config=assocparser.AssocParserConfig(
+                ontology=ontology_graph,
+                paint=False,
+            ))
 
-        click.echo("Making noctua gpad products...")
-        with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
-            for association in associations:
-                gpadwriter.write_assoc(association)
+            click.echo("Making noctua gpad products...")
+            with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
+                for association in associations:
+                    gpadwriter.write_assoc(association)
 
     with open(gaf_path) as gf:
         gafparser = GafParser(config=assocparser.AssocParserConfig(
@@ -642,6 +643,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
         make_products(dataset, end_gaf, products, ontology_graph)
 
         make_gpads(dataset, end_gaf, products, ontology_graph, noctua_gpad_src)
+
+
 
 
 @cli.command()
