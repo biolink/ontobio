@@ -319,7 +319,7 @@ def make_products(dataset, gaf_path, products, ontology_graph):
             rdf_writer = assoc_rdfgen.TurtleRdfWriter(label=os.path.split(product_files["ttl"].name)[1])
             transformer = assoc_rdfgen.CamRdfTransform(writer=rdf_writer)
 
-        click.echo("Making products...")
+        click.echo("Making ttl products...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 if products["ttl"]:
@@ -358,7 +358,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
             paint=False,
         ))
 
-        click.echo("Making products...")
+        click.echo("Making noctua gpad products...")
         with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
             for association in associations:
                 gpadwriter.write_assoc(association)
@@ -369,7 +369,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
             paint=True,
         ))
 
-        click.echo("Making products...")
+        click.echo("Making merged gpad products...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 gpadwriter.write_assoc(association)
