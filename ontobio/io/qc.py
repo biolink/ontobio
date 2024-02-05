@@ -422,17 +422,17 @@ class GoRule30(GoRule):
 class GoRule37(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000037", "IBA annotations should ONLY be assigned_by GO_Central and have PMID:21873635 as a reference", FailMode.HARD)
+        super().__init__("GORULE:0000037", "IBA annotations should ONLY be assigned_by GO_Central and have GO_REF:0000033 as a reference", FailMode.HARD)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        # If the evidence code is IBA, then (1) the assigned_by field must be GO_Central and (2) the reference field must be PMID:21873635
+        # If the evidence code is IBA, then (1) the assigned_by field must be GO_Central and (2) the reference field must be GO_REF:0000033
         evidence = annotation.evidence.type
         references = annotation.evidence.has_supporting_reference
         assigned_by = annotation.provided_by
 
         result = self._result(True) # By default we pass
         if evidence == "ECO:0000318":
-            result = self._result(assigned_by == "GO_Central" and "PMID:21873635" in references)
+            result = self._result(assigned_by == "GO_Central" and "GO_REF:0000033" in references)
 
         return result
 

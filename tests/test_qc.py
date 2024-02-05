@@ -434,7 +434,7 @@ def test_gorule37():
     a = ["blah"] * 15
     a[3] = ""
     a[6] = "IBA"
-    a[5] = "PMID:21873635"
+    a[5] = "GO_REF:0000033"
     a[8] = "P"
     a[13] = "20200303"
     a[14] = "GO_Central"
@@ -452,7 +452,7 @@ def test_gorule37():
     test_result = qc.GoRule37().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
 
-    assoc.evidence.has_supporting_reference = ["PMID:21873635"]
+    assoc.evidence.has_supporting_reference = ["GO_REF:0000033"]
     assoc.provided_by = "Pascale"  # IBA, but wrong assigned_by
     test_result = qc.GoRule37().test(assoc, assocparser.AssocParserConfig())
     assert test_result.result_type == qc.ResultType.ERROR
