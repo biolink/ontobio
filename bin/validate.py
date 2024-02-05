@@ -347,11 +347,12 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
         lines = sum(1 for line in sg)
 
     # logger.info("AssocParserConfig used: {}".format(config))
-    split_source = os.path.split(noctua_gpad_file)[0]
+    split_source = os.path.split(gaf_path)[0]
     validated_gpad_path = os.path.join(split_source, "{}_gpad.gpad".format(dataset))
     outfile = open(validated_gpad_path, "w")
     gpadwriter = GpadWriter(file=outfile, version="GPAD_2_0")
 
+    print("noctua-gpad-file: {}".format(noctua_gpad_file))
     if noctua_gpad_file is not None:
         with open(noctua_gpad_file) as nf:
             gpadparser = GpadParser(config=assocparser.AssocParserConfig(
