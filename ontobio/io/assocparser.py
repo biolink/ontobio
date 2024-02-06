@@ -699,7 +699,10 @@ class AssocParser(object):
                     if fixed_element_individual is None:
                         return None
                 else:
-                    fixed_element_individual = element_individual
+                    fixed_element_individual = element_individual                    
+                #Check db-xref
+                self._validate_curie_using_db_xrefs(association.Curie.from_str(fixed_element_individual), fixed_element_individual, line)
+                    
                 if grouped_fixed_elements == '':
                     grouped_fixed_elements = fixed_element_individual
                 else:
@@ -764,6 +767,9 @@ class AssocParser(object):
                         curSet.append(association.ExtensionUnit(relation = association.Curie(e.relation.namespace, e.relation.identity), term = association.Curie.from_str(fixed_element_individual)))
                 else:
                     curSet.append(association.ExtensionUnit(relation = association.Curie(e.relation.namespace, e.relation.identity), term = association.Curie(e.term.namespace, e.term.identity)))        
+
+                #Check db-xref
+                self._validate_curie_using_db_xrefs(e.term, str(e.term), line)
 
             grouped_set.append(association.ConjunctiveSet(curSet))
                          

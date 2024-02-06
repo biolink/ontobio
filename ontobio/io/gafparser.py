@@ -206,6 +206,8 @@ class GafParser(assocparser.AssocParser):
         if not self._validate_id(str(assoc.object.id), split_line, context=ANNOTATION):
             print("skipping because {} not validated!".format(assoc.object.id))
             return assocparser.ParseResult(line, [], True)
+        
+        self._validate_curie_using_db_xrefs(assoc.object.id, str(assoc.object.id), split_line)
 
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:

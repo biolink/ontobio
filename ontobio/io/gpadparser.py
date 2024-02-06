@@ -184,6 +184,7 @@ class GpadParser(assocparser.AssocParser):
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
+        self._validate_curie_using_db_xrefs(association.Curie.from_str(valid_goid),  valid_goid, split_line)
         assoc.object.id = association.Curie.from_str(valid_goid)
 
         go_rule_results = qc.test_go_rules(assoc, self.config)
