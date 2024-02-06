@@ -1,7 +1,7 @@
 from ontobio.io import assocwriter
 from ontobio.io import gafparser, gpadparser
-from ontobio.model.association import GoAssociation, Curie, Subject, Term, ConjunctiveSet, Evidence, ExtensionUnit, Date, Aspect, Provider
-import json
+from ontobio.model.association import (GoAssociation, Curie, Subject, Term, ConjunctiveSet, Evidence, ExtensionUnit,
+                                       Date, Aspect, Provider)
 import io
 
 
@@ -59,12 +59,14 @@ def test_gaf_writer():
     gaf = [line.strip("\n") for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert expected == gaf
 
+
 def test_full_taxon_field_single_taxon():
     out = io.StringIO()
     writer = assocwriter.GafWriter(file=out)
 
     taxon_field = writer._full_taxon_field("taxon:12345", None)
     assert "taxon:12345" == taxon_field
+
 
 def test_full_taxon_field_interacting():
     out = io.StringIO()
@@ -73,12 +75,14 @@ def test_full_taxon_field_interacting():
     taxon_field = writer._full_taxon_field("taxon:12345", "taxon:6789")
     assert "taxon:12345|taxon:6789" == taxon_field
 
+
 def test_full_taxon_empty_string_interacting_taxon():
     out = io.StringIO()
     writer = assocwriter.GafWriter(file=out)
 
     taxon_field = writer._full_taxon_field("taxon:12345", "")
     assert "taxon:12345" == taxon_field
+
 
 def test_negated_qualifers():
     gaf = ["PomBase", "SPBC11B10.09", "cdc2", "NOT", "GO:0007275", "PMID:21873635", "ISO", "PANTHER:PTN000623979|TAIR:locus:2099478", "P", "Cyclin-dependent kinase 1", "UniProtKB:P04551|PTN000624043", "protein", "taxon:284812", "20170228", "GO_Central", "", ""]
@@ -93,6 +97,7 @@ def test_negated_qualifers():
     parsed = writer.as_tsv(result.associations[0])
     print(parsed)
     assert parsed[2] == "NOT|involved_in"
+
 
 def test_roundtrip():
     """
@@ -116,6 +121,7 @@ def test_roundtrip():
     writer.write_assoc(assoc)
     gaf = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert line == gaf
+
 
 def test_gpad_qualifier_removed_in_gaf_2_1():
     # Qualifier is `part_of` and should be returned blank instead of removing the whole line
@@ -206,6 +212,7 @@ def test_full_gaf_2_2_write():
     out_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert out_line.split("\t") == line.split("\t")
 
+
 def test_gaf_to_gpad2():
     line = "PomBase\tSPAC25B8.17\typf1\t\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:999|taxon:888\t20150305\tPomBase\tpart_of(X:1)\tUniProtKB:P12345"
     parser = gafparser.GafParser()
@@ -235,6 +242,7 @@ def test_gaf_to_gpad2():
     assert lines[2].startswith("!date-generated:")
     assert lines[3] == "PomBase:SPAC25B8.17\tNOT\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t2015-03-05\tPomBase\tBFO:0000050(X:1)\t"
 
+
 def test_writing_assoc_properties():
     line = "MGI:MGI:1922721\t\tRO:0002327\tGO:0019904\tMGI:MGI:3769586|PMID:17984326\tECO:0000353\tPR:Q0KK55\t\t2010-12-01\tMGI\tBFO:0000066(EMAPA:17787),RO:0002233(MGI:MGI:1923734)\tcreation-date=2008-02-07|modification-date=2010-12-01|comment=v-KIND domain binding of Kndc1;MGI:1923734|contributor-id=http://orcid.org/0000-0003-2689-5511|contributor-id=http://orcid.org/0000-0003-3394-9805"
     parser = gpadparser.GpadParser()
@@ -247,6 +255,7 @@ def test_writing_assoc_properties():
     written_gpad_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     written_props = written_gpad_line.split("\t")[11]
     assert len(written_props.split("|")) == 5
+
 
 def test_gpad_eco_to_gaf_evidence_code():
     def parse_gpad_vals_to_gaf_io(gpad_vals):
