@@ -343,8 +343,6 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
         # Bail if we have no products
         return []
 
-    with open(gaf_path) as sg:
-        lines = sum(1 for line in sg)
 
     # logger.info("AssocParserConfig used: {}".format(config))
     split_source = os.path.split(gaf_path)[0]
@@ -354,6 +352,10 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
 
     print("noctua-gpad-file: {}".format(noctua_gpad_file))
     if noctua_gpad_file is not None:
+
+        with open(noctua_gpad_file) as sg:
+            lines = sum(1 for line in sg)
+
         with open(noctua_gpad_file) as nf:
             gpadparser = GpadParser(config=assocparser.AssocParserConfig(
                 ontology=ontology_graph,
@@ -364,6 +366,9 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
             with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
                 for association in associations:
                     gpadwriter.write_assoc(association)
+
+    with open(gaf_path) as sg:
+        lines = sum(1 for line in sg)
 
     with open(gaf_path) as gf:
         gafparser = GafParser(config=assocparser.AssocParserConfig(
