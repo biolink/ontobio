@@ -421,6 +421,12 @@ def test_bad_date():
     assert assoc_result.skipped == True
     assert assoc_result.associations == []
     
+def test_bad_gene_symbol():
+    p = GafParser()
+    assoc_result = p.parse_line("PomBase\tSPAC25B8.17\ta|pipeisnotallowed\t\tGO:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20231110\tPomBase\tfoo(X:1)")
+    assert assoc_result.skipped == True
+    assert assoc_result.associations == []     
+    
 def test_bad_go_id():
     p = GafParser()
     assoc_result = p.parse_line("PomBase\tSPAC25B8.17\typf1\t\tINVALID:0000007\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:4896\t20231110\tPomBase\tfoo(X:1)")
