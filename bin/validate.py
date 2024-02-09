@@ -337,7 +337,7 @@ def make_products(dataset, gaf_path, products, ontology_graph):
 
     return [product_files[prod].name for prod in sorted(product_files.keys()) if products[prod]]
 
-
+@tools.gzips
 def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
     if not products["gpad"]:
         # Bail if we have no products
