@@ -337,56 +337,77 @@ def make_products(dataset, gaf_path, products, ontology_graph):
 
     return [product_files[prod].name for prod in sorted(product_files.keys()) if products[prod]]
 
+
 @tools.gzips
 def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
+    """
+    Using the gaf files and the noctua gpad file, produce a gpad file that contains both kinds of annotations
+    without any loss.
 
+    :param dataset: The dataset name
+    :param gaf_path: The path to the gaf file
+    :param products: The products to make
+    :param ontology_graph: The ontology graph to use for parsing the associations
+    :param noctua_gpad_file: The path to the noctua gpad file
+    :return: The path to the gpad file
+
+    """
     gpad_file_path = os.path.join(os.path.split(gaf_path)[0], f"{dataset}_gpad.gpad")
-
-    product_files = {
-        "gpad": open(os.path.join(os.path.split(gaf_path)[0], "{}_gpad.gpad".format(dataset)), "wb")
-    }
 
     if not products["gpad"]:
         return []
 
-    # logger.info("AssocParserConfig used: {}".format(config))
-
+    # Open the file once and keep it open for all operations within this block
     with open(gpad_file_path, "w") as outfile:
         gpadwriter = GpadWriter(file=outfile, version="GPAD_2_0")
 
-    print("noctua-gpad-file: {}".format(noctua_gpad_file))
-    if noctua_gpad_file is not None:
+        # If there's a noctua gpad file, process it
+        if noctua_gpad_file:
+            # Process noctua gpad file
+            process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph)
 
-        with open(noctua_gpad_file) as sg:
-            lines = sum(1 for line in sg)
+        # Process the GAF file
+        process_gaf_file(gaf_path, gpadwriter, ontology_graph)
 
-        with open(noctua_gpad_file) as nf:
-            gpadparser = GpadParser(config=assocparser.AssocParserConfig(
-                ontology=ontology_graph,
-                paint=False,
-            ))
+    # The file will be automatically closed here, after exiting the 'with' block
+    return [gpad_file_path]
 
-            click.echo("Making noctua gpad products...")
-            with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
-                for association in associations:
-                    gpadwriter.write_assoc(association)
 
-    with open(gaf_path) as sg:
-        lines = sum(1 for line in sg)
+def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph):
+    """
+    Process a noctua gpad file and write the associations to the gpad writer.
 
+    :param noctua_gpad_file: The path to the noctua gpad file
+    :param gpadwriter: The gpad writer to write the associations to
+    :param ontology_graph: The ontology graph to use for parsing the associations
+    """
+    with open(noctua_gpad_file) as nf:
+        lines = sum(1 for line in nf)
+        nf.seek(0)  # Reset file pointer to the beginning after counting lines
+        gpadparser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph, paint=False))
+        click.echo("Making noctua gpad products...")
+        with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
+            for association in associations:
+                gpadwriter.write_assoc(association)
+
+
+def process_gaf_file(gaf_path, gpadwriter, ontology_graph):
+    """
+    Process a gaf file and write the associations to the gpad writer.
+
+    :param gaf_path: The path to the gaf file
+    :param gpadwriter: The gpad writer to write the associations to
+    :param ontology_graph: The ontology graph to use for parsing the associations
+
+    """
     with open(gaf_path) as gf:
-        gafparser = GafParser(config=assocparser.AssocParserConfig(
-            ontology=ontology_graph,
-            paint=True,
-        ))
-
+        lines = sum(1 for line in gf)
+        gf.seek(0)  # Reset file pointer to the beginning after counting lines
+        gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph, paint=True))
         click.echo("Making merged gpad products...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 gpadwriter.write_assoc(association)
-
-        # After we run through associations
-    return [gpad_file_path] if products["gpad"] else []
 
 
 @tools.gzips
