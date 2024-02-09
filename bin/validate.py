@@ -339,14 +339,18 @@ def make_products(dataset, gaf_path, products, ontology_graph):
 
 @tools.gzips
 def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
+
+    product_files = {
+        "gpad": open(os.path.join(os.path.split(gaf_path)[0], "{}_gpad.gpad".format(dataset)), "wb")
+    }
+
     if not products["gpad"]:
         # Bail if we have no products
         return []
 
-
     # logger.info("AssocParserConfig used: {}".format(config))
-    split_source = os.path.split(gaf_path)[0]
-    validated_gpad_path = os.path.join(split_source, "{}_gpad.gpad".format(dataset))
+
+    validated_gpad_path = product_files["gpad"]
     outfile = open(validated_gpad_path, "w")
     gpadwriter = GpadWriter(file=outfile, version="GPAD_2_0")
 
@@ -381,6 +385,11 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
             for association in associations:
                 gpadwriter.write_assoc(association)
 
+        # After we run through associations
+        for f in product_files.values():
+            f.close()
+
+    return [product_files["gpad"].name for prod in sorted(product_files.keys()) if products[prod]]
 
 @tools.gzips
 def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):

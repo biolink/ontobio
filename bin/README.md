@@ -1,8 +1,10 @@
 See [command line docs](http://ontobio.readthedocs.io/en/latest/commandline.html#commandline) on ReadTheDocs
 
-To test validate.py on a particular source:
+To test validate.py "validate" command, the command that produces the final GPADs in the pipeline via the "mega make" 
+(aka: "produces GAFs, GPADs, ttl" stage), on a particular source:
+
 ```bash
 poetry install
-poetry run validate produce -m ../go-site/metadata --gpad -t [path/to/local/ontobio/clone] -o go-basic.json --only-dataset mgi MGI
-poetry run validate produce -m ../go-site/metadata --gpad -t [path/to/local/ontobio/clone] -o go-basic.json --only-dataset goa_chicken goa
+poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/[PIPELINE_BRANCH_NAME]/" --only-dataset mgi MGI
+poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/[PIPELINE_BRANCH_NAME]/" --only-dataset goa_chicken goa
 ```
