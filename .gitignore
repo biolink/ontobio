@@ -15,6 +15,7 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+mgi-*
 groups/
 .eggs/
 lib/

@@ -352,7 +352,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
     :return: The path to the gpad file
 
     """
-    gpad_file_path = os.path.join(os.path.split(gaf_path)[0], f"{dataset}_gpad.gpad")
+    gpad_file_path = os.path.join(os.path.split(gaf_path)[0], f"{dataset}.gpad")
 
     if not products["gpad"]:
         return []
