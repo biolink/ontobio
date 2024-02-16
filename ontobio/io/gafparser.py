@@ -404,7 +404,10 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
         return assocparser.ParseResult(source_line, [], True, report=report)
     if gaf_line[DB_OBJECT_SYMBOL] == "":
         report.error(source_line, Report.INVALID_ID, "EMPTY", "col3 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
-        return assocparser.ParseResult(source_line, [], True, report=report)    
+        return assocparser.ParseResult(source_line, [], True, report=report)
+    if '|' in gaf_line[DB_OBJECT_SYMBOL]:
+        report.error(source_line, Report.INVALID_SYMBOL, gaf_line[4], "Pipes are not allowed in gene symbol", taxon=gaf_line[TAXON_INDEX], rule=1)
+        return assocparser.ParseResult(source_line, [], True, report=report)
     if gaf_line[REFERENCE_INDEX] == "":
         report.error(source_line, Report.INVALID_ID, "EMPTY", "reference column 6 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
