@@ -293,7 +293,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
 
 
 @tools.gzips
-def make_products(dataset, gaf_path, products, ontology_graph):
+def make_ttls(dataset, gaf_path, products, ontology_graph):
     with open(gaf_path) as sg:
         lines = sum(1 for line in sg)
 
@@ -617,7 +617,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 
     paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
     noctua_metadata = metadata.dataset_metadata_file(absolute_metadata, "noctua")
-    mixin_metadata_list = list(filter(lambda m: m != None, [paint_metadata, noctua_metadata]))
+    mixin_metadata_list = list(filter(lambda m: m != None, [paint_metadata]))
 
     db_entities = metadata.database_entities(absolute_metadata)
     group_ids = metadata.groups(absolute_metadata)
@@ -674,7 +674,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
 
-        make_products(dataset, end_gaf, products, ontology_graph)
+        make_ttls(dataset, end_gaf, products, ontology_graph)
 
         make_gpads(dataset, end_gaf, products, ontology_graph, noctua_gpad_src)
 
