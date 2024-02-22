@@ -687,35 +687,6 @@ class GoRule55(GoRule):
         return self._result(True)
 
 
-class GoRule57(GoRule):
-
-    def __init__(self):
-        super().__init__("GORULE:0000057", "Group specific filter rules should be applied to annotations", FailMode.HARD, tags=["context-import"])
-
-    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        # Check group_metadata is present
-        if config.group_metadata is None:
-            return self._result(True)
-
-        evidence_codes = config.group_metadata.get("filter_out", {}).get("evidence", [])
-        if str(annotation.evidence.type) in evidence_codes:
-            return self._result(False)
-
-        evidences_references = config.group_metadata.get("filter_out", {}).get("evidence_reference", [])
-        for er in evidences_references:
-            evidence_code = er["evidence"]
-            reference = er["reference"]
-            if str(annotation.evidence.type) == evidence_code and [str(ref) for ref in annotation.evidence.has_supporting_reference] == [reference]:
-                return self._result(False)
-
-        properties = config.group_metadata.get("filter_out", {}).get("annotation_properties", [])
-        for p in properties:
-            if p in annotation.properties.keys():
-                return self._result(False)
-
-        return self._result(True)
-
-
 class GoRule58(RepairRule):
 
     def __init__(self):
@@ -947,7 +918,6 @@ GoRules = enum.Enum("GoRules", {
     "GoRule50": GoRule50(),
     #"GoRule51": GoRule51(), Do not run test
     "GoRule55": GoRule55(),
-    "GoRule57": GoRule57(),
     "GoRule58": GoRule58(),
     "GoRule61": GoRule61(),
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13

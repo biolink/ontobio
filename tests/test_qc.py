@@ -1,7 +1,6 @@
 import pytest
 import datetime
 import yaml
-import json
 
 from ontobio.model import association
 from ontobio.model.association import Curie
@@ -12,7 +11,7 @@ from ontobio.io import assocparser
 from ontobio.io import gafparser
 from ontobio.io.gafparser import GafParser
 from ontobio.io import gpadparser
-from ontobio import ontol, ontol_factory, ecomap
+from ontobio import ontol_factory, ecomap
 
 import copy
 
@@ -629,44 +628,6 @@ def test_gorule55():
     assert test_result.result_type == qc.ResultType.WARNING
 
 
-def test_gorule57():
-    assoc = make_annotation(db="HELLO", db_id="123", qualifier="contributes_to", goid="GO:0003674", evidence=iea_eco, taxon="taxon:2", from_gaf=False).associations[0]
-    # Look at evidence_code, reference, annotation_properties
-    config = assocparser.AssocParserConfig(
-        group_metadata={
-            "id": "mgi",
-            "label": "Mouse Genome Informatics",
-            "filter_out": {
-                "evidence": [iea_eco],
-                "evidence_reference": [
-                    {
-                        "evidence": ikr_eco,
-                        "reference": "PMID:21873635"
-                    }
-                ],
-                "annotation_properties": ["noctua-model-id"]
-            }
-        },
-        rule_set=assocparser.RuleSet.ALL
-    )
-    test_result = qc.GoRule57().test(assoc, config)
-    assert test_result.result_type == qc.ResultType.ERROR
-
-    assoc.evidence.type = Curie.from_str(ikr_eco)
-    assoc.evidence.has_supporting_reference = [Curie.from_str("PMID:21873635")]
-    test_result = qc.GoRule57().test(assoc, config)
-    assert test_result.result_type == qc.ResultType.ERROR
-
-    assoc.evidence.type = Curie.from_str("ECO:some_garbage")
-    assoc.evidence.has_supporting_reference = [Curie.from_str("PMID:some_garbage")]
-    assoc.properties = {"noctua-model-id": "some_garbage"}
-    test_result = qc.GoRule57().test(assoc, config)
-    assert test_result.result_type == qc.ResultType.ERROR
-
-    assoc.properties = {}
-    test_result = qc.GoRule57().test(assoc, config)
-    assert test_result.result_type == qc.ResultType.PASS
-
 def test_gorule58():
 
     with open("tests/resources/extensions-constraints.yaml") as exs_cons:
@@ -778,7 +739,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 24
+    assert len(test_results.keys()) == 23
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
