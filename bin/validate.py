@@ -669,16 +669,22 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
                                                           base_download_url=base_download_url,
                                                           replace_existing_files=not skip_existing_files)
 
+        sans_noctua_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target,
+                                  ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
+                                  rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
+                                  gaf_output_version=gaf_output_version)
+
+        make_gpads(dataset, sans_noctua_gaf, products, ontology_graph, noctua_gpad_src)
+
+        # add noctua gpad to the mix _after_ grabbing its extra extension metadata for the GPAD representation above.
+        mixin_metadata_list.append(noctua_metadata)
+
         end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target,
                                   ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
 
         make_ttls(dataset, end_gaf, products, ontology_graph)
-
-        make_gpads(dataset, end_gaf, products, ontology_graph, noctua_gpad_src)
-
-
 
 
 @cli.command()
