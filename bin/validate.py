@@ -168,7 +168,7 @@ def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_di
     if mixin_dataset is None:
         return None
 
-    click.echo("Merging mixin dataset {}".format(mixin_dataset["source"]))
+    click.echo("Downloading dataset {}".format(mixin_dataset["source"]))
     path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"],
                                      base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
@@ -226,7 +226,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
                 goref_metadata=None, db_entities=None, group_idspace=None, format="gaf",
                 suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None,
                 extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2",
-                rule_set=assocparser.RuleSet.ALL):
+                rule_set=assocparser.RuleSet.ALL) -> list[str]:
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -493,7 +493,11 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     # Set up merged final gaf product path
     dirs, name = os.path.split(valid_gaf_path)
-    merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
+    click.echo("dirs: {}, name: {}".format(dirs, name))
+    if ".gaf" in name and "_" not in name:
+        merged_path = os.path.join(dirs, name)
+    else:
+        merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
     valid_header = []
     annotations = []
     with open(valid_gaf_path) as valid_file:
@@ -532,6 +536,7 @@ def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, o
     end_gaf = valid_gaf
     mixin_gaf_paths = []
     for mixin_metadata in mixin_metadata_list:
+        click.echo("Merging mixin dataset {}".format(mixin_metadata["id"]))
         mixin_src = check_and_download_mixin_source(mixin_metadata, group_id, dataset, target,
                                                     base_download_url=base_download_url,
                                                     replace_existing_files=replace_existing_files)
@@ -669,20 +674,22 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
                                                           base_download_url=base_download_url,
                                                           replace_existing_files=not skip_existing_files)
 
-        sans_noctua_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target,
-                                  ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
-                                  rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
-                                  gaf_output_version=gaf_output_version)
+        sans_noctua_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset,
+                                          absolute_target,
+                                          ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
+                                          rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
+                                          gaf_output_version=gaf_output_version)
+
+        click.echo(sans_noctua_gaf)
 
         make_gpads(dataset, sans_noctua_gaf, products, ontology_graph, noctua_gpad_src)
 
-        # add noctua gpad to the mix _after_ grabbing its extra extension metadata for the GPAD representation above.
-        mixin_metadata_list.append(noctua_metadata)
-
-        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target,
+        end_gaf = mixin_a_dataset(sans_noctua_gaf, [noctua_metadata], group_metadata["id"], dataset, absolute_target,
                                   ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
+
+        click.echo(end_gaf)
 
         make_ttls(dataset, end_gaf, products, ontology_graph)
 
