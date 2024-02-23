@@ -33,7 +33,9 @@ ikr_eco = ecomapping.coderef_to_ecoclass("IKR")
 iba_eco = ecomapping.coderef_to_ecoclass("IBA")
 iep_eco = ecomapping.coderef_to_ecoclass("IEP")
 hep_eco = ecomapping.coderef_to_ecoclass("HEP")
-
+iss_eco = ecomapping.coderef_to_ecoclass("ISS")
+isa_eco = ecomapping.coderef_to_ecoclass("ISA")
+iso_eco = ecomapping.coderef_to_ecoclass("ISO")
 
 # TestResult = collections.namedtuple("TestResult", ["result_type", "message", "result"])
 class TestResult(object):
@@ -896,6 +898,21 @@ class GoRule61(RepairRule):
         return TestResult(repair_result(repair_state, self.fail_mode), "{}: {} should be one of {}. Repaired to {}".format(self.message(repair_state), relation, allowed_str, repaired_str), repaired_annotation)
 
 
+class GoRule63(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000063", "Annotations using ISS/ISA/ISO evidence should refer to a gene product (in the 'with' column)", FailMode.HARD)
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        evidence = str(annotation.evidence.type)
+        withfrom = annotation.evidence.with_support_from
+
+
+        if evidence in [iss_eco, isa_eco, iso_eco] and (withfrom is None or len(withfrom) == 0):
+            return self._result(False)
+
+        return self._result(True)
+
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
     "GoRule06": GoRule06(),
@@ -920,6 +937,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule55": GoRule55(),
     "GoRule58": GoRule58(),
     "GoRule61": GoRule61(),
+    "GoRule63": GoRule63(),
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
     "GoRule13": GoRule13()
 })

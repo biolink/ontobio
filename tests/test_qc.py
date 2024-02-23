@@ -722,7 +722,37 @@ def test_gorule61():
                             version="2.2")
     test_result = qc.GoRule61().test(assoc.associations[0], config)
     assert test_result.result_type == qc.ResultType.PASS
+        
+def test_go_rule_63():
+    # ISS with anything in withfrom
+    assoc = make_annotation(evidence="ISS", withfrom="BLAH:12345").associations[0]
+    test_result = qc.GoRule63().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.PASS
 
+    # ISA with anything in withfrom
+    assoc = make_annotation(evidence="ISA", withfrom="BLAH:12345").associations[0]
+    test_result = qc.GoRule63().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    # ISO with anything in withfrom
+    assoc = make_annotation(evidence="ISO", withfrom="BLAH:12345").associations[0]
+    test_result = qc.GoRule63().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.PASS    
+
+    # ISS with nothing in withfrom
+    assoc = make_annotation(evidence="ISS", withfrom="").associations[0]
+    test_result = qc.GoRule63().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.ERROR
+
+    # ISA with  with nothing in withfrom
+    assoc = make_annotation(evidence="ISA", withfrom="").associations[0]
+    test_result = qc.GoRule63().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.ERROR
+    
+    # ISO with  with nothing in withfrom
+    assoc = make_annotation(evidence="ISO", withfrom="").associations[0]
+    test_result = qc.GoRule63().test(assoc, all_rules_config())
+    assert test_result.result_type == qc.ResultType.ERROR
 
 def test_all_rules():
     # pass
@@ -739,7 +769,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 23
+    assert len(test_results.keys()) == 24
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
