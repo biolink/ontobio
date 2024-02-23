@@ -339,7 +339,7 @@ def make_ttls(dataset, gaf_path, products, ontology_graph):
 
 
 @tools.gzips
-def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
+def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, paint_gaf_src):
     """
     Using the gaf files and the noctua gpad file, produce a gpad file that contains both kinds of annotations
     without any loss.
@@ -349,6 +349,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
     :param products: The products to make
     :param ontology_graph: The ontology graph to use for parsing the associations
     :param noctua_gpad_file: The path to the noctua gpad file
+    :param paint_gaf_src: The source of the paint gaf file
     :return: The path to the gpad file
 
     """
@@ -367,7 +368,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file):
             process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph)
 
         # Process the GAF file
-        process_gaf_file(gaf_path, gpadwriter, ontology_graph)
+        process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src)
 
     # The file will be automatically closed here, after exiting the 'with' block
     return [gpad_file_path]
@@ -391,23 +392,34 @@ def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph):
                 gpadwriter.write_assoc(association)
 
 
-def process_gaf_file(gaf_path, gpadwriter, ontology_graph):
+def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
     """
     Process a gaf file and write the associations to the gpad writer.
 
     :param gaf_path: The path to the gaf file
     :param gpadwriter: The gpad writer to write the associations to
     :param ontology_graph: The ontology graph to use for parsing the associations
+    :param paint_gaf_src: The source of the paint gaf file
 
     """
     with open(gaf_path) as gf:
         lines = sum(1 for line in gf)
         gf.seek(0)  # Reset file pointer to the beginning after counting lines
         gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph, paint=True))
-        click.echo("Making merged gpad products...")
+        click.echo("Merging in source gaf to gpad product...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 gpadwriter.write_assoc(association)
+
+    if paint_gaf_src is not None:
+        with open(paint_gaf_src) as pgf:
+            lines = sum(1 for line in pgf)
+            pgf.seek(0)
+            gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph, paint=True))
+            click.echo("Merging in paint gaf to gpad product...")
+            with click.progressbar(iterable=gafparser.association_generator(file=pgf), length=lines) as associations:
+                for association in associations:
+                    gpadwriter.write_assoc(association)
 
 
 @tools.gzips
@@ -493,11 +505,7 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     # Set up merged final gaf product path
     dirs, name = os.path.split(valid_gaf_path)
-    click.echo("dirs: {}, name: {}".format(dirs, name))
-    if ".gaf" in name and "_" not in name:
-        merged_path = os.path.join(dirs, name)
-    else:
-        merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
+    merged_path = os.path.join(dirs, "{}.gaf".format(name.rsplit("_", maxsplit=1)[0]))
     valid_header = []
     annotations = []
     with open(valid_gaf_path) as valid_file:
@@ -673,18 +681,15 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
         noctua_gpad_src = check_and_download_mixin_source(noctua_metadata, group_metadata["id"], dataset, target,
                                                           base_download_url=base_download_url,
                                                           replace_existing_files=not skip_existing_files)
+        paint_gaf_src = (check_and_download_mixin_source(paint_metadata, group_metadata["id"], dataset, target,
+                                                         base_download_url=base_download_url,
+                                                         replace_existing_files=not skip_existing_files)
+                         if paint_metadata else None)
 
-        sans_noctua_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset,
-                                          absolute_target,
-                                          ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
-                                          rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
-                                          gaf_output_version=gaf_output_version)
+        make_gpads(dataset, valid_gaf, products, ontology_graph, noctua_gpad_src, paint_gaf_src)
 
-        click.echo(sans_noctua_gaf)
-
-        make_gpads(dataset, sans_noctua_gaf, products, ontology_graph, noctua_gpad_src)
-
-        end_gaf = mixin_a_dataset(sans_noctua_gaf, [noctua_metadata], group_metadata["id"], dataset, absolute_target,
+        end_gaf = mixin_a_dataset(valid_gaf, [noctua_metadata, paint_metadata],
+                                  group_metadata["id"], dataset, absolute_target,
                                   ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
