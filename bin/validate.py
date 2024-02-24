@@ -360,7 +360,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, pa
 
     # Open the file once and keep it open for all operations within this block
     with open(gpad_file_path, "w") as outfile:
-        gpadwriter = GpadWriter(file=outfile, version="GPAD_2_0")
+        gpadwriter = GpadWriter(file=outfile, version="2.0")
 
         # If there's a noctua gpad file, process it
         if noctua_gpad_file:

@@ -6,6 +6,7 @@ import re
 import datetime
 import json
 import logging
+import click
 
 from typing import List, Union
 
@@ -113,14 +114,16 @@ class GpadWriter(AssocWriter):
     """
     Writes Associations in GPAD format
     """
-    def __init__(self, file=None, version=GPAD_1_2):
+    def __init__(self, file=None, version=None):
         self.file = file
+        click.echo("Writing GPAD version: {}".format(version))
         if version in [GPAD_1_2, GPAD_2_0]:
             self.version = version
         else:
             self.version = GPAD_1_2
 
         self._write("!gpad-version: {}\n".format(self.version))
+        click.echo("Writing GPAD version: {}".format(self.version))
         self._write("!generated-by: {}\n".format("GO Central"))
         self._write("!date-generated: {}\n".format(str(datetime.datetime.now().strftime("%Y-%m-%dT%H:%M"))))
         self.ecomap = ecomap.EcoMap()
