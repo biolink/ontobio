@@ -142,7 +142,6 @@ class GpadWriter(AssocWriter):
             return assoc.to_gpad_1_2_tsv()
 
 
-
 class GafWriter(AssocWriter):
     """
     Writes Associations in GAF format.
@@ -157,13 +156,13 @@ class GafWriter(AssocWriter):
 
     The only difference in 2.1 and 2.2 are how qualifiers (column 4) are handled.
     GAF 2.1 allows empty or only `NOT` qualifier values, and only allows
-    `colocalizes_with` and `contributes_to` as qualifer values. However in 2.2
+    `colocalizes_with` and `contributes_to` as qualifier values. However, in 2.2
     qualifier must *not* be empty and cannot have only `NOT` as it's a modifier
-    on existing qualifers. The set of allowed qualifiers in 2.2 is also expanded.
+    on existing qualifiers. The set of allowed qualifiers in 2.2 is also expanded.
 
     So if there's a mismatch between converting from an annotation and a GAF
     version then that annotation is just skipped and not written out with an
-    error message displayed. Mismatch occurances of this kind would appear if
+    error message displayed. Mismatch occurrences of this kind would appear if
     the incoming annotation has a qualifier in the 2.2 set, but 2.1 is being
     written out, or if the qualifier is empty and 2.2 is being written.
     """
