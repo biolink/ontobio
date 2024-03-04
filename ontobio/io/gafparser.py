@@ -385,6 +385,9 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     DB_OBJECT_SYMBOL = 2
     TAXON_INDEX = 12
     REFERENCE_INDEX = 5
+    DEFAULT_SUBJECT_TYPE = 'gene_product'
+    STR_DEFAULT_SUBJECT_TYPE_CURIE = str(association.map_gp_type_label_to_curie(DEFAULT_SUBJECT_TYPE))
+    
     if gaf_line[DB_INDEX] == "":
         report.error(source_line, Report.INVALID_IDSPACE, "EMPTY", "col1 is empty", taxon=gaf_line[TAXON_INDEX], rule=1)
         return assocparser.ParseResult(source_line, [], True, report=report)
@@ -417,7 +420,11 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
 
     interacting_taxon = parsed_taxons_result.parsed[1] if len(parsed_taxons_result.parsed) == 2 else None
     subject_curie = association.Curie(gaf_line[0], gaf_line[1])
+    type_label = gaf_line[11]
     subject = association.Subject(subject_curie, gaf_line[2], [gaf_line[9]], gaf_line[10].split("|"), [association.map_gp_type_label_to_curie(gaf_line[11])], taxon)
+    # Output warnig, if system is defaulting to gene_product
+    if DEFAULT_SUBJECT_TYPE != type_label and len(subject.type) == 1 and STR_DEFAULT_SUBJECT_TYPE_CURIE == str(subject.type[0]):
+        report.warning(source_line, Report.INVALID_SUBJECT_TYPE, type_label, "defaulting to 'gene_product'", taxon=gaf_line[TAXON_INDEX], rule=1)
     gpi_entity = bio_entities.get(subject_curie)
     if gpi_entity is not None and subject != gpi_entity:
         subject = gpi_entity
