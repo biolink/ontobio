@@ -93,7 +93,29 @@ def test_go_rule02():
     assoc.object.id = Curie.from_str("GO:0003674")
     test_result = qc.GoRule02().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
-
+    
+def test_go_rule_05():
+    fail_terms = ["GO:0005488", "GO:0005515"]
+    fail_codes = ["IEA", "ISS", "ISO", "ISM", "ISA", "IBA", "RCA"]
+    for term in fail_terms:
+        for code in fail_codes:
+            assoc = make_annotation(goid=term, evidence=code).associations[0]
+            test_result = qc.GoRule05().test(assoc, all_rules_config(ontology=ontology))
+            assert test_result.result_type == qc.ResultType.WARNING
+    
+    assoc = make_annotation(goid="GO:0034655", evidence="IEA").associations[0]
+    test_result = qc.GoRule05().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    
+    assoc = make_annotation(goid="GO:0005488", evidence="HEP").associations[0]
+    test_result = qc.GoRule05().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    assoc = make_annotation(goid="GO:0034655", evidence="HEP").associations[0]
+    test_result = qc.GoRule05().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS    
+    
 def test_go_rule_06():
 
     assoc = make_annotation(goid="GO:0005575", evidence="HEP", aspect="C").associations[0]
@@ -769,7 +791,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 24
+    assert len(test_results.keys()) == 25
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
