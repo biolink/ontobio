@@ -36,6 +36,8 @@ hep_eco = ecomapping.coderef_to_ecoclass("HEP")
 iss_eco = ecomapping.coderef_to_ecoclass("ISS")
 isa_eco = ecomapping.coderef_to_ecoclass("ISA")
 iso_eco = ecomapping.coderef_to_ecoclass("ISO")
+ism_eco = ecomapping.coderef_to_ecoclass("ISM")
+rca_eco = ecomapping.coderef_to_ecoclass("RCA")
 
 # TestResult = collections.namedtuple("TestResult", ["result_type", "message", "result"])
 class TestResult(object):
@@ -187,6 +189,16 @@ class GoRule02(GoRule):
         fails = ((annotation_obj_id == "GO:0005488" or annotation_obj_id == "GO:0005515") and annotation.negated)
         return self._result(not fails)
 
+class GoRule05(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000005", "IEA, ISS, ISO, ISM, ISA, IBA, RCA annotations ae not allowed for direct annotations to 'binding ; GO:0005488' or 'protein binding ; GO:0005515'", FailMode.SOFT)
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        evidence = str(annotation.evidence.type)
+        annotation_obj_id = str(annotation.object.id)
+        fails = ((annotation_obj_id == "GO:0005488" or annotation_obj_id == "GO:0005515") and evidence in [iea_eco, iss_eco, iso_eco, ism_eco, isa_eco, iba_eco, rca_eco])
+        return self._result(not fails)
 
 class GoRule06(GoRule):
 
@@ -915,6 +927,7 @@ class GoRule63(GoRule):
 
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
+    "GoRule05": GoRule05(),    
     "GoRule06": GoRule06(),
     "GoRule07": GoRule07(),
     "GoRule08": GoRule08(),
