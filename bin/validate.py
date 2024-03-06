@@ -409,7 +409,6 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
         click.echo("Merging in source gaf to gpad product...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
-                if association.
                 gpadwriter.write_assoc(association)
 
     if paint_gaf_src is not None:
