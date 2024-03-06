@@ -960,6 +960,7 @@ def parse_date(date: str, report: Report, line: List) -> Optional[association.Da
 
     return d
 
+
 def parse_iso_date(date: str, report: Report, line: List) -> Optional[association.Date]:
 
     def parse_with_dateutil(date: str, repot: Report, line: List) -> Optional[association.Date]:
@@ -976,7 +977,6 @@ def parse_iso_date(date: str, report: Report, line: List) -> Optional[associatio
             day="{:02d}".format(parsed.day),
             time=parsed.time().isoformat())
 
-
     if date == "":
         report.error(line, Report.INVALID_DATE, "\'\'", "GORULE:0000001: empty", rule=1)
         return None
@@ -984,7 +984,7 @@ def parse_iso_date(date: str, report: Report, line: List) -> Optional[associatio
     d = None
     if len(date) >= 10:
         # For ISO style date, should be YYYY-MM-DD all as digits and
-        # a well formed date string here will be at least 10 characters long.
+        # a well-formed date string here will be at least 10 characters long.
         # Optionally, there could be an appended THH:MM
         year = date[0:4]
         month = date[5:7]
