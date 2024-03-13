@@ -12,5 +12,6 @@ poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json 
 
 To test whether a GAF file is valid (passes all the GORules):
 ```bash
+poetry install
 poetry run python3 ontobio-parse-assocs.py --file [path_to_file.gaf] --format GAF -o mgi_valid.gaf --report-md mgi.report.md -r [path_to_go.json] -l all validate
 ```

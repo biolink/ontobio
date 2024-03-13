@@ -644,6 +644,14 @@ class GoAssociation:
         """
 
         props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties]
+        gp_isoforms = None
+        print("before conversion", self.subject.id)
+        if self.subject_extensions:
+            gp_isoforms = self.subject_extensions[0].term
+        if gp_isoforms:
+            self.subject.id = gp_isoforms
+            print("after conversion", self.subject.id)
+
         return [
             str(self.subject.id),
             "NOT" if self.negated else "",
