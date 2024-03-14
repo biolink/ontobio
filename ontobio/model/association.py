@@ -649,7 +649,6 @@ class GoAssociation:
             gp_isoforms = self.subject_extensions[0].term
         if gp_isoforms:
             self.subject.id = gp_isoforms
-            print("after conversion", self.subject.id)
 
         return [
             str(self.subject.id),
