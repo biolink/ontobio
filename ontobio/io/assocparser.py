@@ -532,7 +532,10 @@ class AssocParser(object):
         file = self._ensure_file(file)
         for line in file:
             parsed_result = self.parse_line(line)
-            self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
+            self.report.report_parsed_result(parsed_result,
+                                             outfile,
+                                             self.config.filtered_evidence_file,
+                                             self.config.filter_out_evidence)
             for association in parsed_result.associations:
                 # yield association if we don't care if it's a header or if it's definitely a real gaf line
                 if not skipheader or not isinstance(association, dict):
@@ -960,6 +963,7 @@ def parse_date(date: str, report: Report, line: List) -> Optional[association.Da
 
     return d
 
+
 def parse_iso_date(date: str, report: Report, line: List) -> Optional[association.Date]:
 
     def parse_with_dateutil(date: str, repot: Report, line: List) -> Optional[association.Date]:
@@ -976,7 +980,6 @@ def parse_iso_date(date: str, report: Report, line: List) -> Optional[associatio
             day="{:02d}".format(parsed.day),
             time=parsed.time().isoformat())
 
-
     if date == "":
         report.error(line, Report.INVALID_DATE, "\'\'", "GORULE:0000001: empty", rule=1)
         return None
@@ -984,7 +987,7 @@ def parse_iso_date(date: str, report: Report, line: List) -> Optional[associatio
     d = None
     if len(date) >= 10:
         # For ISO style date, should be YYYY-MM-DD all as digits and
-        # a well formed date string here will be at least 10 characters long.
+        # a well-formed date string here will be at least 10 characters long.
         # Optionally, there could be an appended THH:MM
         year = date[0:4]
         month = date[5:7]

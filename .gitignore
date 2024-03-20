@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+go-basic.jso*
 .Python
 env/
 build/
@@ -14,6 +15,8 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+mgi-*
+groups/
 .eggs/
 lib/
 lib64/
