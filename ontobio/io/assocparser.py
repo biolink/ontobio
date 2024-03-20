@@ -532,7 +532,10 @@ class AssocParser(object):
         file = self._ensure_file(file)
         for line in file:
             parsed_result = self.parse_line(line)
-            self.report.report_parsed_result(parsed_result, outfile, self.config.filtered_evidence_file, self.config.filter_out_evidence)
+            self.report.report_parsed_result(parsed_result,
+                                             outfile,
+                                             self.config.filtered_evidence_file,
+                                             self.config.filter_out_evidence)
             for association in parsed_result.associations:
                 # yield association if we don't care if it's a header or if it's definitely a real gaf line
                 if not skipheader or not isinstance(association, dict):

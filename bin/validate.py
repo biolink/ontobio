@@ -364,6 +364,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, pa
 
         # If there's a noctua gpad file, process it
         if noctua_gpad_file:
+            click.echo("Making noctua gpad products...{}".format(noctua_gpad_file))
             # Process noctua gpad file
             process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph)
 
@@ -385,7 +386,9 @@ def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph):
     with open(noctua_gpad_file) as nf:
         lines = sum(1 for line in nf)
         nf.seek(0)  # Reset file pointer to the beginning after counting lines
-        gpadparser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph, paint=False))
+        gpadparser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                                     paint=False,
+                                                                     rule_set="all"))
         click.echo("Making noctua gpad products...")
         with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
             for association in associations:
@@ -405,7 +408,9 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
     with open(gaf_path) as gf:
         lines = sum(1 for line in gf)
         gf.seek(0)  # Reset file pointer to the beginning after counting lines
-        gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph, paint=True))
+        gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                                   paint=True,
+                                                                   rule_set="all"))
         click.echo("Merging in source gaf to gpad product...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
@@ -415,7 +420,9 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
         with open(paint_gaf_src) as pgf:
             lines = sum(1 for line in pgf)
             pgf.seek(0)
-            gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph, paint=True))
+            gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                                       paint=True,
+                                                                       rule_set="all"))
             click.echo("Merging in paint gaf to gpad product...")
             with click.progressbar(iterable=gafparser.association_generator(file=pgf), length=lines) as associations:
                 for association in associations:
@@ -649,6 +656,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
         # Set paint to True when the group is "paint".
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group,
         # like for paint_other.
+        click.echo("source_gaf: {}".format(source_gaf))
         valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph,
                                 paint=(group == "paint"),
                                 group=group,

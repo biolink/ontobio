@@ -919,7 +919,6 @@ class GoRule63(GoRule):
         evidence = str(annotation.evidence.type)
         withfrom = annotation.evidence.with_support_from
 
-
         if evidence in [iss_eco, isa_eco, iso_eco] and (withfrom is None or len(withfrom) == 0):
             return self._result(False)
 
