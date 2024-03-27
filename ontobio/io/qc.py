@@ -913,7 +913,7 @@ class GoRule61(RepairRule):
 class GoRule63(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000063", "Annotations using ISS/ISA/ISO evidence should refer to a gene product (in the 'with' column)", FailMode.HARD)
+        super().__init__("GORULE:0000063", "Annotations using ISS/ISA/ISO evidence should refer to a gene product (in the 'with' column)", FailMode.SOFT)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)

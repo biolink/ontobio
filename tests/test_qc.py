@@ -764,17 +764,17 @@ def test_go_rule_63():
     # ISS with nothing in withfrom
     assoc = make_annotation(evidence="ISS", withfrom="").associations[0]
     test_result = qc.GoRule63().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
     # ISA with  with nothing in withfrom
     assoc = make_annotation(evidence="ISA", withfrom="").associations[0]
     test_result = qc.GoRule63().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
     
     # ISO with  with nothing in withfrom
     assoc = make_annotation(evidence="ISO", withfrom="").associations[0]
     test_result = qc.GoRule63().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
 def test_all_rules():
     # pass

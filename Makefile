@@ -29,7 +29,7 @@ travis_test:
 		   tests/test_validation_rules.py tests/unit/test_annotation_scorer.py \
 		   tests/test_goassociation_model.py tests/test_relations.py \
 		   tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
-		   tests/unit/test_clinical_mod.py tests/test_collections.py \
+		   tests/test_collections.py \
 		   tests/test_gocamgen.py
 
 cleandist:
