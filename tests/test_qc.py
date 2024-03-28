@@ -775,6 +775,34 @@ def test_go_rule_63():
     assoc = make_annotation(evidence="ISO", withfrom="").associations[0]
     test_result = qc.GoRule63().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.WARNING
+    
+def test_go_rule_64():
+    config = assocparser.AssocParserConfig(
+        ref_species_metadata={
+            "NCBITaxon:7227", "NCBITaxon:123"
+        },
+        rule_set=assocparser.RuleSet.ALL
+    )
+            
+    assoc = make_annotation(evidence="IEA", references="GO_REF:0000118").associations[0]
+    assoc.subject.taxon = Curie.from_str("NCBITaxon:678")
+    test_result = qc.GoRule64().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS
+
+    assoc = make_annotation(evidence="IBA", references="GO_REF:0000118").associations[0]
+    assoc.subject.taxon = Curie.from_str("NCBITaxon:123")
+    test_result = qc.GoRule64().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    assoc = make_annotation(evidence="IEA", references="GO_REF:0000123").associations[0]
+    assoc.subject.taxon = Curie.from_str("NCBITaxon:123")
+    test_result = qc.GoRule64().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS         
+
+    assoc = make_annotation(evidence="IEA", references="GO_REF:0000118").associations[0]
+    assoc.subject.taxon = Curie.from_str("NCBITaxon:7227")
+    test_result = qc.GoRule64().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR 
 
 def test_all_rules():
     # pass
@@ -791,7 +819,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 25
+    assert len(test_results.keys()) == 26
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
