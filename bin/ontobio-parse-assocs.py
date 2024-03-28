@@ -143,9 +143,11 @@ def main():
         rule_set = assocparser.RuleSet.ALL
     
     goref_metadata = None
+    goref_species = None
     if args.metadata_dir:
         absolute_metadata = os.path.abspath(args.metadata_dir)
-        goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))    
+        goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
+        goref_species = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
 
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
@@ -161,6 +163,7 @@ def main():
         allow_unmapped_eco=args.allow_unmapped_eco,
         gpi_authority_path=args.gpi,
         goref_metadata=goref_metadata,
+        goref_species=goref_species,
         rule_set=rule_set
     )
     p = None

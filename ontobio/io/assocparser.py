@@ -231,6 +231,7 @@ class AssocParserConfig():
                  paint=False,
                  rule_metadata=dict(),
                  goref_metadata=None,
+                 goref_species=None,
                  group_metadata=None,
                  dbxrefs=None,
                  suppress_rule_reporting_tags=[],
@@ -255,6 +256,7 @@ class AssocParserConfig():
         self.paint = paint
         self.rule_metadata = rule_metadata
         self.goref_metadata = goref_metadata
+        self.goref_species = goref_species
         self.group_metadata = group_metadata
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
