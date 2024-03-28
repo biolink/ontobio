@@ -936,7 +936,7 @@ class GoRule64(GoRule):
 
 
         #TreeGrafter reference is GO_REF:0000118
-        if evidence in [iea_eco] and 'GO_REF:0000118' in references and (config.goref_species is not None and str(annotation.subject.taxon) in config.goref_species):
+        if evidence in [iea_eco] and 'GO_REF:0000118' in references and (config.ref_species_metadata is not None and str(annotation.subject.taxon) in config.ref_species_metadata):
             return self._result(False)
 
         return self._result(True)

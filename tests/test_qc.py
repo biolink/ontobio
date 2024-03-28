@@ -778,7 +778,7 @@ def test_go_rule_63():
     
 def test_go_rule_64():
     config = assocparser.AssocParserConfig(
-        goref_species={
+        ref_species_metadata={
             "NCBITaxon:7227", "NCBITaxon:123"
         },
         rule_set=assocparser.RuleSet.ALL
