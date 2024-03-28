@@ -171,3 +171,18 @@ def groups(metadata) -> Set[str]:
         raise click.ClickException("Could not find or read {}: {}".format(groups_path, str(e)))
 
     return set([group["shorthand"] for group in groups_list])
+
+
+def yaml_set(metadata, yaml_file_name, field) -> Set[str]:
+    yaml_path = os.path.join(os.path.abspath(metadata), yaml_file_name)
+    try:
+        with open(yaml_path, "r") as yaml_file:
+            click.echo("Found yaml file at {path}".format(path=yaml_path))
+            yaml_list = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    except Exception as e:
+        raise click.ClickException("Could not find or read {}: {}".format(yaml_path, str(e)))
+
+    return set([yaml[field] for yaml in yaml_list])   
+    
+    
+
