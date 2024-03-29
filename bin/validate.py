@@ -517,7 +517,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
-    ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species", "taxon_id")
+    ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
 
     click.echo("Found {} GO Rules".format(len(rule_metadata.keys())))
     click.echo("Found {} GO_REFs".format(len(goref_metadata.keys())))
@@ -658,7 +658,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
 
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
     gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
-    ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species", "taxon_id")
+    ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
 
     click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
 
