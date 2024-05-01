@@ -92,18 +92,16 @@ class GpiWriter(EntityWriter):
     def __init__(self, file=None):
         self.file = file
         if self.file:
-            self.file.write("!gpi-version: 1.2\n")
+            self.file.write("!gpi-version: 2.0\n")
 
     def write_entity(self, entity):
         """
         Write a single entity to a line in the output file
         """
-        db, db_object_id = self._split_prefix(entity)
         taxon = normalize_taxon(entity["taxon"]["id"])
 
         vals = [
-            db,
-            db_object_id,
+            entity.get('id'),
             entity.get('label'),
             entity.get('full_name'),
             entity.get('synonyms'),

@@ -36,7 +36,9 @@ class GafGpiBridge(object):
                 'xrefs': "", # GAF does not have this field, but it's optional in GPI
                 'taxon': {
                     'id': str(association.subject.taxon)
-                }
+                },
+                'encoded_by': "" # GAF does not have this field, but it's optional in GPI
+
             }
             return Entity(gpi_obj)
 
