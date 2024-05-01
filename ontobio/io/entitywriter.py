@@ -73,9 +73,11 @@ class EntityWriter():
 
 class GpiWriter(EntityWriter):
     """
-    Writes entities in GPI format
+    Writes entities in GPI 2.0 format : https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-2-0.md
+    Columns
 
-    Takes an entity dictionary:
+    Takes an "entity" dictionary generated typically from a GoAssociation object
+
     {
         'id': id, (String)
         'label': db_object_symbol, (String)
@@ -98,18 +100,36 @@ class GpiWriter(EntityWriter):
         """
         Write a single entity to a line in the output file
         """
-        taxon = normalize_taxon(entity["taxon"]["id"])
+
+
+        """ 
+               GPI 2.0 spec <-- entity attributes
+               
+            1. DB_Object_ID <-- entity.id (CURIE format)
+            2. DB_Object_symbol <-- entity.label
+            3. DB_Object_Name <-- entity.full_name
+            4. DB_Object_Synonyms <-- entity.synonyms
+            5. DB_Object_Type <-- entity.type
+            6. DB_Object_Taxon <-- entity.taxon
+            7. Encoded_by <-- does not appear in GAF file, this is optional in GPI
+            8. Parent_Protein <-- entity.parents # unclear if this is a list or a single value
+            9. Protein_Containing_Complex_Members <-- does not appear in GAF file, this is optional in GPI
+            10. DB_Xrefs <-- entity.xrefs
+            11. Gene_Product_Properties <-- entity.properties
+        """
 
         vals = [
-            entity.get('id'),
-            entity.get('label'),
-            entity.get('full_name'),
-            entity.get('synonyms'),
-            entity.get('type'),
-            taxon,
-            entity.get('parents'),
-            entity.get('xrefs'),
-            entity.get('properties')
+            entity.get('id'),  # DB_Object_ID
+            entity.get('label'),  # DB_Object_symbol
+            entity.get('full_name'),  # DB_Object_Name
+            entity.get('synonyms'),  # DB_Object_Synonyms
+            entity.get('type'),  # DB_Object_Type
+            normalize_taxon(entity["NCBITaxon"]["id"]),  # DB_Object_Taxon
+            "",  # Encoded_by
+            entity.get('parents'),  # Parent_Protein
+            "",  # Protein_Containing_Complex_Members
+            entity.get('xrefs'),  # DB_Xrefs
+            entity.get('properties')  # Gene_Product_Properties
         ]
 
         self._write_row(vals)
