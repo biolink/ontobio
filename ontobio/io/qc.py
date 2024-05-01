@@ -913,13 +913,29 @@ class GoRule61(RepairRule):
 class GoRule63(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000063", "Annotations using ISS/ISA/ISO evidence should refer to a gene product (in the 'with' column)", FailMode.HARD)
+        super().__init__("GORULE:0000063", "Annotations using ISS/ISA/ISO evidence should refer to a gene product (in the 'with' column)", FailMode.SOFT)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
         withfrom = annotation.evidence.with_support_from
 
         if evidence in [iss_eco, isa_eco, iso_eco] and (withfrom is None or len(withfrom) == 0):
+            return self._result(False)
+
+        return self._result(True)
+
+class GoRule64(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000064", "TreeGrafter ('GO_REF:0000118') IEAs should be filtered for GO reference species", FailMode.HARD)
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        references = [str(ref) for ref in annotation.evidence.has_supporting_reference]
+        evidence = str(annotation.evidence.type)
+
+
+        #TreeGrafter reference is GO_REF:0000118
+        if evidence in [iea_eco] and 'GO_REF:0000118' in references and (config.ref_species_metadata is not None and str(annotation.subject.taxon) in config.ref_species_metadata):
             return self._result(False)
 
         return self._result(True)
@@ -950,6 +966,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule58": GoRule58(),
     "GoRule61": GoRule61(),
     "GoRule63": GoRule63(),
+    "GoRule64": GoRule64(),    
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
     "GoRule13": GoRule13()
 })

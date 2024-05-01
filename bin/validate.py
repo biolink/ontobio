@@ -223,10 +223,11 @@ Produce validated gaf using the gaf parser/
 
 @tools.gzips
 def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None,
-                goref_metadata=None, db_entities=None, group_idspace=None, format="gaf",
-                suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None,
+                goref_metadata=None, ref_species_metadata=None, db_entities=None, group_idspace=None,
+                format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None,
                 extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2",
                 rule_set=assocparser.RuleSet.ALL) -> list[str]:
+
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -236,6 +237,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
         paint=paint,
         rule_metadata=rule_metadata,
         goref_metadata=goref_metadata,
+        ref_species_metadata=ref_species_metadata,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
@@ -636,9 +638,11 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
+    ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
 
     click.echo("Found {} GO Rules".format(len(rule_metadata.keys())))
     click.echo("Found {} GO_REFs".format(len(goref_metadata.keys())))
+    click.echo("Found {} Reference Species".format(len(ref_species_metadata)))
 
     paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
     noctua_metadata = metadata.dataset_metadata_file(absolute_metadata, "noctua")
@@ -663,20 +667,21 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
         # like for paint_other.
         click.echo("source_gaf: {}".format(source_gaf))
         valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph,
-                                paint=(group == "paint"),
-                                group=group,
-                                rule_metadata=rule_metadata,
-                                goref_metadata=goref_metadata,
-                                db_entities=db_entities,
-                                group_idspace=group_ids,
-                                suppress_rule_reporting_tags=suppress_rule_reporting_tag,
-                                annotation_inferences=gaferences,
-                                group_metadata=group_metadata,
-                                extensions_constraints=extensions_constraints,
-                                rule_contexts=["import"] if dataset_metadata.get("import", False) else [],
-                                gaf_output_version=gaf_output_version,
-                                rule_set=rule_set
-                                )[0]
+            paint=(group=="paint"),
+            group=group,
+            rule_metadata=rule_metadata,
+            goref_metadata=goref_metadata,
+            ref_species_metadata=ref_species_metadata,
+            db_entities=db_entities,
+            group_idspace=group_ids,
+            suppress_rule_reporting_tags=suppress_rule_reporting_tag,
+            annotation_inferences=gaferences,
+            group_metadata=group_metadata,
+            extensions_constraints=extensions_constraints,
+            rule_contexts=["import"] if dataset_metadata.get("import", False) else [],
+            gaf_output_version=gaf_output_version,
+            rule_set=rule_set
+            )[0]
 
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
 
@@ -789,6 +794,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
 
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
     gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
+    ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
 
     click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
 
@@ -802,6 +808,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
         goref_metadata=goref_metadata,
+        ref_species_metadata=ref_species_metadata,
         entity_idspaces=db_entities,
         group_idspace=group_ids,
         annotation_inferences=gaferences,
