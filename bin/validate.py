@@ -339,7 +339,7 @@ def make_ttls(dataset, gaf_path, products, ontology_graph):
 
 
 @tools.gzips
-def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, paint_gaf_src):
+def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, paint_gaf_src, gpi):
     """
     Using the gaf files and the noctua gpad file, produce a gpad file that contains both kinds of annotations
     without any loss.
@@ -350,6 +350,8 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, pa
     :param ontology_graph: The ontology graph to use for parsing the associations
     :param noctua_gpad_file: The path to the noctua gpad file
     :param paint_gaf_src: The source of the paint gaf file
+    :param gpi: The path to the gpi file -- needed to convert isoform annotations from Noctua files
+                                            to gene annotations in GAF outputs.
     :return: The path to the gpad file
 
     """
@@ -366,7 +368,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, pa
         if noctua_gpad_file:
             click.echo("Making noctua gpad products...{}".format(noctua_gpad_file))
             # Process noctua gpad file
-            process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph)
+            process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi)
 
         # Process the GAF file
         process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src)
@@ -375,14 +377,16 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, pa
     return [gpad_file_path]
 
 
-def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph):
+def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi):
     """
     Process a noctua gpad file and write the associations to the gpad writer.
 
     :param noctua_gpad_file: The path to the noctua gpad file
     :param gpadwriter: The gpad writer to write the associations to
     :param ontology_graph: The ontology graph to use for parsing the associations
+    :param gpi: The path to the gpi file -- needed to convert isoform annotations from Noctua files
     """
+
     with open(noctua_gpad_file) as nf:
         lines = sum(1 for line in nf)
         nf.seek(0)  # Reset file pointer to the beginning after counting lines
@@ -392,6 +396,7 @@ def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph):
         click.echo("Making noctua gpad products...")
         with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
             for association in associations:
+                # If the association is an isoform annotation, convert it to a gene annotation
                 gpadwriter.write_assoc(association)
 
 
@@ -694,7 +699,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
                                                          replace_existing_files=not skip_existing_files)
                          if paint_metadata else None)
 
-        make_gpads(dataset, valid_gaf, products, ontology_graph, noctua_gpad_src, paint_gaf_src)
+        make_gpads(dataset, valid_gaf, products, ontology_graph, noctua_gpad_src, paint_gaf_src, gpi)
 
         end_gaf = mixin_a_dataset(valid_gaf, [noctua_metadata, paint_metadata],
                                   group_metadata["id"], dataset, absolute_target,
