@@ -100,6 +100,7 @@ class EntityParser(assocparser.AssocParser):
     # If there is no config file path, return None
     # return None
 
+
 class GpiParser(EntityParser):
 
     def __init__(self, config=None):

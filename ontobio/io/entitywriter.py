@@ -71,6 +71,7 @@ class EntityWriter():
         for e in entities:
             self.write_entity(e)
 
+
 class GpiWriter(EntityWriter):
     """
     Writes entities in GPI 2.0 format : https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-2-0.md
@@ -99,10 +100,10 @@ class GpiWriter(EntityWriter):
     def write_entity(self, entity):
         """
         Write a single entity to a line in the output file
-        """
 
+        :param entity: dict ; typically a dictionary representing an instance of a GoAssociation object
+        :return: None
 
-        """ 
                GPI 2.0 spec <-- entity attributes
                
             1. DB_Object_ID <-- entity.id (CURIE format)
