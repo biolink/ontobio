@@ -30,6 +30,7 @@ from ontobio.io import assocparser
 from ontobio.io import gaference
 from ontobio.slimmer import get_minimal_subgraph
 from ontobio.validation import metadata
+from ontobio.validation import docs
 import os
 import sys
 import json
@@ -81,6 +82,8 @@ def main():
                         help="GPI file")
     parser.add_argument("-m", "--metadata_dir", type=dir_path, required=False,
                         help="Path to metadata directory")
+    parser.add_argument("-d", "--docs_dir", type=dir_path, required=False,
+                        help="Path to docs directory")    
     parser.add_argument("-l", "--rule", action="append", required=None, default=[], dest="rule_set",
                         help="Set of rules to be run. Default is no rules to be run, with the exception \
                             of gorule-0000027 and gorule-0000020. See command line documentation in the \
@@ -149,6 +152,10 @@ def main():
         goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
         ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
 
+    retracted_pubs = None
+    if args.docs_dir:
+        retracted_pubs = docs.retracted_pubs_set(os.path.abspath(args.docs_dir))
+
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
     config = assocparser.AssocParserConfig(
@@ -164,6 +171,7 @@ def main():
         gpi_authority_path=args.gpi,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
+        retracted_pubs = retracted_pubs,
         rule_set=rule_set
     )
     p = None

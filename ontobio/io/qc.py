@@ -421,6 +421,20 @@ class GoRule18(GoRule):
             return self._result(bool(withfrom))
         else:
             return self._result(True)
+        
+class GoRule22(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000022", "Check for, and filter, annotations made to retracted publications", FailMode.HARD)
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        if config.retracted_pubs is not None:
+            references = annotation.evidence.has_supporting_reference
+            for ref in references:
+                ref = str(ref)
+                if ref in config.retracted_pubs:
+                    return self._result(False)
+        return self._result(True)        
 
 
 class GoRule26(GoRule):
@@ -952,6 +966,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule16": GoRule16(),
     "GoRule17": GoRule17(),
     "GoRule18": GoRule18(),
+    "GoRule22": GoRule22(),
     "GoRule26": GoRule26(),
     "GoRule28": GoRule28(),
     "GoRule29": GoRule29(),

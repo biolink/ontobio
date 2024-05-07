@@ -234,6 +234,7 @@ class AssocParserConfig():
                  ref_species_metadata=None,
                  group_metadata=None,
                  dbxrefs=None,
+                 retracted_pubs=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None,
                  extensions_constraints=None,
@@ -258,6 +259,7 @@ class AssocParserConfig():
         self.goref_metadata = goref_metadata
         self.ref_species_metadata = ref_species_metadata
         self.group_metadata = group_metadata
+        self.retracted_pubs = retracted_pubs
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
         self.entity_idspaces = entity_idspaces
