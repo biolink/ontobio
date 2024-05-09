@@ -30,7 +30,6 @@ from ontobio.io import entitywriter
 from ontobio.io import gaference
 from ontobio.rdfgen import assoc_rdfgen
 from ontobio.rdfgen.gocamgen.gocam_builder import GoCamBuilder, AssocExtractor
-from ontobio.validation import docs
 from ontobio.validation import metadata
 from ontobio.validation import tools
 from ontobio.validation import rules
@@ -212,7 +211,7 @@ Produce validated gaf using the gaf parser/
 """
 
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, ref_species_metadata=None, retracted_pubs=None,db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, ref_species_metadata=None, retracted_pub_set=None,db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -223,7 +222,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
         rule_metadata=rule_metadata,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
-        retracted_pubs=retracted_pubs,
+        retracted_pub_set=retracted_pub_set,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
@@ -484,7 +483,6 @@ def cli(ctx, verbose):
 @click.pass_context
 @click.argument("group")
 @click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
-@click.option("--docs", "-d", "docs_dir", type=click.Path(), required=True)
 @click.option("--gpad", default=False, is_flag=True)
 @click.option("--ttl", default=False, is_flag=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
@@ -497,7 +495,7 @@ def cli(ctx, verbose):
 @click.option("--only-dataset", default=None)
 @click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
 @click.option("--rule-set", "-l", "rule_set", default=[assocparser.RuleSet.ALL], multiple=True)
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version, rule_set, docs_dir):
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version, rule_set):
 
     logger.info("Logging is verbose")
     products = {
@@ -511,7 +509,6 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     os.makedirs(os.path.join(absolute_target, "groups"), exist_ok=True)
     click.echo("Products will go in {}".format(absolute_target))
     absolute_metadata = os.path.abspath(metadata_dir)
-    absolute_docs = os.path.abspath(docs_dir)
 
     group_metadata = metadata.dataset_metadata_file(absolute_metadata, group)
     click.echo("Loading ontology: {}...".format(ontology))
@@ -536,7 +533,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     group_ids = metadata.groups(absolute_metadata)
     extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)
     
-    retracted_pubs = docs.retracted_pubs_set(os.path.abspath(absolute_docs))
+    retracted_pub_set = metadata.retracted_pub_set(absolute_metadata)
 
     gaferences = None
     if gaferencer_file:
@@ -556,8 +553,8 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             group=group,
             rule_metadata=rule_metadata,
             goref_metadata=goref_metadata,
-            retracted_pubs=retracted_pubs,
             ref_species_metadata=ref_species_metadata,
+            retracted_pub_set=retracted_pub_set,            
             db_entities=db_entities,
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
@@ -635,15 +632,13 @@ def gpad2gocams(ctx, gpad_path, gpi_path, target, ontology, ttl, modelstate):
 @click.argument("group")
 @click.argument("dataset")
 @click.option("--metadata", "-m", type=click.Path(), required=True)
-@click.option("--docs", "-d", "docs_dir", type=click.Path(), required=True)
 @click.option("--target", type=click.Path(), required=True)
 @click.option("--ontology", type=click.Path(), required=True)
-def paint(group, dataset, metadata, target, ontology, docs_dir):
+def paint(group, dataset, metadata, target, ontology):
     absolute_metadata = os.path.abspath(metadata)
     absolute_target = os.path.abspath(target)
     os.makedirs(os.path.join(absolute_target, "groups"), exist_ok=True)
     paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
-    absolute_docs = os.path.abspath(docs_dir)
     
     paint_src_gaf = check_and_download_mixin_source(paint_metadata, dataset, absolute_target)
 
@@ -652,20 +647,18 @@ def paint(group, dataset, metadata, target, ontology, docs_dir):
 
     gpi_path = os.path.join(absolute_target, "groups", dataset, "{}.gpi".format(dataset))
     click.echo("Using GPI at {}".format(gpi_path))
-    retracted_pubs = docs.retracted_pubs_set(os.path.abspath(absolute_docs))    
-    paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi_path, retracted_pubs=retracted_pubs)
+    retracted_pub_set = metadata.retracted_pub_set(absolute_metadata)    
+    paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi_path, retracted_pub_set=retracted_pub_set)
 
 
 @cli.command()
 @click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
-@click.option("--docs", "-d", "docs_dir", type=click.Path(), required=True)
 @click.option("--out", type=click.Path(), required=False)
 @click.option("--ontology", type=click.Path(), required=True)
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False,
               help="Path to Gaferencer output to be used for inferences")
-def rule(metadata_dir, out, ontology, gaferencer_file, docs_dir):
+def rule(metadata_dir, out, ontology, gaferencer_file):
     absolute_metadata = os.path.abspath(metadata_dir)
-    absolute_docs = os.path.abspath(docs_dir)
 
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
@@ -673,7 +666,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file, docs_dir):
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
     gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
-    retracted_pubs = docs.retracted_pubs_set(os.path.abspath(absolute_docs))
+    retracted_pub_set = metadata.retracted_pub_set(absolute_metadata)
 
     click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
 
@@ -688,7 +681,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file, docs_dir):
         ontology=ontology_graph,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
-        retracted_pubs=retracted_pubs,
+        retracted_pub_set=retracted_pub_set,
         entity_idspaces=db_entities,
         group_idspace=group_ids,
         annotation_inferences=gaferences,

@@ -428,11 +428,11 @@ class GoRule22(GoRule):
         super().__init__("GORULE:0000022", "Check for, and filter, annotations made to retracted publications", FailMode.HARD)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
-        if config.retracted_pubs is not None:
+        if config.retracted_pub_set is not None:
             references = annotation.evidence.has_supporting_reference
             for ref in references:
                 ref = str(ref)
-                if ref in config.retracted_pubs:
+                if ref in config.retracted_pub_set:
                     return self._result(False)
         return self._result(True)        
 

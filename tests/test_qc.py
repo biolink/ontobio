@@ -357,7 +357,7 @@ def test_go_rule_18():
 def test_go_rule22():
     config = assocparser.AssocParserConfig(
         ontology=ontology,
-        retracted_pubs={"RETRACTED:1234","PMID:37772366"},
+        retracted_pub_set={"RETRACTED:1234","PMID:37772366"},
         rule_set=assocparser.RuleSet.ALL
     )
     assoc = make_annotation(goid="GO:1234567", evidence="IBA", references="PMID:12345").associations[0]   
