@@ -186,7 +186,7 @@ def yaml_set(metadata, yaml_file_name, field) -> Set[str]:
 
 
 def retracted_pub_set(metadata)->set[str]:
-    retracted_path = os.path.join(metadata, "retracted.txt")
+    retracted_path = os.path.join(metadata, "retracted-publications.txt")
     try:
         retracted_pubs = set()   
         with open(retracted_path, "r") as f:
