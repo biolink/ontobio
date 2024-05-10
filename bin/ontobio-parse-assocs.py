@@ -81,6 +81,8 @@ def main():
                         help="GPI file")
     parser.add_argument("-m", "--metadata_dir", type=dir_path, required=False,
                         help="Path to metadata directory") 
+    parser.add_argument("--retracted_pub_set", type=argparse.FileType('r'), required=False,
+                        help="Path to retracted publications file") 
     parser.add_argument("-l", "--rule", action="append", required=None, default=[], dest="rule_set",
                         help="Set of rules to be run. Default is no rules to be run, with the exception \
                             of gorule-0000027 and gorule-0000020. See command line documentation in the \
@@ -143,13 +145,17 @@ def main():
         rule_set = assocparser.RuleSet.ALL
     
     goref_metadata = None
-    ref_species_metadata = None
-    retracted_pub_set = None    
+    ref_species_metadata = None  
     if args.metadata_dir:
         absolute_metadata = os.path.abspath(args.metadata_dir)
         goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
         ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
-        retracted_pub_set = metadata.retracted_pub_set(absolute_metadata)
+        
+    retracted_pub_set = None
+    if args.retracted_pub_set:
+        retracted_pub_set = metadata.retracted_pub_set(args.retracted_pub_set.name)
+    elif args.metadata_dir:
+       retracted_pub_set = metadata.retracted_pub_set_from_meta(absolute_metadata)     
 
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
