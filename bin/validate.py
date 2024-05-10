@@ -559,7 +559,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             rule_metadata=rule_metadata,
             goref_metadata=goref_metadata,
             ref_species_metadata=ref_species_metadata,
-            retracted_pub_set=retracted_pubs,            
+            retracted_pub_set=retracted_pubs, 
             db_entities=db_entities,
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
@@ -661,7 +661,8 @@ def paint(group, dataset, metadata, target, ontology):
 @click.option("--ontology", type=click.Path(), required=True)
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False,
               help="Path to Gaferencer output to be used for inferences")
-def rule(metadata_dir, out, ontology, gaferencer_file):
+@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False, help="Path to retracted publications file")
+def rule(metadata_dir, out, ontology, gaferencer_file, retracted_pub_set):
     absolute_metadata = os.path.abspath(metadata_dir)
 
     click.echo("Loading ontology: {}...".format(ontology))
@@ -670,6 +671,12 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
     gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
+    retracted_pubs = None
+    if retracted_pub_set:
+        retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
+    else:
+       retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)     
+    
 
     click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
 
@@ -684,6 +691,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
         ontology=ontology_graph,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
+        retracted_pub_set=retracted_pubs,
         entity_idspaces=db_entities,
         group_idspace=group_ids,
         annotation_inferences=gaferences,
