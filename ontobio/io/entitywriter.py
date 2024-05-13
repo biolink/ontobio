@@ -139,6 +139,7 @@ class GpiWriter(EntityWriter):
             10. Properties <-- entity.properties
 
         """
+        print(entity.get('taxon'))
 
         if self.version == "2.0":
             vals = [
@@ -147,7 +148,7 @@ class GpiWriter(EntityWriter):
                 entity.get('full_name'),  # DB_Object_Name
                 entity.get('synonyms'),  # DB_Object_Synonyms
                 entity.get('type'),  # DB_Object_Type
-                normalize_taxon(entity["NCBITaxon"]["id"]),  # DB_Object_Taxon
+                normalize_taxon(entity.get("taxon").get("id")),  # DB_Object_Taxon
                 "",  # Encoded_by
                 entity.get('parents'),  # Parent_Protein
                 "",  # Protein_Containing_Complex_Members
@@ -155,13 +156,15 @@ class GpiWriter(EntityWriter):
                 entity.get('properties')  # Gene_Product_Properties
             ]
         else:
+            prefix, local_id = self._split_prefix(entity)
             vals = [
-                entity.get('id').split(":")[0],  # DB
-                entity.get('label').split(":")[1],  # DB_Object_ID
+                prefix,  # DB
+                local_id,  # DB_Object_ID
+                entity.get('label'),  # DB_Object_Symbol
                 entity.get('full_name'),  # DB_Object_Symbol
                 entity.get('synonyms'),  # DB_Object_Name
                 entity.get('type'),  # DB_Object_Synonyms
-                normalize_taxon(entity["NCBITaxon"]["id"]),  # DB_Object_Type
+                normalize_taxon(entity.get("taxon").get("id")),  # taxon
                 entity.get('parents'),  # Parent_Object_ID
                 entity.get('xrefs'),  # DB_Xref(s)
                 entity.get('properties')  # Properties
