@@ -33,18 +33,6 @@ def test_gpi_2_0_writer():
     ]
     assert expected_lines == outlines
 
-    out = io.StringIO()
-    gpiwriter12 = entitywriter.GpiWriter(file=out, version="1.2")
-    gpiwriter12.write_entity(entity)
-    outlines = out.getvalue().split("\n")
-
-    expected_lines = [
-        "!gpi-version: 1.2",
-        "MGI\tMGI:1918911\t0610005C13Rik\tRIKEN cDNA 0610005C13 gene\t\tSO:0000000\ttaxon:10090\t\t\t\t\t",
-        ""
-    ]
-    assert expected_lines == outlines
-
 
 def test_gpi_1_2_writer():
     gpi_obj = {

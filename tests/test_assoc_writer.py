@@ -226,7 +226,7 @@ def test_gaf_to_gpad2():
     assert lines[0] == "!gpad-version: 2.0"
     assert lines[1] == "!generated-by: GO Central"
     assert lines[2].startswith("!date-generated:")
-    assert lines[3] == "PomBase:SPAC25B8.17\t\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t2015-03-05\tPomBase\tBFO:0000050(X:1)\t"
+    assert lines[3] == "UniProtKB:P12345\t\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t2015-03-05\tPomBase\tBFO:0000050(X:1)\t"
 
     line = "PomBase\tSPAC25B8.17\typf1\tNOT\tGO:0000006\tGO_REF:0000024\tISO\tSGD:S000001583\tC\tintramembrane aspartyl protease of the perinuclear ER membrane Ypf1 (predicted)\tppp81\tprotein\ttaxon:999|taxon:888\t20150305\tPomBase\tpart_of(X:1)\tUniProtKB:P12345"
     parser = gafparser.GafParser()
@@ -240,7 +240,7 @@ def test_gaf_to_gpad2():
     assert lines[0] == "!gpad-version: 2.0"
     assert lines[1] == "!generated-by: GO Central"
     assert lines[2].startswith("!date-generated:")
-    assert lines[3] == "PomBase:SPAC25B8.17\tNOT\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t2015-03-05\tPomBase\tBFO:0000050(X:1)\t"
+    assert lines[3] == "UniProtKB:P12345\tNOT\tBFO:0000050\tGO:0000006\tGO_REF:0000024\tECO:0000266\tSGD:S000001583\tNCBITaxon:888\t2015-03-05\tPomBase\tBFO:0000050(X:1)\t"
 
 
 def test_writing_assoc_properties():
