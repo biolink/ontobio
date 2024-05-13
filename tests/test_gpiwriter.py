@@ -42,9 +42,9 @@ def test_gpi_1_2_writer():
         'synonyms': [],
         'type': ["SO:0000000"],  # db_object_type,
         'taxon': {"id": "NCBITaxon:10090"},
-        'encoded_by': "", # encoded_by
+        'encoded_by': "",  # encoded_by
         'parents': "",
-        'protein_containing_complex_members': "", # protein_containing_complex_members
+        'protein_containing_complex_members': "",  # protein_containing_complex_members
         'xrefs': "",
         'properties': ""
 
