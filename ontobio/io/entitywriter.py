@@ -74,8 +74,10 @@ class EntityWriter():
 
 class GpiWriter(EntityWriter):
     """
-    Writes entities in GPI 2.0 format : https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-2-0.md
-    Columns
+    Writes entities in GPI 1.2 or 2.0 (https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-2-0.md) format
+
+    :param file: file
+    :param version: str
 
     Takes an "entity" dictionary generated typically from a GoAssociation object
 
@@ -92,12 +94,16 @@ class GpiWriter(EntityWriter):
         }
     }
     """
-    def __init__(self, file=None):
+    def __init__(self, file=None, version=None):
         self.file = file
+        self.version = version
         if self.file:
-            self.file.write("!gpi-version: 2.0\n")
+            if self.version == "2.0":
+                self.file.write("!gpi-version: 2.0\n")
+            else:
+                self.file.write("!gpi-version: 1.2\n")
 
-    def write_entity(self, entity, gpi_output_version):
+    def write_entity(self, entity):
         """
         Write a single entity to a line in the output file
 
@@ -134,7 +140,7 @@ class GpiWriter(EntityWriter):
 
         """
 
-        if gpi_output_version == "2.0":
+        if self.version == "2.0":
             vals = [
                 entity.get('id'),  # DB_Object_ID
                 entity.get('label'),  # DB_Object_symbol

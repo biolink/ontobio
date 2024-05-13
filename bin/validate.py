@@ -340,7 +340,8 @@ def make_ttls(dataset, gaf_path, products, ontology_graph):
 
 
 @tools.gzips
-def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, paint_gaf_src, gpi):
+def make_gpads(dataset, gaf_path, products, ontology_graph,
+               noctua_gpad_file, paint_gaf_src, gpi, gpad_gpi_output_version):
     """
     Using the gaf files and the noctua gpad file, produce a gpad file that contains both kinds of annotations
     without any loss.
@@ -363,7 +364,7 @@ def make_gpads(dataset, gaf_path, products, ontology_graph, noctua_gpad_file, pa
 
     # Open the file once and keep it open for all operations within this block
     with open(gpad_file_path, "w") as outfile:
-        gpadwriter = GpadWriter(file=outfile, version="2.0")
+        gpadwriter = GpadWriter(file=outfile, version=gpad_gpi_output_version)
 
         # If there's a noctua gpad file, process it
         if noctua_gpad_file:
@@ -448,7 +449,7 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_v
     with open(gaf_path) as gf, open(gpi_path, "w") as gpi:
         click.echo("Using {} as the gaf to build gpi with".format(gaf_path))
         bridge = gafgpibridge.GafGpiBridge()
-        gpiwriter = entitywriter.GpiWriter(file=gpi)
+        gpiwriter = entitywriter.GpiWriter(file=gpi, version=gpad_gpi_output_version)
         gpi_cache = set()
 
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
@@ -595,7 +596,7 @@ def cli(ctx, verbose):
 @click.argument("group")
 @click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
 @click.option("--gpad", default=False, is_flag=True)
-@click.option("--gpad-gpi-output-version", default="2.0", type=click.Choice(["1.2", "2.0"]))
+@click.option("--https://github.com/microbiomedata/nmdc-schema/issues/1925", default="2.0", type=click.Choice(["1.2", "2.0"]))
 @click.option("--ttl", default=False, is_flag=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
@@ -704,7 +705,9 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                                          replace_existing_files=not skip_existing_files)
                          if paint_metadata else None)
 
-        make_gpads(dataset, valid_gaf, products, ontology_graph, noctua_gpad_src, paint_gaf_src, gpi)
+        make_gpads(dataset, valid_gaf, products,
+                   ontology_graph, noctua_gpad_src, paint_gaf_src,
+                   gpi, gpad_gpi_output_version)
 
         end_gaf = mixin_a_dataset(valid_gaf, [noctua_metadata, paint_metadata],
                                   group_metadata["id"], dataset, absolute_target,
