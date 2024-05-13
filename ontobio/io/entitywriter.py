@@ -71,11 +71,16 @@ class EntityWriter():
         for e in entities:
             self.write_entity(e)
 
+
 class GpiWriter(EntityWriter):
     """
-    Writes entities in GPI format
+    Writes entities in GPI 1.2 or 2.0 (https://github.com/geneontology/go-annotation/blob/master/specs/gpad-gpi-2-0.md) format
 
-    Takes an entity dictionary:
+    :param file: file
+    :param version: str
+
+    Takes an "entity" dictionary generated typically from a GoAssociation object
+
     {
         'id': id, (String)
         'label': db_object_symbol, (String)
@@ -89,29 +94,80 @@ class GpiWriter(EntityWriter):
         }
     }
     """
-    def __init__(self, file=None):
+    def __init__(self, file=None, version=None):
         self.file = file
+        self.version = version
         if self.file:
-            self.file.write("!gpi-version: 1.2\n")
+            if self.version == "2.0":
+                self.file.write("!gpi-version: 2.0\n")
+            else:
+                self.file.write("!gpi-version: 1.2\n")
 
     def write_entity(self, entity):
         """
         Write a single entity to a line in the output file
-        """
-        db, db_object_id = self._split_prefix(entity)
-        taxon = normalize_taxon(entity["taxon"]["id"])
 
-        vals = [
-            db,
-            db_object_id,
-            entity.get('label'),
-            entity.get('full_name'),
-            entity.get('synonyms'),
-            entity.get('type'),
-            taxon,
-            entity.get('parents'),
-            entity.get('xrefs'),
-            entity.get('properties')
-        ]
+        :param entity: dict ; typically a dictionary representing an instance of a GoAssociation object
+        :param gpi_output_version: str ; the version of the GPAD output file to write
+        :return: None
+
+               GPI 2.0 spec <-- entity attributes
+               
+            1. DB_Object_ID <-- entity.id (CURIE format)
+            2. DB_Object_symbol <-- entity.label
+            3. DB_Object_Name <-- entity.full_name
+            4. DB_Object_Synonyms <-- entity.synonyms
+            5. DB_Object_Type <-- entity.type
+            6. DB_Object_Taxon <-- entity.taxon
+            7. Encoded_by <-- does not appear in GAF file, this is optional in GPI
+            8. Parent_Protein <-- entity.parents # unclear if this is a list or a single value
+            9. Protein_Containing_Complex_Members <-- does not appear in GAF file, this is optional in GPI
+            10. DB_Xrefs <-- entity.xrefs
+            11. Gene_Product_Properties <-- entity.properties
+
+                GPI 1.2 spec <-- entity attributes
+
+            1. DB <-- entity.id.prefix
+            2. DB_Object_ID	 <-- entity.id.local_id
+            3. DB_Object_Symbol <-- entity.label
+            4. DB_Object_Name <-- entity.full_name
+            5. DB_Object_Synonym(s) <-- entity.synonyms
+            6. DB_Object_Type <-- entity.type
+            7. Taxon <-- entity.taxon
+            8. Parent_Object_ID <-- entity.parents # unclear if this is a list or a single value
+            9. DB_Xref(s) <-- entity.xrefs
+            10. Properties <-- entity.properties
+
+        """
+        print(entity.get('taxon'))
+
+        if self.version == "2.0":
+            vals = [
+                entity.get('id'),  # DB_Object_ID
+                entity.get('label'),  # DB_Object_symbol
+                entity.get('full_name'),  # DB_Object_Name
+                entity.get('synonyms'),  # DB_Object_Synonyms
+                entity.get('type'),  # DB_Object_Type
+                normalize_taxon(entity.get("taxon").get("id")),  # DB_Object_Taxon
+                "",  # Encoded_by
+                entity.get('parents'),  # Parent_Protein
+                "",  # Protein_Containing_Complex_Members
+                entity.get('xrefs'),  # DB_Xrefs
+                entity.get('properties')  # Gene_Product_Properties
+            ]
+        else:
+            prefix, local_id = self._split_prefix(entity)
+            vals = [
+                prefix,  # DB
+                local_id,  # DB_Object_ID
+                entity.get('label'),  # DB_Object_Symbol
+                entity.get('full_name'),  # DB_Object_Symbol
+                entity.get('synonyms'),  # DB_Object_Name
+                entity.get('type'),  # DB_Object_Synonyms
+                normalize_taxon(entity.get("taxon").get("id")),  # taxon
+                entity.get('parents'),  # Parent_Object_ID
+                entity.get('xrefs'),  # DB_Xref(s)
+                entity.get('properties')  # Properties
+            ]
 
         self._write_row(vals)

@@ -6,6 +6,7 @@ import re
 import datetime
 import json
 import logging
+import click
 
 from typing import List, Union
 
@@ -108,18 +109,23 @@ class AssocWriter():
 GPAD_2_0 = "2.0"
 GPAD_1_2 = "1.2"
 
+
 class GpadWriter(AssocWriter):
     """
     Writes Associations in GPAD format
     """
-    def __init__(self, file=None, version=GPAD_1_2):
+    def __init__(self, file=None, version=None):
         self.file = file
+        click.echo("Writing GPAD version: {}".format(version))
         if version in [GPAD_1_2, GPAD_2_0]:
             self.version = version
         else:
             self.version = GPAD_1_2
 
-        self._write("!gpa-version: {}\n".format(self.version))
+        self._write("!gpad-version: {}\n".format(self.version))
+        click.echo("Writing GPAD version: {}".format(self.version))
+        self._write("!generated-by: {}\n".format("GO Central"))
+        self._write("!date-generated: {}\n".format(str(datetime.datetime.now().strftime("%Y-%m-%dT%H:%M"))))
         self.ecomap = ecomap.EcoMap()
 
     def as_tsv(self, assoc: Union[association.GoAssociation, dict]):
@@ -136,7 +142,6 @@ class GpadWriter(AssocWriter):
             return assoc.to_gpad_1_2_tsv()
 
 
-
 class GafWriter(AssocWriter):
     """
     Writes Associations in GAF format.
@@ -151,13 +156,13 @@ class GafWriter(AssocWriter):
 
     The only difference in 2.1 and 2.2 are how qualifiers (column 4) are handled.
     GAF 2.1 allows empty or only `NOT` qualifier values, and only allows
-    `colocalizes_with` and `contributes_to` as qualifer values. However in 2.2
+    `colocalizes_with` and `contributes_to` as qualifier values. However, in 2.2
     qualifier must *not* be empty and cannot have only `NOT` as it's a modifier
-    on existing qualifers. The set of allowed qualifiers in 2.2 is also expanded.
+    on existing qualifiers. The set of allowed qualifiers in 2.2 is also expanded.
 
     So if there's a mismatch between converting from an annotation and a GAF
     version then that annotation is just skipped and not written out with an
-    error message displayed. Mismatch occurances of this kind would appear if
+    error message displayed. Mismatch occurrences of this kind would appear if
     the incoming annotation has a qualifier in the 2.2 set, but 2.1 is being
     written out, or if the qualifier is empty and 2.2 is being written.
     """
