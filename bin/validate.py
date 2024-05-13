@@ -436,7 +436,7 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
 
 
 @tools.gzips
-def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
+def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_version):
     gafparser = GafParser()
     gafparser.config = assocparser.AssocParserConfig(
         ontology=ontology_graph
@@ -453,7 +453,7 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
 
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
-                entity = bridge.convert_association(association)
+                entity = bridge.convert_association(association, gpad_gpi_output_version)
                 if entity not in gpi_cache and entity is not None:
                     # If the entity is not in the cache, add it and write it out
                     gpi_cache.add(entity)
@@ -610,7 +610,7 @@ def cli(ctx, verbose):
 @click.option("--only-dataset", default=None)
 @click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
 @click.option("--rule-set", "-l", "rule_set", default=[assocparser.RuleSet.ALL], multiple=True)
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url,
+def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target, ontology, exclude, base_download_url,
             suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version,
             rule_set):
     logger.info("Logging is verbose")
@@ -683,7 +683,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
                                 rule_set=rule_set
                                 )[0]
 
-        gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
+        gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph, gpad_gpi_output_version)
 
         gpi_list = [gpi]
         # Try to find other GPIs in metadata and merge

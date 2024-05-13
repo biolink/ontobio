@@ -97,11 +97,12 @@ class GpiWriter(EntityWriter):
         if self.file:
             self.file.write("!gpi-version: 2.0\n")
 
-    def write_entity(self, entity):
+    def write_entity(self, entity, gpi_output_version):
         """
         Write a single entity to a line in the output file
 
         :param entity: dict ; typically a dictionary representing an instance of a GoAssociation object
+        :param gpi_output_version: str ; the version of the GPAD output file to write
         :return: None
 
                GPI 2.0 spec <-- entity attributes
@@ -117,20 +118,47 @@ class GpiWriter(EntityWriter):
             9. Protein_Containing_Complex_Members <-- does not appear in GAF file, this is optional in GPI
             10. DB_Xrefs <-- entity.xrefs
             11. Gene_Product_Properties <-- entity.properties
+
+                GPI 1.2 spec <-- entity attributes
+
+            1. DB <-- entity.id.prefix
+            2. DB_Object_ID	 <-- entity.id.local_id
+            3. DB_Object_Symbol <-- entity.label
+            4. DB_Object_Name <-- entity.full_name
+            5. DB_Object_Synonym(s) <-- entity.synonyms
+            6. DB_Object_Type <-- entity.type
+            7. Taxon <-- entity.taxon
+            8. Parent_Object_ID <-- entity.parents # unclear if this is a list or a single value
+            9. DB_Xref(s) <-- entity.xrefs
+            10. Properties <-- entity.properties
+
         """
 
-        vals = [
-            entity.get('id'),  # DB_Object_ID
-            entity.get('label'),  # DB_Object_symbol
-            entity.get('full_name'),  # DB_Object_Name
-            entity.get('synonyms'),  # DB_Object_Synonyms
-            entity.get('type'),  # DB_Object_Type
-            normalize_taxon(entity["NCBITaxon"]["id"]),  # DB_Object_Taxon
-            "",  # Encoded_by
-            entity.get('parents'),  # Parent_Protein
-            "",  # Protein_Containing_Complex_Members
-            entity.get('xrefs'),  # DB_Xrefs
-            entity.get('properties')  # Gene_Product_Properties
-        ]
+        if gpi_output_version == "2.0":
+            vals = [
+                entity.get('id'),  # DB_Object_ID
+                entity.get('label'),  # DB_Object_symbol
+                entity.get('full_name'),  # DB_Object_Name
+                entity.get('synonyms'),  # DB_Object_Synonyms
+                entity.get('type'),  # DB_Object_Type
+                normalize_taxon(entity["NCBITaxon"]["id"]),  # DB_Object_Taxon
+                "",  # Encoded_by
+                entity.get('parents'),  # Parent_Protein
+                "",  # Protein_Containing_Complex_Members
+                entity.get('xrefs'),  # DB_Xrefs
+                entity.get('properties')  # Gene_Product_Properties
+            ]
+        else:
+            vals = [
+                entity.get('id').split(":")[0],  # DB
+                entity.get('label').split(":")[1],  # DB_Object_ID
+                entity.get('full_name'),  # DB_Object_Symbol
+                entity.get('synonyms'),  # DB_Object_Name
+                entity.get('type'),  # DB_Object_Synonyms
+                normalize_taxon(entity["NCBITaxon"]["id"]),  # DB_Object_Type
+                entity.get('parents'),  # Parent_Object_ID
+                entity.get('xrefs'),  # DB_Xref(s)
+                entity.get('properties')  # Properties
+            ]
 
         self._write_row(vals)
