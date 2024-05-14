@@ -139,7 +139,6 @@ class GpiWriter(EntityWriter):
             10. Properties <-- entity.properties
 
         """
-        print(entity.get('taxon'))
 
         if self.version == "2.0":
             vals = [
