@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 
+
 @pytest.mark.parametrize("gpad_gpi_output_version", ["2.0", "1.2"])
 def test_produce_gpi(gpad_gpi_output_version):
     # Base path relative to this script
@@ -15,7 +16,7 @@ def test_produce_gpi(gpad_gpi_output_version):
 
     # Ensure the GAF file exists to avoid FileNotFoundError
     if not gaf_path.exists():
-        raise FileNotFoundError(f"Expected GAF file does not exist: {gaf_path}")
+        raise FileNotFoundError("Expected GAF file does not exist: {}".format(gaf_path))
 
     # Set parameters for the function
     dataset = "mgi"
@@ -34,7 +35,10 @@ def test_produce_gpi(gpad_gpi_output_version):
         assert p.parse(f) is not None
         f.seek(0)  # Reset file pointer to the beginning
         results = p.parse(f)
-        assert len(results) > 5
+        assert len(results) > 5, "The GPI file should have more than 5 entries"
+
+# If additional context or setup is required for the imports or environment, ensure that it is compatible with Python 3.7.
+
 
 
 def test_gpi_2_0_writer():
