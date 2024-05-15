@@ -14,7 +14,7 @@ class Entity(dict):
         return hash(d)
 
 
-def convert_association(association) -> Entity | None:
+def convert_association(association):
     """
     'id' is already `join`ed in both the Association and the Entity,
     so we don't have to worry about what that looks like. We assume
