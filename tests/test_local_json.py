@@ -238,7 +238,7 @@ def test_subontology():
 
 def test_obsolete():
     """
-    Test obsoletion metadata
+    Test obsoletion datasets
     """
     factory = OntologyFactory()
     print("Creating ont")

@@ -49,6 +49,8 @@ coverage.xml
 *,cover
 .hypothesis/
 .pytest_cache/
+tests/resources/mgi.gpi
+tests/resources/mgi.gpi.gz
 
 # Translations
 *.mo

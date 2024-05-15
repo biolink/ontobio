@@ -24,6 +24,7 @@ class GafGpiBridge(object):
         so we don't have to worry about what that looks like. We assume
         it's correct.
         """
+
         if isinstance(association, GoAssociation):
             # print(json.dumps(association, indent=4))
             gpi_obj = {

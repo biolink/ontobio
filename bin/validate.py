@@ -448,18 +448,17 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_v
     gpi_path = os.path.join(os.path.split(gaf_path)[0], "{}.gpi".format(dataset))
     with open(gaf_path) as gf, open(gpi_path, "w") as gpi:
         click.echo("Using {} as the gaf to build gpi with".format(gaf_path))
-        bridge = gafgpibridge
+        bridge = gafgpibridge.GafGpiBridge()
         gpiwriter = entitywriter.GpiWriter(file=gpi, version=gpad_gpi_output_version)
         gpi_cache = set()
 
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
-                entity = bridge.convert_association(association, gpad_gpi_output_version)
+                entity = bridge.convert_association(association)
                 if entity not in gpi_cache and entity is not None:
                     # If the entity is not in the cache, add it and write it out
                     gpi_cache.add(entity)
                     gpiwriter.write_entity(entity)
-
     return gpi_path
 
 
@@ -596,7 +595,7 @@ def cli(ctx, verbose):
 @click.argument("group")
 @click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
 @click.option("--gpad", default=False, is_flag=True)
-@click.option("--https://github.com/microbiomedata/nmdc-schema/issues/1925", default="2.0", type=click.Choice(["1.2", "2.0"]))
+@click.option("--gpad-gpi-output-version", default="2.0", type=click.Choice(["1.2", "2.0"]))
 @click.option("--ttl", default=False, is_flag=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)

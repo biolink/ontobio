@@ -1,6 +1,44 @@
 import io
+from ontobio.io import entitywriter, gafgpibridge, entityparser
+from bin.validate import produce_gpi
+from pathlib import Path
+import pytest
 
-from ontobio.io import entitywriter, gafgpibridge
+
+@pytest.mark.parametrize("gpad_gpi_output_version", ["2.0", "1.2"])
+def test_produce_gpi(gpad_gpi_output_version):
+    # Base path relative to this script
+    base_path = Path(__file__).parent / "resources"
+
+    # Define the paths for the GAF and expected GPI file
+    gaf_path = base_path / "mgi.gaf"
+
+    # Ensure the GAF file exists to avoid FileNotFoundError
+    if not gaf_path.exists():
+        raise FileNotFoundError(f"Expected GAF file does not exist: {gaf_path}")
+
+    # Set parameters for the function
+    dataset = "mgi"
+    ontology_graph = None  # Assuming setup elsewhere or not needed for this specific test
+
+    # Call the function
+    output_gpi_path = produce_gpi(dataset, str(base_path), str(gaf_path), ontology_graph, gpad_gpi_output_version)
+
+    # Convert the output path to a pathlib.Path object for consistency
+    output_gpi_path = Path(output_gpi_path)
+    assert output_gpi_path.exists(), "The GPI file was not created."
+
+    # Verify the contents of the GPI file
+    p = entityparser.GpiParser()
+    assert p.parse(open(output_gpi_path, "r")) is not None, "The GPI file could not be parsed."
+    results = p.parse(open(output_gpi_path, "r"))
+    assert len(results) > 5, "The GPI file should have about 9 unique genes from ~ 90 associations in the GAF file."
+
+    with output_gpi_path.open() as f:
+        lines = f.readlines()
+
+    assert len(lines) > 0, "The GPI file should not be empty."
+    # assert lines[0].startswith("!gpi-version: 2.0"), "GPI version header is incorrect or missing."
 
 
 def test_gpi_2_0_writer():
@@ -16,7 +54,6 @@ def test_gpi_2_0_writer():
         'protein_containing_complex_members': "", # protein_containing_complex_members
         'xrefs': "",
         'properties': ""
-
     }
 
     entity = gafgpibridge.Entity(gpi_obj)
