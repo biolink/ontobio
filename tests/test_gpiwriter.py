@@ -12,6 +12,7 @@ def test_produce_gpi(gpad_gpi_output_version):
 
     # Define the paths for the GAF and expected GPI file
     gaf_path = base_path / "mgi.gaf"
+    gpi_path = base_path / "mgi.gpi"
 
     # Ensure the GAF file exists to avoid FileNotFoundError
     if not gaf_path.exists():
@@ -30,15 +31,16 @@ def test_produce_gpi(gpad_gpi_output_version):
 
     # Verify the contents of the GPI file
     p = entityparser.GpiParser()
-    assert p.parse(open(output_gpi_path, "r")) is not None, "The GPI file could not be parsed."
-    results = p.parse(open(output_gpi_path, "r"))
-    assert len(results) > 5, "The GPI file should have about 9 unique genes from ~ 90 associations in the GAF file."
+    with output_gpi_path.open() as f:
+        assert p.parse(f) is not None, "The GPI file could not be parsed."
+        f.seek(0)  # Reset file pointer to the beginning
+        results = p.parse(f)
+        assert len(results) > 5, "The GPI file should have about 9 unique genes from ~ 90 associations in the GAF file."
 
     with output_gpi_path.open() as f:
         lines = f.readlines()
 
     assert len(lines) > 0, "The GPI file should not be empty."
-    # assert lines[0].startswith("!gpi-version: 2.0"), "GPI version header is incorrect or missing."
 
 
 def test_gpi_2_0_writer():
