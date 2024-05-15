@@ -6,14 +6,12 @@ import pytest
 
 
 @pytest.mark.parametrize("gpad_gpi_output_version", ["2.0", "1.2"])
-@pytest.mark.parametrize("gpad_gpi_output_version", ["2.0", "1.2"])
 def test_produce_gpi(gpad_gpi_output_version):
     # Base path relative to this script
     base_path = Path(__file__).parent / "resources"
 
     # Define the paths for the GAF and expected GPI file
     gaf_path = base_path / "mgi.gaf"
-    gpi_path = base_path / "mgi.gpi"
 
     # Ensure the GAF file exists to avoid FileNotFoundError
     if not gaf_path.exists():
@@ -33,15 +31,10 @@ def test_produce_gpi(gpad_gpi_output_version):
     # Verify the contents of the GPI file
     p = entityparser.GpiParser()
     with open(output_gpi_path, "r") as f:
-        assert p.parse(f) is not None, "The GPI file could not be parsed."
+        assert p.parse(f) is not None
         f.seek(0)  # Reset file pointer to the beginning
         results = p.parse(f)
-        assert len(results) > 5, "The GPI file should have about 9 unique genes from ~ 90 associations in the GAF file."
-
-    with open(output_gpi_path, "r") as f:
-        lines = f.readlines()
-
-    assert len(lines) > 0, "The GPI file should not be empty."
+        assert len(results) > 5
 
 
 def test_gpi_2_0_writer():
@@ -52,9 +45,9 @@ def test_gpi_2_0_writer():
         'synonyms': [],
         'type': ["SO:0000000"],  # db_object_type,
         'taxon': {"id": "NCBITaxon:10090"},
-        'encoded_by': "", # encoded_by
+        'encoded_by': "",  # encoded_by
         'parents': "",
-        'protein_containing_complex_members': "", # protein_containing_complex_members
+        'protein_containing_complex_members': "",  # protein_containing_complex_members
         'xrefs': "",
         'properties': ""
     }

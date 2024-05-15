@@ -13,7 +13,7 @@ import glob
 import logging
 import sys
 import traceback
-
+from typing import Dict, List
 import yamldown
 
 from functools import wraps
@@ -448,7 +448,7 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_v
     gpi_path = os.path.join(os.path.split(gaf_path)[0], "{}.gpi".format(dataset))
     with open(gaf_path) as gf, open(gpi_path, "w") as gpi:
         click.echo("Using {} as the gaf to build gpi with".format(gaf_path))
-        bridge = gafgpibridge.GafGpiBridge()
+        bridge = gafgpibridge
         gpiwriter = entitywriter.GpiWriter(file=gpi, version=gpad_gpi_output_version)
         gpi_cache = set()
 
