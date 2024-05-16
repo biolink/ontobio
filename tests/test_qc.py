@@ -354,6 +354,20 @@ def test_go_rule_18():
     test_result = qc.GoRule18().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
 
+def test_go_rule22():
+    config = assocparser.AssocParserConfig(
+        ontology=ontology,
+        retracted_pub_set={"RETRACTED:1234","PMID:37772366"},
+        rule_set=assocparser.RuleSet.ALL
+    )
+    assoc = make_annotation(goid="GO:1234567", evidence="IBA", references="PMID:12345").associations[0]   
+    test_result = qc.GoRule22().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    assoc = make_annotation(goid="GO:1234567", evidence="IBA", references="PMID:37772366").associations[0]   
+    test_result = qc.GoRule22().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR    
+
 def test_go_rule26():
 
     config = assocparser.AssocParserConfig(
@@ -819,7 +833,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 26
+    assert len(test_results.keys()) == 27
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 

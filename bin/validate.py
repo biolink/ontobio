@@ -34,6 +34,7 @@ from ontobio.validation import metadata
 from ontobio.validation import tools
 from ontobio.validation import rules
 
+
 from typing import Dict, Set
 
 # logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s: %(message)s", level=logging.WARNING)
@@ -210,7 +211,7 @@ Produce validated gaf using the gaf parser/
 """
 
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, ref_species_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, ref_species_metadata=None, retracted_pub_set=None,db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -221,6 +222,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
         rule_metadata=rule_metadata,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
+        retracted_pub_set=retracted_pub_set,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
@@ -493,7 +495,8 @@ def cli(ctx, verbose):
 @click.option("--only-dataset", default=None)
 @click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
 @click.option("--rule-set", "-l", "rule_set", default=[assocparser.RuleSet.ALL], multiple=True)
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version, rule_set):
+@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False, help="Path to retracted publications file")
+def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version, rule_set, retracted_pub_set):
 
     logger.info("Logging is verbose")
     products = {
@@ -529,7 +532,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
 
     db_entities = metadata.database_entities(absolute_metadata)
     group_ids = metadata.groups(absolute_metadata)
-    extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)
+    extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)    
 
     gaferences = None
     if gaferencer_file:
@@ -538,6 +541,12 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     # Default comes through as single-element tuple
     if rule_set == (assocparser.RuleSet.ALL,):
         rule_set = assocparser.RuleSet.ALL
+
+    retracted_pubs = None
+    if retracted_pub_set:
+        retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
+    else:
+       retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)  
 
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
@@ -550,6 +559,7 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
             rule_metadata=rule_metadata,
             goref_metadata=goref_metadata,
             ref_species_metadata=ref_species_metadata,
+            retracted_pub_set=retracted_pubs, 
             db_entities=db_entities,
             group_idspace=group_ids,
             suppress_rule_reporting_tags=suppress_rule_reporting_tag,
@@ -634,13 +644,14 @@ def paint(group, dataset, metadata, target, ontology):
     absolute_target = os.path.abspath(target)
     os.makedirs(os.path.join(absolute_target, "groups"), exist_ok=True)
     paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
+    
     paint_src_gaf = check_and_download_mixin_source(paint_metadata, dataset, absolute_target)
 
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
 
     gpi_path = os.path.join(absolute_target, "groups", dataset, "{}.gpi".format(dataset))
-    click.echo("Using GPI at {}".format(gpi_path))
+    click.echo("Using GPI at {}".format(gpi_path))  
     paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi_path)
 
 
@@ -650,7 +661,8 @@ def paint(group, dataset, metadata, target, ontology):
 @click.option("--ontology", type=click.Path(), required=True)
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False,
               help="Path to Gaferencer output to be used for inferences")
-def rule(metadata_dir, out, ontology, gaferencer_file):
+@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False, help="Path to retracted publications file")
+def rule(metadata_dir, out, ontology, gaferencer_file, retracted_pub_set):
     absolute_metadata = os.path.abspath(metadata_dir)
 
     click.echo("Loading ontology: {}...".format(ontology))
@@ -659,6 +671,12 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
     gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
+    retracted_pubs = None
+    if retracted_pub_set:
+        retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
+    else:
+       retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)     
+    
 
     click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
 
@@ -673,6 +691,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
         ontology=ontology_graph,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
+        retracted_pub_set=retracted_pubs,
         entity_idspaces=db_entities,
         group_idspace=group_ids,
         annotation_inferences=gaferences,
