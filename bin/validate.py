@@ -595,7 +595,7 @@ def cli(ctx, verbose):
 @click.argument("group")
 @click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
 @click.option("--gpad", default=False, is_flag=True)
-@click.option("--gpad-gpi-output-version", default="2.0", type=click.Choice(["1.2", "2.0"]))
+@click.option("--gpad-gpi-output-version", default="1.2", type=click.Choice(["1.2", "2.0"]))
 @click.option("--ttl", default=False, is_flag=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
