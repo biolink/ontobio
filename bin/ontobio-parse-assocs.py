@@ -34,6 +34,7 @@ import os
 import sys
 import json
 import logging
+from typing import Dict, List
 
 def main():
     """
