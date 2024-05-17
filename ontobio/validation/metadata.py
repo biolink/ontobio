@@ -182,7 +182,32 @@ def yaml_set(metadata, yaml_file_name, field) -> Set[str]:
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(yaml_path, str(e)))
 
-    return set([yaml[field] for yaml in yaml_list])   
+    return set([yaml[field] for yaml in yaml_list])
+
+def retracted_pub_set_from_meta(metadata) -> Set:
+    retracted_path = os.path.join(metadata, "retracted-publications.txt")
+    if os.access(retracted_path, os.R_OK):
+        return retracted_pub_set_use_abspath(retracted_path)
+    else:
+        return set()     
+    
+def retracted_pub_set(abspath_retracted_file) -> Set:
+   return retracted_pub_set_use_abspath(os.path.abspath(abspath_retracted_file)) 
+
+def retracted_pub_set_use_abspath(abspath_retracted_file) -> Set:
+    try:
+        retracted_pubs = None   
+        with open(abspath_retracted_file, "r") as f:
+            retracted_pubs = set()
+            for line in f:
+                li=line.strip()
+                if not li.startswith("!"):
+                    if "," in li:
+                        li = li.partition(',')[0]
+                    retracted_pubs.add(li)
+        return retracted_pubs                
+    except Exception as e:
+        raise click.ClickException("Could not find or read {}: {}".format(abspath_retracted_file, str(e)))    
     
     
 
