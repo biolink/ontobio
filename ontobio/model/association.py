@@ -494,7 +494,7 @@ class GoAssociation:
     """
     The internal model used by the parsers and qc Rules engine that all annotations are parsed into.
 
-    If an annotation textual line cannot be parsed into a GoAssociation then it is not a well formed line.
+    If an annotation textual line cannot be parsed into a GoAssociation then it is not a well-formed line.
 
     This class provides several methods to convert this GoAssociation into other representations, like GAF and GPAD
     of each version, as well as the old style dictionary Association that this class replaced (for compatibility if needed).
@@ -504,7 +504,7 @@ class GoAssociation:
     """
     source_line: Optional[str]
     subject: Subject
-    relation: Curie # This is the relation Curie
+    relation: Curie  # This is the relation Curie
     object: Term
     negated: bool
     qualifiers: List[Curie]
@@ -647,6 +647,12 @@ class GoAssociation:
         """
 
         props_list = ["{key}={value}".format(key=key, value=value) for key, value in self.properties]
+        gp_isoforms = None
+        if self.subject_extensions:
+            gp_isoforms = self.subject_extensions[0].term
+        if gp_isoforms:
+            self.subject.id = gp_isoforms
+
         return [
             str(self.subject.id),
             "NOT" if self.negated else "",
@@ -659,7 +665,7 @@ class GoAssociation:
             ymd_str(self.date, "-"),
             self.provided_by,
             ConjunctiveSet.list_to_str(self.object_extensions,
-                conjunct_to_str=lambda conj: conj.display()),
+                                       conjunct_to_str=lambda conj: conj.display()),
             "|".join(props_list)
         ]
 

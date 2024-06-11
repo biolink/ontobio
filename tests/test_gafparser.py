@@ -609,7 +609,7 @@ def test_gaf_gpi_bridge():
     gaf = ["MGI", "MGI:1923503", "0610006L08Rik", "enables", "GO:0003674", "MGI:MGI:2156816|GO_REF:0000015", "ND", "",
            "F", "RIKEN cDNA 0610006L08 gene", "", "gene", "taxon:10090", "20120430", "MGI", "", ""]
     association = gafparser.to_association(gaf, qualifier_parser=assocparser.Qualifier2_2()).associations[0]
-    bridge = gafgpibridge.GafGpiBridge()
+    bridge = gafgpibridge
     entity = bridge.convert_association(association)
     #gene gets updated to gene_product!!!!
     assert entity.get("type") == ["gene_product"]

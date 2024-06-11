@@ -13,7 +13,7 @@ import glob
 import logging
 import sys
 import traceback
-
+from typing import Dict, List
 import yamldown
 
 from functools import wraps
@@ -34,6 +34,7 @@ from ontobio.validation import metadata
 from ontobio.validation import tools
 from ontobio.validation import rules
 
+
 from typing import Dict, Set
 
 # logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s: %(message)s", level=logging.WARNING)
@@ -45,7 +46,8 @@ def thispath():
     os.path.normpath(os.path.abspath(__file__))
 
 
-def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None, replace_existing_files=True):
+def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, base_download_url=None,
+                              replace_existing_files=True):
     """
     This will download a dataset source given the group name,
     the metadata stanza for the dataset, and the target directory that all downloads
@@ -96,10 +98,13 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
             joined_url = urllib.parse.urljoin(base_download_url, source_url)
         else:
             # This is bad and we have to jump out`since we have no way of constructing a real gaf url
-            raise click.ClickException("Option `--base-download-url` was not specified and the config url {} is a relative path.".format(source_url))
+            raise click.ClickException(
+                "Option `--base-download-url` was not specified and the config url {} is a relative path.".format(
+                    source_url))
 
     # including scheme and such
-    reconstructed_url = urllib.parse.urlunsplit((scheme, urllib.parse.urlparse(joined_url).netloc, urllib.parse.urlparse(joined_url).path, source_url_parsed.query, ""))
+    reconstructed_url = urllib.parse.urlunsplit((scheme, urllib.parse.urlparse(joined_url).netloc,
+                                                 urllib.parse.urlparse(joined_url).path, source_url_parsed.query, ""))
 
     click.echo("Using URL `{}`".format(reconstructed_url))
 
@@ -111,7 +116,8 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
         content_length = int(response.headers.get("Content-Length", 0))
 
         with open(path, "wb") as downloaded:
-            with click.progressbar(iterable=response.iter_content(chunk_size=512 * 1024), length=content_length, show_percent=True) as chunks:
+            with click.progressbar(iterable=response.iter_content(chunk_size=512 * 1024), length=content_length,
+                                   show_percent=True) as chunks:
                 for chunk in chunks:
                     if chunk:
                         downloaded.write(chunk)
@@ -119,7 +125,8 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
     return path
 
 
-def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None, replace_existing_files=True, only_dataset=None):
+def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None, replace_existing_files=True,
+                         only_dataset=None):
     """
     This looks at a group metadata dictionary and downloads each GAF source that is not in the exclusions list.
     For each downloaded file, keep track of the path of the file. If the file is zipped, it will unzip it here.
@@ -128,17 +135,20 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
     # Grab all datasets in a group, excluding non-gaf, datasets that are explicitely excluded from an option, and excluding datasets with the `exclude key` set to true
     gaf_urls = []
     if only_dataset is None:
-        gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["type"] == "gaf" and data["dataset"] not in exclusions and not data.get("exclude", False)]
+        gaf_urls = [(data, data["source"]) for data in group_metadata["datasets"] if
+                    data["type"] == "gaf" and data["dataset"] not in exclusions and not data.get("exclude", False)]
     else:
-        gaf_urls = [ (data, data["source"]) for data in group_metadata["datasets"] if data["dataset"] == only_dataset ]
+        gaf_urls = [(data, data["source"]) for data in group_metadata["datasets"] if data["dataset"] == only_dataset]
     # List of dataset metadata to gaf download url
 
-    click.echo("Found {}".format(", ".join( [ kv[0]["dataset"] for kv in gaf_urls ] )))
+    click.echo("Found {}".format(", ".join([kv[0]["dataset"] for kv in gaf_urls])))
     downloaded_paths = []
     for dataset_metadata, gaf_url in gaf_urls:
         dataset = dataset_metadata["dataset"]
         # Local target download path setup - path and then directories
-        path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url, base_download_url=base_download_url, replace_existing_files=replace_existing_files)
+        path = download_a_dataset_source(group_metadata["id"], dataset_metadata, target_dir, gaf_url,
+                                         base_download_url=base_download_url,
+                                         replace_existing_files=replace_existing_files)
 
         if dataset_metadata.get("compression", None) == "gzip":
             # Unzip any downloaded file that has gzip, strip of the gzip extension
@@ -153,22 +163,24 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
     return downloaded_paths
 
 
-def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None, replace_existing_files=True):
+def check_and_download_mixin_source(mixin_metadata, group_id, dataset, target_dir, base_download_url=None,
+                                    replace_existing_files=True):
     mixin_dataset = tools.find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
     if mixin_dataset is None:
         return None
 
-    click.echo("Merging mixin dataset {}".format(mixin_dataset["source"]))
-    path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"], base_download_url=base_download_url, replace_existing_files=replace_existing_files)
+    click.echo("Downloading dataset {}".format(mixin_dataset["source"]))
+    path = download_a_dataset_source(group_id, mixin_dataset, target_dir, mixin_dataset["source"],
+                                     base_download_url=base_download_url, replace_existing_files=replace_existing_files)
 
-    unzipped = unzip_simple(path) # Strip off the .gz extension, leaving just the unzipped filename
+    unzipped = unzip_simple(path)  # Strip off the .gz extension, leaving just the unzipped filename
     return unzipped
 
 
 def mixin_dataset(mixin_metadata, dataset):
     mixin_dataset_version = tools.find(mixin_metadata["datasets"], lambda d: d.get("merges_into", "") == dataset)
     if mixin_dataset_version is None:
-        return None # Blah
+        return None  # Blah
 
     return mixin_dataset_version
 
@@ -209,8 +221,13 @@ def create_parser(config, group, dataset, format="gaf"):
 Produce validated gaf using the gaf parser/
 """
 
+
 @tools.gzips
-def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None, goref_metadata=None, db_entities=None, group_idspace=None, format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None, extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2", rule_set=assocparser.RuleSet.ALL):
+def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None,
+                goref_metadata=None, ref_species_metadata=None, retracted_pub_set=None, db_entities=None, group_idspace=None,
+                format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None,
+                extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2",
+                rule_set=assocparser.RuleSet.ALL) -> list[str]:
     filtered_associations = open(os.path.join(os.path.split(source_gaf)[0], "{}_noiea.gaf".format(dataset)), "w")
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
@@ -220,6 +237,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
         paint=paint,
         rule_metadata=rule_metadata,
         goref_metadata=goref_metadata,
+        ref_species_metadata=ref_species_metadata,
+        retracted_pub_set=retracted_pub_set,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
         suppress_rule_reporting_tags=suppress_rule_reporting_tags,
@@ -267,7 +286,8 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
         report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
 
     logger.info("json {} written out".format(report_markdown_path))
-    logger.info("gorule-13 first 10 messages: {}".format(json.dumps(parser.report.to_report_json()["messages"].get("gorule-0000013", [])[:10], indent=4)))
+    logger.info("gorule-13 first 10 messages: {}".format(
+        json.dumps(parser.report.to_report_json()["messages"].get("gorule-0000013", [])[:10], indent=4)))
     logger.info("json current Stack:")
     if logger.getEffectiveLevel() == logging.INFO:
         traceback.print_stack()
@@ -276,17 +296,15 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
 
 
 @tools.gzips
-def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
-
+def make_ttls(dataset, gaf_path, products, ontology_graph):
     with open(gaf_path) as sg:
         lines = sum(1 for line in sg)
 
     product_files = {
-        "gpad": open(os.path.join(os.path.split(gaf_path)[0], "{}.gpad".format(dataset)), "w"),
         "ttl": open(os.path.join(os.path.split(gaf_path)[0], "{}_cam.ttl".format(dataset)), "wb")
     }
 
-    if not products["gpad"] and not products["ttl"]:
+    if not products["ttl"]:
         # Bail if we have no products
         return []
 
@@ -301,22 +319,15 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
         click.echo("Using {} as the gaf to build data products with".format(gaf_path))
         if products["ttl"]:
             click.echo("Setting up {}".format(product_files["ttl"].name))
-            rdf_writer = assoc_rdfgen.TurtleRdfWriter(label=os.path.split(product_files["ttl"].name)[1] )
+            rdf_writer = assoc_rdfgen.TurtleRdfWriter(label=os.path.split(product_files["ttl"].name)[1])
             transformer = assoc_rdfgen.CamRdfTransform(writer=rdf_writer)
 
-        if products["gpad"]:
-            click.echo("Setting up {}".format(product_files["gpad"].name))
-            gpadwriter = GpadWriter(file=product_files["gpad"])
-
-        click.echo("Making products...")
+        click.echo("Making ttl products...")
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 if products["ttl"]:
                     transformer.provenance()
                     transformer.translate(association)
-
-                if products["gpad"]:
-                    gpadwriter.write_assoc(association)
 
         # post ttl steps
         if products["ttl"]:
@@ -329,8 +340,106 @@ def make_products(dataset, target_dir, gaf_path, products, ontology_graph):
 
     return [product_files[prod].name for prod in sorted(product_files.keys()) if products[prod]]
 
+
 @tools.gzips
-def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
+def make_gpads(dataset, gaf_path, products, ontology_graph,
+               noctua_gpad_file, paint_gaf_src, gpi, gpad_gpi_output_version):
+    """
+    Using the gaf files and the noctua gpad file, produce a gpad file that contains both kinds of annotations
+    without any loss.
+
+    :param dataset: The dataset name
+    :param gaf_path: The path to the gaf file
+    :param products: The products to make
+    :param ontology_graph: The ontology graph to use for parsing the associations
+    :param noctua_gpad_file: The path to the noctua gpad file
+    :param paint_gaf_src: The source of the paint gaf file
+    :param gpi: The path to the gpi file -- needed to convert isoform annotations from Noctua files
+                                            to gene annotations in GAF outputs.
+    :return: The path to the gpad file
+
+    """
+    gpad_file_path = os.path.join(os.path.split(gaf_path)[0], f"{dataset}.gpad")
+
+    if not products["gpad"]:
+        return []
+
+    # Open the file once and keep it open for all operations within this block
+    with open(gpad_file_path, "w") as outfile:
+        gpadwriter = GpadWriter(file=outfile, version=gpad_gpi_output_version)
+
+        # If there's a noctua gpad file, process it
+        if noctua_gpad_file:
+            click.echo("Making noctua gpad products...{}".format(noctua_gpad_file))
+            # Process noctua gpad file
+            process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi)
+
+        # Process the GAF file
+        process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src)
+
+    # The file will be automatically closed here, after exiting the 'with' block
+    return [gpad_file_path]
+
+
+def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi):
+    """
+    Process a noctua gpad file and write the associations to the gpad writer.
+
+    :param noctua_gpad_file: The path to the noctua gpad file
+    :param gpadwriter: The gpad writer to write the associations to
+    :param ontology_graph: The ontology graph to use for parsing the associations
+    :param gpi: The path to the gpi file -- needed to convert isoform annotations from Noctua files
+    """
+
+    with open(noctua_gpad_file) as nf:
+        lines = sum(1 for line in nf)
+        nf.seek(0)  # Reset file pointer to the beginning after counting lines
+        gpadparser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                                     paint=False,
+                                                                     rule_set="all"))
+        click.echo("Making noctua gpad products...")
+        with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
+            for association in associations:
+                # If the association is an isoform annotation, convert it to a gene annotation
+                gpadwriter.write_assoc(association)
+
+
+def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
+    """
+    Process a gaf file and write the associations to the gpad writer.
+
+    :param gaf_path: The path to the gaf file
+    :param gpadwriter: The gpad writer to write the associations to
+    :param ontology_graph: The ontology graph to use for parsing the associations
+    :param paint_gaf_src: The source of the paint gaf file
+
+    """
+    with open(gaf_path) as gf:
+        lines = sum(1 for line in gf)
+        gf.seek(0)  # Reset file pointer to the beginning after counting lines
+        gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                                   paint=True,
+                                                                   rule_set="all"))
+        click.echo("Merging in source gaf to gpad product...")
+        with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
+            for association in associations:
+                gpadwriter.write_assoc(association)
+
+    if paint_gaf_src is not None:
+        with open(paint_gaf_src) as pgf:
+            lines = sum(1 for line in pgf)
+            pgf.seek(0)
+            gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph,
+                                                                       paint=True,
+                                                                       rule_set="all"))
+            click.echo("Merging in paint gaf to gpad product...")
+            with click.progressbar(iterable=gafparser.association_generator(file=pgf), length=lines) as associations:
+                for association in associations:
+                    gpadwriter.write_assoc(association)
+
+
+@tools.gzips
+def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_version):
     gafparser = GafParser()
     gafparser.config = assocparser.AssocParserConfig(
         ontology=ontology_graph
@@ -341,8 +450,8 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
     gpi_path = os.path.join(os.path.split(gaf_path)[0], "{}.gpi".format(dataset))
     with open(gaf_path) as gf, open(gpi_path, "w") as gpi:
         click.echo("Using {} as the gaf to build gpi with".format(gaf_path))
-        bridge = gafgpibridge.GafGpiBridge()
-        gpiwriter = entitywriter.GpiWriter(file=gpi)
+        bridge = gafgpibridge
+        gpiwriter = entitywriter.GpiWriter(file=gpi, version=gpad_gpi_output_version)
         gpi_cache = set()
 
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
@@ -352,7 +461,6 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph):
                     # If the entity is not in the cache, add it and write it out
                     gpi_cache.add(entity)
                     gpiwriter.write_entity(entity)
-
     return gpi_path
 
 
@@ -403,10 +511,11 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
 
     def make_mixin_header(header_lines, path):
         the_header = [
-            "!Header copied from {}".format(os.path.basename(path)),
-            "!================================="
-        ] + header_lines[8:] + ["!"]
+                         "!Header copied from {}".format(os.path.basename(path)),
+                         "!================================="
+                     ] + header_lines[8:] + ["!"]
         return the_header
+
     # ####################################################################
 
     # Set up merged final gaf product path
@@ -426,16 +535,16 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
             annotations += mixin_annotations
 
     full_header = valid_header + \
-    [
-        "!=================================",
-        "!"
-    ] + mixin_headers + \
-    [
-        "!=================================",
-        "!",
-        "!Documentation about this header can be found here: https://github.com/geneontology/go-site/blob/master/docs/gaf_validation.md",
-        "!"
-    ]
+                  [
+                      "!=================================",
+                      "!"
+                  ] + mixin_headers + \
+                  [
+                      "!=================================",
+                      "!",
+                      "!Documentation about this header can be found here: https://github.com/geneontology/go-site/blob/master/docs/gaf_validation.md",
+                      "!"
+                  ]
     all_lines = full_header + annotations
 
     with open(merged_path, "w") as merged_file:
@@ -444,19 +553,25 @@ def merge_all_mixin_gaf_into_mod_gaf(valid_gaf_path, mixin_gaf_paths):
     return merged_path
 
 
-def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipaths=None, base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[], gaf_output_version="2.2"):
-
+def mixin_a_dataset(valid_gaf, mixin_metadata_list, group_id, dataset, target, ontology, gpipaths=None,
+                    base_download_url=None, rule_metadata={}, replace_existing_files=True, rule_contexts=[],
+                    gaf_output_version="2.2"):
     end_gaf = valid_gaf
     mixin_gaf_paths = []
     for mixin_metadata in mixin_metadata_list:
-        mixin_src = check_and_download_mixin_source(mixin_metadata, group_id, dataset, target, base_download_url=base_download_url, replace_existing_files=replace_existing_files)
+        click.echo("Merging mixin dataset {}".format(mixin_metadata["id"]))
+        mixin_src = check_and_download_mixin_source(mixin_metadata, group_id, dataset, target,
+                                                    base_download_url=base_download_url,
+                                                    replace_existing_files=replace_existing_files)
 
         if mixin_src is not None:
             mixin_dataset_metadata = mixin_dataset(mixin_metadata, dataset)
             mixin_dataset_id = mixin_dataset_metadata["dataset"]
             format = mixin_dataset_metadata["type"]
             context = ["import"] if mixin_metadata.get("import", False) else []
-            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipaths=gpipaths, paint=True, group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format, rule_contexts=context, gaf_output_version=gaf_output_version)[0]
+            mixin_gaf = produce_gaf(mixin_dataset_id, mixin_src, ontology, gpipaths=gpipaths, paint=True,
+                                    group=mixin_metadata["id"], rule_metadata=rule_metadata, format=format,
+                                    rule_contexts=context, gaf_output_version=gaf_output_version)[0]
             mixin_gaf_paths.append(mixin_gaf)
 
     if mixin_gaf_paths:
@@ -476,24 +591,53 @@ def cli(ctx, verbose):
     if verbose:
         logger.setLevel(logging.INFO)
 
+
 @cli.command()
 @click.pass_context
 @click.argument("group")
 @click.option("--metadata", "-m", "metadata_dir", type=click.Path(), required=True)
 @click.option("--gpad", default=False, is_flag=True)
+@click.option("--gpad-gpi-output-version", default="1.2", type=click.Choice(["1.2", "2.0"]))
 @click.option("--ttl", default=False, is_flag=True)
 @click.option("--target", "-t", type=click.Path(), required=True)
 @click.option("--ontology", "-o", type=click.Path(exists=True), required=False)
 @click.option("--exclude", "-x", multiple=True)
 @click.option("--base-download-url", "-b", default=None)
-@click.option("--suppress-rule-reporting-tag", "-S", multiple=True, help="Suppress markdown output messages from rules tagged with this tag")
-@click.option("--skip-existing-files", "-K", is_flag=True, default=False, help="When downloading files, if a file already exists it won't downloaded over")
-@click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False, help="Path to Gaferencer output to be used for inferences")
+@click.option("--suppress-rule-reporting-tag", "-S", multiple=True,
+              help="Suppress markdown output messages from rules tagged with this tag")
+@click.option("--skip-existing-files", "-K", is_flag=True, default=False,
+              help="When downloading files, if a file already exists it won't downloaded over")
+@click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False,
+              help="Path to Gaferencer output to be used for inferences")
 @click.option("--only-dataset", default=None)
 @click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
 @click.option("--rule-set", "-l", "rule_set", default=[assocparser.RuleSet.ALL], multiple=True)
-def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base_download_url, suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version, rule_set):
+@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False, help="Path to retracted publications file")
+def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target, ontology, exclude, base_download_url,
+            suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version,
+            rule_set, retracted_pub_set):
+    """
+    Produce GAF, GPI, and TTL files for a group.
 
+    This command will download the GAF files for a group, validate them, and then produce GPI and TTL files.
+    :param ctx: Click context
+    :param group: The group to produce files for
+    :param metadata_dir: The directory containing the metadata files
+    :param gpad: Produce GPAD files
+    :param gpad_gpi_output_version: The version of the GPAD and GPI files to produce
+    :param ttl: Produce TTL files
+    :param target: The directory to put the files in
+    :param ontology: The ontology to use for validation
+    :param exclude: Datasets to exclude
+    :param base_download_url: The base URL to download files from
+    :param suppress_rule_reporting_tag: Tags to suppress in the rule reporting
+    :param skip_existing_files: Skip downloading files that already exist
+    :param gaferencer_file: The path to the Gaferencer output file
+    :param only_dataset: Only process a single dataset
+    :param gaf_output_version: The version of the GAF files to produce
+    :param rule_set: The rule set to use
+    :param retracted_pub_set: The path to the retracted publications file
+    """
     logger.info("Logging is verbose")
     products = {
         "gaf": True,
@@ -511,22 +655,27 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
 
-    downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude, base_download_url=base_download_url, replace_existing_files=not skip_existing_files, only_dataset=only_dataset)
+    downloaded_gaf_sources = download_source_gafs(group_metadata, absolute_target, exclusions=exclude,
+                                                  base_download_url=base_download_url,
+                                                  replace_existing_files=not skip_existing_files,
+                                                  only_dataset=only_dataset)
 
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
+    ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
 
     click.echo("Found {} GO Rules".format(len(rule_metadata.keys())))
     click.echo("Found {} GO_REFs".format(len(goref_metadata.keys())))
+    click.echo("Found {} Reference Species".format(len(ref_species_metadata)))
 
     paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
     noctua_metadata = metadata.dataset_metadata_file(absolute_metadata, "noctua")
-    mixin_metadata_list = list(filter(lambda m: m != None, [paint_metadata, noctua_metadata]))
+    mixin_metadata_list = list(filter(lambda m: m != None, [paint_metadata]))
 
     db_entities = metadata.database_entities(absolute_metadata)
     group_ids = metadata.groups(absolute_metadata)
-    extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)
+    extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)    
 
     gaferences = None
     if gaferencer_file:
@@ -536,28 +685,36 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
     if rule_set == (assocparser.RuleSet.ALL,):
         rule_set = assocparser.RuleSet.ALL
 
+    retracted_pubs = None
+    if retracted_pub_set:
+        retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
+    else:
+       retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)  
+
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
         # Set paint to True when the group is "paint".
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group,
         # like for paint_other.
+        click.echo("source_gaf: {}".format(source_gaf))
         valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph,
-            paint=(group=="paint"),
-            group=group,
-            rule_metadata=rule_metadata,
-            goref_metadata=goref_metadata,
-            db_entities=db_entities,
-            group_idspace=group_ids,
-            suppress_rule_reporting_tags=suppress_rule_reporting_tag,
-            annotation_inferences=gaferences,
-            group_metadata=group_metadata,
-            extensions_constraints=extensions_constraints,
-            rule_contexts=["import"] if dataset_metadata.get("import", False) else [],
-            gaf_output_version=gaf_output_version,
-            rule_set=rule_set
-            )[0]
+                                paint=(group == "paint"),
+                                group=group,
+                                rule_metadata=rule_metadata,
+                                goref_metadata=goref_metadata,
+                                ref_species_metadata=ref_species_metadata,
+                                db_entities=db_entities,
+                                group_idspace=group_ids,
+                                suppress_rule_reporting_tags=suppress_rule_reporting_tag,
+                                annotation_inferences=gaferences,
+                                group_metadata=group_metadata,
+                                extensions_constraints=extensions_constraints,
+                                rule_contexts=["import"] if dataset_metadata.get("import", False) else [],
+                                gaf_output_version=gaf_output_version,
+                                rule_set=rule_set
+                                )[0]
 
-        gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph)
+        gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph, gpad_gpi_output_version)
 
         gpi_list = [gpi]
         # Try to find other GPIs in metadata and merge
@@ -570,11 +727,27 @@ def produce(ctx, group, metadata_dir, gpad, ttl, target, ontology, exclude, base
                     matching_gpi_path = unzip_simple(matching_gpi_path)
                 gpi_list.append(matching_gpi_path)
 
-        end_gaf = mixin_a_dataset(valid_gaf, mixin_metadata_list, group_metadata["id"], dataset, absolute_target,
+        noctua_gpad_src = check_and_download_mixin_source(noctua_metadata, group_metadata["id"], dataset, target,
+                                                          base_download_url=base_download_url,
+                                                          replace_existing_files=not skip_existing_files)
+        paint_gaf_src = (check_and_download_mixin_source(paint_metadata, group_metadata["id"], dataset, target,
+                                                         base_download_url=base_download_url,
+                                                         replace_existing_files=not skip_existing_files)
+                         if paint_metadata else None)
+
+        make_gpads(dataset, valid_gaf, products,
+                   ontology_graph, noctua_gpad_src, paint_gaf_src,
+                   gpi, gpad_gpi_output_version)
+
+        end_gaf = mixin_a_dataset(valid_gaf, [noctua_metadata, paint_metadata],
+                                  group_metadata["id"], dataset, absolute_target,
                                   ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
-        make_products(dataset, absolute_target, end_gaf, products, ontology_graph)
+
+        click.echo(end_gaf)
+
+        make_ttls(dataset, end_gaf, products, ontology_graph)
 
 
 @cli.command()
@@ -630,13 +803,14 @@ def paint(group, dataset, metadata, target, ontology):
     absolute_target = os.path.abspath(target)
     os.makedirs(os.path.join(absolute_target, "groups"), exist_ok=True)
     paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
+    
     paint_src_gaf = check_and_download_mixin_source(paint_metadata, dataset, absolute_target)
 
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
 
     gpi_path = os.path.join(absolute_target, "groups", dataset, "{}.gpi".format(dataset))
-    click.echo("Using GPI at {}".format(gpi_path))
+    click.echo("Using GPI at {}".format(gpi_path))  
     paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi_path)
 
 
@@ -646,7 +820,8 @@ def paint(group, dataset, metadata, target, ontology):
 @click.option("--ontology", type=click.Path(), required=True)
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False,
               help="Path to Gaferencer output to be used for inferences")
-def rule(metadata_dir, out, ontology, gaferencer_file):
+@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False, help="Path to retracted publications file")
+def rule(metadata_dir, out, ontology, gaferencer_file, retracted_pub_set):
     absolute_metadata = os.path.abspath(metadata_dir)
 
     click.echo("Loading ontology: {}...".format(ontology))
@@ -654,6 +829,13 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
 
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
     gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
+    ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
+    retracted_pubs = None
+    if retracted_pub_set:
+        retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
+    else:
+       retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)     
+    
 
     click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
 
@@ -667,6 +849,8 @@ def rule(metadata_dir, out, ontology, gaferencer_file):
     config = assocparser.AssocParserConfig(
         ontology=ontology_graph,
         goref_metadata=goref_metadata,
+        ref_species_metadata=ref_species_metadata,
+        retracted_pub_set=retracted_pubs,
         entity_idspaces=db_entities,
         group_idspace=group_ids,
         annotation_inferences=gaferences,

@@ -34,6 +34,7 @@ import os
 import sys
 import json
 import logging
+from typing import Dict, List
 
 def main():
     """
@@ -80,7 +81,9 @@ def main():
     parser.add_argument("-g", "--gpi", type=str, required=False, default=None,
                         help="GPI file")
     parser.add_argument("-m", "--metadata_dir", type=dir_path, required=False,
-                        help="Path to metadata directory")
+                        help="Path to metadata directory") 
+    parser.add_argument("--retracted_pub_set", type=argparse.FileType('r'), required=False,
+                        help="Path to retracted publications file") 
     parser.add_argument("-l", "--rule", action="append", required=None, default=[], dest="rule_set",
                         help="Set of rules to be run. Default is no rules to be run, with the exception \
                             of gorule-0000027 and gorule-0000020. See command line documentation in the \
@@ -143,9 +146,17 @@ def main():
         rule_set = assocparser.RuleSet.ALL
     
     goref_metadata = None
+    ref_species_metadata = None  
     if args.metadata_dir:
         absolute_metadata = os.path.abspath(args.metadata_dir)
-        goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))    
+        goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
+        ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
+        
+    retracted_pub_set = None
+    if args.retracted_pub_set:
+        retracted_pub_set = metadata.retracted_pub_set(args.retracted_pub_set.name)
+    elif args.metadata_dir:
+       retracted_pub_set = metadata.retracted_pub_set_from_meta(absolute_metadata)     
 
     # set configuration
     filtered_evidence_file = open(args.filtered_file, "w") if args.filtered_file else None
@@ -161,6 +172,8 @@ def main():
         allow_unmapped_eco=args.allow_unmapped_eco,
         gpi_authority_path=args.gpi,
         goref_metadata=goref_metadata,
+        ref_species_metadata=ref_species_metadata,
+        retracted_pub_set=retracted_pub_set,
         rule_set=rule_set
     )
     p = None

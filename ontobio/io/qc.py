@@ -36,6 +36,8 @@ hep_eco = ecomapping.coderef_to_ecoclass("HEP")
 iss_eco = ecomapping.coderef_to_ecoclass("ISS")
 isa_eco = ecomapping.coderef_to_ecoclass("ISA")
 iso_eco = ecomapping.coderef_to_ecoclass("ISO")
+ism_eco = ecomapping.coderef_to_ecoclass("ISM")
+rca_eco = ecomapping.coderef_to_ecoclass("RCA")
 
 # TestResult = collections.namedtuple("TestResult", ["result_type", "message", "result"])
 class TestResult(object):
@@ -187,6 +189,16 @@ class GoRule02(GoRule):
         fails = ((annotation_obj_id == "GO:0005488" or annotation_obj_id == "GO:0005515") and annotation.negated)
         return self._result(not fails)
 
+class GoRule05(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000005", "IEA, ISS, ISO, ISM, ISA, IBA, RCA annotations ae not allowed for direct annotations to 'binding ; GO:0005488' or 'protein binding ; GO:0005515'", FailMode.SOFT)
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        evidence = str(annotation.evidence.type)
+        annotation_obj_id = str(annotation.object.id)
+        fails = ((annotation_obj_id == "GO:0005488" or annotation_obj_id == "GO:0005515") and evidence in [iea_eco, iss_eco, iso_eco, ism_eco, isa_eco, iba_eco, rca_eco])
+        return self._result(not fails)
 
 class GoRule06(GoRule):
 
@@ -409,6 +421,20 @@ class GoRule18(GoRule):
             return self._result(bool(withfrom))
         else:
             return self._result(True)
+        
+class GoRule22(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000022", "Check for, and filter, annotations made to retracted publications", FailMode.HARD)
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        if config.retracted_pub_set is not None:
+            references = annotation.evidence.has_supporting_reference
+            for ref in references:
+                ref = str(ref)
+                if ref in config.retracted_pub_set:
+                    return self._result(False)
+        return self._result(True)        
 
 
 class GoRule26(GoRule):
@@ -901,7 +927,7 @@ class GoRule61(RepairRule):
 class GoRule63(GoRule):
 
     def __init__(self):
-        super().__init__("GORULE:0000063", "Annotations using ISS/ISA/ISO evidence should refer to a gene product (in the 'with' column)", FailMode.HARD)
+        super().__init__("GORULE:0000063", "Annotations using ISS/ISA/ISO evidence should refer to a gene product (in the 'with' column)", FailMode.SOFT)
 
     def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
         evidence = str(annotation.evidence.type)
@@ -913,8 +939,25 @@ class GoRule63(GoRule):
 
         return self._result(True)
 
+class GoRule64(GoRule):
+
+    def __init__(self):
+        super().__init__("GORULE:0000064", "TreeGrafter ('GO_REF:0000118') IEAs should be filtered for GO reference species", FailMode.HARD)
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        references = [str(ref) for ref in annotation.evidence.has_supporting_reference]
+        evidence = str(annotation.evidence.type)
+
+
+        #TreeGrafter reference is GO_REF:0000118
+        if evidence in [iea_eco] and 'GO_REF:0000118' in references and (config.ref_species_metadata is not None and str(annotation.subject.taxon) in config.ref_species_metadata):
+            return self._result(False)
+
+        return self._result(True)
+
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
+    "GoRule05": GoRule05(),    
     "GoRule06": GoRule06(),
     "GoRule07": GoRule07(),
     "GoRule08": GoRule08(),
@@ -923,6 +966,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule16": GoRule16(),
     "GoRule17": GoRule17(),
     "GoRule18": GoRule18(),
+    "GoRule22": GoRule22(),
     "GoRule26": GoRule26(),
     "GoRule28": GoRule28(),
     "GoRule29": GoRule29(),
@@ -938,6 +982,7 @@ GoRules = enum.Enum("GoRules", {
     "GoRule58": GoRule58(),
     "GoRule61": GoRule61(),
     "GoRule63": GoRule63(),
+    "GoRule64": GoRule64(),    
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
     "GoRule13": GoRule13()
 })

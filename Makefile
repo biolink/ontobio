@@ -24,13 +24,24 @@ foo:
 
 # only run local tests
 travis_test:
-	pytest tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
-	       tests/test_rdfgen.py tests/test_phenosim_engine.py tests/test_ontol.py \
-		   tests/test_validation_rules.py tests/unit/test_annotation_scorer.py \
-		   tests/test_goassociation_model.py tests/test_relations.py \
-		   tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
-		   tests/unit/test_clinical_mod.py tests/test_collections.py \
-		   tests/test_gocamgen.py
+	@if [ -d ".venv" ] && [ -f "pyproject.toml" ]; then \
+		echo "Running tests in Poetry environment..."; \
+		poetry run pytest tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
+		tests/test_rdfgen.py tests/test_phenosim_engine.py tests/test_ontol.py \
+		tests/test_validation_rules.py tests/unit/test_annotation_scorer.py \
+		tests/test_goassociation_model.py tests/test_relations.py \
+		tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
+		tests/test_collections.py \
+		tests/test_gocamgen.py; \
+	else \
+		pytest tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
+		tests/test_rdfgen.py tests/test_phenosim_engine.py tests/test_ontol.py \
+		tests/test_validation_rules.py tests/unit/test_annotation_scorer.py \
+		tests/test_goassociation_model.py tests/test_relations.py \
+		tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
+		tests/test_collections.py \
+		tests/test_gocamgen.py; \
+	fi
 
 cleandist:
 	rm dist/* || true

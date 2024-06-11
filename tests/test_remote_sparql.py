@@ -169,7 +169,7 @@ def test_subontology():
     w.write_subgraph(ont, ancs)
 
     # TODO: sub-ontology does not create
-    # full metadata
+    # full datasets
     w = GraphRenderer.create('obo')
     w.write_subgraph(ont, ancs)
     

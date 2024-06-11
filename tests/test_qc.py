@@ -93,7 +93,29 @@ def test_go_rule02():
     assoc.object.id = Curie.from_str("GO:0003674")
     test_result = qc.GoRule02().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
-
+    
+def test_go_rule_05():
+    fail_terms = ["GO:0005488", "GO:0005515"]
+    fail_codes = ["IEA", "ISS", "ISO", "ISM", "ISA", "IBA", "RCA"]
+    for term in fail_terms:
+        for code in fail_codes:
+            assoc = make_annotation(goid=term, evidence=code).associations[0]
+            test_result = qc.GoRule05().test(assoc, all_rules_config(ontology=ontology))
+            assert test_result.result_type == qc.ResultType.WARNING
+    
+    assoc = make_annotation(goid="GO:0034655", evidence="IEA").associations[0]
+    test_result = qc.GoRule05().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    
+    assoc = make_annotation(goid="GO:0005488", evidence="HEP").associations[0]
+    test_result = qc.GoRule05().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    assoc = make_annotation(goid="GO:0034655", evidence="HEP").associations[0]
+    test_result = qc.GoRule05().test(assoc, all_rules_config(ontology=ontology))
+    assert test_result.result_type == qc.ResultType.PASS    
+    
 def test_go_rule_06():
 
     assoc = make_annotation(goid="GO:0005575", evidence="HEP", aspect="C").associations[0]
@@ -331,6 +353,20 @@ def test_go_rule_18():
     assoc.evidence.with_support_from = association.ConjunctiveSet.str_to_conjunctions("BLAH:12345")
     test_result = qc.GoRule18().test(assoc, all_rules_config())
     assert test_result.result_type == qc.ResultType.PASS
+
+def test_go_rule22():
+    config = assocparser.AssocParserConfig(
+        ontology=ontology,
+        retracted_pub_set={"RETRACTED:1234","PMID:37772366"},
+        rule_set=assocparser.RuleSet.ALL
+    )
+    assoc = make_annotation(goid="GO:1234567", evidence="IBA", references="PMID:12345").associations[0]   
+    test_result = qc.GoRule22().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    assoc = make_annotation(goid="GO:1234567", evidence="IBA", references="PMID:37772366").associations[0]   
+    test_result = qc.GoRule22().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR    
 
 def test_go_rule26():
 
@@ -742,17 +778,45 @@ def test_go_rule_63():
     # ISS with nothing in withfrom
     assoc = make_annotation(evidence="ISS", withfrom="").associations[0]
     test_result = qc.GoRule63().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
 
     # ISA with  with nothing in withfrom
     assoc = make_annotation(evidence="ISA", withfrom="").associations[0]
     test_result = qc.GoRule63().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
     
     # ISO with  with nothing in withfrom
     assoc = make_annotation(evidence="ISO", withfrom="").associations[0]
     test_result = qc.GoRule63().test(assoc, all_rules_config())
-    assert test_result.result_type == qc.ResultType.ERROR
+    assert test_result.result_type == qc.ResultType.WARNING
+    
+def test_go_rule_64():
+    config = assocparser.AssocParserConfig(
+        ref_species_metadata={
+            "NCBITaxon:7227", "NCBITaxon:123"
+        },
+        rule_set=assocparser.RuleSet.ALL
+    )
+            
+    assoc = make_annotation(evidence="IEA", references="GO_REF:0000118").associations[0]
+    assoc.subject.taxon = Curie.from_str("NCBITaxon:678")
+    test_result = qc.GoRule64().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS
+
+    assoc = make_annotation(evidence="IBA", references="GO_REF:0000118").associations[0]
+    assoc.subject.taxon = Curie.from_str("NCBITaxon:123")
+    test_result = qc.GoRule64().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS
+    
+    assoc = make_annotation(evidence="IEA", references="GO_REF:0000123").associations[0]
+    assoc.subject.taxon = Curie.from_str("NCBITaxon:123")
+    test_result = qc.GoRule64().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.PASS         
+
+    assoc = make_annotation(evidence="IEA", references="GO_REF:0000118").associations[0]
+    assoc.subject.taxon = Curie.from_str("NCBITaxon:7227")
+    test_result = qc.GoRule64().test(assoc, config)
+    assert test_result.result_type == qc.ResultType.ERROR 
 
 def test_all_rules():
     # pass
@@ -769,7 +833,7 @@ def test_all_rules():
     assoc = gafparser.to_association(a).associations[0]
 
     test_results = qc.test_go_rules(assoc, config).all_results
-    assert len(test_results.keys()) == 24
+    assert len(test_results.keys()) == 27
     assert test_results[qc.GoRules.GoRule26.value].result_type == qc.ResultType.PASS
     assert test_results[qc.GoRules.GoRule29.value].result_type == qc.ResultType.PASS
 
