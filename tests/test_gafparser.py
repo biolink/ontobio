@@ -471,7 +471,36 @@ def test_obsolete_replair_of_withfrom():
     assoc_result = p.parse_line(obsolete_no_replacement_line)
     assert assoc_result.associations == []
     assert p.report.to_report_json()["messages"]["gorule-0000020"][0]["obj"] == "GO:0016458"
+    
+    
+def test_invalid_db_type():
+    #gene_product gets mapped to gene_product
+    line = ["UniProtKB", "P0AFI2", "parC", "", "GO:0003916", "PMID:1334483", "IDA", "", "F", "", "", "gene_product", "taxon:83333", "20081208", "EcoliWiki"]
+    parsed = gafparser.to_association(line)
+    assoc = parsed.associations[0]
+    assert assoc.subject.type == [association.map_gp_type_label_to_curie('gene_product')]
 
+    #protein gets mapped to protein
+    line = ["UniProtKB", "P0AFI2", "parC", "", "GO:0003916", "PMID:1334483", "IDA", "", "F", "", "", "protein", "taxon:83333", "20081208", "EcoliWiki"]
+    parsed = gafparser.to_association(line)
+    assoc = parsed.associations[0]
+    assert assoc.subject.type == [association.map_gp_type_label_to_curie('protein')]
+    
+    #Unhandled types get mapped to 'gene_product'
+    line = ["UniProtKB", "P0AFI2", "parC", "", "GO:0003916", "PMID:1334483", "IDA", "", "F", "", "", "invalid_gene_product", "taxon:83333", "20081208", "EcoliWiki"]
+    parsed = gafparser.to_association(line)
+    assoc = parsed.associations[0]
+    assert assoc.subject.type == [association.map_gp_type_label_to_curie('gene_product')]
+    assert parsed.report.to_report_json()["messages"]["gorule-0000001"][0]["type"] == parsed.report.INVALID_SUBJECT_TYPE
+    
+    #'lnc_RNA' gets repaired to 'lncRNA'
+    line = ["UniProtKB", "P0AFI2", "parC", "", "GO:0003916", "PMID:1334483", "IDA", "", "F", "", "", "lnc_RNA", "taxon:83333", "20081208", "EcoliWiki"]
+    parsed = gafparser.to_association(line)
+    assoc = parsed.associations[0]
+    assert assoc.subject.type == [association.map_gp_type_label_to_curie('lncRNA')]                
+    assert parsed.report.to_report_json()["messages"]["gorule-0000001"][0]["type"] == parsed.report.INVALID_SUBJECT_TYPE
+    
+ 
 
 def test_subject_extensions_bad_curie():
     """

@@ -351,6 +351,7 @@ class Report(object):
     VIOLATES_GO_RULE = "Violates GO Rule"
     RULE_PASS = "Passes GO Rule"
     INVALID_REFERENCES = "Only one reference per ID space allowed"
+    INVALID_SUBJECT_TYPE = "Invalid subject type"
 
     def __init__(self, group="unknown", dataset="unknown", config=None):
         self.messages = []
