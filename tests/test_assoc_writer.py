@@ -201,7 +201,7 @@ def test_gaf_2_2_extensions():
 
 
 def test_full_gaf_2_2_write():
-    line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene_product\ttaxon:6239\t20060302\tWB\t\t"
+    line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
     parser = gafparser.GafParser()
     parser.version = "2.2"
     out = io.StringIO()

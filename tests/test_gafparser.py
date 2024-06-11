@@ -216,7 +216,7 @@ def test_qualifiers_gaf():
 
 
 def test_gaf_2_1_unknown_qualifier():
-    line = ["UniProtKB", "P0AFI2", "parC", "Contributes_to", "GO:0003916", "PMID:1334483", "IDA", "", "F", "", "", "gene_product", "taxon:83333", "20081208", "EcoliWiki"]
+    line = ["UniProtKB", "P0AFI2", "parC", "Contributes_to", "GO:0003916", "PMID:1334483", "IDA", "", "F", "", "", "gene", "taxon:83333", "20081208", "EcoliWiki"]
     parsed = gafparser.to_association(line)
 
     assert parsed.skipped is True
