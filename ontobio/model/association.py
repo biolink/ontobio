@@ -212,17 +212,23 @@ __default_entity_type_to_curie_mapping = bidict.bidict({
     "protein_coding_gene": Curie.from_str("SO:0001217"),
     "protein": Curie.from_str("PR:000000001"),
     "gene_product": Curie.from_str("CHEBI:33695"),
+    "autocatalytically_spliced_intron": Curie.from_str("SO:0000588"),    
     "snRNA": Curie.from_str("SO:0000274"),
     "ncRNA": Curie.from_str("SO:0000655"),
     "rRNA": Curie.from_str("SO:0000252"),
     "mRNA": Curie.from_str("SO:0000234"),
+    "pre_miRNA": Curie.from_str("SO:0001244"),
     "lincRNA": Curie.from_str("SO:0001463"),
+    "lncRNA": Curie.from_str("SO:0001877"),    
     "tRNA": Curie.from_str("SO:0000253"),
     "snoRNA": Curie.from_str("SO:0000275"),
     "miRNA": Curie.from_str("SO:0000276"),
     "scRNA": Curie.from_str("SO:0000013"),
     "piRNA": Curie.from_str("SO:0001035"),
+    "pre_miRNA": Curie.from_str("SO:0001244"),    
     "tmRNA": Curie.from_str("SO:0000584"),
+    "scaRNA": Curie.from_str("SO:0002095"),
+    "siRNA": Curie.from_str("SO:0000646"),         
     "SRP_RNA": Curie.from_str("SO:0000590"),    
     "ribozyme": Curie.from_str("SO:0000374"),
     "telomerase_RNA": Curie.from_str("SO:0000390"),
@@ -230,36 +236,23 @@ __default_entity_type_to_curie_mapping = bidict.bidict({
     "antisense_RNA": Curie.from_str("SO:0000644"),
     "RNase_MRP_RNA": Curie.from_str("SO:0000385"),
     "guide_RNA": Curie.from_str("SO:0000602"),
+    "vault_RNA": Curie.from_str("SO:0000404"),
+    "Y_RNA": Curie.from_str("SO:0000405"),         
     "hammerhead_ribozyme": Curie.from_str("SO:0000380"),
     "pseudogene": Curie.from_str("SO:0000336"),
+    "pseudogenic_transcript": Curie.from_str("SO:0000516"),    
     "protein_complex": Curie.from_str("GO:0032991"),    
     "antisense_lncRNA": Curie.from_str("SO:0001904"),
+    "antisense_lncRNA_gene": Curie.from_str("SO:0002182"),  
     "gene_segment": Curie.from_str("SO:3000000"),
     "genetic_marker": Curie.from_str("SO:0001645"),
     "biological region": Curie.from_str("SO:0001411"),
     "transposable_element_gene": Curie.from_str("SO:0000111")
-    # "RNA": Curie.from_str("SO:0000356"),         
-    # "lincRNA_gene": Curie.from_str("SO:0001641"),
-    # "lncRNA_gene": Curie.from_str("SO:0002127"),
-    # "miRNA_gene": Curie.from_str("SO:0001265"),
-    # "ncRNA_gene": Curie.from_str("SO:0001263"),
-    # "RNase_MRP_RNA_gene": Curie.from_str("SO:0001640"),
-    # "RNase_P_RNA_gene": Curie.from_str("SO:0001639"),
-    # "rRNA_gene": Curie.from_str("SO:0001637"),
-    # "scRNA_gene": Curie.from_str("SO:0001266"),
-    # "sense_intronic_ncRNA_gene": Curie.from_str("SO:0002184"),
-    # "sense_overlap_ncRNA_gene": Curie.from_str("SO:0002183"),
-    # "snoRNA_gene": Curie.from_str("SO:0001267"),
-    # "snRNA_gene": Curie.from_str("SO:0001268"),
-    # "SRP_RNA_gene": Curie.from_str("SO:0001269"),
-    # "telomerase_RNA_gene": Curie.from_str("SO:0001643"),
-    # "tRNA_gene": Curie.from_str("SO:0001272"),
-    #  "lnc_RNA": Curie.from_str("SO:0001877"),
-    # "primary_transcript": Curie.from_str("SO:0000185"),
-    # "gene": Curie.from_str("SO:0000704"),
-    # "transcript": Curie.from_str("SO:0000673"),
-    
-   
+})
+
+# ===============================================================================
+__repair_entity_type_to_curie_mapping = bidict.bidict({
+    "lnc_RNA": Curie.from_str("SO:0001877")
 })
 
 def map_gp_type_label_to_curie(type_label: str) -> Curie:
@@ -269,9 +262,13 @@ def map_gp_type_label_to_curie(type_label: str) -> Curie:
 
     This is a measure to upgrade the pseudo-labels into proper Curies. Present here are
     the existing set of labels in current use, and how they should be mapped into CURIEs.
+    Repair Sequence Ontology (SO) labels if possible
     """
     # normalized_label = type_label.translate()
     global __default_entity_type_to_curie_mapping
+    global __repair_entity_type_to_curie_mapping
+    if type_label not in __default_entity_type_to_curie_mapping and type_label in __repair_entity_type_to_curie_mapping:
+        return __repair_entity_type_to_curie_mapping.get(type_label)
     return __default_entity_type_to_curie_mapping.get(type_label, __default_entity_type_to_curie_mapping["gene_product"])
 
 def gp_type_label_to_curie(type: Curie) -> str:
@@ -280,6 +277,10 @@ def gp_type_label_to_curie(type: Curie) -> str:
     """
     global __default_entity_type_to_curie_mapping
     return __default_entity_type_to_curie_mapping.inverse.get(type, "gene_product")
+
+def map_gp_type_label_to_repair_curie(type_label: str) -> Curie:
+    global __repair_entity_type_to_curie_mapping
+    return __repair_entity_type_to_curie_mapping.get(type_label)
 
 @dataclass(unsafe_hash=True)
 class Term:

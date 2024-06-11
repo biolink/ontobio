@@ -425,6 +425,9 @@ def to_association(gaf_line: List[str], report=None, group="unknown", dataset="u
     # Output warnig, if system is defaulting to gene_product
     if DEFAULT_SUBJECT_TYPE != type_label and len(subject.type) == 1 and STR_DEFAULT_SUBJECT_TYPE_CURIE == str(subject.type[0]):
         report.warning(source_line, Report.INVALID_SUBJECT_TYPE, type_label, "defaulting to 'gene_product'", taxon=gaf_line[TAXON_INDEX], rule=1)
+    if association.map_gp_type_label_to_repair_curie(type_label) is not None:
+        report.warning(source_line, Report.INVALID_SUBJECT_TYPE, type_label, "has been repaired", taxon=gaf_line[TAXON_INDEX], rule=1)
+             
     gpi_entity = bio_entities.get(subject_curie)
     if gpi_entity is not None and subject != gpi_entity:
         subject = gpi_entity
