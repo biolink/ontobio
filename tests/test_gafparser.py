@@ -611,8 +611,7 @@ def test_gaf_gpi_bridge():
     association = gafparser.to_association(gaf, qualifier_parser=assocparser.Qualifier2_2()).associations[0]
     bridge = gafgpibridge
     entity = bridge.convert_association(association)
-    #gene gets updated to gene_product!!!!
-    assert entity.get("type") == ["gene_product"]
+    assert entity.get("type") == ["gene"]
 
 
 if __name__ == "__main__":
