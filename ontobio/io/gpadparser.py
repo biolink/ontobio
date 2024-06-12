@@ -184,6 +184,7 @@ class GpadParser(assocparser.AssocParser):
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
+        self._validate_curie_using_db_xrefs(association.Curie.from_str(valid_goid),  valid_goid, split_line)
         assoc.object.id = association.Curie.from_str(valid_goid)
 
         go_rule_results = qc.test_go_rules(assoc, self.config)
@@ -216,6 +217,9 @@ class GpadParser(assocparser.AssocParser):
 
         if not self._validate_id(str(assoc.evidence.type), split_line):
             return assocparser.ParseResult(line, [], True)
+        
+        #Ensure db and dbid are valid
+        self._validate_curie_using_db_xrefs(assoc.subject.id, str(assoc.subject.id), split_line)         
 
         if assoc.interacting_taxon:
             if not self._validate_taxon(str(assoc.interacting_taxon), split_line):
@@ -235,6 +239,8 @@ class GpadParser(assocparser.AssocParser):
         references = self.validate_curie_ids(assoc.evidence.has_supporting_reference, split_line)
         if references is None:
             return assocparser.ParseResult(line, [], True)
+        for reference in references:
+            self._validate_curie_using_db_xrefs(reference, str(reference), split_line)  
 
         # With/From
         if assoc.evidence.with_support_from is not None:

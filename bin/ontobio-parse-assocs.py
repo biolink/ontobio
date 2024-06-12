@@ -17,6 +17,7 @@ Examples:
 """
 
 import argparse
+import click
 import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
@@ -30,6 +31,7 @@ from ontobio.io import assocparser
 from ontobio.io import gaference
 from ontobio.slimmer import get_minimal_subgraph
 from ontobio.validation import metadata
+import time
 import os
 import sys
 import json
@@ -146,11 +148,13 @@ def main():
         rule_set = assocparser.RuleSet.ALL
     
     goref_metadata = None
-    ref_species_metadata = None  
+    ref_species_metadata = None
+    db_type_name_regex_id_syntax = None      
     if args.metadata_dir:
         absolute_metadata = os.path.abspath(args.metadata_dir)
         goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
         ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
+        db_type_name_regex_id_syntax = metadata.database_type_name_regex_id_syntax(absolute_metadata)        
         
     retracted_pub_set = None
     if args.retracted_pub_set:
@@ -173,6 +177,7 @@ def main():
         gpi_authority_path=args.gpi,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
+        db_type_name_regex_id_syntax=db_type_name_regex_id_syntax,
         retracted_pub_set=retracted_pub_set,
         rule_set=rule_set
     )
@@ -198,7 +203,10 @@ def main():
     if args.outfile is not None:
         two_mb = 2097152
         outfh = open(args.outfile, "w", buffering=two_mb)
+    start_time = time.time()        
     func(ont, args.file, outfh, p, args)
+    elapsed  = time.time() -  start_time
+    click.echo("Time after parsing {file} is {time} seconds".format(file=args.file, time=elapsed))    
     if filtered_evidence_file:
         filtered_evidence_file.close()
 
