@@ -16,7 +16,7 @@ class Token:
     A token or entity extracted from a marked-up span
     """
     id: str
-    category: List[str] = field(default_factory=list)
+    categories: List[str] = field(default_factory=list)
     terms: List[str] = field(default_factory=list)
 
 
