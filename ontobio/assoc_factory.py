@@ -34,7 +34,7 @@ class AssociationSetFactory():
         initializes based on an ontology name
         """
 
-    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None,relation=None, file=None, fmt=None, skim=True):
+    def create(self, ontology=None,subject_category=None,object_category=None,evidence=None,taxon=None, relation=None, file=None, fmt=None, skim=True):
         """
         creates an AssociationSet
 
@@ -64,6 +64,7 @@ class AssociationSetFactory():
         logger.info("Fetching assocs from store")
         assocs = bulk_fetch_cached(subject_category=subject_category,
                                    object_category=object_category,
+                                   relation=relation,
                                    evidence=evidence,
                                    taxon=taxon)
 
@@ -74,11 +75,12 @@ class AssociationSetFactory():
         amap = {}
         subject_label_map = {}
         for a in assocs:
-            rel = a['relation']
             subj = a['subject']
             subject_label_map[subj] = a['subject_label']
-            amap[subj] = a['objects']
-
+            if subj in amap:
+                amap[subj].extend(a['objects'])
+            else:
+                amap[subj] = a['objects']
 
         aset = AssociationSet(ontology=ontology,
                               meta=meta,
