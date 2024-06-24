@@ -17,7 +17,6 @@ Examples:
 """
 
 import argparse
-import click
 import networkx as nx
 from networkx.algorithms.dag import ancestors, descendants
 from ontobio.assoc_factory import AssociationSetFactory
@@ -31,7 +30,6 @@ from ontobio.io import assocparser
 from ontobio.io import gaference
 from ontobio.slimmer import get_minimal_subgraph
 from ontobio.validation import metadata
-import time
 import os
 import sys
 import json
@@ -202,11 +200,8 @@ def main():
     outfh = None
     if args.outfile is not None:
         two_mb = 2097152
-        outfh = open(args.outfile, "w", buffering=two_mb)
-    start_time = time.time()        
-    func(ont, args.file, outfh, p, args)
-    elapsed  = time.time() -  start_time
-    click.echo("Time after parsing {file} is {time} seconds".format(file=args.file, time=elapsed))    
+        outfh = open(args.outfile, "w", buffering=two_mb)      
+    func(ont, args.file, outfh, p, args)   
     if filtered_evidence_file:
         filtered_evidence_file.close()
 
