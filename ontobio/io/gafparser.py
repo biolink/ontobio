@@ -207,8 +207,6 @@ class GafParser(assocparser.AssocParser):
             print("skipping because {} not validated!".format(assoc.object.id))
             return assocparser.ParseResult(line, [], True)
 
-        self._validate_curie_using_db_xrefs(assoc.object.id, str(assoc.object.id), split_line)
-
         valid_goid = self._validate_ontology_class_id(str(assoc.object.id), split_line)
         if valid_goid is None:
             return assocparser.ParseResult(line, [], True)
@@ -217,9 +215,7 @@ class GafParser(assocparser.AssocParser):
         references = self.validate_curie_ids(assoc.evidence.has_supporting_reference, split_line)
         if references is None:
             # Reporting occurs in above function call
-            return assocparser.ParseResult(line, [], True)
-        for reference in references:
-            self._validate_curie_using_db_xrefs(reference, str(reference), split_line)        
+            return assocparser.ParseResult(line, [], True)        
 
         # With/From
         for wf in assoc.evidence.with_support_from:
@@ -242,7 +238,12 @@ class GafParser(assocparser.AssocParser):
             if repaired is None:
                     assoc.object_extensions = []        
                     return assocparser.ParseResult(line, [], True)
-            assoc.object_extensions = repaired   
+            assoc.object_extensions = repaired
+            
+        # Check subject_extensions and output warnings
+        if (0 < len(assoc.subject_extensions)):
+            for ext in assoc.subject_extensions:
+                self._validate_id(str(ext.term), split_line)
 
 
         ## Run GO Rules, save split values into individual variables
@@ -281,9 +282,6 @@ class GafParser(assocparser.AssocParser):
             else:
                 self.report.warning(line, Report.INVALID_ID, assoc.subject.id.namespace,
                 "GORULE:0000027: {subject_id_namespace} is not present in dbxrefs".format(subject_id_namespace=assoc.subject.id.namespace), taxon=str(assoc.object.taxon), rule=27)    
-
-        # Validate against db-xref id_syntax
-        self._validate_curie_using_db_xrefs(assoc.subject.id, str(assoc.subject.id), split_line) 
         
         ## --
         ## db + db_object_id. CARD=1

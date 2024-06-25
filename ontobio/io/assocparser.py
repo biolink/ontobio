@@ -706,10 +706,6 @@ class AssocParser(object):
                 else:
                     fixed_element_individual = element_individual
                     
-                #Check db-xref
-                self._validate_curie_using_db_xrefs(association.Curie.from_str(fixed_element_individual), fixed_element_individual, line)
-
-                    
                 if grouped_fixed_elements == '':
                     grouped_fixed_elements = fixed_element_individual
                 else:
@@ -775,42 +771,9 @@ class AssocParser(object):
                 else:
                     curSet.append(association.ExtensionUnit(relation = association.Curie(e.relation.namespace, e.relation.identity), term = association.Curie(e.term.namespace, e.term.identity)))        
 
-                #Check db-xref
-                self._validate_curie_using_db_xrefs(e.term, str(e.term), line)
-
             grouped_set.append(association.ConjunctiveSet(curSet))
                          
         return grouped_set
-
-    def _validate_curie_using_db_xrefs(self, curie, curieStr, line: SplitLine):
-        if curie is None:
-            self.report.warning(line.line, Report.INVALID_ID, curieStr,"GORULE:0000027: curie is empty", taxon=line.taxon, rule=27)
-            return False            
-        if  isinstance(curie, association.Curie) is False:
-            self.report.warning(line.line, Report.INVALID_ID, curieStr,"GORULE:0000027: Not a curie", taxon=line.taxon, rule=27)
-            return False
-        if curie.namespace is None:
-            self.report.warning(line.line, Report.INVALID_ID, curie.namespace, "GORULE:0000027: Curie namespace is empty", taxon=line.taxon, rule=27)
-            return False        
-        if curie.identity is None:
-            self.report.warning(line.line, Report.INVALID_ID, curie.identity, "GORULE:0000027: Curie identity is empty", taxon=line.taxon, rule=27)
-            return False
-
-        if self.config.db_type_name_regex_id_syntax is not None:
-            if curie.namespace in self.config.db_type_name_regex_id_syntax:
-                type_name_regex_patterns = self.config.db_type_name_regex_id_syntax[curie.namespace]
-                identity_matches_pattern = False
-                for regex in type_name_regex_patterns.values():
-                    if regex.match(curie.identity):
-                        identity_matches_pattern = True
-                        break
-                if identity_matches_pattern == False:
-                    self.report.warning(line, Report.INVALID_ID, curie.identity,
-                    "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(str(curie), curie.namespace), taxon=line.taxon, rule=27)    
-                    return False        
-        return True
-
-
 
     def _validate_symbol(self, symbol, line: SplitLine):
         if symbol is None or symbol == "":
@@ -856,7 +819,22 @@ class AssocParser(object):
             if id_prefix not in self.config.class_idspaces:
                 self.report.error(line.line, Report.INVALID_IDSPACE, id_prefix, "allowed: {}".format(self.config.class_idspaces), rule=27)
                 return False
-
+        
+        # ensure id_syntax is valid, else output a warning
+        if self.config.db_type_name_regex_id_syntax is not None:
+            if id_prefix in self.config.db_type_name_regex_id_syntax:
+                type_name_regex_patterns = self.config.db_type_name_regex_id_syntax[id_prefix]
+                identity_matches_pattern = False
+                for regex in type_name_regex_patterns.values():
+                    if regex.match(right):
+                        identity_matches_pattern = True
+                        break
+                if identity_matches_pattern == False:
+                    self.report.warning(line.line, Report.INVALID_ID, id,
+                    "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(right, id_prefix), taxon=line.taxon, rule=27)
+            else:
+                self.report.warning(line.line, Report.INVALID_ID, id,
+                    "GORULE:0000027: {} not found in list of database names in dbxrefs".format(id_prefix), taxon=line.taxon, rule=27)  
         return True
 
     def validate_pipe_separated_ids(self, column, line: SplitLine, empty_allowed=False, extra_delims="") -> Optional[List[str]]:
