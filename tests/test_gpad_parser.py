@@ -7,10 +7,10 @@ from ontobio.model import collections
 from ontobio.model.association import Curie, Subject
 
 import yaml
+import re
 
 POMBASE = "tests/resources/truncated-pombase.gpad"
 ALT_ID_ONT = "tests/resources/obsolete.json"
-
 
 def test_obsolete_term_repair_withfrom():
 
@@ -317,6 +317,93 @@ def test_unmapped_eco_to_gaf_codes():
     vals[5] = "ECO:0006003"  # indirectly maps to IDA via gaf-eco-mapping-derived.txt
     result = parser.parse_line("\t".join(vals))
     assert len(result.associations) == 1
+    
+def test_id_syntax():
+    database_id_syntax_lookups = {}
+    go_types = {}
+    pattern = '\\d{7}'
+    go_types['molecular_function'] = re.compile(pattern)
+    go_types['biological_process'] = re.compile(pattern)
+    go_types['cellular_component'] = re.compile(pattern)      
+    database_id_syntax_lookups['GO'] = go_types
+    
+    pmid_types = {}
+    pmid_types['entity'] = re.compile('[0-9]+')
+    database_id_syntax_lookups['PMID'] = pmid_types
+    
+    pombase_types = {}
+    pombase_types['entity'] = re.compile('S\\w+(\\.)?\\w+(\\.)?')
+    database_id_syntax_lookups['PomBase'] = pombase_types
+    
+    eco_types = {}
+    eco_types['entity'] = re.compile(pattern)
+    database_id_syntax_lookups['ECO'] = eco_types
+    
+    vals = ["PomBase",
+            "SPAC25A8.01c",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "PMID:15494018",
+            "ECO:0000305",
+            "GO:0005913",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "PomBase"
+            ]
+
+    config = assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(ALT_ID_ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups)
+    p = GpadParser(config=config)
+    result = p.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+    assert result.skipped == False  
+    messages = p.report.to_report_json()["messages"]
+    assert "gorule-0000027" not in messages       
+    
+    vals = ["PomBase",
+            "SPAC25A8.01c",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "PMID:PMID:15494018",
+            "ECO:0000305",
+            "GO:0005913",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "PomBase"
+            ]
+
+    p = GpadParser(config=config)
+    result = p.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+    assert result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "PMID:PMID:15494018" 
+
+    vals = ["PomBase",
+            "SPAC25A8.01c",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "BLA:15494018",
+            "ECO:0000305",
+            "GO:0005913",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "PomBase"
+            ]
+    p = GpadParser(config=config)
+    result = p.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+    assert result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "BLA:15494018"   
     
 def test_gpi_check():
     report = assocparser.Report(group="unknown", dataset="unknown")

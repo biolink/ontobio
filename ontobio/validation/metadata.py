@@ -2,6 +2,7 @@ import click
 import yaml
 import os
 import glob
+import re
 
 from dataclasses import dataclass
 
@@ -147,6 +148,30 @@ def source_path(dataset_metadata, target_dir, group):
     return path
 
 def database_entities(metadata):
+    dbxrefs = database_yaml(metadata)
+
+    d = BiDiMultiMap()
+    for entity in dbxrefs:
+        d[entity["database"]] = set(entity.get("synonyms", []))
+
+    return d
+
+def database_type_name_regex_id_syntax(metadata):
+    dbxrefs = database_yaml(metadata)
+
+    d = {}
+    for entity in dbxrefs:
+        type_names = {}
+        entity_types = entity.get("entity_types", {})
+        for et in entity_types:
+            if "id_syntax" in et and "type_name" in et:
+                type_names[et["type_name"]] = re.compile(et["id_syntax"])
+        if len(type_names) > 0:        
+            d[entity["database"]] = type_names
+
+    return d    
+
+def database_yaml(metadata):
     dbxrefs_path = os.path.join(os.path.abspath(metadata), "db-xrefs.yaml")
     try:
         with open(dbxrefs_path, "r") as db_xrefs_file:
@@ -154,12 +179,7 @@ def database_entities(metadata):
             dbxrefs = yaml.load(db_xrefs_file, Loader=yaml.FullLoader)
     except Exception as e:
         raise click.ClickException("Could not find or read {}: {}".format(dbxrefs_path, str(e)))
-
-    d = BiDiMultiMap()
-    for entity in dbxrefs:
-        d[entity["database"]] = set(entity.get("synonyms", []))
-
-    return d
+    return dbxrefs    
 
 def groups(metadata) -> Set[str]:
     groups_path = os.path.join(os.path.abspath(metadata), "groups.yaml")
