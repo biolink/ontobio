@@ -16,6 +16,7 @@ import logging
 import pytest
 import io
 import json
+import re
 
 ecomap = EcoMap()
 ecomap.mappings()
@@ -603,6 +604,49 @@ def test_factory():
 
     assert len(aset.associations_by_subj) > 0
     assert found == 2
+    
+def test_id_syntax():
+    database_id_syntax_lookups = {}
+    go_types = {}
+    pattern = '\\d{7}'
+    go_types['molecular_function'] = re.compile(pattern)
+    go_types['biological_process'] = re.compile(pattern)
+    go_types['cellular_component'] = re.compile(pattern)      
+    database_id_syntax_lookups['GO'] = go_types
+    
+    pmid_types = {}
+    pmid_types['entity'] = re.compile('[0-9]+')
+    database_id_syntax_lookups['PMID'] = pmid_types
+    
+    pombase_types = {}
+    pombase_types['entity'] = re.compile('S\\w+(\\.)?\\w+(\\.)?')
+    database_id_syntax_lookups['PomBase'] = pombase_types    
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))
+
+    assoc_result = p.parse_line("PomBase\tSPBC1289.03c\tspi1\t\tGO:0005515\tPMID:18422602\tIPI\tPomBase:SPAC25A8.01c\tF\tRan GTPase Spi1\t\tprotein\ttaxon:4896\t20080718\tPomBase\t")
+    assert len(assoc_result.associations) == 1
+    assert assoc_result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert "gorule-0000027" not in messages
+
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))
+    assoc_result = p.parse_line("PomBase\tSPBC1289.03c\tspi1\t\tGO:0005515\tPMID:PMID:18422602\tIPI\tPomBase:SPAC25A8.01c\tF\tRan GTPase Spi1\t\tprotein\ttaxon:4896\t20080718\tPomBase\t")
+    assert len(assoc_result.associations) == 1
+    assert assoc_result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "PMID:PMID:18422602" 
+
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))
+    assoc_result = p.parse_line("PomBase\tSPBC1289.03c\tspi1\t\tGO:0005515\tBLA:18422602\tIPI\tPomBase:SPAC25A8.01c\tF\tRan GTPase Spi1\t\tprotein\ttaxon:4896\t20080718\tPomBase\t")
+    assert len(assoc_result.associations) == 1
+    assert assoc_result.skipped == False
+    messages = p.report.to_report_json()["messages"]    
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "BLA:18422602" 
 
 
 def test_gaf_gpi_bridge():
