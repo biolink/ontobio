@@ -215,7 +215,7 @@ class GpadParser(assocparser.AssocParser):
             return assocparser.ParseResult(line, [], True)
 
         if not self._validate_id(str(assoc.evidence.type), split_line):
-            return assocparser.ParseResult(line, [], True)
+            return assocparser.ParseResult(line, [], True)       
 
         if assoc.interacting_taxon:
             if not self._validate_taxon(str(assoc.interacting_taxon), split_line):

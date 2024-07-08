@@ -234,6 +234,7 @@ class AssocParserConfig():
                  ref_species_metadata=None,
                  group_metadata=None,
                  dbxrefs=None,
+                 db_type_name_regex_id_syntax=None,                 
                  retracted_pub_set=None,
                  suppress_rule_reporting_tags=[],
                  annotation_inferences=None,
@@ -259,6 +260,7 @@ class AssocParserConfig():
         self.goref_metadata = goref_metadata
         self.ref_species_metadata = ref_species_metadata
         self.group_metadata = group_metadata
+        self.db_type_name_regex_id_syntax = db_type_name_regex_id_syntax        
         self.retracted_pub_set = retracted_pub_set
         self.suppress_rule_reporting_tags = suppress_rule_reporting_tags
         self.annotation_inferences = annotation_inferences
@@ -703,6 +705,7 @@ class AssocParser(object):
                         return None
                 else:
                     fixed_element_individual = element_individual
+                    
                 if grouped_fixed_elements == '':
                     grouped_fixed_elements = fixed_element_individual
                 else:
@@ -816,7 +819,22 @@ class AssocParser(object):
             if id_prefix not in self.config.class_idspaces:
                 self.report.error(line.line, Report.INVALID_IDSPACE, id_prefix, "allowed: {}".format(self.config.class_idspaces), rule=27)
                 return False
-
+        
+        # ensure id_syntax is valid, else output a warning
+        if self.config.db_type_name_regex_id_syntax is not None:
+            if id_prefix in self.config.db_type_name_regex_id_syntax:
+                type_name_regex_patterns = self.config.db_type_name_regex_id_syntax[id_prefix]
+                identity_matches_pattern = False
+                for regex in type_name_regex_patterns.values():
+                    if regex.match(right):
+                        identity_matches_pattern = True
+                        break
+                if identity_matches_pattern == False:
+                    self.report.warning(line.line, Report.INVALID_ID, id,
+                    "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(right, id_prefix), taxon=line.taxon, rule=27)
+            else:
+                self.report.warning(line.line, Report.INVALID_ID, id,
+                    "GORULE:0000027: {} not found in list of database names in dbxrefs".format(id_prefix), taxon=line.taxon, rule=27)  
         return True
 
     def validate_pipe_separated_ids(self, column, line: SplitLine, empty_allowed=False, extra_delims="") -> Optional[List[str]]:
