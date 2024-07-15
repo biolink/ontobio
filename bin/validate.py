@@ -224,7 +224,7 @@ Produce validated gaf using the gaf parser/
 
 @tools.gzips
 def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None,
-                goref_metadata=None, ref_species_metadata=None, retracted_pub_set=None, db_entities=None, group_idspace=None,
+                goref_metadata=None, ref_species_metadata=None, db_type_name_regex_id_syntax=None, retracted_pub_set=None, db_entities=None, group_idspace=None,
                 format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None,
                 extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2",
                 rule_set=assocparser.RuleSet.ALL) -> list[str]:
@@ -238,6 +238,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
         rule_metadata=rule_metadata,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
+        db_type_name_regex_id_syntax=db_type_name_regex_id_syntax,
         retracted_pub_set=retracted_pub_set,
         entity_idspaces=db_entities,
         group_idspace=group_idspace,
@@ -684,6 +685,8 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
     # Default comes through as single-element tuple
     if rule_set == (assocparser.RuleSet.ALL,):
         rule_set = assocparser.RuleSet.ALL
+        
+    db_type_name_regex_id_syntax = metadata.database_type_name_regex_id_syntax(absolute_metadata)
 
     retracted_pubs = None
     if retracted_pub_set:
@@ -703,6 +706,8 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                 rule_metadata=rule_metadata,
                                 goref_metadata=goref_metadata,
                                 ref_species_metadata=ref_species_metadata,
+                                db_type_name_regex_id_syntax=db_type_name_regex_id_syntax,
+                                retracted_pub_set=retracted_pubs,
                                 db_entities=db_entities,
                                 group_idspace=group_ids,
                                 suppress_rule_reporting_tags=suppress_rule_reporting_tag,
@@ -830,6 +835,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file, retracted_pub_set):
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
     gorule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     ref_species_metadata = metadata.yaml_set(absolute_metadata, "go-reference-species.yaml", "taxon_id")
+    db_type_name_regex_id_syntax = metadata.database_type_name_regex_id_syntax(absolute_metadata)
     retracted_pubs = None
     if retracted_pub_set:
         retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
@@ -850,6 +856,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file, retracted_pub_set):
         ontology=ontology_graph,
         goref_metadata=goref_metadata,
         ref_species_metadata=ref_species_metadata,
+        db_type_name_regex_id_syntax=db_type_name_regex_id_syntax,
         retracted_pub_set=retracted_pubs,
         entity_idspaces=db_entities,
         group_idspace=group_ids,
