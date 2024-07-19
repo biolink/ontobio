@@ -382,7 +382,53 @@ def test_id_syntax():
     assert result.skipped == False
     messages = p.report.to_report_json()["messages"]
     assert len(messages["gorule-0000027"]) == 1
-    assert messages["gorule-0000027"][0]["obj"] == "PMID:PMID:15494018" 
+    assert messages["gorule-0000027"][0]["obj"] == "PMID:PMID:15494018"
+    
+    vals = ["PomBase",
+            "SPAC25A8.01c",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "PMID:9.",
+            "ECO:0000305",
+            "GO:0005913",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "PomBase"
+            ]
+
+    p = GpadParser(config=config)
+    result = p.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+    assert result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "PMID:9." 
+    
+    
+    vals = ["PomBase",
+            "SPAC25A8.01c",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "PMID:a1549418",
+            "ECO:0000305",
+            "GO:0005913",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "PomBase"
+            ]
+
+    p = GpadParser(config=config)
+    result = p.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+    assert result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "PMID:a1549418" 
+         
 
     vals = ["PomBase",
             "SPAC25A8.01c",

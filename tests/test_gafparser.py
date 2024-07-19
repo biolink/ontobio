@@ -638,6 +638,24 @@ def test_id_syntax():
     messages = p.report.to_report_json()["messages"]
     assert len(messages["gorule-0000027"]) == 1
     assert messages["gorule-0000027"][0]["obj"] == "PMID:PMID:18422602" 
+    
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))
+    assoc_result = p.parse_line("PomBase\tSPBC1289.03c\tspi1\t\tGO:0005515\tPMID:0.\tIPI\tPomBase:SPAC25A8.01c\tF\tRan GTPase Spi1\t\tprotein\ttaxon:4896\t20080718\tPomBase\t")
+    assert len(assoc_result.associations) == 1
+    assert assoc_result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "PMID:0."
+
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))
+    assoc_result = p.parse_line("PomBase\tSPBC1289.03c\tspi1\t\tGO:0005515\tPMID:x18422602\tIPI\tPomBase:SPAC25A8.01c\tF\tRan GTPase Spi1\t\tprotein\ttaxon:4896\t20080718\tPomBase\t")
+    assert len(assoc_result.associations) == 1
+    assert assoc_result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "PMID:x18422602"
 
     p = GafParser(config=assocparser.AssocParserConfig(
         ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))

@@ -826,7 +826,7 @@ class AssocParser(object):
                 type_name_regex_patterns = self.config.db_type_name_regex_id_syntax[id_prefix]
                 identity_matches_pattern = False
                 for regex in type_name_regex_patterns.values():
-                    if regex.match(right):
+                    if regex.fullmatch(right):
                         identity_matches_pattern = True
                         break
                 if identity_matches_pattern == False:
