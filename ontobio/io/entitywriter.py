@@ -102,7 +102,7 @@ class GpiWriter(EntityWriter):
             if self.version == "2.0":
                 self.file.write("!gpi-version: 2.0\n")
                 self.file.write("!date_generated: {}\n".format(str(datetime.now().strftime("%Y-%m-%dT%H:%M"))))
-                self.file.wrte("!generated_by: {}\n".format("GO Central"))
+                self.file.write("!generated_by: {}\n".format("GO Central"))
             else:
                 self.file.write("!gpi-version: 1.2\n")
 
