@@ -5,8 +5,8 @@ To test validate.py "validate" command, the command that produces the final GPAD
 
 ```bash
 poetry install
-poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/[PIPELINE_BRANCH_NAME]/" --only-dataset mgi MGI
-poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/[PIPELINE_BRANCH_NAME]/" --only-dataset goa_chicken goa
+poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/[PIPELINE_BRANCH_NAME]/" --only-dataset mgi MGI --gpad-gpi-output-version 2.0
+poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/[PIPELINE_BRANCH_NAME]/" --only-dataset goa_chicken goa --gpad-gpi-output-version 2.0
 ```
 
 

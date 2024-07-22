@@ -22,6 +22,7 @@ from functools import wraps
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
 from ontobio.io.gpadparser import GpadParser
+from ontobio.io.entityparser import GpiParser
 from ontobio.io.assocwriter import GafWriter
 from ontobio.io.assocwriter import GpadWriter
 from ontobio.io import assocparser
@@ -723,6 +724,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
 
         gpi_list = [gpi]
         # Try to find other GPIs in metadata and merge
+        matching_gpi_path = None
         for ds in group_metadata["datasets"]:
             # Where type=GPI for the same dataset (e.g. "zfin", "goa_cow")
             if ds["type"] == "gpi" and ds["dataset"] == dataset and ds.get("source"):
@@ -731,6 +733,8 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                 if ds.get("compression", None) == "gzip":
                     matching_gpi_path = unzip_simple(matching_gpi_path)
                 gpi_list.append(matching_gpi_path)
+
+        print("matching gpi path", matching_gpi_path)
 
         noctua_gpad_src = check_and_download_mixin_source(noctua_metadata, group_metadata["id"], dataset, target,
                                                           base_download_url=base_download_url,
@@ -750,9 +754,78 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
 
+        print("fixing isoforms", matching_gpi_path)
+
+        output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
+        isoform_fixed_gaf = fix_isoforms(end_gaf, matching_gpi_path, ontology_graph, output_gaf_path)
+
         click.echo(end_gaf)
 
         make_ttls(dataset, end_gaf, products, ontology_graph)
+
+
+def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_file_path: str) -> str:
+    """
+    Given a GAF file and a GPI file, fix the GAF file by converting isoform annotations to gene annotations.
+
+    :param gaf_file_to_fix: The path to the GAF file to fix
+    :param gpi_file: The path to the GPI file
+    :param ontology_graph: The ontology graph to use for parsing the associations
+    :param output_file_path: The path to write the fixed GAF file to
+    :return: The path to the fixed GAF file
+    """
+
+    gpiparser = GpiParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+    # Parse the GPI file line by line
+    parsed_entries = gpiparser.parse(gpi_file, None)
+
+    gpi_lookup = {entry.get('db_object_id'): entry for entry in parsed_entries if entry.get('encoded_by')}
+
+    substituted_entries = []
+    substitution_count = 0
+    no_substitution_count = 0
+
+    with open(gaf_file_to_fix, 'r') as file, open(output_file_path, 'w') as output_file:
+        for line in file:
+            # Skip comment lines starting with '!' and empty lines
+            if line.startswith('!') or not line.strip():
+                output_file.write(line)
+                continue
+
+            # Split the line by tab and strip any trailing newline characters
+            fields = line.strip().split('\t')
+
+            # Construct the full ID to match with GPI
+            db, local_id = fields[0], fields[1]
+            full_id = f"{db}:{local_id}"
+
+            if db == 'PR':
+                if full_id in gpi_lookup:
+                    # Get the corresponding GPI entry
+                    gpi_entry = gpi_lookup[full_id]
+
+                    # Handle multiple ':' in Encoded_By
+                    encoded_by_parts = gpi_entry['encoded_by'].split(':')
+                    if len(encoded_by_parts) > 1:
+                        encoded_by_db = encoded_by_parts[0]
+                        encoded_by_local_id = ':'.join(
+                            encoded_by_parts[1:])  # Rejoin any additional parts that might include ':'
+                        fields[0], fields[1] = encoded_by_db, encoded_by_local_id  # Substitute DB and ID
+                        fields[2] = gpi_entry['db_object_symbol']  # Substitute Symbol
+                        fields[9] = gpi_entry['db_object_name']  # Substitute Full Name
+                        fields[10] = gpi_entry['db_object_synonyms'] if gpi_entry[
+                            'db_object_synonyms'] else ''  # Substitute Synonyms
+                        fields[11] = gpi_entry['db_object_type']  # Substitute Type
+                        substitution_count += 1
+                else:
+                    no_substitution_count += 1
+
+            # Join fields back into a string and write to output file
+            processed_line = '\t'.join(fields)
+            output_file.write(processed_line + '\n')
+            substituted_entries.append(processed_line)
+
+    click.echo(f"Substituted {substitution_count} entries in {gaf_file_to_fix} and left {no_substitution_count} entries unchanged.")
 
 
 @cli.command()
