@@ -825,7 +825,8 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
             output_file.write(processed_line + '\n')
             substituted_entries.append(processed_line)
 
-    click.echo(f"Substituted {substitution_count} entries in {gaf_file_to_fix} and left {no_substitution_count} entries unchanged.")
+    click.echo(f"Substituted {substitution_count} entries in {gaf_file_to_fix} "
+               f"and left {no_substitution_count} entries unchanged.")
 
 
 @cli.command()
