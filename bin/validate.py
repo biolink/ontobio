@@ -26,7 +26,7 @@ from ontobio.io.gpadparser import GpadParser
 from ontobio.io.entityparser import GpiParser
 from ontobio.io.assocwriter import GafWriter
 from ontobio.io.assocwriter import GpadWriter
-from ontobio.model.association import GoAssociation
+from ontobio.model.association import Curie
 from ontobio.io import assocparser
 from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
@@ -786,7 +786,8 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
                                         "full_name": gpi_entry.get('full_name'),
                                         "label": gpi_entry.get('label'),
                                         "synonyms": gpi_entry.get('synonyms'),
-                                        "type": gpi_entry.get('type')}
+                                        "type": gpi_entry.get('type'),
+                                        "id": gpi_entry.get('id')}
 
     gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     gafwriter = GafWriter(file=open(output_file_path, "w"), source="test", version=gafparser.version)
@@ -804,6 +805,8 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
                 if source_assoc.subject.id.namespace.startswith("PR"):
                     # TODO: right now we get the first encoded_by result -- this is what the original script from Chris did??
                     full_old_identifier = source_assoc.subject.id.namespace + ":" + source_assoc.subject.id.identity
+                    old_namespace = source_assoc.subject.id.namespace
+                    old_identity = source_assoc.subject.id.identity
                     if "MGI" == gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]:
                         source_assoc.subject.id.namespace = gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]
                         source_assoc.subject.id.identity = "MGI:" + gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[2]
@@ -817,6 +820,10 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
                     source_assoc.subject.label = gpi_map[full_new_identifier].get("label")
                     source_assoc.subject.synonyms = gpi_map[full_new_identifier].get("synonyms")
                     source_assoc.subject.type = gpi_map[full_new_identifier].get("type")
+                    source_assoc.subject_extensions[0].term = Curie(
+                            namespace=old_identity,
+                            identity=old_namespace,
+                        )
                     substitution_count += 1
                 else:
                     no_substitution_count += 1
