@@ -15,86 +15,1024 @@
 !! 10. DB_Xrefs
 !! 11. Gene_Product_Properties
 !!
-MGI:MGI:1918911	0610005C13Rik	RIKEN cDNA 0610005C13 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1923503	0610006L08Rik	RIKEN cDNA 0610006L08 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1925547	0610008J02Rik	RIKEN cDNA 0610008J02 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1913300	0610009B22Rik	RIKEN cDNA 0610009B22 gene		SO:0001217	NCBITaxon:10090				UniProtKB:Q8R3W2	
-MGI:MGI:3698435	0610009E02Rik	RIKEN cDNA 0610009E02 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1918921	0610009F21Rik	RIKEN cDNA 0610009F21 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1918931	0610009K14Rik	RIKEN cDNA 0610009K14 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1914088	0610009L18Rik	RIKEN cDNA 0610009L18 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1918925	0610010F05Rik	RIKEN cDNA 0610010F05 gene		SO:0001217	NCBITaxon:10090				UniProtKB:Q68FF0	
-MGI:MGI:1915609	0610010K14Rik	RIKEN cDNA 0610010K14 gene		SO:0001217	NCBITaxon:10090				UniProtKB:Q9DCT6	
-MGI:MGI:1918926	0610012D04Rik	RIKEN cDNA 0610012D04 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1925548	0610012E21Rik	RIKEN cDNA 0610012E21 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1913301	0610012G03Rik	RIKEN cDNA 0610012G03 gene		SO:0001217	NCBITaxon:10090				UniProtKB:A0A0J9YTR2	
-MGI:MGI:1915618	0610025J13Rik	RIKEN cDNA 0610025J13 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915614	0610030E20Rik	RIKEN cDNA 0610030E20 gene		SO:0001217	NCBITaxon:10090				UniProtKB:Q149G0	
-MGI:MGI:1925549	0610031C06Rik	RIKEN cDNA 0610031C06 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1921093	0610031I08Rik	RIKEN cDNA 0610031I08 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915619	0610031O16Rik	RIKEN cDNA 0610031O16 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1925551	0610033I19Rik	RIKEN cDNA 0610033I19 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1921343	0610033M10Rik	RIKEN cDNA 0610033M10 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1925613	0610033P13Rik	RIKEN cDNA 0610033P13 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1925614	0610037L18Rik	RIKEN cDNA 0610037L18 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1917595	0610038B21Rik	RIKEN cDNA 0610038B21 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1922649	0610039G09Rik	RIKEN cDNA 0610039G09 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915647	0610039H22Rik	RIKEN cDNA 0610039H22 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915636	0610039K10Rik	RIKEN cDNA 0610039K10 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915626	0610040A22Rik	RIKEN cDNA 0610040A22 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1914922	0610040B10Rik	RIKEN cDNA 0610040B10 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1922644	0610040F04Rik	RIKEN cDNA 0610040F04 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1923511	0610040J01Rik	RIKEN cDNA 0610040J01 gene		SO:0001217	NCBITaxon:10090				UniProtKB:Q99K99	
-MGI:MGI:1918938	0610042B02Rik	RIKEN cDNA 0610042B02 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1922652	0610042B23Rik	RIKEN cDNA 0610042B23 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1921345	0610042E11Rik	RIKEN cDNA 0610042E11 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915630	0610042G04Rik	RIKEN cDNA 0610042G04 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915650	0610043K17Rik	RIKEN cDNA 0610043K17 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915652	0710001A04Rik	RIKEN cDNA 0710001A04 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1914929	0710001D07Rik	RIKEN cDNA 0710001D07 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915664	0710001L09Rik	RIKEN cDNA 0710001L09 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1918942	0710005I21Rik	RIKEN cDNA 0710005I21 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915659	0710007G10Rik	RIKEN cDNA 0710007G10 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1918947	0710008F09Rik	RIKEN cDNA 0710008F09 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1918945	0910001E24Rik	RIKEN cDNA 0910001E24 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1922653	1010001B22Rik	RIKEN cDNA 1010001B22 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915683	1010001I08Rik	RIKEN cDNA 1010001I08 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1922655	1100001I12Rik	RIKEN cDNA 1100001I12 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1920975	1110001D16Rik	RIKEN cDNA 1110001D16 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915702	1110001M07Rik	RIKEN cDNA 1110001M07 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915066	1110002E22Rik	RIKEN cDNA 1110002E22 gene		SO:0001217	NCBITaxon:10090				UniProtKB:E0CYV9	
-MGI:MGI:1915738	1110002J07Rik	RIKEN cDNA 1110002J07 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915821	1110002L01Rik	RIKEN cDNA 1110002L01 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915733	1110002O04Rik	RIKEN cDNA 1110002O04 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915716	1110003F02Rik	RIKEN cDNA 1110003F02 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915726	1110003F10Rik	RIKEN cDNA 1110003F10 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1929274	1110004F10Rik	RIKEN cDNA 1110004F10 gene	sid2057	SO:0001217	NCBITaxon:10090				UniProtKB:Q9R0P4	
-MGI:MGI:1915714	1110004M10Rik	RIKEN cDNA 1110004M10 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1923536	1110006E14Rik	RIKEN cDNA 1110006E14 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1913373	1110006O24Rik	RIKEN cDNA 1110006O24 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915732	1110007E10Rik	RIKEN cDNA 1110007E10 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915750	1110008E08Rik	RIKEN cDNA 1110008E08 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1920987	1110008P14Rik	RIKEN cDNA 1110008P14 gene	C79326	SO:0001217	NCBITaxon:10090				UniProtKB:P58686	
-MGI:MGI:1915772	1110013H19Rik	RIKEN cDNA 1110013H19 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915879	1110013I04Rik	RIKEN cDNA 1110013I04 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1913377	1110014L15Rik	RIKEN cDNA 1110014L15 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915766	1110015O18Rik	RIKEN cDNA 1110015O18 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1920971	1110017D15Rik	RIKEN cDNA 1110017D15 gene	Smrp1|Cbe1	SO:0001217	NCBITaxon:10090				UniProtKB:Q2MH31	
-MGI:MGI:1915844	1110018F16Rik	RIKEN cDNA 1110018F16 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915753	1110018N20Rik	RIKEN cDNA 1110018N20 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915779	1110019B22Rik	RIKEN cDNA 1110019B22 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:2443389	1110019B24Rik	RIKEN cDNA 1110019B24 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1923561	1110019D14Rik	RIKEN cDNA 1110019D14 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915781	1110020A21Rik	RIKEN cDNA 1110020A21 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915834	1110020C17Rik	RIKEN cDNA 1110020C17 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915850	1110021P09Rik	RIKEN cDNA 1110021P09 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915887	1110025L11Rik	RIKEN cDNA 1110025L11 gene		SO:0001217	NCBITaxon:10090				UniProtKB:O09048	
-MGI:MGI:1915885	1110025M09Rik	RIKEN cDNA 1110025M09 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915940	1110028F11Rik	RIKEN cDNA 1110028F11 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915942	1110028F18Rik	RIKEN cDNA 1110028F18 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915971	1110032A03Rik	RIKEN cDNA 1110032A03 gene		SO:0001217	NCBITaxon:10090				UniProtKB:Q9D131	
-MGI:MGI:1915975	1110032F04Rik	RIKEN cDNA 1110032F04 gene		SO:0001217	NCBITaxon:10090				UniProtKB:E9Q0B3	
-MGI:MGI:1915977	1110032L06Rik	RIKEN cDNA 1110032L06 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:2147638	1110034N17Rik	RIKEN cDNA 1110034N17 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915934	1110035D15Rik	RIKEN cDNA 1110035D15 gene		SO:0001263	NCBITaxon:10090					
-MGI:MGI:1915922	1110035E04Rik	RIKEN cDNA 1110035E04 gene		SO:0001263	NCBITaxon:10090					
+MGI:MGI:99476	Abhd16a	abhydrolase domain containing 16A	Bat5|NG26|D17H6S82E	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Q2
+MGI:MGI:1861453	Actl6a	actin-like 6A	Actl6|Baf53a|2810432C06Rik|ARP4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2N8	
+MGI:MGI:1096335	Adam17	a disintegrin and metallopeptidase domain 17	Tace|CD156b	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0F8	
+MGI:MGI:1347095	Adgre5	adhesion G protein-coupled receptor E5	EGF-TM7 receptor|Cd97	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0M6	
+MGI:MGI:1338758	Adnp	activity-dependent neuroprotective protein		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z103	
+MGI:MGI:1338038	Aebp2	AE binding protein 2	B230313N05Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z248	
+MGI:MGI:1349419	Aifm1	apoptosis-inducing factor, mitochondrion-associated 1	AIF|apoptosis-inducing factor|Pdcd8|AIFsh2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0X1	
+MGI:MGI:1338803	Aire	autoimmune regulator		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0E3	
+MGI:MGI:1888908	Aldh18a1	aldehyde dehydrogenase 18 family, member A1	2810433K04Rik|Pycs	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z110	
+MGI:MGI:1888999	Angptl4	angiopoietin-like 4	HFARP|BK89|FIAF|NG27	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1P8	
+MGI:MGI:1333879	Ap3b1	adaptor-related protein complex 3, beta 1 subunit	rim2|Hps2|recombination induced mutation 2|beta3A|AP-3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1T1	
+MGI:MGI:1346052	Apc2	APC regulator of WNT signaling pathway 2	APCL	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1K7	
+MGI:MGI:1930124	Apom	apolipoprotein M	1190010O19Rik|NG20|G3a	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1R3	
+MGI:MGI:1930768	Arid3b	AT-rich interaction domain 3B	Bdp|Dri2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1N7	
+MGI:MGI:1344363	Arih1	ariadne RBR E3 ubiquitin protein ligase 1	UIP77	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1K5	
+MGI:MGI:1344361	Arih2	ariadne RBR E3 ubiquitin protein ligase 2	TRIAD1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1K6	
+MGI:MGI:1333791	Artn	artemin	neublastin	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0L2	
+MGI:MGI:1333870	Ate1	arginyltransferase 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2A5	
+MGI:MGI:1355553	Atoh7	atonal bHLH transcription factor 7	Math5|bHLHa13	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2E5	
+MGI:MGI:1926943	Atp12a	ATPase, H+/K+ transporting, nongastric, alpha polypeptide	Atp1al1|cHKA|HKalpha2|ATPase H+K+-transporting, alpha 2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1W8	
+MGI:MGI:103286	Atp6v0a1	ATPase, H+ transporting, lysosomal V0 subunit A1	V-ATPase a1|Vpp-1|Vpp1|Atp6n1|Atp6n1a	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1G4	
+MGI:MGI:1913585	Atp6v1c1	ATPase, H+ transporting, lysosomal V1 subunit C1	1700025B18Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1G3	
+MGI:MGI:1859517	B3galt4	UDP-Gal:betaGlcNAc beta 1,3-galactosyltransferase, polypeptide 4	Gal-T2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0F0	
+MGI:MGI:1889505	B3gnt2	UDP-GlcNAc:betaGal beta-1,3-N-acetylglucosaminyltransferase 2	B3Galt6|B3gnt1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z222	
+MGI:MGI:1858493	B4galt2	UDP-Gal:betaGlcNAc beta 1,4- galactosyltransferase, polypeptide 2		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2Y2	
+MGI:MGI:1919439	Bag6	BCL2-associated athanogene 6	D17H6S52E|G3|2410045D21Rik|Scythe|Bat3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1R2	
+MGI:MGI:1353499	Baz1b	bromodomain adjacent to zinc finger domain, 1B	Wbscr9|WSTF	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z277	
+MGI:MGI:1337994	Bcl10	B cell leukemia/lymphoma 10	mE10|BCL-10|cE10	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0H7	
+MGI:MGI:1330841	Bcl2l10	Bcl2-like 10	Diva|Boo	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0F3	
+MGI:MGI:88140	Bcl3	B cell leukemia/lymphoma 3	Bcl-3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2F6	
+MGI:MGI:1316745	Bmp15	bone morphogenetic protein 15	GDF-9B|Bmp-15	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0L4	
+MGI:MGI:1332659	Bnip3l	BCL2/adenovirus E1B interacting protein 3-like	Nix|D14Ertd719e|Nip3L	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2F7	
+MGI:MGI:1338800	Bpnt1	3'(2'), 5'-bisphosphate nucleotidase 1	BPntase|bisphosphate 3'-nucleotidase 1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0S1	
+MGI:MGI:1298392	Bscl2	BSCL2 lipid droplet biogenesis associated, seipin	Gng3lg|seipin	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2E9	
+MGI:MGI:1333889	Bub1b	BUB1B, mitotic checkpoint serine/threonine kinase	BUBR1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1S0	
+MGI:MGI:1338890	Cacna2d3	calcium channel, voltage-dependent, alpha2/delta subunit 3	alpha 2 delta-3|alpha2delta3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1L5	
+MGI:MGI:1343459	Ccl27a	C-C motif chemokine ligand 27A	ESkine|mILC|CTACK|PESKY|Scya27|skinskine|ALP|ILC|CTAK|Scya27a|ESkine|Ccl27	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1X0	
+MGI:MGI:101878	Ccl8	C-C motif chemokine ligand 8	MCP-2|1810063B20Rik|HC14|Scya8	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z121	
+MGI:MGI:1328326	Ccn5	cellular communication network factor 5	rCop1|Crgr4|CCN5|Wisp2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0G4	
+MGI:MGI:1329034	Ccne2	cyclin E2		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z238	
+MGI:MGI:1341077	Ccni	cyclin I		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2V9	
+MGI:MGI:1860083	Cd320	CD320 antigen	NG29|D17Ertd716e|8D6|VLDL|425O18-1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1P5	
+MGI:MGI:1929745	Cdc42ep5	CDC42 effector protein 5	CEP5|1700027J19Rik|2010007O02Rik|Borg3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0X0	
+MGI:MGI:1338073	Cdc45	cell division cycle 45	Cdc45l	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1X9	
+MGI:MGI:1309511	Cdc7	cell division cycle 7	muCdc7|Cdc7|Cdc7l1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0H0	
+MGI:MGI:1346069	Cdh20	cadherin 20	Cdh7	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0M3	
+MGI:MGI:1338822	Celf2	CUGBP, Elav-like family member 2	Napor-2|ETR-3|B230345P09Rik|Cugbp2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0H4	
+MGI:MGI:1333869	Ch25h	cholesterol 25-hydroxylase	m25OH	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0F5	
+MGI:MGI:1355321	Chek2	checkpoint kinase 2	CHK2|Rad53	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z265	
+MGI:MGI:1313268	Chrd	chordin	Chd	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0E2	
+MGI:MGI:1344418	Cib1	calcium and integrin binding 1	Kip	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0F4	
+MGI:MGI:1929293	Cib2	calcium and integrin binding family member 2	calcium binding protein Kip2|2810434I23Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z309	
+MGI:MGI:1913101	Cldn10	claudin 10	6720456I16Rik|D14Ertd728e|Cldn10b|Cldn10a	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0S6	
+MGI:MGI:1913102	Cldn13	claudin 13	2500004B14Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0S4	
+MGI:MGI:1860425	Cldn14	claudin 14		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0S3	
+MGI:MGI:1913103	Cldn15	claudin 15	2210009B08Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0S5	
+MGI:MGI:1329044	Cldn3	claudin 3	Cpetr2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0G9	
+MGI:MGI:1859284	Cldn6	claudin 6		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z262	
+MGI:MGI:1859285	Cldn7	claudin 7		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z261	
+MGI:MGI:1859286	Cldn8	claudin 8		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z260	
+MGI:MGI:1913100	Cldn9	claudin 9	nmf329	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0S7	
+MGI:MGI:1298389	Clec4d	C-type lectin domain family 4, member d	mMCL|Mpcl|Clecsf8|mcl	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2H6	
+MGI:MGI:2148924	Clic1	chloride intracellular channel 1	Clcp|G6	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Q5	
+MGI:MGI:1313136	Clip2	CAP-GLY domain containing linker protein 2	CLIP-115|WSCR4|Cyln2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0H8	
+MGI:MGI:1341171	Cnmd	chondromodulin	ChM-I|Chondromodulin 1|Bricd3|Lect1|Chmd	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1F6	
+MGI:MGI:1333873	Cog1	component of oligomeric golgi complex 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z160	
+MGI:MGI:1349451	Corin	corin, serine peptidase	Lrp4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z319	
+MGI:MGI:1334445	Cpne6	copine VI	neuronal copine	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z140	
+MGI:MGI:1934569	Cpxm1	carboxypeptidase X, M14 family member 1	Cpx-1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z100	
+MGI:MGI:1347062	Creb3l1	cAMP responsive element binding protein 3-like 1	BBF-2 (drosophila) homolog|Oasis	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z125	
+MGI:MGI:1860086	Crlf3	cytokine receptor-like factor 3	cytor4|Creme9	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2L7	
+MGI:MGI:1340053	Cst9	cystatin 9	M12|testatin|cresp	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0H6	
+MGI:MGI:1333815	Cx3cr1	C-X3-C motif chemokine receptor 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0D9	
+MGI:MGI:90673	D17H6S53E	DNA segment, Chr 17, human D6S53E	NG34	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1R4	
+MGI:MGI:1859251	Dctn3	dynactin 3	p24	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0Y1	
+MGI:MGI:99240	Ddx39b	DEAD box helicase 39b	Bat-1|Bat1|D17H6S81E-1|0610030D10Rik|Bat1a|DEAD (Asp-Glu-Ala-Asp) box polypeptide 39B	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1N5	
+MGI:MGI:1858496	Deaf1	DEAF1, transcription factor	C230009B13Rik|suppressin|NUDR	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1T5	
+MGI:MGI:1333874	Dedd	death effector domain-containing	DEFT|CASP8IP1|FLDED1|KE05|Dedpro1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1L3	
+MGI:MGI:1333825	Dgat1	diacylglycerol O-acyltransferase 1	D15Ertd23e	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2A7	
+MGI:MGI:1927222	Diaph3	diaphanous related formin 3	mDia2|p134MDia2|4930417P13Rik|Drf3|Diap3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z207	
+MGI:MGI:1338833	Dio2	deiodinase, iodothyronine, type II		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Y9	
+MGI:MGI:1278328	Dnpep	aspartyl aminopeptidase		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2W0	
+MGI:MGI:1330238	Dpm2	dolichyl-phosphate mannosyltransferase subunit 2, regulatory		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z324	
+MGI:MGI:94921	Dpp6	dipeptidylpeptidase 6	Dpp-6|Peplb|Rw|In(5)6H-p|LOC384168|B930011P16Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z218	
+MGI:MGI:1330302	Dyrk1b	dual-specificity tyrosine phosphorylation regulated kinase 1b	Mirk	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z188	
+MGI:MGI:2148922	Ehmt2	euchromatic histone lysine N-methyltransferase 2	G9a|NG36|D17Ertd710e|Bat8|KMT1C	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z148	
+MGI:MGI:1353448	Eif2ak1	eukaryotic translation initiation factor 2 alpha kinase 1	Hri	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2R9	
+MGI:MGI:1341830	Eif2ak3	eukaryotic translation initiation factor 2 alpha kinase 3	PERK	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2B5	
+MGI:MGI:1349431	Eif2s3x	eukaryotic translation initiation factor 2, subunit 3, structural gene X-linked	Eif-2gx	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0N1	
+MGI:MGI:1349430	Eif2s3y	eukaryotic translation initiation factor 2, subunit 3, structural gene Y-linked	Eif-2gy|Tfy|Spy	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0N2	
+MGI:MGI:1858258	Eif3g	eukaryotic translation initiation factor 3, subunit G	TU-189B2|p44|44kDa|D0Jmb4|Eif3s4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1D1	
+MGI:MGI:1928377	Elf4	E74 like ETS transcription factor 4	MEF|myeloid elf-1 like factor	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2U4	
+MGI:MGI:103010	Epb41l1	erythrocyte membrane protein band 4.1 like 1	4.1N|Epb4.1l1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2H5	
+MGI:MGI:1349436	Ern2	endoplasmic reticulum to nucleus signalling 2	Ire1b	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2E3	
+MGI:MGI:1337104	Eya4	EYA transcriptional coactivator and phosphatase 4	B130023L16Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z191	
+MGI:MGI:1930079	Fads2	fatty acid desaturase 2	2900042M13Rik|Fads2a	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0R9	
+MGI:MGI:1335089	Fem1a	fem 1 homolog a	Eprap	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2G1	
+MGI:MGI:1335087	Fem1b	fem 1 homolog b		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2G0	
+MGI:MGI:1336205	Fkbp1b	FK506 binding protein 1b	FKBP12.6|12.6kDa|calstabin2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2I2	
+MGI:MGI:1350921	Fkbp9	FK506 binding protein 9	FKBP60|FKBP63	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z247	
+MGI:MGI:1889273	Fxyd1	FXYD domain-containing ion transport regulator 1	PML|phospholemman|0610012C17Rik|PLM|1110006M24Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z239	
+MGI:MGI:1277193	G6pc2	glucose-6-phosphatase, catalytic, 2	islet specific glucose-6-phosphatase|IGRP|G6pc-rs	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z186	
+MGI:MGI:1333854	Gab2	growth factor receptor bound protein 2-associated protein 2	p97|D130058I17Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1S8	
+MGI:MGI:1346325	Gadd45g	growth arrest and DNA-damage-inducible 45 gamma	CR6|OIG37	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z111	
+MGI:MGI:102772	Gbp2	guanylate binding protein 2		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0E6	
+MGI:MGI:1338027	Gdf11	growth differentiation factor 11	Bmp11	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1W4	
+MGI:MGI:1346047	Gdf15	growth differentiation factor 15	macrophage inhibiting cytokine-1|MIC-1|NAG-1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0J7	
+MGI:MGI:1338883	Gfpt2	glutamine fructose-6-phosphate transaminase 2	GFAT2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2Z9	
+MGI:MGI:1329035	Ggh	gamma-glutamyl hydrolase	gamma-GH	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0L8	
+MGI:MGI:1346063	Ggt5	gamma-glutamyltransferase 5	gamma-glutamyl leukotrienase|GGL|GGT-REL|Ggtla1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2A9	
+MGI:MGI:1926252	Gipc1	GIPC PDZ domain containing family, member 1	synectin|TIP-2|Semcap1|TaxIP2|Glut1CIP|neurophilin1-IP|Rgs19ip1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0G0	
+MGI:MGI:1889209	Gipc2	GIPC PDZ domain containing family, member 2	2200002N01Rik|Semcap2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2H7	
+MGI:MGI:3781352	Gm3173	predicted gene 3173		SO:0001217	NCBITaxon:10090				UniProtKB:E9Q9Z8	
+MGI:MGI:1890220	Gpr132	G protein-coupled receptor 132	G2 accumulation|G2a	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z282	
+MGI:MGI:95810	Gria3	glutamate receptor, ionotropic, AMPA3 (alpha 3)	Glur-3|Glur3|GluR3|2900064I19Rik|Gluralpha3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2W9	
+MGI:MGI:95811	Gria4	glutamate receptor, ionotropic, AMPA4 (alpha 4)	Glur-4|Glur4|spkw1|Gluralpha4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2W8	
+MGI:MGI:1889850	Gsdme	gasdermin E	4932441K13Rik|2310037D07Rik|Fin15|Dfna5h|Dfna5	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2D3	
+MGI:MGI:101805	Gys1	glycogen synthase 1, muscle	Gys3|MGS	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1E4	
+MGI:MGI:1194498	Haspin	histone H3 associated protein kinase	Gsg2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0R0	
+MGI:MGI:1333784	Hdac5	histone deacetylase 5	mHDA1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2V6	
+MGI:MGI:1333752	Hdac6	histone deacetylase 6	mHDA2|Sfc6	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2V5	
+MGI:MGI:1332240	Heph	hephaestin	sla|sex linked anemia|C130006F04Rik|Cpl	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0Z4	
+MGI:MGI:1341190	Hmg20b	high mobility group 20B	Smarce1r|Hmgx2|BRAF35|BRCA2-associated factor 35|Hmgxb2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z104	
+MGI:MGI:107795	Hnrnpc	heterogeneous nuclear ribonucleoprotein C	hnRNP C1|hnRNP C2|hnRNPC1|hnRNPC2|D14Wsu171e|Hnrpc1|Hnrpc2|Hnrpc	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z204	
+MGI:MGI:1355299	Hnrnpdl	heterogeneous nuclear ribonucleoprotein D-like	JKTBP|D5Ertd650e|D5Wsu145e|hnRNP-DL|Hnrpdl	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z130	
+MGI:MGI:2138741	Hnrnpf	heterogeneous nuclear ribonucleoprotein F	4833420I20Rik|Hnrpf	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2X1	
+MGI:MGI:1347345	Homer1	homer scaffolding protein 1	Ves-1|PSD-Zip45	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2Y3	
+MGI:MGI:1859271	Htatip2	HIV-1 Tat interactive protein 2	TIP30	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2G9	
+MGI:MGI:1345142	Ik	IK cytokine	MuRED	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1M8	
+MGI:MGI:1333800	Il18bp	interleukin 18 binding protein	IL-18BP|MC54L|Igifbp	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0M9	
+MGI:MGI:1338888	Il18rap	interleukin 18 receptor accessory protein	AcPL accessory protein-like)	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2B1	
+MGI:MGI:1339973	Ilf3	interleukin enhancer binding factor 3	NF90	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1X4	
+MGI:MGI:1338009	Irs4	insulin receptor substrate 4	IRS-4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0Y7	
+MGI:MGI:96615	Itgb6	integrin beta 6	2210409C20Rik|4831415H04Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0T9	
+MGI:MGI:99418	Itpr2	inositol 1,4,5-triphosphate receptor 2	Ip3r2|Itpr5	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z329	
+MGI:MGI:1338069	Itsn1	intersectin 1 (SH3 domain protein 1A)	Ese1|Sh3p17|EHSH1|Eh domain, SH3 domain regulator of endocytosis 1|Intersectin-L	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0R4	
+MGI:MGI:1338049	Itsn2	intersectin 2	Ese2|Sh3p18|Eh domain, SH3 domain regulator of endocytosis 2|Sh3d1B	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0R6	
+MGI:MGI:1098615	Kank3	KN motif and ankyrin repeat domains 3	0610013D04Rik|D17Ertd288e|Ankrd47	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1P7	
+MGI:MGI:102663	Kcnd2	potassium voltage-gated channel, Shal-related family, member 2	Kv4.2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0V2	
+MGI:MGI:1928743	Kcnd3	potassium voltage-gated channel, Shal-related family, member 3	potassium channel Kv4.3L|potassium channel Kv4.3M|Kv4.3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0V1	
+MGI:MGI:1314842	Kcnj16	potassium inwardly-rectifying channel, subfamily J, member 16	Kir5.1|6430410F18Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z307	
+MGI:MGI:1341841	Kcnk7	potassium channel, subfamily K, member 7	Kcnk8|Knot|Mlk3|2310014G03Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2T1	
+MGI:MGI:1309503	Kcnq2	potassium voltage-gated channel, subfamily Q, member 2	KQT2|Nmf134	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z351	
+MGI:MGI:1858732	Keap1	kelch-like ECH-associated protein 1	ring canal protein|INrf2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2X8	
+MGI:MGI:1338056	Klf5	Kruppel-like transcription factor 5	Bteb2|4930520J07Rik|IKLF|CKLF	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0Z7	
+MGI:MGI:1861379	Klk4	kallikrein related-peptidase 4 (prostase, enamel matrix, prostate)	ESMP1|KLK-L1|Prss17	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0M1	
+MGI:MGI:1336161	Klrc1	killer cell lectin-like receptor subfamily C, member 1	NKG2A|NKG2B|CD159a	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z202	
+MGI:MGI:1913606	Knop1	lysine rich nucleolar protein 1	Tsg118|2310008H09Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2Q2	
+MGI:MGI:96690	Krt16	keratin 16	K16|Krt1-16	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2K1	
+MGI:MGI:1339999	Krt27	keratin 27	Krt1-c29|mIRSa3.1|stpm	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z320	
+MGI:MGI:1333768	Krt6b	keratin 6B	mK6[b]|Krt2-6b	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z331	
+MGI:MGI:1859268	Krt85	keratin 85	Hb5|Krt2-18|Gm49425	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2T6	
+MGI:MGI:1328315	Krtap12-1	keratin associated protein 12-1	D10Jhu14e	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z287	
+MGI:MGI:1342270	Large1	LARGE xylosyl- and glucuronyltransferase 1	fg|BPFD#36|froggy|enr	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1M7	
+MGI:MGI:1932557	Letm1	leucine zipper-EF-hand containing transmembrane protein 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2I0	
+MGI:MGI:1341817	Lgr5	leucine rich repeat containing G protein coupled receptor 5	Gpr49	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1P4	
+MGI:MGI:96785	Lhx2	LIM homeobox protein 2	Lh-2|LH2A|ap|apterous	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0S2	
+MGI:MGI:96789	Lipa	lysosomal acid lipase A	Lal|Lip-1|Lip1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0M5	
+MGI:MGI:1337004	Loxl3	lysyl oxidase-like 3	Lor2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z175	
+MGI:MGI:2148930	Ly6g6c	lymphocyte antigen 6 family member G6C	1110003M04Rik|NG24|G6c	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Q4	
+MGI:MGI:2148931	Ly6g6d	lymphocyte antigen 6 family member G6D	G6d|NG25|G6f|NG32|MEGT1|A930024F17Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Q3	
+MGI:MGI:1315200	M1ap	meiosis 1 associated protein	D6Mm5e	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0E1	
+MGI:MGI:1860374	Mad2l1	MAD2 mitotic arrest deficient-like 1	MAD2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1B5	
+MGI:MGI:1346864	Mapk13	mitogen-activated protein kinase 13	p38 delta MAP kinase|SAPK4|Serk4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1B7	
+MGI:MGI:1333811	Mbd1	methyl-CpG binding domain protein 1	PCM1|Cxxc3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2E2	
+MGI:MGI:1333813	Mbd2	methyl-CpG binding domain protein 2	MBD2a	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2E1	
+MGI:MGI:1333812	Mbd3	methyl-CpG binding domain protein 3		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2D8	
+MGI:MGI:1333850	Mbd4	methyl-CpG binding domain protein 4	Med1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2D7	
+MGI:MGI:99918	Mecp2	methyl CpG binding protein 2	WBP10|Mbd5|1500041B07Rik|D630021H01Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2D6	
+MGI:MGI:1339986	Mettl1	methyltransferase 1, tRNA methylguanosine	2810012D02Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z120	
+MGI:MGI:1336159	Minpp1	multiple inositol polyphosphate histidine phosphatase 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2L6	
+MGI:MGI:1336894	Mocs2	molybdenum cofactor synthesis 2		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z223	
+MGI:MGI:1332635	Mrpl40	mitochondrial ribosomal protein L40	Nlvcf	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2Q5	
+MGI:MGI:1099452	Mtm1	X-linked myotubular myopathy gene 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2C5	
+MGI:MGI:1858271	Mtmr1	myotubularin related protein 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2C4	
+MGI:MGI:1924366	Mtmr2	myotubularin related protein 2	6030445P13Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2D1	
+MGI:MGI:1891693	Mtmr7	myotubularin related protein 7		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2C9	
+MGI:MGI:2442842	Mtmr9	myotubularin related protein 9	9430075G12Rik|MTMR8|LIP-STYX|mMTMH3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2D0	
+MGI:MGI:1332242	Mycs	myc-like oncogene, s-myc protein		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z304	
+MGI:MGI:1347351	Ncdn	neurochondrin	neurochondrin-1|neurochondrin-2|norbin	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0E0	
+MGI:MGI:1913666	Ndufa7	NADH:ubiquinone oxidoreductase subunit A7	2400007M02Rik|14.5kDa|NADH oxidoreductase	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1P6	
+MGI:MGI:1344404	Nek4	NIMA (never in mitosis gene a)-related expressed kinase 4		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1J2	
+MGI:MGI:1927138	Net1	neuroepithelial cell transforming gene 1	mNET1|Net1 homolog|0610025H04Rik|9530071N24Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z206	
+MGI:MGI:104741	Nfkbia	nuclear factor of kappa light polypeptide gene enhancer in B cells inhibitor, alpha	I(Kappa)B(alpha)|Nfkbi|IkappaBalpha|I-kappaBalpha	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1E3	
+MGI:MGI:1316706	Nfs1	nitrogen fixation gene 1 (S. cerevisiae)	m-Nfs1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1J3	
+MGI:MGI:97323	Ngfr	nerve growth factor receptor (TNFR superfamily, member 16)	p75NTR|p75NGFR|p75|p75 neurotrophin receptor|LNGFR|Tnfrsf16	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0W1	
+MGI:MGI:97360	Nos1	nitric oxide synthase 1, neuronal	bNOS|nNOS|Nos-1|NO|2310005C01Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0J4	
+MGI:MGI:1915213	Npc2	NPC intracellular cholesterol transporter 2	2700012J19Rik|HE1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0J0	
+MGI:MGI:1352462	Nr1h3	nuclear receptor subfamily 1, group H, member 3	LXR alpha|Unr1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0Y9	
+MGI:MGI:1926227	Nup160	nucleoporin 160	2810011M03Rik|Gtl1-13	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0W3	
+MGI:MGI:1344390	Oasl2	2'-5' oligoadenylate synthetase-like 2	M1204|Mmu-OASL	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2F2	
+MGI:MGI:1313269	Oc90	otoconin 90	PLA2L|Ocn-95|Pla2ll	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0L3	
+MGI:MGI:3030582	Or11h23	olfactory receptor family 11 subfamily G member 23	GA_x6K02T2PMLR-6454789-6455712|MOR106-9P|Olfr748	SO:0001217	NCBITaxon:10090				UniProtKB:E9Q9Z0	
+MGI:MGI:3030069	Or5an11	olfactory receptor family 5 subfamily AN member 11	GA_x6K02T03CT6-1-477|GA_x6K02T057QT-4025-4642|GA_x6K02T2LL2P-1028-792|MOR214-3|MOR214-3|Olfr245|Olfr232|Olfr235	SO:0001217	NCBITaxon:10090				UniProtKB:E9Q9Z6	
+MGI:MGI:1333764	Or6e1	olfactory receptor family 6 subfamily E member 1	IC6|GA_x6K02T2QVSB-39745261-39746202|MOR118-1|Olfr49	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1V0	
+MGI:MGI:1328337	Orc1	origin recognition complex, subunit 1	MmORC1|Orc1l	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1N2	
+MGI:MGI:1339957	P2rx7	purinergic receptor P2X, ligand-gated ion channel, 7	P2X7 receptor|P2X7R|P2X(7)	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1M0	
+MGI:MGI:1338893	Padi1	peptidyl arginine deiminase, type I	Pdi1|Pad type 1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z185	
+MGI:MGI:1338891	Padi3	peptidyl arginine deiminase, type III	PAD type III|Pad3|Pdi3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z184	
+MGI:MGI:1338898	Padi4	peptidyl arginine deiminase, type IV	PAD type IV|Pdi4|Pad4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z183	
+MGI:MGI:1261814	Palm	paralemmin		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0P4	
+MGI:MGI:1927223	Pard6a	par-6 family cell polarity regulator alpha	Par6c|Tip-40|TAX40|PAR6alpha|0710008C04Rik|2610010A15Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z101	
+MGI:MGI:97501	Pck1	phosphoenolpyruvate carboxykinase 1, cytosolic	Pck-1|PEPCK	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2V4	
+MGI:MGI:1860764	Pde3a	phosphodiesterase 3A, cGMP inhibited	A930022O17Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0X4	
+MGI:MGI:1338068	Pdpk1	3-phosphoinositide dependent protein kinase 1	Pdk1|Pkb kinase	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2A0	
+MGI:MGI:1338788	Pex11a	peroxisomal biogenesis factor 11 alpha	PEX11alpha	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z211	
+MGI:MGI:1338882	Pex11b	peroxisomal biogenesis factor 11 beta		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z210	
+MGI:MGI:1888711	Pf4	platelet factor 4	Scyb4|Pf4|Cxcl4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z126	
+MGI:MGI:98647	Phf1	PHD finger protein 1	Tctex-3|D17Ertd455e|Tctex3|PHF2|mPcl1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1B8	
+MGI:MGI:1335106	Pikfyve	phosphoinositide kinase, FYVE type zinc finger containing	5230400C17Rik|Pip5k3|PipkIII	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1T6	
+MGI:MGI:1338786	Pkdrej	polycystin (PKD) family receptor for egg jelly		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0T6	
+MGI:MGI:101842	Pla2g1b	phospholipase A2, group IB, pancreas	Pla2a|sPLA2IB	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0Y2	
+MGI:MGI:97613	Plcb1	phospholipase C, beta 1	3110043I21Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1B3	
+MGI:MGI:109585	Pld1	phospholipase D1	Pld1a|Pld1b	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z280	
+MGI:MGI:1891207	Plpbp	pyridoxal phosphate binding protein	2200002F22Rik|Prosc	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2Y8	
+MGI:MGI:1859214	Pmm2	phosphomannomutase 2		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2M7	
+MGI:MGI:1333876	Ppp1r17	protein phosphatase 1, regulatory subunit 17	G-substrate|Gsbs	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2E4	
+MGI:MGI:1335093	Ppp2r3d	protein phosphatase 2 (formerly 2A), regulatory subunit B'', delta	PR59|Ppp2r3|Ppp2r3a	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z176	
+MGI:MGI:98839	Prss1	serine protease 1 (trypsin 1)	PRSS1|Try-1|Try1|Trygn16	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1R9	
+MGI:MGI:1347009	Psma5	proteasome subunit alpha 5		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2U1	
+MGI:MGI:1347070	Psma7	proteasome subunit alpha 7	C6-I	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2U0	
+MGI:MGI:1858898	Psmd10	proteasome (prosome, macropain) 26S subunit, non-ATPase, 10	gankyrin	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2X2	
+MGI:MGI:1351664	Ptdss2	phosphatidylserine synthase 2	PSS2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1X2	
+MGI:MGI:1330275	Ptgdr2	prostaglandin D2 receptor 2	Crth2|PGD2 receptor|Gpr44	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2J6	
+MGI:MGI:97799	Pth	parathyroid hormone		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0L6	
+MGI:MGI:1201692	Rabac1	Rab acceptor 1 (prenylated)	PRA1|Gbpap1|2310040I06Rik|prenylin	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0S9	
+MGI:MGI:1328356	Rad9a	RAD9 checkpoint clamp component A	Rad9	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0F6	
+MGI:MGI:1330842	Rasal1	RAS protein activator like 1 (GAP1 like)	MRASAL	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z268	
+MGI:MGI:1314635	Rasgrp1	RAS guanyl releasing protein 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1S3	
+MGI:MGI:1855698	Reck	reversion-inducing-cysteine-rich protein with kazal motifs	St15	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0J1	
+MGI:MGI:103021	Recql	RecQ protein-like	RecQ1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z129	
+MGI:MGI:1333865	Rfxank	regulatory factor X-associated ankyrin-containing protein	Tvl1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z205	
+MGI:MGI:1929473	Rgr	retinal G protein coupled receptor	RGR opsin	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2B3	
+MGI:MGI:1354739	Rgs11	regulator of G-protein signaling 11		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2H1	
+MGI:MGI:1354730	Rgs6	regulator of G-protein signaling 6		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2H2	
+MGI:MGI:97930	Rlbp1	retinaldehyde binding protein 1	CRALBP|3110056M11Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z275	
+MGI:MGI:1343102	Robo3	roundabout guidance receptor 3	Rig-1|Rbig1|Robo3a|Robo3b|Rig1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2I4	
+MGI:MGI:1347520	Ror1	receptor tyrosine kinase-like orphan receptor 1	Ntrkr1|2810404D04Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z139	
+MGI:MGI:1347521	Ror2	receptor tyrosine kinase-like orphan receptor 2	Ntrkr2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z138	
+MGI:MGI:1930076	Rps6ka4	ribosomal protein S6 kinase, polypeptide 4	MSK2|1110069D02Rik|90kDa	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2B9	
+MGI:MGI:1927343	Rps6kb2	ribosomal protein S6 kinase, polypeptide 2	S6K2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1M4	
+MGI:MGI:1336189	Rs1	retinoschisis (X-linked, juvenile) 1 (human)	Xlrs1|tmgc1|Rs1h	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1L4	
+MGI:MGI:2183426	Rspo1	R-spondin 1	R-spondin|Rspondin	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z132	
+MGI:MGI:1339365	S1pr3	sphingosine-1-phosphate receptor 3	LPb3|S1P3|Edg3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0U9	
+MGI:MGI:1333809	S1pr4	sphingosine-1-phosphate receptor 4	lpC1|S1P4|Edg6	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0L1	
+MGI:MGI:1309453	Sart1	squamous cell carcinoma antigen recognized by T cells 1	U5-110K	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z315	
+MGI:MGI:1329016	Sel1l	sel-1 suppressor of lin-12-like (C. elegans)	Sel1h	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2G6	
+MGI:MGI:1340055	Sema4f	sema domain, immunoglobulin domain (Ig), TM domain, and short cytoplasmic domain	Sema W	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z123	
+MGI:MGI:1345148	Septin3	septin 3	Sep3|B530002E20Rik|3110018K01Rik|Gm46500|Sept3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1S5	
+MGI:MGI:1195461	Septin5	septin 5	Pnutl1|Cdcrel1|Sept5	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2Q6	
+MGI:MGI:92638	Serp1	stress-associated endoplasmic reticulum protein 1	D3Ucla1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1W5	
+MGI:MGI:1933199	Setbp1	SET binding protein 1	Seb	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z180	
+MGI:MGI:892010	Sfrp4	secreted frizzled-related protein 4		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1N6	
+MGI:MGI:1344391	Sh3bp5	SH3-domain binding protein 5 (BTK-associated)	Sab	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z131	
+MGI:MGI:1338802	Shcbp1	Shc SH2-domain binding protein 1	mPAL	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z179	
+MGI:MGI:1351663	Skp2	S-phase kinase-associated protein 2	FBXL1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0Z3	
+MGI:MGI:1353479	Slc22a4	solute carrier family 22 (organic cation transporter), member 4	Octn1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z306	
+MGI:MGI:1329012	Slc22a5	solute carrier family 22 (organic cation transporter), member 5	Octn2|Lstpl	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0E8	
+MGI:MGI:1341903	Slc23a1	solute carrier family 23 (nucleobase transporters), member 1	YSPL3|SVCT1|D18Ucla2|Slc23a2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2J0	
+MGI:MGI:1330823	Slc25a14	solute carrier family 25 (mitochondrial carrier, brain), member 14	UCP5|BMCP1|UCP5S|UCP5L	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2B2	
+MGI:MGI:1928738	Slc25a20	solute carrier family 25 (mitochondrial carnitine/acylcarnitine translocase), member 20	mCAC|Cact|1110007P09Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2Z6	
+MGI:MGI:1298205	Slc7a5	solute carrier family 7 (cationic amino acid transporter, y+ system), member 5	TA1|D0H16S474E|LAT1|Gm42049	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z127	
+MGI:MGI:1337120	Slc7a7	solute carrier family 7 (cationic amino acid transporter, y+ system), member 7	my+lat1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1K8	
+MGI:MGI:1313259	Slfn1	schlafen 1		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0I7	
+MGI:MGI:1313258	Slfn2	schlafen 2	Shlf2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0I6	
+MGI:MGI:1930923	Slurp1	secreted Ly6/Plaur domain containing 1	ARS component B|1110021N19Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0K7	
+MGI:MGI:1328366	Smarcb1	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily b, member 1	SNF5/INI1|integrase interactor 1|Snf5|Ini1|Baf47	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0H3	
+MGI:MGI:1333745	Snapin	SNAP-associated protein	Snap25bp|Snapap|Bloc1s7	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z266	
+MGI:MGI:1298397	Sncg	synuclein, gamma	persyn|C79089	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0F7	
+MGI:MGI:1891338	Srpk3	serine/arginine-rich protein specific kinase 3	Mssk1|Stk23	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0G2	
+MGI:MGI:1338864	Stau1	staufen double-stranded RNA binding protein 1	5830401L18Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z108	
+MGI:MGI:1891699	Stk25	serine/threonine kinase 25 (yeast)	Ste20-like|Ysk1|1500019J11Rik|SOK-1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2W1	
+MGI:MGI:1858416	Stk39	serine/threonine kinase 39	DCHT|SPAK|RF005|Rnl5	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1W9	
+MGI:MGI:1329037	Strap	serine/threonine kinase receptor associated protein	C78091|Unrip	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Z2	
+MGI:MGI:1306775	Sucla2	succinate-Coenzyme A ligase, ADP-forming, beta subunit	4930547K18Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2I9	
+MGI:MGI:1306824	Suclg2	succinate-Coenzyme A ligase, GDP-forming, beta subunit	D6Wsu120e	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2I8	
+MGI:MGI:1345643	Sufu	SUFU negative regulator of hedgehog signaling	Su(Fu)|2810026F04Rik|b2b273Clo	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0P7	
+MGI:MGI:1336201	Sumo3	small ubiquitin-like modifier 3	SMT3A|2810014B19Rik|D10Ertd345e|Smt3h1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z172	
+MGI:MGI:1335090	Supt4b	SPT4B, DSIF elongation factor subunit	Supt4h2|Gm3258	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z199	
+MGI:MGI:1928903	Syngr4	synaptogyrin 4	1700016O14Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1L2	
+MGI:MGI:1927225	Tbc1d8	TBC1 domain family, member 8	HBLP1|BUB2-like protein 1|GRAM domain|AD3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1A9	
+MGI:MGI:1202876	Tcf7l1	transcription factor 7 like 1 (T cell specific, HMG box)	Tcf3	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1J1	
+MGI:MGI:1338041	Tfg	Trk-fused gene		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1A1	
+MGI:MGI:1101779	Thbs4	thrombospondin 4	TSP-4|TSP4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1T2	
+MGI:MGI:1343131	Timm17a	translocase of inner mitochondrial membrane 17a	mTim17a|17kDa	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0V8	
+MGI:MGI:1343176	Timm17b	translocase of inner mitochondrial membrane 17b	mTim17b|Sfc3|17kDa	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0V7	
+MGI:MGI:1341872	Tjp2	tight junction protein 2	ZO-2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0U1	
+MGI:MGI:1333803	Top3b	topoisomerase (DNA) III beta	Topo III beta	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z321	
+MGI:MGI:1341264	Tpbg	trophoblast glycoprotein	5T4|5T4 oncofetal antigen	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0L0	
+MGI:MGI:1343458	Trip6	thyroid hormone receptor interactor 6		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Y4	
+MGI:MGI:1196284	Tsc22d3	TSC22 domain family, member 3	Gilz|Dsip1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2S7	
+MGI:MGI:109571	Tulp1	TUB like protein 1	Tulp1l	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z273	
+MGI:MGI:1346078	Twf2	twinfilin actin binding protein 2	A6-related|Twinfilin-2|Twf2|Ptk9l	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0P5	
+MGI:MGI:1858313	Uba2	ubiquitin-like modifier activating enzyme 2	Arx|anthracycline-associated resistance|UBA2|Sumo-1 activating enzyme subunit 2|SAE2|Uble1b	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1F9	
+MGI:MGI:102959	Ube2a	ubiquitin-conjugating enzyme E2A	HHR6A|HR6A	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z255	
+MGI:MGI:1344373	Ubl3	ubiquitin-like 3		SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2M6	
+MGI:MGI:1328357	Unc119	unc-119 lipid binding chaperone	Rg4|UNC119|HRG4|Unc119h|MRG4|Rtg4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2R6	
+MGI:MGI:1342278	Unc13b	unc-13 homolog B	Munc13-2|Unc13h2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1N9	
+MGI:MGI:98912	Upk1b	uroplakin 1B	Upk1|Tspan20	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2C6	
+MGI:MGI:1929095	Uso1	USO1 vesicle docking factor	TAP|transcytosis associated protein p115|Vdp	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Z0	
+MGI:MGI:1858622	Vamp5	vesicle-associated membrane protein 5	Camp	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2P8	
+MGI:MGI:90675	Vars1	valyl-tRNA synthetase 1	G7a|Bat-6|D17H6S56E|Bat6|Vars2|Vars	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1Q9	
+MGI:MGI:108395	Vnn1	vanin 1	V-1|pantetheinase	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0K8	
+MGI:MGI:1928009	Vsig2	V-set and immunoglobulin domain containing 2	CTM|CTX|1190004B15Rik|2210413P10Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z109	
+MGI:MGI:1931871	Wdr46	WD repeat domain 46	2310007I04Rik|Bing4	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0H1	
+MGI:MGI:97932	Xpr1	xenotropic and polytropic retrovirus receptor 1	Syg1|suppressor of yeast G<a> deletion|Rmc-1|Rmc1	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0U0	
+MGI:MGI:1096372	Ybx2	Y box protein 2	MSY2	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2C8	
+MGI:MGI:88133	Zbtb12	zinc finger and BTB domain containing 12	Bat-9|Bat9	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z150	
+MGI:MGI:1931870	Zbtb22	zinc finger and BTB domain containing 22	Bing1|1110008J20Rik|Zfp297	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z0G7	
+MGI:MGI:1353423	Zfp292	zinc finger protein 292	Zn-15|Zn-16|Krox-10|Zfp-15|9430062L07Rik|5730450D02Rik|Zfp15	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z2U2	
+MGI:MGI:99200	Zfp53	zinc finger protein 53	zfas8|KRAZ1|Zfp-53|Zfp118|D030067O06Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z117	
+MGI:MGI:1344427	Zfp68	zinc finger protein 68	KRAZ2|KRAB3|Zfp68|Zfp70	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z116	
+MGI:MGI:1914485	Zkscan14	zinc finger with KRAB and SCAN domains 14	2810437E14Rik|2310046C23Rik|Zfp99	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1D9	
+MGI:MGI:107533	Zkscan5	zinc finger with KRAB and SCAN domains 5	hKraba1|Zfp95	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1D8	
+MGI:MGI:1099444	Zscan12	zinc finger and SCAN domain containing 12	Zfp96	SO:0001217	NCBITaxon:10090				UniProtKB:Q9Z1D7	
+PR:Q9Z1Q2	mABHD16A	phosphatidylserine lipase ABHD16A (mouse)	mABHD16A|abhydrolase domain-containing protein 16A (mouse)|alpha/beta hydrolase domain-containing protein 16A (mouse)|HLA-B-associated transcript 5 (mouse)|mBAT5|monoacylglycerol lipase ABHD16A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99476			UniProtKB:Q9Z1Q2	
+PR:Q9Z1Q2-1	mABHD16A/iso:1	protein ABHD16A isoform 1 (mouse)	mABHD16A/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:99476			UniProtKB:Q9Z1Q2-1	
+PR:Q9Z2N8	mACTL6A	actin-like protein 6A (mouse)	mACTL6A|53 kDa BRG1-associated factor A (mouse)|actin-related protein Baf53a (mouse)|BAF53A (mouse)|BRG1-associated factor 53A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1861453			UniProtKB:Q9Z2N8	
+PR:Q9Z2N8-1	mACTL6A/iso:1	actin-like protein 6A isoform 1 (mouse)	mACTL6A/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1861453			UniProtKB:Q9Z2N8-1	
+PR:Q9Z0F8	mADAM17	disintegrin and metalloproteinase domain-containing protein 17 (mouse)	mADAM17|ADAM 17 (mouse)|CD156b (mouse)|TNF-alpha convertase (mouse)|TNF-alpha-converting enzyme (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1096335			UniProtKB:Q9Z0F8	
+PR:Q9Z0F8-1	mADAM17/iso:Long	disintegrin and metalloproteinase domain-containing protein 17 isoform Long (mouse)	mADAM17/iso:Long	PR:000000001	NCBITaxon:10090	MGI:MGI:1096335			UniProtKB:Q9Z0F8-1	
+PR:Q9Z0F8-2	mADAM17/iso:Short	disintegrin and metalloproteinase domain-containing protein 17 isoform Short (mouse)	mADAM17/iso:Short	PR:000000001	NCBITaxon:10090	MGI:MGI:1096335			UniProtKB:Q9Z0F8-2	
+PR:Q9Z0M6	mADGRE5	adhesion G protein-coupled receptor E5 (mouse)	mADGRE5|CD97 (mouse)|leukocyte antigen CD97 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347095			UniProtKB:Q9Z0M6	
+PR:Q9Z0M6-1	mADGRE5/iso:m1	adhesion G protein-coupled receptor E5 isoform m1 (mouse)	mADGRE5/iso:m1|adhesion G protein-coupled receptor E5 isoform EGF(1,2,X,3,4) (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347095			UniProtKB:Q9Z0M6-1	
+PR:Q9Z0M6-2	mADGRE5/iso:m2	adhesion G protein-coupled receptor E5 isoform m2 (mouse)	mADGRE5/iso:m2|adhesion G protein-coupled receptor E5 isoform EGF(1,2,4) (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347095			UniProtKB:Q9Z0M6-2	
+PR:Q9Z0M6-3	mADGRE5/iso:m3	adhesion G protein-coupled receptor E5 isoform m3 (mouse)	mADGRE5/iso:m3|adhesion G protein-coupled receptor E5 isoform EGF(1,2,3,4) (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347095			UniProtKB:Q9Z0M6-3	
+PR:Q9Z103	mADNP	activity-dependent neuroprotector homeobox protein (mouse)	mADNP|activity-dependent neuroprotective protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338758			UniProtKB:Q9Z103	
+PR:Q9Z248	mAEBP2	zinc finger protein AEBP2 (mouse)	mAEBP2|adipocyte enhancer-binding protein 2 (mouse)|AE-binding protein 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338038			UniProtKB:Q9Z248	
+PR:Q9Z248-1	mAEBP2/iso:m1	zinc finger protein AEBP2 isoform m1 (mouse)	mAEBP2/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338038			UniProtKB:Q9Z248-1	
+PR:Q9Z248-2	mAEBP2/iso:m2	zinc finger protein AEBP2 isoform m2 (mouse)	mAEBP2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1338038			UniProtKB:Q9Z248-2	
+PR:Q9Z248-3	mAEBP2/iso:m3	zinc finger protein AEBP2 isoform m3 (mouse)	mAEBP2/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1338038			UniProtKB:Q9Z248-3	
+PR:Q9Z248-4	mAEBP2/iso:m4	zinc finger protein AEBP2 isoform m4 (mouse)	mAEBP2/iso:m4	PR:000000001	NCBITaxon:10090	MGI:MGI:1338038			UniProtKB:Q9Z248-4	
+PR:Q9Z248-5	mAEBP2/iso:m5	zinc finger protein AEBP2 isoform m5 (mouse)	mAEBP2/iso:m5	PR:000000001	NCBITaxon:10090	MGI:MGI:1338038			UniProtKB:Q9Z248-5	
+PR:Q9Z0X1	mAIFM1	apoptosis-inducing factor 1, mitochondrial (mouse)	mAIFM1|programmed cell death protein 8 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1349419			UniProtKB:Q9Z0X1	
+PR:Q9Z0X1-1	mAIFM1/iso:1	apoptosis-inducing factor 1, mitochondrial isoform 1 (mouse)	mAIFM1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1349419			UniProtKB:Q9Z0X1-1	
+PR:Q9Z0X1-2	mAIFM1/iso:m2	apoptosis-inducing factor 1, mitochondrial isoform m2 (mouse)	mAIFM1/iso:m2|apoptosis-inducing factor 1, mitochondrial isoform AIFsh2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1349419			UniProtKB:Q9Z0X1-2	
+PR:Q9Z0E3	mAIRE	autoimmune regulator (mouse)	mAIRE|APECED protein homolog (mouse)|autoimmune polyendocrinopathy candidiasis ectodermal dystrophy protein homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3	
+PR:Q9Z0E3-1	mAIRE/iso:m1a	autoimmune regulator isoform m1a (mouse)	mAIRE/iso:m1a	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-1	
+PR:Q9Z0E3-2	mAIRE/iso:m1b	autoimmune regulator isoform m1b (mouse)	mAIRE/iso:m1b	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-2	
+PR:Q9Z0E3-3	mAIRE/iso:m1c	autoimmune regulator isoform m1c (mouse)	mAIRE/iso:m1c	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-3	
+PR:Q9Z0E3-4	mAIRE/iso:m1d	autoimmune regulator isoform m1d (mouse)	mAIRE/iso:m1d	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-4	
+PR:Q9Z0E3-5	mAIRE/iso:m2a	autoimmune regulator isoform m2a (mouse)	mAIRE/iso:m2a	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-5	
+PR:Q9Z0E3-6	mAIRE/iso:m2b	autoimmune regulator isoform m2b (mouse)	mAIRE/iso:m2b	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-6	
+PR:Q9Z0E3-7	mAIRE/iso:m2c	autoimmune regulator isoform m2c (mouse)	mAIRE/iso:m2c	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-7	
+PR:Q9Z0E3-8	mAIRE/iso:m2d	autoimmune regulator isoform m2d (mouse)	mAIRE/iso:m2d	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-8	
+PR:Q9Z0E3-9	mAIRE/iso:m3a	autoimmune regulator isoform m3a (mouse)	mAIRE/iso:m3a	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-9	
+PR:Q9Z0E3-10	mAIRE/iso:m3b	autoimmune regulator isoform m3b (mouse)	mAIRE/iso:m3b	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-10	
+PR:Q9Z0E3-11	mAIRE/iso:m3c	autoimmune regulator isoform m3c (mouse)	mAIRE/iso:m3c	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-11	
+PR:Q9Z0E3-12	mAIRE/iso:m3d	autoimmune regulator isoform m3d (mouse)	mAIRE/iso:m3d	PR:000000001	NCBITaxon:10090	MGI:MGI:1338803			UniProtKB:Q9Z0E3-12	
+PR:Q9Z110	mALDH18A1	delta-1-pyrroline-5-carboxylate synthase (mouse)	mALDH18A1|aldehyde dehydrogenase family 18 member A1 (mouse)|P5CS (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1888908			UniProtKB:Q9Z110	
+PR:Q9Z110-1	mALDH18A1/iso:Long	delta-1-pyrroline-5-carboxylate synthase isoform Long (mouse)	mALDH18A1/iso:Long	PR:000000001	NCBITaxon:10090	MGI:MGI:1888908			UniProtKB:Q9Z110-1	
+PR:Q9Z110-2	mALDH18A1/iso:Short	delta-1-pyrroline-5-carboxylate synthase isoform Short (mouse)	mALDH18A1/iso:Short	PR:000000001	NCBITaxon:10090	MGI:MGI:1888908			UniProtKB:Q9Z110-2	
+PR:Q9Z1P8	mANGPTL4	angiopoietin-related protein 4 (mouse)	mANGPTL4|425O18-1 (mouse)|angiopoietin-like protein 4 (mouse)|fasting-induced adipose factor (mouse)|hepatic fibrinogen/angiopoietin-related protein (mouse)|HFARP (mouse)|secreted protein Bk89 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1888999			UniProtKB:Q9Z1P8	
+PR:Q9Z1T1	mAP3B1	AP-3 complex subunit beta-1 (mouse)	adaptor protein complex AP-3 subunit beta-1 (mouse)|mAP3B1|adaptor-related protein complex 3 subunit beta-1 (mouse)|beta-3A-adaptin (mouse)|clathrin assembly protein complex 3 beta-1 large chain (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333879			UniProtKB:Q9Z1T1	
+PR:Q9Z1K7	mAPC2	adenomatous polyposis coli protein 2 (mouse)	mAPC2	PR:000000001	NCBITaxon:10090	MGI:MGI:1346052			UniProtKB:Q9Z1K7	
+PR:000074450	mAPC2/Cyst:1	adenomatous polyposis coli protein 2 cysteinylated 1 (mouse)	mAPC2/Cyst:1|UniProtKB:Q9Z1K7, Cys-1602, MOD:00765	PR:000000001	NCBITaxon:10090	MGI:MGI:1346052				
+PR:Q9Z1R3	mAPOM	apolipoprotein M (mouse)	mAPOM|apo-M (mouse)|ApoM (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1930124			UniProtKB:Q9Z1R3	
+PR:Q9Z1R3-1	mAPOM/iso:1	apolipoprotein M isoform 1 (mouse)	mAPOM/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1930124			UniProtKB:Q9Z1R3-1	
+PR:Q9Z1N7	mARID3B	AT-rich interactive domain-containing protein 3B (mouse)	mARID3B|ARID domain-containing protein 3B (mouse)|bright and dead ringer protein (mouse)|bright-like protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1930768			UniProtKB:Q9Z1N7	
+PR:Q9Z1N7-1	mARID3B/iso:m1	AT-rich interactive domain-containing protein 3B isoform m1 (mouse)	mARID3B/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1930768			UniProtKB:Q9Z1N7-1	
+PR:Q9Z1N7-2	mARID3B/iso:m2	AT-rich interactive domain-containing protein 3B isoform m2 (mouse)	mARID3B/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1930768			UniProtKB:Q9Z1N7-2	
+PR:Q9Z1N7-3	mARID3B/iso:m3	AT-rich interactive domain-containing protein 3B isoform m3 (mouse)	mARID3B/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1930768			UniProtKB:Q9Z1N7-3	
+PR:Q9Z1K5	mARIH1	E3 ubiquitin-protein ligase ARIH1 (mouse)	ubiquitin-conjugating enzyme E2-binding protein 1 (mouse)|mARIH1|ARI-1 (mouse)|protein ariadne-1 homolog (mouse)|RING-type E3 ubiquitin transferase ARIH1 (mouse)|UbcH7-binding protein (mouse)|UbcM4-interacting protein 77 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1344363			UniProtKB:Q9Z1K5	
+PR:Q9Z1K6	mARIH2	E3 ubiquitin-protein ligase ARIH2 (mouse)	mARIH2|ARI-2 (mouse)|protein ariadne-2 homolog (mouse)|RING-type E3 ubiquitin transferase ARIH2 (mouse)|Triad1 protein (mouse)|UbcM4-interacting protein 48 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1344361			UniProtKB:Q9Z1K6	
+PR:Q9Z0L2	mARTN	artemin (mouse)	mARTN	PR:000000001	NCBITaxon:10090	MGI:MGI:1333791			UniProtKB:Q9Z0L2	
+PR:Q9Z0L2-1	mARTN/iso:1	artemin isoform 1 (mouse)	mARTN/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333791			UniProtKB:Q9Z0L2-1	
+PR:Q9Z0L2-2	mARTN/iso:m2	artemin isoform m2 (mouse)	mARTN/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1333791			UniProtKB:Q9Z0L2-2	
+PR:Q9Z0L2-3	mARTN/iso:m3	artemin isoform m3 (mouse)	mARTN/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1333791			UniProtKB:Q9Z0L2-3	
+PR:Q9Z2A5	mATE1	arginyl-tRNA--protein transferase 1 (mouse)	mATE1|arginine-tRNA--protein transferase 1 (mouse)|arginyltransferase 1 (mouse)|R-transferase 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333870			UniProtKB:Q9Z2A5	
+PR:Q9Z2A5-1	mATE1/iso:mATE1-1	arginyl-tRNA--protein transferase 1 isoform mATE1-1 (mouse)	arginyl-tRNA--protein transferase 1 isoform ATE1-1B7A (mouse)|mATE1/iso:mATE1-1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333870			UniProtKB:Q9Z2A5-1	
+PR:Q9Z2A5-2	mATE1/iso:mATE1-2	arginyl-tRNA--protein transferase 1 isoform mATE1-2 (mouse)	arginyl-tRNA--protein transferase 1 isoform ATE1-1B7B (mouse)|mATE1/iso:mATE1-2	PR:000000001	NCBITaxon:10090	MGI:MGI:1333870			UniProtKB:Q9Z2A5-2	
+PR:Q9Z2A5-3	mATE1/iso:mATE1-3	arginyl-tRNA--protein transferase 1 isoform mATE1-3 (mouse)	mATE1/iso:mATE1-3|arginyl-tRNA--protein transferase 1 isoform ATE1-1A7A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333870			UniProtKB:Q9Z2A5-3	
+PR:Q9Z2A5-4	mATE1/iso:mATE1-4	arginyl-tRNA--protein transferase 1 isoform mATE1-4 (mouse)	mATE1/iso:mATE1-4|arginyl-tRNA--protein transferase 1 isoform ATE1-1A7B (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333870			UniProtKB:Q9Z2A5-4	
+PR:Q9Z2E5	mATOH7	transcription factor Atoh7 (mouse)	mATOH7|atonal bHLH transcription factor 7 (mouse)|helix-loop-helix protein mATH-5 (mouse)|mATH5|protein atonal homolog 7 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1355553			UniProtKB:Q9Z2E5	
+PR:Q9Z1W8	mATP12A	potassium-transporting ATPase alpha chain 2 (mouse)	mATP12A|HK alpha 2 (mouse)|non-gastric H(+)/K(+) ATPase subunit alpha (mouse)|non-gastric Na(+)/K(+) ATPase subunit alpha (mouse)|sodium pump (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1926943			UniProtKB:Q9Z1W8	
+PR:000071601	mATP12A/Cyst:1	potassium-transporting ATPase alpha chain 2 cysteinylated 1 (mouse)	mATP12A/Cyst:1|UniProtKB:Q9Z1W8, Cys-567, MOD:00765	PR:000000001	NCBITaxon:10090	MGI:MGI:1926943				
+PR:Q9Z1G4	mATP6V0A1	V-type proton ATPase 116 kDa subunit a 1 (mouse)	mATP6V0A1|V-ATPase 116 kDa subunit a 1 (mouse)|clathrin-coated vesicle/synaptic vesicle proton pump 116 kDa subunit (mouse)|V-type proton ATPase 116 kDa subunit a isoform 1 (mouse)|vacuolar adenosine triphosphatase subunit Ac116 (mouse)|vacuolar proton pump subunit 1 (mouse)|vacuolar proton translocating ATPase 116 kDa subunit a isoform 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:103286			UniProtKB:Q9Z1G4	
+PR:Q9Z1G4-2	mATP6V0A1/iso:A1-I	V-type proton ATPase 116 kDa subunit a 1 isoform A1-I (mouse)	mATP6V0A1/iso:A1-I	PR:000000001	NCBITaxon:10090	MGI:MGI:103286			UniProtKB:Q9Z1G4-2	
+PR:Q9Z1G4-1	mATP6V0A1/iso:mA1-II	V-type proton ATPase 116 kDa subunit a 1 isoform mA1-II (mouse)	mATP6V0A1/iso:mA1-II	PR:000000001	NCBITaxon:10090	MGI:MGI:103286			UniProtKB:Q9Z1G4-1	
+PR:Q9Z1G4-3	mATP6V0A1/iso:mA1-III	V-type proton ATPase 116 kDa subunit a 1 isoform mA1-III (mouse)	mATP6V0A1/iso:mA1-III	PR:000000001	NCBITaxon:10090	MGI:MGI:103286			UniProtKB:Q9Z1G4-3	
+PR:Q9Z1G3	mATP6V1C1	V-type proton ATPase subunit C 1 (mouse)	mATP6V1C1|V-ATPase subunit C 1 (mouse)|vacuolar proton pump subunit C 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913585			UniProtKB:Q9Z1G3	
+PR:Q9Z1G3-1	mATP6V1C1/iso:1	V-type proton ATPase subunit C 1 isoform 1 (mouse)	mATP6V1C1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1913585			UniProtKB:Q9Z1G3-1	
+PR:Q9Z0F0	mB3GALT4	beta-1,3-galactosyltransferase 4 (mouse)	mB3GALT4|b3Gal-T4 (mouse)|beta-1,3-GalTase 4 (mouse)|beta3Gal-T4 (mouse)|beta3GalT4 (mouse)|gal-T2 (mouse)|ganglioside galactosyltransferase (mouse)|UDP-galactose:beta-N-acetyl-galactosamine-beta-1,3-galactosyltransferase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1859517			UniProtKB:Q9Z0F0	
+PR:Q9Z222	mB3GNT2	N-acetyllactosaminide beta-1,3-N-acetylglucosaminyltransferase 2 (mouse)	mB3GNT2|b3Gal-T7 (mouse)|beta-1,3-galactosyltransferase 7 (mouse)|beta-1,3-GalTase 7 (mouse)|beta-1,3-Gn-T1 (mouse)|beta-1,3-Gn-T2 (mouse)|beta-1,3-N-acetylglucosaminyltransferase 1 (mouse)|beta-1,3-N-acetylglucosaminyltransferase 2 (mouse)|beta-3-Gx-T7 (mouse)|beta3Gal-T7 (mouse)|beta3GalT7 (mouse)|beta3Gn-T1 (mouse)|beta3Gn-T2 (mouse)|BGnT-1 (mouse)|BGnT-2 (mouse)|UDP-Gal:beta-GlcNAc beta-1,3-galactosyltransferase 7 (mouse)|UDP-galactose:beta-N-acetylglucosamine beta-1,3-galactosyltransferase 7 (mouse)|UDP-GlcNAc:betaGal beta-1,3-N-acetylglucosaminyltransferase 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1889505			UniProtKB:Q9Z222	
+PR:Q9Z222-1	mB3GNT2/iso:1	N-acetyllactosaminide beta-1,3-N-acetylglucosaminyltransferase 2 isoform 1 (mouse)	mB3GNT2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1889505			UniProtKB:Q9Z222-1	
+PR:Q9Z2Y2	mB4GALT2	beta-1,4-galactosyltransferase 2 (mouse)	UDP-galactose:beta-N-acetylglucosamine beta-1,4-galactosyltransferase 2 (mouse)|mB4GALT2|b4Gal-T2 (mouse)|beta-1,4-GalTase 2 (mouse)|beta4Gal-T2 (mouse)|UDP-Gal:beta-GlcNAc beta-1,4-galactosyltransferase 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858493			UniProtKB:Q9Z2Y2	
+PR:Q9Z1R2	mBAG6	large proline-rich protein BAG6 (mouse)	mBAG6|BAG family molecular chaperone regulator 6 (mouse)|BAG-6 (mouse)|BCL2-associated athanogene 6 (mouse)|HLA-B-associated transcript 3 (mouse)|protein Scythe (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1919439			UniProtKB:Q9Z1R2	
+PR:Q9Z277	mBAZ1B	tyrosine-protein kinase BAZ1B (mouse)	mBAZ1B|bromodomain adjacent to zinc finger domain protein 1B (mouse)|Williams syndrome transcription factor homolog (mouse)|Williams-Beuren syndrome chromosomal region 9 protein homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1353499			UniProtKB:Q9Z277	
+PR:Q9Z277-1	mBAZ1B/iso:m1	tyrosine-protein kinase BAZ1B isoform m1 (mouse)	mBAZ1B/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1353499			UniProtKB:Q9Z277-1	
+PR:Q9Z277-2	mBAZ1B/iso:m2	tyrosine-protein kinase BAZ1B isoform m2 (mouse)	mBAZ1B/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1353499			UniProtKB:Q9Z277-2	
+PR:Q9Z0H7	mBCL10	B-cell lymphoma/leukemia 10 (mouse)	mBCL10|B-cell CLL/lymphoma 10 (mouse)|Bcl-10 (mouse)|c-E10 (mouse)|CARD-containing molecule enhancing NF-kappa-B (mouse)|CARD-like apoptotic protein (mouse)|cCARMEN (mouse)|CED-3/ICH-1 prodomain homologous E10-like regulator (mouse)|cellular homolog of vCARMEN (mouse)|cellular-E10 (mouse)|mammalian CARD-containing adapter molecule E10 (mouse)|mCIPER|mCLAP|mE10 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1337994			UniProtKB:Q9Z0H7	
+PR:Q9Z0H7-1	mBCL10/iso:1	B-cell lymphoma/leukemia 10 isoform 1 (mouse)	mBCL10/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1337994			UniProtKB:Q9Z0H7-1	
+PR:Q9Z0F3	mBCL2L10	Bcl-2-like protein 10 (mouse)	mBCL2L10|anti-apoptotic protein Boo (mouse)|apoptosis regulator Bcl-B (mouse)|Bcl-2 homolog Diva (mouse)|Bcl2-L-10 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330841			UniProtKB:Q9Z0F3	
+PR:Q9Z2F6	mBCL3	B-cell lymphoma 3 protein homolog (mouse)	mBCL3|BCL-3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:88140			UniProtKB:Q9Z2F6	
+PR:Q9Z0L4	mBMP15	bone morphogenetic protein 15 (mouse)	mBMP15|BMP-15 (mouse)|GDF-9B (mouse)|growth/differentiation factor 9B (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1316745			UniProtKB:Q9Z0L4	
+PR:Q9Z2F7	mBNIP3L	BCL2/adenovirus E1B 19 kDa protein-interacting protein 3-like (mouse)	mBNIP3L|NIP3-like protein X (mouse)|NIP3L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1332659			UniProtKB:Q9Z2F7	
+PR:Q9Z2F7-1	mBNIP3L/iso:1	BCL2/adenovirus E1B 19 kDa protein-interacting protein 3-like isoform 1 (mouse)	mBNIP3L/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1332659			UniProtKB:Q9Z2F7-1	
+PR:Q9Z0S1	mBPNT1	3'(2'),5'-bisphosphate nucleotidase 1 (mouse)	mBPNT1|bisphosphate 3'-nucleotidase 1 (mouse)|PAP-inositol 1,4-phosphatase (mouse)|PIP (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338800			UniProtKB:Q9Z0S1	
+PR:Q9Z0S1-1	mBPNT1/iso:1	3'(2'),5'-bisphosphate nucleotidase 1 isoform 1 (mouse)	mBPNT1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338800			UniProtKB:Q9Z0S1-1	
+PR:Q9Z2E9	mBSCL2	seipin (mouse)	mBSCL2|bernardinelli-Seip congenital lipodystrophy type 2 protein homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1298392			UniProtKB:Q9Z2E9	
+PR:Q9Z1S0	mBUB1B	mitotic checkpoint serine/threonine-protein kinase BUB1 beta (mouse)	mBUB1B|BubR1 (mouse)|MAD3/BUB1-related protein kinase (mouse)|mitotic checkpoint kinase MAD3L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333889			UniProtKB:Q9Z1S0	
+PR:Q9Z1R4	mC6orf47	uncharacterized protein C6orf47 homolog (mouse)	mC6orf47	PR:000000001	NCBITaxon:10090	MGI:MGI:90673			UniProtKB:Q9Z1R4	
+PR:Q9Z1L5	mCACNA2D3	voltage-dependent calcium channel subunit alpha-2/delta-3 (mouse)	mCACNA2D3|voltage-gated calcium channel subunit alpha-2/delta-3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338890			UniProtKB:Q9Z1L5	
+PR:Q9Z1L5-1	mCACNA2D3/iso:1	voltage-dependent calcium channel subunit alpha-2/delta-3 isoform 1 (mouse)	mCACNA2D3/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338890			UniProtKB:Q9Z1L5-1	
+PR:Q9Z1X0	mCCL27	C-C motif chemokine 27 (mouse)	mCCL27|ALP (mouse)|CC chemokine ILC (mouse)|CTACK (mouse)|cutaneous T-cell-attracting chemokine (mouse)|ESkine (mouse)|IL-11 R-alpha-locus chemokine (mouse)|mILC|skinkine (mouse)|small-inducible cytokine A27 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1343459			UniProtKB:Q9Z1X0	
+PR:Q9Z1X0-1	mCCL27/iso:1	C-C motif chemokine 27 isoform 1 (mouse)	mCCL27/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1343459			UniProtKB:Q9Z1X0-1	
+PR:000037167	mCCL27/iso:1/SigPep-	C-C motif chemokine 27 isoform 1, signal peptide removed form (mouse)	mCCL27/iso:1/SigPep-|PRO_0000005240|UniProtKB:Q9Z1X0-1, 26-120	PR:000000001	NCBITaxon:10090	MGI:MGI:1343459				
+PR:Q9Z1X0-2	mCCL27/iso:2	C-C motif chemokine 27 isoform 2 (mouse)	mCCL27/iso:2|PESKY (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1343459			UniProtKB:Q9Z1X0-2	
+PR:Q9Z121	mCcl8	C-C motif chemokine 8 (mouse)	mCcl8|MCP-2 (mouse)|monocyte chemoattractant protein 2 (mouse)|monocyte chemotactic protein 2 (mouse)|small-inducible cytokine A8 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:101878			UniProtKB:Q9Z121	
+PR:Q9Z0G4	mCCN5	CCN family member 5 (mouse)	mCCN5|connective tissue growth factor-like protein (mouse)|CTGF-L (mouse)|WISP-2 (mouse)|WNT1-inducible-signaling pathway protein 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1328326			UniProtKB:Q9Z0G4	
+PR:Q9Z238	mCCNE2	G1/S-specific cyclin-E2 (mouse)	mCCNE2	PR:000000001	NCBITaxon:10090	MGI:MGI:1329034			UniProtKB:Q9Z238	
+PR:Q9Z238-1	mCCNE2/iso:1	G1/S-specific cyclin-E2 isoform 1 (mouse)	mCCNE2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1329034			UniProtKB:Q9Z238-1	
+PR:Q9Z2V9	mCCNI	cyclin-I (mouse)	mCCNI	PR:000000001	NCBITaxon:10090	MGI:MGI:1341077			UniProtKB:Q9Z2V9	
+PR:Q9Z2V9-1	mCCNI/iso:1	cyclin-I isoform 1 (mouse)	mCCNI/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1341077			UniProtKB:Q9Z2V9-1	
+PR:Q9Z1P5	mCD320	CD320 antigen (mouse)	mCD320|CD320 (mouse)|TCblR (mouse)|transcobalamin receptor (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1860083			UniProtKB:Q9Z1P5	
+PR:Q9Z1P5-1	mCD320/iso:m1	CD320 antigen isoform m1 (mouse)	mCD320/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1860083			UniProtKB:Q9Z1P5-1	
+PR:Q9Z1P5-2	mCD320/iso:m2	CD320 antigen isoform m2 (mouse)	mCD320/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1860083			UniProtKB:Q9Z1P5-2	
+PR:Q9Z0X0	mCDC42EP5	Cdc42 effector protein 5 (mouse)	mCDC42EP5|binder of Rho GTPases 3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1929745			UniProtKB:Q9Z0X0	
+PR:Q9Z1X9	mCDC45	cell division control protein 45 homolog (mouse)	mCDC45|PORC-PI-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338073			UniProtKB:Q9Z1X9	
+PR:Q9Z1X9-1	mCDC45/iso:1	cell division control protein 45 homolog isoform 1 (mouse)	mCDC45/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338073			UniProtKB:Q9Z1X9-1	
+PR:Q9Z0H0	mCDC7	cell division cycle 7-related protein kinase (mouse)	mCDC7|CDC7-related kinase (mouse)|muCdc7 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309511			UniProtKB:Q9Z0H0	
+PR:Q9Z0H0-1	mCDC7/iso:m1	cell division cycle 7-related protein kinase isoform m1 (mouse)	mCDC7/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1309511			UniProtKB:Q9Z0H0-1	
+PR:Q9Z0H0-2	mCDC7/iso:m2	cell division cycle 7-related protein kinase isoform m2 (mouse)	mCDC7/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1309511			UniProtKB:Q9Z0H0-2	
+PR:Q9Z0M3	mCDH20	cadherin-20 (mouse)	mCDH20	PR:000000001	NCBITaxon:10090	MGI:MGI:1346069			UniProtKB:Q9Z0M3	
+PR:Q9Z0M3-1	mCDH20/iso:1	cadherin-20 isoform 1 (mouse)	mCDH20/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1346069			UniProtKB:Q9Z0M3-1	
+PR:Q9Z0H4	mCELF2	CUGBP Elav-like family member 2 (mouse)	mCELF2|bruno-like protein 3 (mouse)|CELF-2 (mouse)|CUG triplet repeat RNA-binding protein 2 (mouse)|CUG-BP- and ETR-3-like factor 2 (mouse)|CUG-BP2 (mouse)|ELAV-type RNA-binding protein 3 (mouse)|ETR-3 (mouse)|mETR-3|mNapor|neuroblastoma apoptosis-related RNA-binding protein (mouse)|RNA-binding protein BRUNOL-3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4	
+PR:Q9Z0H4-1	mCELF2/iso:m1	CUGBP Elav-like family member 2 isoform m1 (mouse)	mCELF2/iso:m1|CUGBP Elav-like family member 2 isoform Napor-3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-1	
+PR:Q9Z0H4-11	mCELF2/iso:m11	CUGBP Elav-like family member 2 isoform m11 (mouse)	mCELF2/iso:m11	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-11	
+PR:Q9Z0H4-2	mCELF2/iso:m2	CUGBP Elav-like family member 2 isoform m2 (mouse)	mCELF2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-2	
+PR:Q9Z0H4-3	mCELF2/iso:m3	CUGBP Elav-like family member 2 isoform m3 (mouse)	mCELF2/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-3	
+PR:Q9Z0H4-4	mCELF2/iso:m4	CUGBP Elav-like family member 2 isoform m4 (mouse)	mCELF2/iso:m4	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-4	
+PR:Q9Z0H4-5	mCELF2/iso:m5	CUGBP Elav-like family member 2 isoform m5 (mouse)	mCELF2/iso:m5	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-5	
+PR:Q9Z0H4-6	mCELF2/iso:m6	CUGBP Elav-like family member 2 isoform m6 (mouse)	mCELF2/iso:m6	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-6	
+PR:Q9Z0H4-7	mCELF2/iso:m7	CUGBP Elav-like family member 2 isoform m7 (mouse)	mCELF2/iso:m7|CUGBP Elav-like family member 2 isoform Napor-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-7	
+PR:Q9Z0H4-8	mCELF2/iso:m8	CUGBP Elav-like family member 2 isoform m8 (mouse)	mCELF2/iso:m8	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-8	
+PR:Q9Z0H4-9	mCELF2/iso:m9	CUGBP Elav-like family member 2 isoform m9 (mouse)	mCELF2/iso:m9	PR:000000001	NCBITaxon:10090	MGI:MGI:1338822			UniProtKB:Q9Z0H4-9	
+PR:Q9Z0F5	mCH25H	cholesterol 25-hydroxylase (mouse)	mCH25H|cholesterol 25-monooxygenase (mouse)|m25OH (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333869			UniProtKB:Q9Z0F5	
+PR:Q9Z0F5-1	mCH25H/iso:1	cholesterol 25-hydroxylase isoform 1 (mouse)	mCH25H/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333869			UniProtKB:Q9Z0F5-1	
+PR:Q9Z265	mCHEK2	serine/threonine-protein kinase Chk2 (mouse)	mCHEK2|checkpoint kinase 2 (mouse)|CHK2 checkpoint homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1355321			UniProtKB:Q9Z265	
+PR:000049820	mCHEK2/Phos:1	serine/threonine-protein kinase Chk2 phosphorylated 1 (mouse)	mCHEK2/Phos:1|UniProtKB:Q9Z265, Ser-383, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:1355321				
+PR:000049821	mCHEK2/Phos:2	serine/threonine-protein kinase Chk2 phosphorylated 2 (mouse)	mCHEK2/Phos:2|UniProtKB:Q9Z265, Ser-540, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:1355321				
+PR:Q9Z0E2	mCHRD	chordin (mouse)	mCHRD	PR:000000001	NCBITaxon:10090	MGI:MGI:1313268			UniProtKB:Q9Z0E2	
+PR:Q9Z0E2-1	mCHRD/iso:1	chordin isoform 1 (mouse)	mCHRD/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1313268			UniProtKB:Q9Z0E2-1	
+PR:000036411	mCHRD/iso:1/Clv:2	chordin isoform 1 cleaved 2 (mouse)	mCHRD/iso:1/Clv:2|UniProtKB:Q9Z0E2-1, 154-861	PR:000000001	NCBITaxon:10090	MGI:MGI:1313268				
+PR:000036409	mCHRD/iso:1/SigPep-	chordin isoform 1, signal peptide removed form (mouse)	mCHRD/iso:1/SigPep-|PRO_0000005365|UniProtKB:Q9Z0E2-1, 27-948	PR:000000001	NCBITaxon:10090	MGI:MGI:1313268				
+PR:Q9Z0F4	mCIB1	calcium and integrin-binding protein 1 (mouse)	mCIB1|calmyrin (mouse)|CIB (mouse)|DNA-PKcs-interacting protein (mouse)|kinase-interacting protein (mouse)|KIP (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1344418			UniProtKB:Q9Z0F4	
+PR:Q9Z0F4-1	mCIB1/iso:1	calcium and integrin-binding protein 1 isoform 1 (mouse)	mCIB1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1344418			UniProtKB:Q9Z0F4-1	
+PR:Q9Z309	mCIB2	calcium and integrin-binding family member 2 (mouse)	mCIB2|kinase-interacting protein 2 (mouse)|KIP 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1929293			UniProtKB:Q9Z309	
+PR:Q9Z309-1	mCIB2/iso:1	calcium and integrin-binding family member 2 isoform 1 (mouse)	mCIB2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1929293			UniProtKB:Q9Z309-1	
+PR:Q9Z0S6	mCLDN10	claudin-10 (mouse)	mCLDN10	PR:000000001	NCBITaxon:10090	MGI:MGI:1913101			UniProtKB:Q9Z0S6	
+PR:Q9Z0S6-1	mCLDN10/iso:m1	claudin-10 isoform m1 (mouse)	mCLDN10/iso:m1|claudin-10 isoform Cldn10b (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913101			UniProtKB:Q9Z0S6-1	
+PR:Q9Z0S6-2	mCLDN10/iso:m2	claudin-10 isoform m2 (mouse)	mCLDN10/iso:m2|claudin-10 isoform Cldn10a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913101			UniProtKB:Q9Z0S6-2	
+PR:Q9Z0S6-3	mCLDN10/iso:m3	claudin-10 isoform m3 (mouse)	mCLDN10/iso:m3|claudin-10 isoform Cldn10a_i2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913101			UniProtKB:Q9Z0S6-3	
+PR:Q9Z0S6-4	mCLDN10/iso:m4	claudin-10 isoform m4 (mouse)	mCLDN10/iso:m4|claudin-10 isoform Cldn10a_i1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913101			UniProtKB:Q9Z0S6-4	
+PR:Q9Z0S6-5	mCLDN10/iso:m5	claudin-10 isoform m5 (mouse)	mCLDN10/iso:m5|claudin-10 isoform Cldn10a_i3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913101			UniProtKB:Q9Z0S6-5	
+PR:Q9Z0S6-6	mCLDN10/iso:m6	claudin-10 isoform m6 (mouse)	mCLDN10/iso:m6|claudin-10 isoform Cldn10b_i1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913101			UniProtKB:Q9Z0S6-6	
+PR:Q9Z0S4	mCldn13	claudin-13 (mouse)	mCldn13	PR:000000001	NCBITaxon:10090	MGI:MGI:1913102			UniProtKB:Q9Z0S4	
+PR:Q9Z0S3	mCLDN14	claudin-14 (mouse)	mCLDN14	PR:000000001	NCBITaxon:10090	MGI:MGI:1860425			UniProtKB:Q9Z0S3	
+PR:Q9Z0S3-1	mCLDN14/iso:1	claudin-14 isoform 1 (mouse)	mCLDN14/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1860425			UniProtKB:Q9Z0S3-1	
+PR:Q9Z0S5	mCLDN15	claudin-15 (mouse)	mCLDN15	PR:000000001	NCBITaxon:10090	MGI:MGI:1913103			UniProtKB:Q9Z0S5	
+PR:Q9Z0G9	mCLDN3	claudin-3 (mouse)	mCLDN3|clostridium perfringens enterotoxin receptor 2 (mouse)|CPE-R 2 (mouse)|CPE-receptor 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1329044			UniProtKB:Q9Z0G9	
+PR:Q9Z0G9-1	mCLDN3/iso:1	claudin-3 isoform 1 (mouse)	mCLDN3/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1329044			UniProtKB:Q9Z0G9-1	
+PR:Q9Z0G9-2	mCLDN3/iso:m2	claudin-3 isoform m2 (mouse)	mCLDN3/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1329044			UniProtKB:Q9Z0G9-2	
+PR:Q9Z262	mCLDN6	claudin-6 (mouse)	mCLDN6|skullin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1859284			UniProtKB:Q9Z262	
+PR:Q9Z261	mCLDN7	claudin-7 (mouse)	mCLDN7	PR:000000001	NCBITaxon:10090	MGI:MGI:1859285			UniProtKB:Q9Z261	
+PR:Q9Z261-1	mCLDN7/iso:1	claudin-7 isoform 1 (mouse)	mCLDN7/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1859285			UniProtKB:Q9Z261-1	
+PR:Q9Z260	mCLDN8	claudin-8 (mouse)	mCLDN8	PR:000000001	NCBITaxon:10090	MGI:MGI:1859286			UniProtKB:Q9Z260	
+PR:Q9Z260-1	mCLDN8/iso:1	claudin-8 isoform 1 (mouse)	mCLDN8/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1859286			UniProtKB:Q9Z260-1	
+PR:Q9Z0S7	mCLDN9	claudin-9 (mouse)	mCLDN9	PR:000000001	NCBITaxon:10090	MGI:MGI:1913100			UniProtKB:Q9Z0S7	
+PR:Q9Z0S7-1	mCLDN9/iso:1	claudin-9 isoform 1 (mouse)	mCLDN9/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1913100			UniProtKB:Q9Z0S7-1	
+PR:Q9Z2H6	mCLEC4D	C-type lectin domain family 4 member D (mouse)	mCLEC4D|C-type lectin superfamily member 8 (mouse)|CD368 (mouse)|DC-associated C-type lectin 3 (mouse)|dectin-3 (mouse)|dendritic cell-associated C-type lectin 3 (mouse)|macrophage-restricted C-type lectin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1298389			UniProtKB:Q9Z2H6	
+PR:Q9Z1Q5	mCLIC1	chloride intracellular channel protein 1 (mouse)	mCLIC1|NCC27 (mouse)|nuclear chloride ion channel 27 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:2148924			UniProtKB:Q9Z1Q5	
+PR:Q9Z1Q5-1	mCLIC1/iso:1	chloride intracellular channel protein 1 isoform 1 (mouse)	mCLIC1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:2148924			UniProtKB:Q9Z1Q5-1	
+PR:Q9Z0H8	mCLIP2	CAP-Gly domain-containing linker protein 2 (mouse)	mCLIP2|CLIP-115 (mouse)|cytoplasmic linker protein 115 (mouse)|cytoplasmic linker protein 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1313136			UniProtKB:Q9Z0H8	
+PR:Q9Z0H8-1	mCLIP2/iso:m1	CAP-Gly domain-containing linker protein 2 isoform m1 (mouse)	mCLIP2/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1313136			UniProtKB:Q9Z0H8-1	
+PR:Q9Z0H8-2	mCLIP2/iso:m2	CAP-Gly domain-containing linker protein 2 isoform m2 (mouse)	mCLIP2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1313136			UniProtKB:Q9Z0H8-2	
+PR:Q9Z1F6	mCNMD	leukocyte cell-derived chemotaxin 1 (mouse)	mCNMD|chondromodulin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1341171			UniProtKB:Q9Z1F6	
+PR:Q9Z1F6-1	mCNMD/iso:1	leukocyte cell-derived chemotaxin 1 isoform 1 (mouse)	mCNMD/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1341171			UniProtKB:Q9Z1F6-1	
+PR:Q9Z160	mCOG1	conserved oligomeric Golgi complex subunit 1 (mouse)	mCOG1|COG complex subunit 1 (mouse)|component of oligomeric Golgi complex 1 (mouse)|low density lipoprotein receptor defect B-complementing protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333873			UniProtKB:Q9Z160	
+PR:Q9Z319	mCORIN	atrial natriuretic peptide-converting enzyme (mouse)	mCORIN|corin (mouse)|low density lipoprotein receptor-related protein 4 (mouse)|pro-ANP-converting enzyme (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1349451			UniProtKB:Q9Z319	
+PR:Q9Z319-1	mCORIN/iso:m1	atrial natriuretic peptide-converting enzyme isoform m1 (mouse)	atrial natriuretic peptide-converting enzyme isoform E1a (mouse)|atrial natriuretic peptide-converting enzyme isoform mE1a (mouse)|mCORIN/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1349451			UniProtKB:Q9Z319-1	
+PR:Q9Z319-2	mCORIN/iso:m2	atrial natriuretic peptide-converting enzyme isoform m2 (mouse)	mCORIN/iso:m2|atrial natriuretic peptide-converting enzyme isoform E1 (mouse)|atrial natriuretic peptide-converting enzyme isoform mE1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1349451			UniProtKB:Q9Z319-2	
+PR:Q9Z140	mCPNE6	copine-6 (mouse)	mCPNE6|copine VI (mouse)|N-copine (mouse)|neuronal-copine (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1334445			UniProtKB:Q9Z140	
+PR:Q9Z140-1	mCPNE6/iso:1	copine-6 isoform 1 (mouse)	mCPNE6/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1334445			UniProtKB:Q9Z140-1	
+PR:000030007	mCPNE6/Phos:1	copine-6 phosphorylated 1 (mouse)	mCPNE6/Phos:1|UniProtKB:Q9Z140, Ser-65, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:1334445				
+PR:Q9Z100	mCPXM1	probable carboxypeptidase X1 (mouse)	mCPXM1|metallocarboxypeptidase CPX-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1934569			UniProtKB:Q9Z100	
+PR:Q9Z125	mCREB3L1	cyclic AMP-responsive element-binding protein 3-like protein 1 (mouse)	mCREB3L1|cAMP-responsive element-binding protein 3-like protein 1 (mouse)|OASIS (mouse)|Old astrocyte specifically-induced substance (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347062			UniProtKB:Q9Z125	
+PR:Q9Z125-1	mCREB3L1/iso:m1	cyclic AMP-responsive element-binding protein 3-like protein 1 isoform m1 (mouse)	mCREB3L1/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1347062			UniProtKB:Q9Z125-1	
+PR:Q9Z125-2	mCREB3L1/iso:m2	cyclic AMP-responsive element-binding protein 3-like protein 1 isoform m2 (mouse)	mCREB3L1/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1347062			UniProtKB:Q9Z125-2	
+PR:Q9Z2L7	mCRLF3	cytokine receptor-like factor 3 (mouse)	mCRLF3|CREME-9 (mouse)|cytokine receptor-like molecule 9 (mouse)|cytokine receptor-related factor 4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1860086			UniProtKB:Q9Z2L7	
+PR:Q9Z2L7-1	mCRLF3/iso:1	cytokine receptor-like factor 3 isoform 1 (mouse)	mCRLF3/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1860086			UniProtKB:Q9Z2L7-1	
+PR:Q9Z2L7-2	mCRLF3/iso:m2	cytokine receptor-like factor 3 isoform m2 (mouse)	mCRLF3/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1860086			UniProtKB:Q9Z2L7-2	
+PR:Q9Z0H6	mCST9	cystatin-9 (mouse)	mCST9|testatin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1340053			UniProtKB:Q9Z0H6	
+PR:Q9Z0D9	mCX3CR1	CX3C chemokine receptor 1 (mouse)	mCX3CR1|C-X3-C CKR-1 (mouse)|CX3CR1 (mouse)|fractalkine receptor (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333815			UniProtKB:Q9Z0D9	
+PR:Q9Z0D9-1	mCX3CR1/iso:1	CX3C chemokine receptor 1 isoform 1 (mouse)	mCX3CR1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333815			UniProtKB:Q9Z0D9-1	
+PR:Q9Z0Y1	mDCTN3	dynactin subunit 3 (mouse)	mDCTN3|dynactin light chain p24 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1859251			UniProtKB:Q9Z0Y1	
+PR:Q9Z0Y1-1	mDCTN3/iso:1	dynactin subunit 3 isoform 1 (mouse)	mDCTN3/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1859251			UniProtKB:Q9Z0Y1-1	
+PR:Q9Z1N5	mDDX39B	spliceosome RNA helicase Ddx39b (mouse)	mDDX39B|56 kDa U2AF65-associated protein (mouse)|DEAD box protein UAP56 (mouse)|HLA-B-associated transcript 1 protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99240			UniProtKB:Q9Z1N5	
+PR:Q9Z1N5-1	mDDX39B/iso:1	spliceosome RNA helicase Ddx39b isoform 1 (mouse)	mDDX39B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:99240			UniProtKB:Q9Z1N5-1	
+PR:Q9Z1T5	mDEAF1	deformed epidermal autoregulatory factor 1 homolog (mouse)	mDEAF1|nuclear DEAF-1-related transcriptional regulator (mouse)|NUDR (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858496			UniProtKB:Q9Z1T5	
+PR:Q9Z1T5-1	mDEAF1/iso:m1	deformed epidermal autoregulatory factor 1 homolog isoform m1 (mouse)	mDEAF1/iso:m1|deformed epidermal autoregulatory factor 1 homolog isoform DF1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858496			UniProtKB:Q9Z1T5-1	
+PR:Q9Z1T5-2	mDEAF1/iso:m2	deformed epidermal autoregulatory factor 1 homolog isoform m2 (mouse)	mDEAF1/iso:m2|deformed epidermal autoregulatory factor 1 homolog isoform DF1-VAR1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858496			UniProtKB:Q9Z1T5-2	
+PR:Q9Z1L3	mDEDD	death effector domain-containing protein (mouse)	mDEDD|DEDPro1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333874			UniProtKB:Q9Z1L3	
+PR:Q9Z1L3-1	mDEDD/iso:1	death effector domain-containing protein isoform 1 (mouse)	mDEDD/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333874			UniProtKB:Q9Z1L3-1	
+PR:Q9Z2A7	mDGAT1	diacylglycerol O-acyltransferase 1 (mouse)	mDGAT1|diglyceride acyltransferase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333825			UniProtKB:Q9Z2A7	
+PR:Q9Z207	mDIAPH3	protein diaphanous homolog 3 (mouse)	mDIAPH3|diaphanous-related formin-3 (mouse)|DRF3 (mouse)|mDIA2|p134mDIA2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1927222			UniProtKB:Q9Z207	
+PR:Q9Z1Y9	mDIO2	type II iodothyronine deiodinase (mouse)	mDIO2|5DII (mouse)|DIOII (mouse)|type 2 DI (mouse)|type-II 5'-deiodinase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338833			UniProtKB:Q9Z1Y9	
+PR:Q9Z1Y9-1	mDIO2/iso:1	type II iodothyronine deiodinase isoform 1 (mouse)	mDIO2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338833			UniProtKB:Q9Z1Y9-1	
+PR:Q9Z2W0	mDNPEP	aspartyl aminopeptidase (mouse)	mDNPEP	PR:000000001	NCBITaxon:10090	MGI:MGI:1278328			UniProtKB:Q9Z2W0	
+PR:Q9Z324	mDPM2	dolichol phosphate-mannose biosynthesis regulatory protein (mouse)	mDPM2|dolichol-phosphate mannose synthase subunit 2 (mouse)|DPM synthase subunit 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330238			UniProtKB:Q9Z324	
+PR:Q9Z324-1	mDPM2/iso:1	dolichol phosphate-mannose biosynthesis regulatory protein isoform 1 (mouse)	mDPM2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1330238			UniProtKB:Q9Z324-1	
+PR:Q9Z218	mDPP6	dipeptidyl aminopeptidase-like protein 6 (mouse)	mDPP6|dipeptidyl aminopeptidase-related protein (mouse)|dipeptidyl peptidase 6 (mouse)|dipeptidyl peptidase IV-like protein (mouse)|dipeptidyl peptidase VI (mouse)|DPP VI (mouse)|DPPX (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:94921			UniProtKB:Q9Z218	
+PR:Q9Z188	mDYRK1B	dual specificity tyrosine-phosphorylation-regulated kinase 1B (mouse)	mDYRK1B	PR:000000001	NCBITaxon:10090	MGI:MGI:1330302			UniProtKB:Q9Z188	
+PR:Q9Z188-1	mDYRK1B/iso:1	dual specificity tyrosine-phosphorylation-regulated kinase 1B isoform 1 (mouse)	mDYRK1B/iso:1|dual specificity tyrosine-phosphorylation-regulated kinase 1B isoform p69 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330302			UniProtKB:Q9Z188-1	
+PR:Q9Z188-2	mDYRK1B/iso:2	dual specificity tyrosine-phosphorylation-regulated kinase 1B isoform 2 (mouse)	mDYRK1B/iso:2|dual specificity tyrosine-phosphorylation-regulated kinase 1B isoform p65 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330302			UniProtKB:Q9Z188-2	
+PR:Q9Z188-3	mDYRK1B/iso:m3	dual specificity tyrosine-phosphorylation-regulated kinase 1B isoform m3 (mouse)	mDYRK1B/iso:m3|dual specificity tyrosine-phosphorylation-regulated kinase 1B isoform p75 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330302			UniProtKB:Q9Z188-3	
+PR:Q9Z148	mEHMT2	histone-lysine N-methyltransferase EHMT2 (mouse)	mEHMT2|euchromatic histone-lysine N-methyltransferase 2 (mouse)|H3-K9-HMTase 3 (mouse)|histone H3-K9 methyltransferase 3 (mouse)|HLA-B-associated transcript 8 (mouse)|protein G9a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:2148922			UniProtKB:Q9Z148	
+PR:Q9Z148-1	mEHMT2/iso:m1	histone-lysine N-methyltransferase EHMT2 isoform m1 (mouse)	mEHMT2/iso:m1|histone-lysine N-methyltransferase EHMT2 isoform G9a-L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:2148922			UniProtKB:Q9Z148-1	
+PR:Q9Z148-2	mEHMT2/iso:m2	histone-lysine N-methyltransferase EHMT2 isoform m2 (mouse)	mEHMT2/iso:m2|histone-lysine N-methyltransferase EHMT2 isoform G9a-S (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:2148922			UniProtKB:Q9Z148-2	
+PR:Q9Z148-3	mEHMT2/iso:m3	histone-lysine N-methyltransferase EHMT2 isoform m3 (mouse)	mEHMT2/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:2148922			UniProtKB:Q9Z148-3	
+PR:Q9Z2R9	mEIF2AK1	eukaryotic translation initiation factor 2-alpha kinase 1 (mouse)	mEIF2AK1|HCR (mouse)|heme-controlled repressor (mouse)|heme-regulated eukaryotic initiation factor eIF-2-alpha kinase (mouse)|heme-regulated inhibitor (mouse)|hemin-sensitive initiation factor 2-alpha kinase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1353448			UniProtKB:Q9Z2R9	
+PR:Q9Z2B5	mEIF2AK3	eukaryotic translation initiation factor 2-alpha kinase 3 (mouse)	mEIF2AK3|pancreatic eIF2-alpha kinase (mouse)|PRKR-like endoplasmic reticulum kinase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1341830			UniProtKB:Q9Z2B5	
+PR:Q9Z0N1	mEif2s3x	eukaryotic translation initiation factor 2 subunit 3, X-linked (mouse)	eIF2-gamma X (mouse)|eukaryotic translation initiation factor 2 subunit gamma, X-linked (mouse)|mEif2s3x	PR:000000001	NCBITaxon:10090	MGI:MGI:1349431			UniProtKB:Q9Z0N1	
+PR:Q9Z0N1-1	mEif2s3x/iso:1	eukaryotic translation initiation factor 2 subunit 3, X-linked isoform 1 (mouse)	mEif2s3x/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1349431			UniProtKB:Q9Z0N1-1	
+PR:Q9Z0N2	mEif2s3y	eukaryotic translation initiation factor 2 subunit 3, Y-linked (mouse)	mEif2s3y|eIF-2-gamma Y (mouse)|eukaryotic translation initiation factor 2 subunit gamma, Y-linked (mouse)|spermatogonial proliferation factor (mouse)|Spy (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1349430			UniProtKB:Q9Z0N2	
+PR:000078102	mEif2s3y/Cyst:1	eukaryotic translation initiation factor 2 subunit 3, Y-linked cysteinylated 1 (mouse)	mEif2s3y/Cyst:1|UniProtKB:Q9Z0N2, Cys-236, MOD:00765	PR:000000001	NCBITaxon:10090	MGI:MGI:1349430				
+PR:Q9Z1D1	mEIF3G	eukaryotic translation initiation factor 3 subunit G (mouse)	mEIF3G|eIF-3 RNA-binding subunit (mouse)|eIF-3-delta (mouse)|eIF3 p42 (mouse)|eIF3 p44 (mouse)|eIF3g (mouse)|eukaryotic translation initiation factor 3 RNA-binding subunit (mouse)|eukaryotic translation initiation factor 3 subunit 4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858258			UniProtKB:Q9Z1D1	
+PR:Q9Z1D1-1	mEIF3G/iso:1	eukaryotic translation initiation factor 3 subunit G isoform 1 (mouse)	mEIF3G/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1858258			UniProtKB:Q9Z1D1-1	
+PR:Q9Z2U4	mELF4	ETS-related transcription factor Elf-4 (mouse)	mELF4|E74-like factor 4 (mouse)|myeloid Elf-1-like factor (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1928377			UniProtKB:Q9Z2U4	
+PR:Q9Z2H5	mEPB41L1	band 4.1-like protein 1 (mouse)	mEPB41L1|4.1N (mouse)|erythrocyte membrane protein band 4.1-like 1 (mouse)|neuronal protein 4.1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:103010			UniProtKB:Q9Z2H5	
+PR:Q9Z2H5-1	mEPB41L1/iso:m1	band 4.1-like protein 1 isoform m1 (mouse)	mEPB41L1/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:103010			UniProtKB:Q9Z2H5-1	
+PR:Q9Z2H5-2	mEPB41L1/iso:m2	band 4.1-like protein 1 isoform m2 (mouse)	mEPB41L1/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:103010			UniProtKB:Q9Z2H5-2	
+PR:Q9Z2H5-3	mEPB41L1/iso:m3	band 4.1-like protein 1 isoform m3 (mouse)	mEPB41L1/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:103010			UniProtKB:Q9Z2H5-3	
+PR:Q9Z2E3	mERN2	serine/threonine-protein kinase/endoribonuclease IRE2 (mouse)	mERN2|endoplasmic reticulum-to-nucleus signaling 2 (mouse)|inositol-requiring protein 2 (mouse)|Ire1-beta (mouse)|IRE1b (mouse)|mIre1	PR:000000001	NCBITaxon:10090	MGI:MGI:1349436			UniProtKB:Q9Z2E3	
+PR:Q9Z191	mEYA4	eyes absent homolog 4 (mouse)	mEYA4	PR:000000001	NCBITaxon:10090	MGI:MGI:1337104			UniProtKB:Q9Z191	
+PR:Q9Z0R9	mFADS2	acyl-CoA 6-desaturase (mouse)	mFADS2|D6D (mouse)|Delta(6) desaturase (mouse)|Delta(6) fatty acid desaturase (mouse)|delta-6 desaturase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1930079			UniProtKB:Q9Z0R9	
+PR:Q9Z0R9-1	mFADS2/iso:1	fatty acid desaturase 2 isoform 1 (mouse)	mFADS2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1930079			UniProtKB:Q9Z0R9-1	
+PR:Q9Z2G1	mFem1aa	protein fem-1 homolog A-A (mouse)	mFem1aa|prostaglandin E receptor 4-associated protein (mouse)|FEM1-alpha-A (mouse)|FEM1a-A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1335089			UniProtKB:Q9Z2G1	
+PR:Q9Z2G0	mFEM1B	protein fem-1 homolog B (mouse)	mFEM1B|F1A-alpha (mouse)|Fem-1-like death receptor-binding protein alpha (mouse)|Fem-1-like in apoptotic pathway protein alpha (mouse)|FEM1-beta (mouse)|FEM1b (mouse)|mt-Fem (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1335087			UniProtKB:Q9Z2G0	
+PR:Q9Z2G0-1	mFEM1B/iso:1	protein fem-1 homolog B isoform 1 (mouse)	mFEM1B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1335087			UniProtKB:Q9Z2G0-1	
+PR:Q9Z2I2	mFKBP1B	peptidyl-prolyl cis-trans isomerase FKBP1B (mouse)	mFKBP1B|12.6 kDa FK506-binding protein (mouse)|12.6 kDa FKBP (mouse)|FK506-binding protein 1B (mouse)|FKBP-12.6 (mouse)|FKBP-1B (mouse)|immunophilin FKBP12.6 (mouse)|PPIase FKBP1B (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1336205			UniProtKB:Q9Z2I2	
+PR:Q9Z2I2-1	mFKBP1B/iso:1	peptidyl-prolyl cis-trans isomerase FKBP1B isoform 1 (mouse)	mFKBP1B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1336205			UniProtKB:Q9Z2I2-1	
+PR:Q9Z247	mFKBP9	peptidyl-prolyl cis-trans isomerase FKBP9 (mouse)	mFKBP9|63 kDa FK506-binding protein (mouse)|63 kDa FKBP (mouse)|FK506-binding protein 9 (mouse)|FKBP-63 (mouse)|FKBP-9 (mouse)|FKBP65RS (mouse)|PPIase FKBP9 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1350921			UniProtKB:Q9Z247	
+PR:Q9Z247-1	mFKBP9/iso:1	peptidyl-prolyl cis-trans isomerase FKBP9 isoform 1 (mouse)	mFKBP9/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1350921			UniProtKB:Q9Z247-1	
+PR:Q9Z239	mFXYD1	phospholemman (mouse)	mFXYD1|FXYD domain-containing ion transport regulator 1 (mouse)|sodium/potassium-transporting ATPase subunit FXYD1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1889273			UniProtKB:Q9Z239	
+PR:Q9Z186	mG6PC2	glucose-6-phosphatase 2 (mouse)	mG6PC2|G-6-Pase 2 (mouse)|G6Pase 2 (mouse)|islet-specific glucose-6-phosphatase catalytic subunit-related protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1277193			UniProtKB:Q9Z186	
+PR:Q9Z186-1	mG6PC2/iso:1	glucose-6-phosphatase 2 isoform 1 (mouse)	mG6PC2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1277193			UniProtKB:Q9Z186-1	
+PR:Q9Z186-2	mG6PC2/iso:2	glucose-6-phosphatase 2 isoform 2 (mouse)	mG6PC2/iso:2	PR:000000001	NCBITaxon:10090	MGI:MGI:1277193			UniProtKB:Q9Z186-2	
+PR:Q9Z1S8	mGAB2	GRB2-associated-binding protein 2 (mouse)	mGAB2|GRB2-associated binder 2 (mouse)|growth factor receptor bound protein 2-associated protein 2 (mouse)|PH domain-containing adaptor molecule p97 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333854			UniProtKB:Q9Z1S8	
+PR:Q9Z1S8-1	mGAB2/iso:1	GRB2-associated-binding protein 2 isoform 1 (mouse)	mGAB2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333854			UniProtKB:Q9Z1S8-1	
+PR:Q9Z111	mGADD45G	growth arrest and DNA damage-inducible protein GADD45 gamma (mouse)	mGADD45G|cytokine-responsive protein CR6 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1346325			UniProtKB:Q9Z111	
+PR:Q9Z0E6	mGbp2	guanylate-binding protein 2 (mouse)	mGbp2|GBP-2 (mouse)|guanine nucleotide-binding protein 2 (mouse)|interferon-induced guanylate-binding protein 2 (mouse)|mGBP-2|mGBP2	PR:000000001	NCBITaxon:10090	MGI:MGI:102772			UniProtKB:Q9Z0E6	
+PR:Q9Z1W4	mGDF11	growth/differentiation factor 11 (mouse)	mGDF11|BMP-11 (mouse)|bone morphogenetic protein 11 (mouse)|GDF-11 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338027			UniProtKB:Q9Z1W4	
+PR:Q9Z0J7	mGDF15	growth/differentiation factor 15 (mouse)	mGDF15|GDF-15 (mouse)|macrophage inhibitory cytokine 1 (mouse)|MIC-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1346047			UniProtKB:Q9Z0J7	
+PR:Q9Z2Z9	mGFPT2	glutamine--fructose-6-phosphate aminotransferase [isomerizing] 2 (mouse)	mGFPT2|D-fructose-6-phosphate amidotransferase 2 (mouse)|GFAT 2 (mouse)|GFAT2 (mouse)|glutamine:fructose-6-phosphate amidotransferase 2 (mouse)|hexosephosphate aminotransferase 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338883			UniProtKB:Q9Z2Z9	
+PR:Q9Z2Z9-1	mGFPT2/iso:1	glutamine--fructose-6-phosphate aminotransferase [isomerizing] 2 isoform 1 (mouse)	mGFPT2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338883			UniProtKB:Q9Z2Z9-1	
+PR:Q9Z0L8	mGGH	gamma-glutamyl hydrolase (mouse)	mGGH|conjugase (mouse)|FGPH (mouse)|folylpolyglutamate hydrolase (mouse)|gamma-Glu-x carboxypeptidase (mouse)|GH (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1329035			UniProtKB:Q9Z0L8	
+PR:Q9Z0L8-1	mGGH/iso:I	gamma-glutamyl hydrolase isoform I (mouse)	mGGH/iso:I	PR:000000001	NCBITaxon:10090	MGI:MGI:1329035			UniProtKB:Q9Z0L8-1	
+PR:Q9Z0L8-2	mGGH/iso:II	gamma-glutamyl hydrolase isoform II (mouse)	mGGH/iso:II	PR:000000001	NCBITaxon:10090	MGI:MGI:1329035			UniProtKB:Q9Z0L8-2	
+PR:Q9Z2A9	mGGT5	glutathione hydrolase 5 proenzyme (mouse)	mGGT5|gamma-glutamyl leukotrienase (mouse)|gamma-glutamyltransferase 5 (mouse)|gamma-glutamyltransferase-like activity 1 (mouse)|gamma-glutamyltranspeptidase 5 (mouse)|GGL (mouse)|GGT 5 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1346063			UniProtKB:Q9Z2A9	
+PR:Q9Z2A9-1	mGGT5/iso:m1	glutathione hydrolase 5 proenzyme isoform m1 (mouse)	mGGT5/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1346063			UniProtKB:Q9Z2A9-1	
+PR:Q9Z2A9-2	mGGT5/iso:m2	glutathione hydrolase 5 proenzyme isoform m2 (mouse)	mGGT5/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1346063			UniProtKB:Q9Z2A9-2	
+PR:Q9Z0G0	mGIPC1	PDZ domain-containing protein GIPC1 (mouse)	mGIPC1|GAIP C-terminus-interacting protein (mouse)|RGS-GAIP-interacting protein (mouse)|RGS19-interacting protein 1 (mouse)|SemaF cytoplasmic domain-associated protein 1 (mouse)|SEMCAP-1 (mouse)|synectin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1926252			UniProtKB:Q9Z0G0	
+PR:Q9Z0G0-1	mGIPC1/iso:1	PDZ domain-containing protein GIPC1 isoform 1 (mouse)	mGIPC1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1926252			UniProtKB:Q9Z0G0-1	
+PR:Q9Z2H7	mGIPC2	PDZ domain-containing protein GIPC2 (mouse)	mGIPC2|SemaF cytoplasmic domain-associated protein 2 (mouse)|SEMCAP-2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1889209			UniProtKB:Q9Z2H7	
+PR:Q9Z0F1-1	mGNAS/iso:Nesp55-1	neuroendocrine secretory protein 55 isoform Nesp55-1 (mouse)	mGNAS/iso:Nesp55-1	PR:000000001	NCBITaxon:10090	MGI:MGI:95777			UniProtKB:Q9Z0F1-1	
+PR:Q9Z0F1	mGNAS/iso:[Nesp55-1/Nesp55-2]	neuroendocrine secretory protein 55 isoforms Nesp55-1/Nesp55-2 (mouse)	mGNAS/iso:[Nesp55-1/Nesp55-2]	PR:000000001	NCBITaxon:10090	MGI:MGI:95777			UniProtKB:Q9Z0F1	
+PR:Q9Z0F1-2	mGNAS/iso:Nesp55-2	neuroendocrine secretory protein 55 isoform Nesp55-2 (mouse)	mGNAS/iso:Nesp55-2	PR:000000001	NCBITaxon:10090	MGI:MGI:95777			UniProtKB:Q9Z0F1-2	
+PR:Q9Z282	mGPR132	probable G-protein coupled receptor 132 (mouse)	mGPR132|G2 accumulation protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1890220			UniProtKB:Q9Z282	
+PR:Q9Z2W9	mGRIA3	glutamate receptor 3 (mouse)	mGRIA3|AMPA-selective glutamate receptor 3 (mouse)|GluA3 (mouse)|GluR-3 (mouse)|GluR-C (mouse)|GluR-K3 (mouse)|glutamate receptor ionotropic, AMPA 3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:95810			UniProtKB:Q9Z2W9	
+PR:Q9Z2W9-1	mGRIA3/iso:Flip	glutamate receptor 3 isoform Flip (mouse)	mGRIA3/iso:Flip	PR:000000001	NCBITaxon:10090	MGI:MGI:95810			UniProtKB:Q9Z2W9-1	
+PR:Q9Z2W9-2	mGRIA3/iso:Flop	glutamate receptor 3 isoform Flop (mouse)	mGRIA3/iso:Flop	PR:000000001	NCBITaxon:10090	MGI:MGI:95810			UniProtKB:Q9Z2W9-2	
+PR:Q9Z2W8	mGRIA4	glutamate receptor 4 (mouse)	GluA4 (mouse)|GluR-4 (mouse)|GluR-D (mouse)|GluR4 (mouse)|glutamate receptor ionotropic, AMPA 4 (mouse)|mGRIA4|AMPA-selective glutamate receptor 4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:95811			UniProtKB:Q9Z2W8	
+PR:Q9Z2W8-1	mGRIA4/iso:1	glutamate receptor 4 isoform 1 (mouse)	mGRIA4/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:95811			UniProtKB:Q9Z2W8-1	
+PR:Q9Z2D3	mGSDME	gasdermin-E (mouse)	mGSDME|non-syndromic hearing impairment protein 5 homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1889850			UniProtKB:Q9Z2D3	
+PR:Q9Z1E4	mGYS1	glycogen [starch] synthase, muscle (mouse)	glycogen synthase 1 (mouse)|mGYS1	PR:000000001	NCBITaxon:10090	MGI:MGI:101805			UniProtKB:Q9Z1E4	
+PR:Q9Z1E4-1	mGYS1/iso:1	glycogen [starch] synthase, muscle isoform 1 (mouse)	mGYS1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:101805			UniProtKB:Q9Z1E4-1	
+PR:Q9Z0R0	mHASPIN	serine/threonine-protein kinase haspin (mouse)	mHASPIN|germ cell-specific gene 2 protein (mouse)|haploid germ cell-specific nuclear protein kinase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1194498			UniProtKB:Q9Z0R0	
+PR:Q9Z2V6	mHDAC5	histone deacetylase 5 (mouse)	mHDAC5|HD5 (mouse)|histone deacetylase mHDA1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333784			UniProtKB:Q9Z2V6	
+PR:Q9Z2V5	mHDAC6	histone deacetylase 6 (mouse)	mHDAC6|HD6 (mouse)|histone deacetylase mHDA2 (mouse)|tubulin-lysine deacetylase HDAC6 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333752			UniProtKB:Q9Z2V5	
+PR:Q9Z0Z4	mHEPH	hephaestin (mouse)	mHEPH	PR:000000001	NCBITaxon:10090	MGI:MGI:1332240			UniProtKB:Q9Z0Z4	
+PR:Q9Z0Z4-1	mHEPH/iso:1	hephaestin isoform 1 (mouse)	mHEPH/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1332240			UniProtKB:Q9Z0Z4-1	
+PR:Q9Z0Z4-2	mHEPH/iso:m2	hephaestin isoform m2 (mouse)	mHEPH/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1332240			UniProtKB:Q9Z0Z4-2	
+PR:Q9Z104	mHMG20B	SWI/SNF-related matrix-associated actin-dependent regulator of chromatin subfamily E member 1-related (mouse)	mHMG20B|BRCA2-associated factor 35 (mouse)|HMG box-containing protein 20B (mouse)|SMARCE1-related protein (mouse)|structural DNA-binding protein BRAF35 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1341190			UniProtKB:Q9Z104	
+PR:Q9Z104-1	mHMG20B/iso:1	SWI/SNF-related matrix-associated actin-dependent regulator of chromatin subfamily E member 1-related isoform 1 (mouse)	mHMG20B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1341190			UniProtKB:Q9Z104-1	
+PR:Q9Z204	mHNRNPC	heterogeneous nuclear ribonucleoproteins C1/C2 (mouse)	mHNRNPC|hnRNP C1/C2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:107795			UniProtKB:Q9Z204	
+PR:Q9Z204-3	mHNRNPC/iso:m3	heterogeneous nuclear ribonucleoproteins C1/C2 isoform m3 (mouse)	mHNRNPC/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:107795			UniProtKB:Q9Z204-3	
+PR:Q9Z204-4	mHNRNPC/iso:m4	heterogeneous nuclear ribonucleoproteins C1/C2 isoform m4 (mouse)	mHNRNPC/iso:m4	PR:000000001	NCBITaxon:10090	MGI:MGI:107795			UniProtKB:Q9Z204-4	
+PR:Q9Z204-5	mHNRNPC/iso:m5	heterogeneous nuclear ribonucleoproteins C1/C2 isoform m5 (mouse)	mHNRNPC/iso:m5	PR:000000001	NCBITaxon:10090	MGI:MGI:107795			UniProtKB:Q9Z204-5	
+PR:Q9Z204-2	mHNRNPC/iso:mC1	heterogeneous nuclear ribonucleoproteins C1/C2 isoform mC1 (mouse)	mHNRNPC/iso:mC1	PR:000000001	NCBITaxon:10090	MGI:MGI:107795			UniProtKB:Q9Z204-2	
+PR:Q9Z204-1	mHNRNPC/iso:mC2	heterogeneous nuclear ribonucleoproteins C1/C2 isoform mC2 (mouse)	mHNRNPC/iso:mC2	PR:000000001	NCBITaxon:10090	MGI:MGI:107795			UniProtKB:Q9Z204-1	
+PR:Q9Z130	mHNRNPDL	heterogeneous nuclear ribonucleoprotein D-like (mouse)	mHNRNPDL|hnRNP D-like (mouse)|hnRNP DL (mouse)|JKT41-binding protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1355299			UniProtKB:Q9Z130	
+PR:Q9Z2X1	mHNRNPF	heterogeneous nuclear ribonucleoprotein F (mouse)	mHNRNPF|hnRNP F (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:2138741			UniProtKB:Q9Z2X1	
+PR:Q9Z2X1-1	mHNRNPF/iso:1	heterogeneous nuclear ribonucleoprotein F isoform 1 (mouse)	mHNRNPF/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:2138741			UniProtKB:Q9Z2X1-1	
+PR:Q9Z2X1-2	mHNRNPF/iso:m2	heterogeneous nuclear ribonucleoprotein F isoform m2 (mouse)	mHNRNPF/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:2138741			UniProtKB:Q9Z2X1-2	
+PR:Q9Z2Y3	mHOMER1	homer protein homolog 1 (mouse)	mHOMER1|homer-1 (mouse)|VASP/Ena-related gene up-regulated during seizure and LTP 1 (mouse)|Vesl-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347345			UniProtKB:Q9Z2Y3	
+PR:Q9Z2Y3-5	mHOMER1/iso:5	homer protein homolog 1 isoform 5 (mouse)	mHOMER1/iso:5|homer protein homolog 1 isoform Vesl-1S (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347345			UniProtKB:Q9Z2Y3-5	
+PR:Q9Z2Y3-1	mHOMER1/iso:m1	homer protein homolog 1 isoform m1 (mouse)	mHOMER1/iso:m1|homer protein homolog 1 isoform Vesl-1L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347345			UniProtKB:Q9Z2Y3-1	
+PR:Q9Z2Y3-2	mHOMER1/iso:m2	homer protein homolog 1 isoform m2 (mouse)	mHOMER1/iso:m2|homer protein homolog 1 isoform 1d (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347345			UniProtKB:Q9Z2Y3-2	
+PR:Q9Z2Y3-3	mHOMER1/iso:m3	homer protein homolog 1 isoform m3 (mouse)	mHOMER1/iso:m3|homer protein homolog 1 isoform 1b (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347345			UniProtKB:Q9Z2Y3-3	
+PR:Q9Z2Y3-4	mHOMER1/iso:m4	homer protein homolog 1 isoform m4 (mouse)	mHOMER1/iso:m4|homer protein homolog 1 isoform Vesl-1M (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347345			UniProtKB:Q9Z2Y3-4	
+PR:Q9Z2G9	mHTATIP2	oxidoreductase HTATIP2 (mouse)	mHTATIP2	PR:000000001	NCBITaxon:10090	MGI:MGI:1859271			UniProtKB:Q9Z2G9	
+PR:Q9Z2G9-1	mHTATIP2/iso:1	oxidoreductase HTATIP2 isoform 1 (mouse)	mHTATIP2/iso:1|oxidoreductase HTATIP2 isoform CC3 (mouse)|oxidoreductase HTATIP2 isoform TIP30 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1859271			UniProtKB:Q9Z2G9-1	
+PR:Q9Z2G9-2	mHTATIP2/iso:m2	oxidoreductase HTATIP2 isoform m2 (mouse)	mHTATIP2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1859271			UniProtKB:Q9Z2G9-2	
+PR:Q9Z1M8	mIK	protein Red (mouse)	mIK|cytokine IK (mouse)|IK factor (mouse)|protein RER (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1345142			UniProtKB:Q9Z1M8	
+PR:Q9Z1M8-1	mIK/iso:1	protein Red isoform 1 (mouse)	mIK/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1345142			UniProtKB:Q9Z1M8-1	
+PR:Q9Z0M9	mIL18BP	interleukin-18-binding protein (mouse)	mIL18BP|IL-18BP (mouse)|interferon gamma-inducing factor-binding protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333800			UniProtKB:Q9Z0M9	
+PR:Q9Z2B1	mIL18RAP	interleukin-18 receptor accessory protein (mouse)	mIL18RAP|accessory protein-like (mouse)|AcPL (mouse)|CD218 antigen-like family member B (mouse)|CD218b (mouse)|IL-18 receptor accessory protein (mouse)|IL-18R-beta (mouse)|IL-18RAcP (mouse)|IL-18Rbeta (mouse)|IL-1R accessory protein-like (mouse)|IL-1RAcPL (mouse)|interleukin-18 receptor accessory protein-like (mouse)|interleukin-18 receptor beta (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338888			UniProtKB:Q9Z2B1	
+PR:Q9Z1X4	mILF3	interleukin enhancer-binding factor 3 (mouse)	mILF3	PR:000000001	NCBITaxon:10090	MGI:MGI:1339973			UniProtKB:Q9Z1X4	
+PR:Q9Z1X4-1	mILF3/iso:m1	interleukin enhancer-binding factor 3 isoform m1 (mouse)	mILF3/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1339973			UniProtKB:Q9Z1X4-1	
+PR:Q9Z1X4-2	mILF3/iso:m2	interleukin enhancer-binding factor 3 isoform m2 (mouse)	mILF3/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1339973			UniProtKB:Q9Z1X4-2	
+PR:Q9Z1X4-3	mILF3/iso:m3	interleukin enhancer-binding factor 3 isoform m3 (mouse)	mILF3/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1339973			UniProtKB:Q9Z1X4-3	
+PR:Q9Z0Y7	mIRS4	insulin receptor substrate 4 (mouse)	mIRS4|IRS-4 (mouse)|phosphoprotein of 160 kDa (mouse)|pp160 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338009			UniProtKB:Q9Z0Y7	
+PR:Q9Z0T9	mITGB6	integrin beta-6 (mouse)	mITGB6	PR:000000001	NCBITaxon:10090	MGI:MGI:96615			UniProtKB:Q9Z0T9	
+PR:Q9Z0T9-1	mITGB6/iso:1	integrin beta-6 isoform 1 (mouse)	mITGB6/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:96615			UniProtKB:Q9Z0T9-1	
+PR:Q9Z329	mITPR2	inositol 1,4,5-trisphosphate receptor type 2 (mouse)	mITPR2|inositol 1,4,5-trisphosphate type V receptor (mouse)|InsP3R2 (mouse)|IP3 receptor isoform 2 (mouse)|IP3R 2 (mouse)|type 2 inositol 1,4,5-trisphosphate receptor (mouse)|type 2 InsP3 receptor (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99418			UniProtKB:Q9Z329	
+PR:Q9Z329-1	mITPR2/iso:1	inositol 1,4,5-trisphosphate receptor type 2 isoform 1 (mouse)	mITPR2/iso:1|inositol 1,4,5-trisphosphate receptor type 2 isoform Long (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99418			UniProtKB:Q9Z329-1	
+PR:Q9Z329-2	mITPR2/iso:m2	inositol 1,4,5-trisphosphate receptor type 2 isoform m2 (mouse)	mITPR2/iso:m2|inositol 1,4,5-trisphosphate receptor type 2 isoform Short (mouse)|inositol 1,4,5-trisphosphate receptor type 2 isoform TIPR (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99418			UniProtKB:Q9Z329-2	
+PR:Q9Z329-3	mITPR2/iso:m3	inositol 1,4,5-trisphosphate receptor type 2 isoform m3 (mouse)	mITPR2/iso:m3|inositol 1,4,5-trisphosphate receptor type 2 isoform Itpr2v (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99418			UniProtKB:Q9Z329-3	
+PR:Q9Z0R4	mITSN1	intersectin-1 (mouse)	mITSN1|EH and SH3 domains protein 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338069			UniProtKB:Q9Z0R4	
+PR:Q9Z0R4-1	mITSN1/iso:m1	intersectin-1 isoform m1 (mouse)	mITSN1/iso:m1|intersectin-1 isoform Ese1L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338069			UniProtKB:Q9Z0R4-1	
+PR:Q9Z0R4-2	mITSN1/iso:m2	intersectin-1 isoform m2 (mouse)	mITSN1/iso:m2|intersectin-1 isoform ITSN-s (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338069			UniProtKB:Q9Z0R4-2	
+PR:Q9Z0R6	mITSN2	intersectin-2 (mouse)	mITSN2|EH and SH3 domains protein 2 (mouse)|EH domain and SH3 domain regulator of endocytosis 2 (mouse)|SH3 domain-containing protein 1B (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338049			UniProtKB:Q9Z0R6	
+PR:Q9Z0R6-1	mITSN2/iso:m1	intersectin-2 isoform m1 (mouse)	mITSN2/iso:m1|intersectin-2 isoform Ese2L (mouse)|intersectin-2 isoform Long (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338049			UniProtKB:Q9Z0R6-1	
+PR:Q9Z0R6-2	mITSN2/iso:m2	intersectin-2 isoform m2 (mouse)	mITSN2/iso:m2|intersectin-2 isoform Ese2 (mouse)|intersectin-2 isoform Short (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338049			UniProtKB:Q9Z0R6-2	
+PR:Q9Z1P7	mKANK3	KN motif and ankyrin repeat domain-containing protein 3 (mouse)	mKANK3|ankyrin repeat domain-containing protein 47 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1098615			UniProtKB:Q9Z1P7	
+PR:Q9Z0V2	mKCND2	potassium voltage-gated channel subfamily D member 2 (mouse)	mKCND2|voltage-gated potassium channel subunit Kv4.2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:102663			UniProtKB:Q9Z0V2	
+PR:Q9Z0V2-1	mKCND2/iso:1	potassium voltage-gated channel subfamily D member 2 isoform 1 (mouse)	mKCND2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:102663			UniProtKB:Q9Z0V2-1	
+PR:000036577	mKCND2/iso:1/Phos:1	voltage-gated potassium channel KCND2 isoform 1 phosphorylated 1 (mouse)	mKCND2/iso:1/Phos:1|UniProtKB:Q9Z0V2-1, Thr-38, MOD:00047|Ser-552, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:102663				
+PR:000036578	mKCND2/iso:1/Phos:2	voltage-gated potassium channel KCND2 isoform 1 phosphorylated 2 (mouse)	mKCND2/iso:1/Phos:2|UniProtKB:Q9Z0V2-1, Thr-38, MOD:00047	PR:000000001	NCBITaxon:10090	MGI:MGI:102663				
+PR:000036579	mKCND2/iso:1/Phos:3	voltage-gated potassium channel KCND2 isoform 1 phosphorylated 3 (mouse)	mKCND2/iso:1/Phos:3|UniProtKB:Q9Z0V2-1, Ser-552, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:102663				
+PR:000036580	mKCND2/iso:1/Phos:4	voltage-gated potassium channel KCND2 isoform 1 phosphorylated 4 (mouse)	mKCND2/iso:1/Phos:4|UniProtKB:Q9Z0V2-1, Thr-602/Thr-607, MOD:00047|Ser-616, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:102663				
+PR:000045389	mKCND2/iso:1/UnPhos:3	voltage-gated potassium channel KCND2 isoform 1 unphosphorylated 3 (mouse)	mKCND2/iso:1/UnPhos:3|UniProtKB:Q9Z0V2-1, Ser-552, PR:000026291	PR:000000001	NCBITaxon:10090	MGI:MGI:102663				
+PR:000045390	mKCND2/iso:1/UnPhos:4	voltage-gated potassium channel KCND2 isoform 1 unphosphorylated 4 (mouse)	mKCND2/iso:1/UnPhos:4|UniProtKB:Q9Z0V2-1, Thr-602/Thr-607/Ser-616, PR:000026291	PR:000000001	NCBITaxon:10090	MGI:MGI:102663				
+PR:Q9Z0V1	mKCND3	potassium voltage-gated channel subfamily D member 3 (mouse)	mKCND3|voltage-gated potassium channel subunit Kv4.3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1928743			UniProtKB:Q9Z0V1	
+PR:Q9Z0V1-1	mKCND3/iso:1	potassium voltage-gated channel subfamily D member 3 isoform 1 (mouse)	mKCND3/iso:1|potassium voltage-gated channel subfamily D member 3 isoform Kv4.3L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1928743			UniProtKB:Q9Z0V1-1	
+PR:Q9Z0V1-2	mKCND3/iso:2	potassium voltage-gated channel subfamily D member 3 isoform 2 (mouse)	mKCND3/iso:2|potassium voltage-gated channel subfamily D member 3 isoform Kv4.3M (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1928743			UniProtKB:Q9Z0V1-2	
+PR:Q9Z0V1-3	mKCND3/iso:m3	potassium voltage-gated channel subfamily D member 3 isoform m3 (mouse)	mKCND3/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1928743			UniProtKB:Q9Z0V1-3	
+PR:Q9Z307	mKCNJ16	inward rectifier potassium channel 16 (mouse)	mKCNJ16|inward rectifier K(+) channel Kir5.1 (mouse)|potassium channel, inwardly rectifying subfamily J member 16 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1314842			UniProtKB:Q9Z307	
+PR:Q9Z2T1	mKCNK7	potassium channel subfamily K member 7 (mouse)	mKCNK7|double-pore K(+) channel 3 (mouse)|neuromuscular two p domain potassium channel (mouse)|putative potassium channel DP3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1341841			UniProtKB:Q9Z2T1	
+PR:Q9Z2T1-1	mKCNK7/iso:1	potassium channel subfamily K member 7 isoform 1 (mouse)	mKCNK7/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1341841			UniProtKB:Q9Z2T1-1	
+PR:Q9Z351	mKCNQ2	potassium voltage-gated channel subfamily KQT member 2 (mouse)	mKCNQ2|KQT-like 2 (mouse)|potassium channel subunit alpha KvLQT2 (mouse)|voltage-gated potassium channel subunit Kv7.2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351	
+PR:Q9Z351-1	mKCNQ2/iso:1	potassium voltage-gated channel subfamily KQT member 2 isoform 1 (mouse)	mKCNQ2/iso:1|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-1	
+PR:Q9Z351-10	mKCNQ2/iso:10	potassium voltage-gated channel subfamily KQT member 2 isoform 10 (mouse)	mKCNQ2/iso:10|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.10 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-10	
+PR:Q9Z351-11	mKCNQ2/iso:11	potassium voltage-gated channel subfamily KQT member 2 isoform 11 (mouse)	mKCNQ2/iso:11|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.11 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-11	
+PR:Q9Z351-12	mKCNQ2/iso:12	potassium voltage-gated channel subfamily KQT member 2 isoform 12 (mouse)	mKCNQ2/iso:12	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-12	
+PR:Q9Z351-2	mKCNQ2/iso:2	potassium voltage-gated channel subfamily KQT member 2 isoform 2 (mouse)	mKCNQ2/iso:2|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-2	
+PR:Q9Z351-3	mKCNQ2/iso:3	potassium voltage-gated channel subfamily KQT member 2 isoform 3 (mouse)	mKCNQ2/iso:3|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-3	
+PR:Q9Z351-4	mKCNQ2/iso:4	potassium voltage-gated channel subfamily KQT member 2 isoform 4 (mouse)	mKCNQ2/iso:4|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-4	
+PR:Q9Z351-5	mKCNQ2/iso:5	potassium voltage-gated channel subfamily KQT member 2 isoform 5 (mouse)	mKCNQ2/iso:5|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.5 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-5	
+PR:Q9Z351-6	mKCNQ2/iso:6	potassium voltage-gated channel subfamily KQT member 2 isoform 6 (mouse)	mKCNQ2/iso:6|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.6 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-6	
+PR:Q9Z351-7	mKCNQ2/iso:7	potassium voltage-gated channel subfamily KQT member 2 isoform 7 (mouse)	potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.7 (mouse)|mKCNQ2/iso:7	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-7	
+PR:Q9Z351-8	mKCNQ2/iso:8	potassium voltage-gated channel subfamily KQT member 2 isoform 8 (mouse)	mKCNQ2/iso:8|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.8 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-8	
+PR:Q9Z351-9	mKCNQ2/iso:9	potassium voltage-gated channel subfamily KQT member 2 isoform 9 (mouse)	mKCNQ2/iso:9|potassium voltage-gated channel subfamily KQT member 2 isoform MKQT2.9 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-9	
+PR:Q9Z351-13	mKCNQ2/iso:m13	potassium voltage-gated channel subfamily KQT member 2 isoform m13 (mouse)	mKCNQ2/iso:m13	PR:000000001	NCBITaxon:10090	MGI:MGI:1309503			UniProtKB:Q9Z351-13	
+PR:Q9Z2X8	mKEAP1	kelch-like ECH-associated protein 1 (mouse)	mKEAP1|cytosolic inhibitor of Nrf2 (mouse)|INrf2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858732			UniProtKB:Q9Z2X8	
+PR:Q9Z2X8-1	mKEAP1/iso:1	kelch-like ECH-associated protein 1 isoform 1 (mouse)	mKEAP1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1858732			UniProtKB:Q9Z2X8-1	
+PR:Q9Z0Z7	mKLF5	krueppel-like factor 5 (mouse)	mKLF5|basic transcription element-binding protein 2 (mouse)|BTE-binding protein 2 (mouse)|intestinal-enriched krueppel-like factor (mouse)|transcription factor BTEB2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338056			UniProtKB:Q9Z0Z7	
+PR:Q9Z0M1	mKLK4	kallikrein-4 (mouse)	mKLK4|enamel matrix serine proteinase 1 (mouse)|kallikrein-like protein 1 (mouse)|serine protease 17 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1861379			UniProtKB:Q9Z0M1	
+PR:Q9Z2Q2	mKNOP1	lysine-rich nucleolar protein 1 (mouse)	mKNOP1|testis-specific gene 118 protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913606			UniProtKB:Q9Z2Q2	
+PR:Q9Z2Q2-1	mKNOP1/iso:m1	lysine-rich nucleolar protein 1 isoform m1 (mouse)	mKNOP1/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1913606			UniProtKB:Q9Z2Q2-1	
+PR:Q9Z2Q2-2	mKNOP1/iso:m2	lysine-rich nucleolar protein 1 isoform m2 (mouse)	mKNOP1/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1913606			UniProtKB:Q9Z2Q2-2	
+PR:Q9Z2Q2-3	mKNOP1/iso:m3	lysine-rich nucleolar protein 1 isoform m3 (mouse)	mKNOP1/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1913606			UniProtKB:Q9Z2Q2-3	
+PR:Q9Z2K1	mKRT16	keratin, type I cytoskeletal 16 (mouse)	mKRT16|CK-16 (mouse)|cytokeratin-16 (mouse)|K16 (mouse)|keratin-16 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:96690			UniProtKB:Q9Z2K1	
+PR:Q9Z320	mKRT27	keratin, type I cytoskeletal 27 (mouse)	mKRT27|CK-27 (mouse)|cytokeratin-27 (mouse)|K27 (mouse)|keratin complex-1, acidic, gene C29 (mouse)|keratin-27 (mouse)|type I inner root sheath-specific keratin-K25irs3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1339999			UniProtKB:Q9Z320	
+PR:Q9Z331	mKrt6b	keratin, type II cytoskeletal 6B (mouse)	mKrt6b|CK-6B (mouse)|cytokeratin-6B (mouse)|K6B (mouse)|keratin-6-beta (mouse)|keratin-6B (mouse)|mK6-beta	PR:000000001	NCBITaxon:10090	MGI:MGI:1333768			UniProtKB:Q9Z331	
+PR:Q9Z2T6	mKRT85	keratin, type II cuticular Hb5 (mouse)	mKRT85|K85 (mouse)|keratin-85 (mouse)|type II hair keratin Hb5 (mouse)|type-II keratin Kb25 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1859268			UniProtKB:Q9Z2T6	
+PR:Q9Z2T6-1	mKRT85/iso:1	keratin, type II cuticular Hb5 isoform 1 (mouse)	mKRT85/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1859268			UniProtKB:Q9Z2T6-1	
+PR:Q9Z287	mKrtap12-1	keratin-associated protein 12-1 (mouse)	mKrtap12-1	PR:000000001	NCBITaxon:10090	MGI:MGI:1328315			UniProtKB:Q9Z287	
+PR:Q9Z1M7	mLARGE1	xylosyl- and glucuronyltransferase LARGE1 (mouse)	mLARGE1|acetylglucosaminyltransferase-like 1A (mouse)|glycosyltransferase-like protein (mouse)|LARGE xylosyl- and glucuronyltransferase 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1342270			UniProtKB:Q9Z1M7	
+PR:Q9Z1M7-1	mLARGE1/iso:1	xylosyl- and glucuronyltransferase LARGE1 isoform 1 (mouse)	mLARGE1/iso:1|glycosyltransferase-like protein LARGE1 isoform 1 (mouse)|Large isoform 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1342270			UniProtKB:Q9Z1M7-1	
+PR:Q9Z2I0	mLETM1	mitochondrial proton/calcium exchanger protein (mouse)	KHE (mouse)|electroneutral mitochondrial K(+)/H(+)exchanger (mouse)|leucine zipper-EF-hand-containing transmembrane protein 1 (mouse)|mLETM1	PR:000000001	NCBITaxon:10090	MGI:MGI:1932557			UniProtKB:Q9Z2I0	
+PR:Q9Z1P4	mLGR5	leucine-rich repeat-containing G-protein coupled receptor 5 (mouse)	mLGR5|G-protein coupled receptor 49 (mouse)|orphan G-protein coupled receptor FEX (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1341817			UniProtKB:Q9Z1P4	
+PR:Q9Z1P4-1	mLGR5/iso:1	leucine-rich repeat-containing G-protein coupled receptor 5 isoform 1 (mouse)	mLGR5/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1341817			UniProtKB:Q9Z1P4-1	
+PR:Q9Z0S2	mLHX2	LIM/homeobox protein Lhx2 (mouse)	mLHX2|homeobox protein LH-2 (mouse)|LIM homeobox protein 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:96785			UniProtKB:Q9Z0S2	
+PR:Q9Z0S2-1	mLHX2/iso:1	LIM/homeobox protein Lhx2 isoform 1 (mouse)	mLHX2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:96785			UniProtKB:Q9Z0S2-1	
+PR:Q9Z0M5	mLIPA	lysosomal acid lipase/cholesteryl ester hydrolase (mouse)	mLIPA|acid cholesteryl ester hydrolase (mouse)|cholesteryl esterase (mouse)|LAL (mouse)|lipase A (mouse)|sterol esterase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:96789			UniProtKB:Q9Z0M5	
+PR:Q9Z175	mLOXL3	lysyl oxidase homolog 3 (mouse)	mLOXL3|lysyl oxidase-like protein 3 (mouse)|lysyl oxidase-related protein 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1337004			UniProtKB:Q9Z175	
+PR:000082084	mLOXL3/SGlt:1	lysyl oxidase homolog 3 glutathionylated 1 (mouse)	mLOXL3/SGlt:1|UniProtKB:Q9Z175, Cys-145, MOD:00234	PR:000000001	NCBITaxon:10090	MGI:MGI:1337004				
+PR:Q9Z1Q4	mLY6G6C	lymphocyte antigen 6 complex locus protein G6c (mouse)	mLY6G6C	PR:000000001	NCBITaxon:10090	MGI:MGI:2148930			UniProtKB:Q9Z1Q4	
+PR:Q9Z1Q3	mLY6G6D	lymphocyte antigen 6 complex locus protein G6d (mouse)	mLY6G6D	PR:000000001	NCBITaxon:10090	MGI:MGI:2148931			UniProtKB:Q9Z1Q3	
+PR:Q9Z0E1	mM1AP	meiosis 1 arrest protein (mouse)	mM1AP|meiosis 1-arresting protein (mouse)|meiosis 1-associated protein (mouse)|spermatogenesis-associated protein 37 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1315200			UniProtKB:Q9Z0E1	
+PR:Q9Z1B5	mMAD2L1	mitotic spindle assembly checkpoint protein MAD2A (mouse)	mMAD2L1|MAD2-like protein 1 (mouse)|mitotic arrest deficient 2-like protein 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1860374			UniProtKB:Q9Z1B5	
+PR:Q9Z1B5-1	mMAD2L1/iso:1	mitotic spindle assembly checkpoint protein MAD2A isoform 1 (mouse)	mMAD2L1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1860374			UniProtKB:Q9Z1B5-1	
+PR:Q9Z1B7	mMAPK13	mitogen-activated protein kinase 13 (mouse)	mMAPK13|MAP kinase 13 (mouse)|MAP kinase p38 delta (mouse)|MAPK 13 (mouse)|mitogen-activated protein kinase p38 delta (mouse)|stress-activated protein kinase 4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1346864			UniProtKB:Q9Z1B7	
+PR:Q9Z2E2	mMBD1	methyl-CpG-binding domain protein 1 (mouse)	mMBD1|methyl-CpG-binding protein MBD1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333811			UniProtKB:Q9Z2E2	
+PR:Q9Z2E2-1	mMBD1/iso:m1	methyl-CpG-binding domain protein 1 isoform m1 (mouse)	mMBD1/iso:m1|methyl-CpG-binding domain protein 1 isoform MBD1a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333811			UniProtKB:Q9Z2E2-1	
+PR:Q9Z2E2-2	mMBD1/iso:m2	methyl-CpG-binding domain protein 1 isoform m2 (mouse)	mMBD1/iso:m2|methyl-CpG-binding domain protein 1 isoform MBD1b (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333811			UniProtKB:Q9Z2E2-2	
+PR:Q9Z2E2-3	mMBD1/iso:m3	methyl-CpG-binding domain protein 1 isoform m3 (mouse)	mMBD1/iso:m3|methyl-CpG-binding domain protein 1 isoform MBD1d (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333811			UniProtKB:Q9Z2E2-3	
+PR:Q9Z2E2-4	mMBD1/iso:m4	methyl-CpG-binding domain protein 1 isoform m4 (mouse)	mMBD1/iso:m4	PR:000000001	NCBITaxon:10090	MGI:MGI:1333811			UniProtKB:Q9Z2E2-4	
+PR:Q9Z2E2-5	mMBD1/iso:m5	methyl-CpG-binding domain protein 1 isoform m5 (mouse)	mMBD1/iso:m5	PR:000000001	NCBITaxon:10090	MGI:MGI:1333811			UniProtKB:Q9Z2E2-5	
+PR:Q9Z2E1	mMBD2	methyl-CpG-binding domain protein 2 (mouse)	mMBD2|methyl-CpG-binding protein MBD2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333813			UniProtKB:Q9Z2E1	
+PR:Q9Z2E1-1	mMBD2/iso:m1	methyl-CpG-binding domain protein 2 isoform m1 (mouse)	mMBD2/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333813			UniProtKB:Q9Z2E1-1	
+PR:Q9Z2E1-2	mMBD2/iso:m2	methyl-CpG-binding domain protein 2 isoform m2 (mouse)	mMBD2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1333813			UniProtKB:Q9Z2E1-2	
+PR:Q9Z2D8	mMBD3	methyl-CpG-binding domain protein 3 (mouse)	mMBD3|methyl-CpG-binding protein MBD3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333812			UniProtKB:Q9Z2D8	
+PR:Q9Z2D8-1	mMBD3/iso:m1	methyl-CpG-binding domain protein 3 isoform m1 (mouse)	mMBD3/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333812			UniProtKB:Q9Z2D8-1	
+PR:Q9Z2D8-2	mMBD3/iso:m2	methyl-CpG-binding domain protein 3 isoform m2 (mouse)	mMBD3/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1333812			UniProtKB:Q9Z2D8-2	
+PR:Q9Z2D7	mMBD4	methyl-CpG-binding domain protein 4 (mouse)	mMBD4|methyl-CpG-binding protein MBD4 (mouse)|mismatch-specific DNA N-glycosylase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333850			UniProtKB:Q9Z2D7	
+PR:Q9Z2D6	mMECP2	methyl-CpG-binding protein 2 (mouse)	mMECP2|MeCp-2 protein (mouse)|MeCp2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99918			UniProtKB:Q9Z2D6	
+PR:Q9Z2D6-1	mMECP2/iso:1	methyl-CpG-binding protein 2 isoform 1 (mouse)	mMECP2/iso:1|MECP2a (mouse)|MECP2e2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99918			UniProtKB:Q9Z2D6-1	
+PR:Q9Z2D6-2	mMECP2/iso:2	methyl-CpG-binding protein 2 isoform 2 (mouse)	mMECP2/iso:2|MECP2b (mouse)|MECP2e1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:99918			UniProtKB:Q9Z2D6-2	
+PR:Q9Z120	mMETTL1	tRNA (guanine-N(7)-)-methyltransferase (mouse)	mMETTL1|methyltransferase-like protein 1 (mouse)|miRNA (guanine-N(7)-)-methyltransferase (mouse)|mRNA (guanine-N(7)-)-methyltransferase (mouse)|tRNA (guanine(46)-N(7))-methyltransferase (mouse)|tRNA(m7G46)-methyltransferase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1339986			UniProtKB:Q9Z120	
+PR:Q9Z2L6	mMINPP1	multiple inositol polyphosphate phosphatase 1 (mouse)	2,3-BPG phosphatase (mouse)|2,3-bisphosphoglycerate 3-phosphatase (mouse)|mMINPP1	PR:000000001	NCBITaxon:10090	MGI:MGI:1336159			UniProtKB:Q9Z2L6	
+PR:Q9Z223	mMOCS2L	molybdopterin synthase catalytic subunit (mouse)	mMOCS2L|MOCS2B (mouse)|molybdenum cofactor synthesis protein 2 large subunit (mouse)|molybdenum cofactor synthesis protein 2B (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1336894			UniProtKB:Q9Z223	
+PR:Q9Z223-2	mMOCS2L/iso:m1	molybdopterin synthase catalytic subunit isoform m1 (mouse)	mMOCS2L/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1336894			UniProtKB:Q9Z223-2	
+PR:Q9Z223-1	mMOCS2L/iso:m2	molybdopterin synthase catalytic subunit isoform m2 (mouse)	mMOCS2L/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1336894			UniProtKB:Q9Z223-1	
+PR:Q9Z223-3	mMOCS2L/iso:m3	molybdopterin synthase catalytic subunit isoform m3 (mouse)	mMOCS2L/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1336894			UniProtKB:Q9Z223-3	
+PR:Q9Z224	mMOCS2S	molybdopterin synthase sulfur carrier subunit (mouse)	mMOCS2S|MOCS2A (mouse)|molybdenum cofactor synthesis protein 2 small subunit (mouse)|molybdenum cofactor synthesis protein 2A (mouse)|sulfur carrier protein MOCS2A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1336894			UniProtKB:Q9Z224	
+PR:Q9Z2Q5	mMRPL40	large ribosomal subunit protein mL40 (mouse)	39S ribosomal protein L40, mitochondrial (mouse)|L40mt (mouse)|MRP-L40 (mouse)|mMRPL40|nuclear localization signal-containing protein deleted in velocardiofacial syndrome homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1332635			UniProtKB:Q9Z2Q5	
+PR:Q9Z2Q5-1	mMRPL40/iso:1	39S ribosomal protein L40, mitochondrial isoform 1 (mouse)	mMRPL40/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1332635			UniProtKB:Q9Z2Q5-1	
+PR:Q9Z2C5	mMTM1	myotubularin (mouse)	mMTM1	PR:000000001	NCBITaxon:10090	MGI:MGI:1099452			UniProtKB:Q9Z2C5	
+PR:Q9Z2C5-1	mMTM1/iso:1	myotubularin isoform 1 (mouse)	mMTM1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1099452			UniProtKB:Q9Z2C5-1	
+PR:Q9Z2C4	mMTMR1	myotubularin-related protein 1 (mouse)	mMTMR1	PR:000000001	NCBITaxon:10090	MGI:MGI:1858271			UniProtKB:Q9Z2C4	
+PR:Q9Z2D1	mMTMR2	myotubularin-related protein 2 (mouse)	mMTMR2	PR:000000001	NCBITaxon:10090	MGI:MGI:1924366			UniProtKB:Q9Z2D1	
+PR:Q9Z2D1-1	mMTMR2/iso:1	myotubularin-related protein 2 isoform 1 (mouse)	mMTMR2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1924366			UniProtKB:Q9Z2D1-1	
+PR:Q9Z2C9	mMTMR7	myotubularin-related protein 7 (mouse)	mMTMR7|inositol 1,3-bisphosphate phosphatase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1891693			UniProtKB:Q9Z2C9	
+PR:Q9Z2C9-1	mMTMR7/iso:1	myotubularin-related protein 7 isoform 1 (mouse)	mMTMR7/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1891693			UniProtKB:Q9Z2C9-1	
+PR:Q9Z2D0	mMTMR9	myotubularin-related protein 9 (mouse)	mMTMR9|inactive phosphatidylinositol 3-phosphatase 9 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:2442842			UniProtKB:Q9Z2D0	
+PR:Q9Z304	mMycs	protein S-Myc (mouse)	mMycs	PR:000000001	NCBITaxon:10090	MGI:MGI:1332242			UniProtKB:Q9Z304	
+PR:Q9Z0E0	mNCDN	neurochondrin (mouse)	mNCDN|M-Sema F-associating protein of 75 kDa (mouse)|norbin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347351			UniProtKB:Q9Z0E0	
+PR:Q9Z0E0-1	mNCDN/iso:1	neurochondrin isoform 1 (mouse)	mNCDN/iso:1|neurochondrin isoform Neurochondrin-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347351			UniProtKB:Q9Z0E0-1	
+PR:Q9Z0E0-2	mNCDN/iso:m2	neurochondrin isoform m2 (mouse)	mNCDN/iso:m2|neurochondrin isoform Neurochondrin-2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347351			UniProtKB:Q9Z0E0-2	
+PR:Q9Z1P6	mNDUFA7	NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 7 (mouse)	mNDUFA7|CI-B14.5a (mouse)|complex I-B14.5a (mouse)|NADH-ubiquinone oxidoreductase subunit B14.5a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1913666			UniProtKB:Q9Z1P6	
+PR:Q9Z1P6-1	mNDUFA7/iso:1	NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 7 isoform 1 (mouse)	mNDUFA7/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1913666			UniProtKB:Q9Z1P6-1	
+PR:Q9Z1J2	mNEK4	serine/threonine-protein kinase Nek4 (mouse)	mNEK4|never in mitosis A-related kinase 4 (mouse)|NimA-related protein kinase 4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1344404			UniProtKB:Q9Z1J2	
+PR:Q9Z1J2-1	mNEK4/iso:m1	serine/threonine-protein kinase Nek4 isoform m1 (mouse)	mNEK4/iso:m1|serine/threonine-protein kinase Nek4 isoform mSTK2L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1344404			UniProtKB:Q9Z1J2-1	
+PR:Q9Z1J2-2	mNEK4/iso:m2	serine/threonine-protein kinase Nek4 isoform m2 (mouse)	mNEK4/iso:m2|serine/threonine-protein kinase Nek4 isoform mSTK2S (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1344404			UniProtKB:Q9Z1J2-2	
+PR:Q9Z206	mNET1	neuroepithelial cell-transforming gene 1 protein (mouse)	mNET1|Rho guanine nucleotide exchange factor 8 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1927138			UniProtKB:Q9Z206	
+PR:Q9Z206-1	mNET1/iso:1	neuroepithelial cell-transforming gene 1 protein isoform 1 (mouse)	mNET1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1927138			UniProtKB:Q9Z206-1	
+PR:Q9Z206-2	mNET1/iso:2	neuroepithelial cell-transforming gene 1 protein isoform 2 (mouse)	mNET1/iso:2|NET1A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1927138			UniProtKB:Q9Z206-2	
+PR:Q9Z1E3	mNFKBIA	NF-kappa-B inhibitor alpha (mouse)	mNFKBIA|I-kappa-B-alpha (mouse)|IkappaBalpha (mouse)|IkB-alpha (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:104741			UniProtKB:Q9Z1E3	
+PR:Q9Z1E3-1	mNFKBIA/iso:1	NF-kappa-B inhibitor alpha isoform 1 (mouse)	mNFKBIA/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:104741			UniProtKB:Q9Z1E3-1	
+PR:000028550	mNFKBIA/iso:1/Phos:1	NF-kappa-B inhibitor alpha isoform 1 phosphorylated 1 (mouse)	mNFKBIA/iso:1/Phos:1|UniProtKB:Q9Z1E3-1, Ser-32/Ser-36, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:104741				
+PR:000028551	mNFKBIA/iso:1/PhosUbiq:1	NF-kappa-B inhibitor alpha isoform 1 phosphorylated and ubiquitinated 1 (mouse)	mNFKBIA/iso:1/PhosUbiq:1|UniProtKB:Q9Z1E3-1, Lys-21/Lys-22, MOD:01148|Ser-32/Ser-36, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:104741				
+PR:Q9Z1J3	mNFS1	cysteine desulfurase (mouse)	mNFS1|m-Nfs1	PR:000000001	NCBITaxon:10090	MGI:MGI:1316706			UniProtKB:Q9Z1J3	
+PR:Q9Z0W1	mNGFR	tumor necrosis factor receptor superfamily member 16 (mouse)	CD271 (mouse)|NGF receptor (mouse)|low affinity neurotrophin receptor p75NTR (mouse)|low-affinity nerve growth factor receptor (mouse)|low-affinity nerve growth factor receptor p75NGFR (mouse)|low-affinity nerve growth factor receptor p75NGR (mouse)|mNGFR	PR:000000001	NCBITaxon:10090	MGI:MGI:97323			UniProtKB:Q9Z0W1	
+PR:Q9Z0W1-1	mNGFR/iso:m1	tumor necrosis factor receptor superfamily member 16 isoform m1 (mouse)	mNGFR/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:97323			UniProtKB:Q9Z0W1-1	
+PR:Q9Z0W1-2	mNGFR/iso:m2	tumor necrosis factor receptor superfamily member 16 isoform m2 (mouse)	mNGFR/iso:m2|tumor necrosis factor receptor superfamily member 16 isoform s-p75 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97323			UniProtKB:Q9Z0W1-2	
+PR:Q9Z0J4	mNOS1	nitric oxide synthase 1 (mouse)	N-NOS (mouse)|NC-NOS (mouse)|NOS type I (mouse)|bNOS (mouse)|mNOS1|nNOS (mouse)|neuronal NOS (mouse)|nitric oxide synthase, brain (mouse)|peptidyl-cysteine S-nitrosylase NOS1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97360			UniProtKB:Q9Z0J4	
+PR:Q9Z0J4-1	mNOS1/iso:mN-NOS-1	nitric oxide synthase 1 isoform mN-NOS-1 (mouse)	mNOS1/iso:mN-NOS-1	PR:000000001	NCBITaxon:10090	MGI:MGI:97360			UniProtKB:Q9Z0J4-1	
+PR:Q9Z0J4-2	mNOS1/iso:mN-NOS-2	nitric oxide synthase 1 isoform mN-NOS-2 (mouse)	mNOS1/iso:mN-NOS-2	PR:000000001	NCBITaxon:10090	MGI:MGI:97360			UniProtKB:Q9Z0J4-2	
+PR:Q9Z0J4-3	mNOS1/iso:NNOS beta	nitric oxide synthase 1 isoform NNOS beta (mouse)	mNOS1/iso:NNOS beta	PR:000000001	NCBITaxon:10090	MGI:MGI:97360			UniProtKB:Q9Z0J4-3	
+PR:Q9Z0J4-4	mNOS1/iso:NNOS gamma	nitric oxide synthase 1 isoform NNOS gamma (mouse)	mNOS1/iso:NNOS gamma	PR:000000001	NCBITaxon:10090	MGI:MGI:97360			UniProtKB:Q9Z0J4-4	
+PR:Q9Z0J4-5	mNOS1/iso:NNOS Mu	nitric oxide synthase 1 isoform NNOS Mu (mouse)	mNOS1/iso:NNOS Mu|nitric oxide synthase 1 isoform Muscle-specific (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97360			UniProtKB:Q9Z0J4-5	
+PR:Q9Z0J0	mNPC2	NPC intracellular cholesterol transporter 2 (mouse)	mNPC2|epididymal secretory protein E1 (mouse)|mE1|Niemann Pick type C2 protein homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1915213			UniProtKB:Q9Z0J0	
+PR:Q9Z0Y9	mNR1H3	oxysterols receptor LXR-alpha (mouse)	mNR1H3|liver X receptor alpha (mouse)|nuclear receptor subfamily 1 group H member 3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1352462			UniProtKB:Q9Z0Y9	
+PR:Q9Z0W3	mNUP160	nuclear pore complex protein Nup160 (mouse)	mNUP160|160 kDa nucleoporin (mouse)|gene trap locus 1-13 protein (mouse)|GTL-13 (mouse)|nucleoporin Nup160 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1926227			UniProtKB:Q9Z0W3	
+PR:Q9Z0W3-1	mNUP160/iso:m1	nuclear pore complex protein Nup160 isoform m1 (mouse)	mNUP160/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1926227			UniProtKB:Q9Z0W3-1	
+PR:Q9Z0W3-2	mNUP160/iso:m2	nuclear pore complex protein Nup160 isoform m2 (mouse)	mNUP160/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1926227			UniProtKB:Q9Z0W3-2	
+PR:Q9Z2F2	mOasl2	2'-5'-oligoadenylate synthase-like protein 2 (mouse)	mOasl2|54 kDa 2'-5'-oligoadenylate synthase-like protein (mouse)|M1204 (mouse)|p54 OASL (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1344390			UniProtKB:Q9Z2F2	
+PR:Q9Z0L3	mOC90	otoconin-90 (mouse)	mOC90|Oc95 (mouse)|otoconin-95 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1313269			UniProtKB:Q9Z0L3	
+PR:Q9Z0L3-1	mOC90/iso:m1	otoconin-90 isoform m1 (mouse)	mOC90/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1313269			UniProtKB:Q9Z0L3-1	
+PR:Q9Z0L3-2	mOC90/iso:m2	otoconin-90 isoform m2 (mouse)	mOC90/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1313269			UniProtKB:Q9Z0L3-2	
+PR:Q9Z0L3-3	mOC90/iso:m3	otoconin-90 isoform m3 (mouse)	mOC90/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1313269			UniProtKB:Q9Z0L3-3	
+PR:Q9Z0L3-4	mOC90/iso:m4	otoconin-90 isoform m4 (mouse)	mOC90/iso:m4	PR:000000001	NCBITaxon:10090	MGI:MGI:1313269			UniProtKB:Q9Z0L3-4	
+PR:Q9Z0L3-5	mOC90/iso:m5	otoconin-90 isoform m5 (mouse)	mOC90/iso:m5	PR:000000001	NCBITaxon:10090	MGI:MGI:1313269			UniProtKB:Q9Z0L3-5	
+PR:Q9Z1V0	mOr6e1	olfactory receptor 6E1 (mouse)	mOr6e1|olfactory receptor 118-1 (mouse)|olfactory receptor 49 (mouse)|olfactory receptor I-C6 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333764			UniProtKB:Q9Z1V0	
+PR:Q9Z1N2	mORC1	origin recognition complex subunit 1 (mouse)	mORC1	PR:000000001	NCBITaxon:10090	MGI:MGI:1328337			UniProtKB:Q9Z1N2	
+PR:Q9Z1M0	mP2RX7	P2X purinoceptor 7 (mouse)	mP2RX7|ATP receptor (mouse)|P2X7 (mouse)|P2Z receptor (mouse)|purinergic receptor (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1339957			UniProtKB:Q9Z1M0	
+PR:Q9Z1M0-1	mP2RX7/iso:1	P2X purinoceptor 7 isoform 1 (mouse)	mP2RX7/iso:1|P2X purinoceptor 7 isoform a (mouse)|P2X7a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1339957			UniProtKB:Q9Z1M0-1	
+PR:Q9Z185	mPADI1	protein-arginine deiminase type-1 (mouse)	mPADI1|peptidylarginine deiminase I (mouse)|protein-arginine deiminase type I (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338893			UniProtKB:Q9Z185	
+PR:Q9Z184	mPADI3	protein-arginine deiminase type-3 (mouse)	mPADI3|peptidylarginine deiminase III (mouse)|protein-arginine deiminase type III (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338891			UniProtKB:Q9Z184	
+PR:Q9Z184-1	mPADI3/iso:1	protein-arginine deiminase type-3 isoform 1 (mouse)	mPADI3/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338891			UniProtKB:Q9Z184-1	
+PR:Q9Z183	mPADI4	protein-arginine deiminase type-4 (mouse)	mPADI4|peptidylarginine deiminase IV (mouse)|protein-arginine deiminase type IV (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338898			UniProtKB:Q9Z183	
+PR:Q9Z183-1	mPADI4/iso:1	protein-arginine deiminase type-4 isoform 1 (mouse)	mPADI4/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338898			UniProtKB:Q9Z183-1	
+PR:Q9Z0P4	mPALM	paralemmin-1 (mouse)	mPALM|paralemmin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1261814			UniProtKB:Q9Z0P4	
+PR:Q9Z0P4-1	mPALM/iso:1	paralemmin-1 isoform 1 (mouse)	mPALM/iso:1|paralemmin-1 isoform Paralemmin-L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1261814			UniProtKB:Q9Z0P4-1	
+PR:Q9Z0P4-2	mPALM/iso:m2	paralemmin-1 isoform m2 (mouse)	mPALM/iso:m2|paralemmin-1 isoform Paralemmin-S (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1261814			UniProtKB:Q9Z0P4-2	
+PR:Q9Z101	mPARD6A	partitioning defective 6 homolog alpha (mouse)	mPARD6A|PAR-6 (mouse)|PAR-6 alpha (mouse)|PAR-6A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1927223			UniProtKB:Q9Z101	
+PR:Q9Z101-1	mPARD6A/iso:1	partitioning defective 6 homolog alpha isoform 1 (mouse)	mPARD6A/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1927223			UniProtKB:Q9Z101-1	
+PR:Q9Z101-2	mPARD6A/iso:2	partitioning defective 6 homolog alpha isoform 2 (mouse)	mPARD6A/iso:2	PR:000000001	NCBITaxon:10090	MGI:MGI:1927223			UniProtKB:Q9Z101-2	
+PR:Q9Z101-3	mPARD6A/iso:m3	partitioning defective 6 homolog alpha isoform m3 (mouse)	mPARD6A/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1927223			UniProtKB:Q9Z101-3	
+PR:Q9Z2V4	mPCK1	phosphoenolpyruvate carboxykinase, cytosolic [GTP] (mouse)	mPCK1|PEPCK-C (mouse)|serine-protein kinase PCK1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97501			UniProtKB:Q9Z2V4	
+PR:Q9Z2V4-1	mPCK1/iso:1	phosphoenolpyruvate carboxykinase, cytosolic [GTP] isoform 1 (mouse)	mPCK1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:97501			UniProtKB:Q9Z2V4-1	
+PR:Q9Z0X4	mPDE3A	cGMP-inhibited 3',5'-cyclic phosphodiesterase 3A (mouse)	CGI-PDE A (mouse)|cyclic GMP-inhibited phosphodiesterase A (mouse)|mPDE3A	PR:000000001	NCBITaxon:10090	MGI:MGI:1860764			UniProtKB:Q9Z0X4	
+PR:Q9Z0X4-1	mPDE3A/iso:1	cGMP-inhibited 3',5'-cyclic phosphodiesterase 3A isoform 1 (mouse)	mPDE3A/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1860764			UniProtKB:Q9Z0X4-1	
+PR:Q9Z2A0	mPDPK1	3-phosphoinositide-dependent protein kinase 1 (mouse)	mPDPK1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338068			UniProtKB:Q9Z2A0	
+PR:Q9Z2A0-1	mPDPK1/iso:1	3-phosphoinositide-dependent protein kinase 1 isoform 1 (mouse)	mPDPK1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338068			UniProtKB:Q9Z2A0-1	
+PR:Q9Z211	mPEX11A	peroxisomal membrane protein 11A (mouse)	mPEX11A|peroxin-11A (mouse)|peroxisomal biogenesis factor 11A (mouse)|PEX11-alpha (mouse)|protein PEX11 homolog alpha (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338788			UniProtKB:Q9Z211	
+PR:Q9Z211-1	mPEX11A/iso:1	peroxisomal membrane protein 11A isoform 1 (mouse)	mPEX11A/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338788			UniProtKB:Q9Z211-1	
+PR:Q9Z210	mPEX11B	peroxisomal membrane protein 11B (mouse)	mPEX11B|peroxin-11B (mouse)|peroxisomal biogenesis factor 11B (mouse)|PEX11-beta (mouse)|protein PEX11 homolog beta (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338882			UniProtKB:Q9Z210	
+PR:Q9Z210-1	mPEX11B/iso:1	peroxisomal membrane protein 11B isoform 1 (mouse)	mPEX11B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338882			UniProtKB:Q9Z210-1	
+PR:Q9Z126	mPF4	platelet factor 4 (mouse)	mPF4|C-X-C motif chemokine 4 (mouse)|PF-4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1888711			UniProtKB:Q9Z126	
+PR:Q9Z126-1	mPF4/iso:1	platelet factor 4 isoform 1 (mouse)	mPF4/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1888711			UniProtKB:Q9Z126-1	
+PR:Q9Z1B8	mPHF1	PHD finger protein 1 (mouse)	mPHF1|mPCl1|polycomb-like protein 1 (mouse)|protein PHF1 (mouse)|T-complex testis-expressed 3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:98647			UniProtKB:Q9Z1B8	
+PR:Q9Z1T6	mPIKFYVE	1-phosphatidylinositol 3-phosphate 5-kinase (mouse)	mPIKFYVE|FYVE finger-containing phosphoinositide kinase (mouse)|phosphatidylinositol 3-phosphate 5-kinase (mouse)|phosphatidylinositol 3-phosphate 5-kinase type III (mouse)|PIKfyve (mouse)|PIPkin-III (mouse)|serine-protein kinase PIKFYVE (mouse)|type III PIP kinase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1335106			UniProtKB:Q9Z1T6	
+PR:Q9Z1T6-2	mPIKFYVE/iso:m1	1-phosphatidylinositol 3-phosphate 5-kinase isoform m1 (mouse)	mPIKFYVE/iso:m1|1-phosphatidylinositol 3-phosphate 5-kinase isoform p235S (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1335106			UniProtKB:Q9Z1T6-2	
+PR:Q9Z1T6-1	mPIKFYVE/iso:m2	1-phosphatidylinositol 3-phosphate 5-kinase isoform m2 (mouse)	mPIKFYVE/iso:m2|1-phosphatidylinositol 3-phosphate 5-kinase isoform p235L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1335106			UniProtKB:Q9Z1T6-1	
+PR:Q9Z1T6-3	mPIKFYVE/iso:m3	1-phosphatidylinositol 3-phosphate 5-kinase isoform m3 (mouse)	mPIKFYVE/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1335106			UniProtKB:Q9Z1T6-3	
+PR:Q9Z0T6	mPKDREJ	polycystin family receptor for egg jelly (mouse)	PKD and REJ homolog (mouse)|mPKDREJ|polycystic kidney disease and receptor for egg jelly-related protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338786			UniProtKB:Q9Z0T6	
+PR:Q9Z0Y2	mPLA2G1B	phospholipase A2 (mouse)	mPLA2G1B|group IB phospholipase A2 (mouse)|phosphatidylcholine 2-acylhydrolase 1B (mouse)|PLA2-Ib (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:101842			UniProtKB:Q9Z0Y2	
+PR:Q9Z0Y2-1	mPLA2G1B/iso:1	phospholipase A2 isoform 1 (mouse)	mPLA2G1B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:101842			UniProtKB:Q9Z0Y2-1	
+PR:Q9Z1B3	mPLCB1	1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase beta-1 (mouse)	mPLCB1|phosphoinositide phospholipase C-beta-1 (mouse)|phospholipase C-beta-1 (mouse)|PLC-154 (mouse)|PLC-beta-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97613			UniProtKB:Q9Z1B3	
+PR:Q9Z1B3-1	mPLCB1/iso:A	1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase beta-1 isoform A (mouse)	mPLCB1/iso:A|1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase beta-1 isoform C-beta-1a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97613			UniProtKB:Q9Z1B3-1	
+PR:Q9Z1B3-2	mPLCB1/iso:B	1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase beta-1 isoform B (mouse)	mPLCB1/iso:B|1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase beta-1 isoform C-beta-1b (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97613			UniProtKB:Q9Z1B3-2	
+PR:Q9Z1B3-3	mPLCB1/iso:C	1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase beta-1 isoform C (mouse)	mPLCB1/iso:C	PR:000000001	NCBITaxon:10090	MGI:MGI:97613			UniProtKB:Q9Z1B3-3	
+PR:Q9Z280	mPLD1	phospholipase D1 (mouse)	mPLD1|choline phosphatase 1 (mouse)|phosphatidylcholine-hydrolyzing phospholipase D1 (mouse)|PLD 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:109585			UniProtKB:Q9Z280	
+PR:Q9Z280-2	mPLD1/iso:mPLD1B	phospholipase D1 isoform mPLD1B (mouse)	mPLD1/iso:mPLD1B	PR:000000001	NCBITaxon:10090	MGI:MGI:109585			UniProtKB:Q9Z280-2	
+PR:Q9Z280-1	mPLD1/iso:PLD1A	phospholipase D1 isoform PLD1A (mouse)	mPLD1/iso:PLD1A	PR:000000001	NCBITaxon:10090	MGI:MGI:109585			UniProtKB:Q9Z280-1	
+PR:Q9Z2Y8	mPLPBP	pyridoxal phosphate homeostasis protein (mouse)	mPLPBP|PLP homeostasis protein (mouse)|proline synthase co-transcribed bacterial homolog protein (mouse)|pyridoxal phosphate-binding protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1891207			UniProtKB:Q9Z2Y8	
+PR:Q9Z2M7	mPMM2	phosphomannomutase 2 (mouse)	mPMM2|PMM 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1859214			UniProtKB:Q9Z2M7	
+PR:Q9Z2E4	mPPP1R17	protein phosphatase 1 regulatory subunit 17 (mouse)	mPPP1R17|G substrate (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333876			UniProtKB:Q9Z2E4	
+PR:Q9Z176	mPpp2r3d	serine/threonine-protein phosphatase 2A regulatory subunit B'' subunit delta (mouse)	mPpp2r3d|PP2A B''-PR59 (mouse)|PP2A PR59 (mouse)|protein phosphatase 2A, 59 kDa regulatory subunit B (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1335093			UniProtKB:Q9Z176	
+PR:Q9Z2U1	mPSMA5	proteasome subunit alpha type-5 (mouse)	mPSMA5|macropain zeta chain (mouse)|multicatalytic endopeptidase complex zeta chain (mouse)|proteasome zeta chain (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347009			UniProtKB:Q9Z2U1	
+PR:Q9Z2U1-1	mPSMA5/iso:1	proteasome subunit alpha type-5 isoform 1 (mouse)	mPSMA5/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1347009			UniProtKB:Q9Z2U1-1	
+PR:Q9Z2U0	mPSMA7	proteasome subunit alpha type-7 (mouse)	mPSMA7|proteasome subunit RC6-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347070			UniProtKB:Q9Z2U0	
+PR:Q9Z2U0-1	mPSMA7/iso:1	proteasome subunit alpha type-7 isoform 1 (mouse)	mPSMA7/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1347070			UniProtKB:Q9Z2U0-1	
+PR:Q9Z2X2	mPSMD10	26S proteasome non-ATPase regulatory subunit 10 (mouse)	mPSMD10|26S proteasome regulatory subunit p28 (mouse)|gankyrin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858898			UniProtKB:Q9Z2X2	
+PR:Q9Z2X2-1	mPSMD10/iso:1	26S proteasome non-ATPase regulatory subunit 10 isoform 1 (mouse)	mPSMD10/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1858898			UniProtKB:Q9Z2X2-1	
+PR:Q9Z1X2	mPTDSS2	phosphatidylserine synthase 2 (mouse)	mPTDSS2|PSS-2 (mouse)|PtdSer synthase 2 (mouse)|serine-exchange enzyme II (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1351664			UniProtKB:Q9Z1X2	
+PR:Q9Z1X2-1	mPTDSS2/iso:m1	phosphatidylserine synthase 2 isoform m1 (mouse)	mPTDSS2/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1351664			UniProtKB:Q9Z1X2-1	
+PR:Q9Z1X2-2	mPTDSS2/iso:m2	phosphatidylserine synthase 2 isoform m2 (mouse)	mPTDSS2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1351664			UniProtKB:Q9Z1X2-2	
+PR:Q9Z2J6	mPTGDR2	prostaglandin D2 receptor 2 (mouse)	mPTGDR2|CD294 (mouse)|chemoattractant receptor-homologous molecule expressed on Th2 cells (mouse)|G-protein coupled receptor 44 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330275			UniProtKB:Q9Z2J6	
+PR:Q9Z0S9	mRABAC1	prenylated Rab acceptor protein 1 (mouse)	mRABAC1|PRA1 family protein 1 (mouse)|prenylin (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1201692			UniProtKB:Q9Z0S9	
+PR:Q9Z0S9-1	mRABAC1/iso:1	prenylated Rab acceptor protein 1 isoform 1 (mouse)	mRABAC1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1201692			UniProtKB:Q9Z0S9-1	
+PR:Q9Z0F6	mRAD9A	cell cycle checkpoint control protein RAD9A (mouse)	mRAD9A|DNA repair exonuclease rad9 homolog A (mouse)|mRAD9|Rad9-like protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1328356			UniProtKB:Q9Z0F6	
+PR:Q9Z268	mRASAL1	RasGAP-activating-like protein 1 (mouse)	mRASAL1|Ras GTPase-activating-like protein (mouse)|RAS protein activator like 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330842			UniProtKB:Q9Z268	
+PR:Q9Z1S3	mRASGRP1	RAS guanyl-releasing protein 1 (mouse)	mRASGRP1|calcium and DAG-regulated guanine nucleotide exchange factor II (mouse)|CalDAG-GEFII (mouse)|Ras guanyl-releasing protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1314635			UniProtKB:Q9Z1S3	
+PR:Q9Z1S3-1	mRASGRP1/iso:1	RAS guanyl-releasing protein 1 isoform 1 (mouse)	mRASGRP1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1314635			UniProtKB:Q9Z1S3-1	
+PR:Q9Z0J1	mRECK	reversion-inducing cysteine-rich protein with Kazal motifs (mouse)	mRECK	PR:000000001	NCBITaxon:10090	MGI:MGI:1855698			UniProtKB:Q9Z0J1	
+PR:Q9Z0J1-1	mRECK/iso:1	reversion-inducing cysteine-rich protein with Kazal motifs isoform 1 (mouse)	mRECK/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1855698			UniProtKB:Q9Z0J1-1	
+PR:Q9Z129	mRECQL	ATP-dependent DNA helicase Q1 (mouse)	mRECQL|DNA-dependent ATPase Q1 (mouse)|RecQ protein-like 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:103021			UniProtKB:Q9Z129	
+PR:Q9Z129-1	mRECQL/iso:Alpha	ATP-dependent DNA helicase Q1 isoform Alpha (mouse)	mRECQL/iso:Alpha	PR:000000001	NCBITaxon:10090	MGI:MGI:103021			UniProtKB:Q9Z129-1	
+PR:Q9Z129-2	mRECQL/iso:Beta	ATP-dependent DNA helicase Q1 isoform Beta (mouse)	mRECQL/iso:Beta	PR:000000001	NCBITaxon:10090	MGI:MGI:103021			UniProtKB:Q9Z129-2	
+PR:Q9Z205	mRFXANK	DNA-binding protein RFXANK (mouse)	mRFXANK|ankyrin repeat-containing adapter protein Tvl-1 (mouse)|regulatory factor X subunit B (mouse)|regulatory factor X-associated ankyrin-containing protein (mouse)|RFX-B (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333865			UniProtKB:Q9Z205	
+PR:Q9Z205-1	mRFXANK/iso:Long	DNA-binding protein RFXANK isoform Long (mouse)	mRFXANK/iso:Long	PR:000000001	NCBITaxon:10090	MGI:MGI:1333865			UniProtKB:Q9Z205-1	
+PR:Q9Z205-2	mRFXANK/iso:Short	DNA-binding protein RFXANK isoform Short (mouse)	mRFXANK/iso:Short	PR:000000001	NCBITaxon:10090	MGI:MGI:1333865			UniProtKB:Q9Z205-2	
+PR:Q9Z2B3	mRGR	RPE-retinal G protein-coupled receptor (mouse)	mRGR	PR:000000001	NCBITaxon:10090	MGI:MGI:1929473			UniProtKB:Q9Z2B3	
+PR:Q9Z2B3-1	mRGR/iso:1	RPE-retinal G protein-coupled receptor isoform 1 (mouse)	mRGR/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1929473			UniProtKB:Q9Z2B3-1	
+PR:Q9Z2H1	mRGS11	regulator of G-protein signaling 11 (mouse)	mRGS11	PR:000000001	NCBITaxon:10090	MGI:MGI:1354739			UniProtKB:Q9Z2H1	
+PR:Q9Z2H1-1	mRGS11/iso:m1	regulator of G-protein signaling 11 isoform m1 (mouse)	mRGS11/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1354739			UniProtKB:Q9Z2H1-1	
+PR:Q9Z2H1-2	mRGS11/iso:m2	regulator of G-protein signaling 11 isoform m2 (mouse)	mRGS11/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1354739			UniProtKB:Q9Z2H1-2	
+PR:Q9Z2H2	mRGS6	regulator of G-protein signaling 6 (mouse)	mRGS6|RGS6 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1354730			UniProtKB:Q9Z2H2	
+PR:Q9Z275	mRLBP1	retinaldehyde-binding protein 1 (mouse)	mRLBP1|cellular retinaldehyde-binding protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97930			UniProtKB:Q9Z275	
+PR:Q9Z275-1	mRLBP1/iso:1	retinaldehyde-binding protein 1 isoform 1 (mouse)	mRLBP1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:97930			UniProtKB:Q9Z275-1	
+PR:Q9Z2I4	mROBO3	roundabout homolog 3 (mouse)	Rig-1 (mouse)|mROBO3|retinoblastoma-inhibiting gene 1 protein (mouse)|roundabout guidance receptor 3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1343102			UniProtKB:Q9Z2I4	
+PR:Q9Z2I4-3	mROBO3/iso:m1	roundabout homolog 3 isoform m1 (mouse)	mROBO3/iso:m1|roundabout homolog 3 isoform 3.1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1343102			UniProtKB:Q9Z2I4-3	
+PR:Q9Z2I4-4	mROBO3/iso:m3	roundabout homolog 3 isoform m3 (mouse)	mROBO3/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1343102			UniProtKB:Q9Z2I4-4	
+PR:Q9Z2I4-1	mROBO3/iso:ROBO3A.2	roundabout homolog 3 isoform ROBO3A.2 (mouse)	mROBO3/iso:ROBO3A.2|mRobo3A.2	PR:000000001	NCBITaxon:10090	MGI:MGI:1343102			UniProtKB:Q9Z2I4-1	
+PR:Q9Z2I4-2	mROBO3/iso:ROBO3B.2	roundabout homolog 3 isoform ROBO3B.2 (mouse)	mROBO3/iso:ROBO3B.2|mRobo3B.2	PR:000000001	NCBITaxon:10090	MGI:MGI:1343102			UniProtKB:Q9Z2I4-2	
+PR:Q9Z139	mROR1	inactive tyrosine-protein kinase transmembrane receptor ROR1 (mouse)	mROR1|neurotrophic tyrosine kinase, receptor-related 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347520			UniProtKB:Q9Z139	
+PR:Q9Z139-1	mROR1/iso:1	tyrosine-protein kinase transmembrane receptor ROR1 isoform 1 (mouse)	mROR1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1347520			UniProtKB:Q9Z139-1	
+PR:Q9Z138	mROR2	tyrosine-protein kinase transmembrane receptor ROR2 (mouse)	mROR2|neurotrophic tyrosine kinase, receptor-related 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1347521			UniProtKB:Q9Z138	
+PR:Q9Z2B9	mRPS6KA4	ribosomal protein S6 kinase alpha-4 (mouse)	mRPS6KA4|90 kDa ribosomal protein S6 kinase 4 (mouse)|nuclear mitogen- and stress-activated protein kinase 2 (mouse)|S6K-alpha-4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1930076			UniProtKB:Q9Z2B9	
+PR:Q9Z1M4	mRPS6KB2	ribosomal protein S6 kinase beta-2 (mouse)	mRPS6KB2|70 kDa ribosomal protein S6 kinase 2 (mouse)|p70 ribosomal S6 kinase beta (mouse)|p70 S6 kinase beta (mouse)|p70 S6K-beta (mouse)|p70 S6KB (mouse)|S6K-beta-2 (mouse)|S6K2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1927343			UniProtKB:Q9Z1M4	
+PR:Q9Z1M4-1	mRPS6KB2/iso:1	ribosomal protein S6 kinase beta-2 isoform 1 (mouse)	mRPS6KB2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1927343			UniProtKB:Q9Z1M4-1	
+PR:Q9Z1L4	mRS1	retinoschisin (mouse)	mRS1|X-linked juvenile retinoschisis protein homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1336189			UniProtKB:Q9Z1L4	
+PR:Q9Z1L4-1	mRS1/iso:1	retinoschisin isoform 1 (mouse)	mRS1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1336189			UniProtKB:Q9Z1L4-1	
+PR:Q9Z132	mRSPO1	R-spondin-1 (mouse)	mRSPO1|cristin-3 (mouse)|cysteine-rich and single thrombospondin domain-containing protein 3 (mouse)|mCristin-3|roof plate-specific spondin-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:2183426			UniProtKB:Q9Z132	
+PR:Q9Z0U9	mS1PR3	sphingosine 1-phosphate receptor 3 (mouse)	mS1PR3|endothelial differentiation G-protein coupled receptor 3 (mouse)|lysophospholipid receptor B3 (mouse)|S1P receptor 3 (mouse)|S1P receptor Edg-3 (mouse)|S1P3 (mouse)|sphingosine 1-phosphate receptor Edg-3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1339365			UniProtKB:Q9Z0U9	
+PR:Q9Z0L1	mS1PR4	sphingosine 1-phosphate receptor 4 (mouse)	mS1PR4|endothelial differentiation G-protein coupled receptor 6 (mouse)|lysophospholipid receptor C1 (mouse)|S1P receptor 4 (mouse)|S1P receptor Edg-6 (mouse)|S1P4 (mouse)|sphingosine 1-phosphate receptor Edg-6 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333809			UniProtKB:Q9Z0L1	
+PR:Q9Z315	mSART1	U4/U6.U5 tri-snRNP-associated protein 1 (mouse)	mSART1|hypoxia-associated factor (mouse)|mSART-1|SART-1 (mouse)|squamous cell carcinoma antigen recognized by T-cells 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1309453			UniProtKB:Q9Z315	
+PR:Q9Z2G6	mSEL1L	protein sel-1 homolog 1 (mouse)	mSEL1L|Sel-1L (mouse)|suppressor of lin-12-like protein 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1329016			UniProtKB:Q9Z2G6	
+PR:Q9Z2G6-1	mSEL1L/iso:m1	protein sel-1 homolog 1 isoform m1 (mouse)	mSEL1L/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1329016			UniProtKB:Q9Z2G6-1	
+PR:Q9Z2G6-2	mSEL1L/iso:m2	protein sel-1 homolog 1 isoform m2 (mouse)	mSEL1L/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1329016			UniProtKB:Q9Z2G6-2	
+PR:Q9Z123	mSEMA4F	semaphorin-4F (mouse)	mSEMA4F|Sema W (mouse)|semaphorin-W (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1340055			UniProtKB:Q9Z123	
+PR:Q9Z1S5-1	mSEPT3/iso:1	neuronal-specific septin-3 isoform 1 (mouse)	mSEPT3/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1345148			UniProtKB:Q9Z1S5-1	
+PR:Q9Z2Q6-1	mSEPT5/iso:1	septin-5 isoform 1 (mouse)	mSEPT5/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1195461			UniProtKB:Q9Z2Q6-1	
+PR:Q9Z1S5	mSEPTIN3	neuronal-specific septin-3 (mouse)	mSEPTIN3	PR:000000001	NCBITaxon:10090	MGI:MGI:1345148			UniProtKB:Q9Z1S5	
+PR:Q9Z1S5-2	mSEPTIN3/iso:m2	neuronal-specific septin-3 isoform m2 (mouse)	mSEPTIN3/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1345148			UniProtKB:Q9Z1S5-2	
+PR:Q9Z2Q6	mSEPTIN5	septin-5 (mouse)	mSEPTIN5|CDCrel-1 (mouse)|cell division control-related protein 1 (mouse)|peanut-like protein 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1195461			UniProtKB:Q9Z2Q6	
+PR:000084175	mSEPTIN5/Cyst:1	septin-5 cysteinylated 1 (mouse)	mSEPTIN5/Cyst:1|UniProtKB:Q9Z2Q6, Cys-193, MOD:00765	PR:000000001	NCBITaxon:10090	MGI:MGI:1195461				
+PR:Q9Z1W5	mSERP1	stress-associated endoplasmic reticulum protein 1 (mouse)	mSERP1|ribosome-attached membrane protein 4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:92638			UniProtKB:Q9Z1W5	
+PR:Q9Z1W5-1	mSERP1/iso:1	stress-associated endoplasmic reticulum protein 1 isoform 1 (mouse)	mSERP1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:92638			UniProtKB:Q9Z1W5-1	
+PR:Q9Z180	mSETBP1	SET-binding protein (mouse)	mSETBP1|SEB (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1933199			UniProtKB:Q9Z180	
+PR:Q9Z1N6	mSFRP4	secreted frizzled-related sequence protein 4 (mouse)	mSFRP4|FRP-4 (mouse)|sFRP-4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:892010			UniProtKB:Q9Z1N6	
+PR:Q9Z131	mSH3BP5	SH3 domain-binding protein 5 (mouse)	SH3 domain-binding protein that preferentially associates with BTK (mouse)|SH3BP-5 (mouse)|mSH3BP5	PR:000000001	NCBITaxon:10090	MGI:MGI:1344391			UniProtKB:Q9Z131	
+PR:Q9Z131-1	mSH3BP5/iso:m1	SH3 domain-binding protein 5 isoform m1 (mouse)	mSH3BP5/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1344391			UniProtKB:Q9Z131-1	
+PR:Q9Z131-2	mSH3BP5/iso:m2	SH3 domain-binding protein 5 isoform m2 (mouse)	mSH3BP5/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1344391			UniProtKB:Q9Z131-2	
+PR:Q9Z131-3	mSH3BP5/iso:m3	SH3 domain-binding protein 5 isoform m3 (mouse)	mSH3BP5/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1344391			UniProtKB:Q9Z131-3	
+PR:Q9Z179	mSHCBP1	SHC SH2 domain-binding protein 1 (mouse)	mSHCBP1|mPAL|protein expressed in activated lymphocytes (mouse)|SHC-binding protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1338802			UniProtKB:Q9Z179	
+PR:Q9Z0Z3	mSKP2	S-phase kinase-associated protein 2 (mouse)	mSKP2|cyclin-A/CDK2-associated protein p45 (mouse)|F-box protein Skp2 (mouse)|F-box/WD-40 protein 1 (mouse)|FWD1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1351663			UniProtKB:Q9Z0Z3	
+PR:Q9Z0Z3-1	mSKP2/iso:1	S-phase kinase-associated protein 2 isoform 1 (mouse)	mSKP2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1351663			UniProtKB:Q9Z0Z3-1	
+PR:Q9Z0Z3-2	mSKP2/iso:m2	S-phase kinase-associated protein 2 isoform m2 (mouse)	mSKP2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1351663			UniProtKB:Q9Z0Z3-2	
+PR:Q9Z0Z3-3	mSKP2/iso:m3	S-phase kinase-associated protein 2 isoform m3 (mouse)	mSKP2/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1351663			UniProtKB:Q9Z0Z3-3	
+PR:Q9Z306	mSLC22A4	solute carrier family 22 member 4 (mouse)	mSLC22A4|organic cation/carnitine transporter 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1353479			UniProtKB:Q9Z306	
+PR:Q9Z306-1	mSLC22A4/iso:1	solute carrier family 22 member 4 isoform 1 (mouse)	mSLC22A4/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1353479			UniProtKB:Q9Z306-1	
+PR:Q9Z0E8	mSLC22A5	organic cation/carnitine transporter 2 (mouse)	high-affinity sodium-dependent carnitine cotransporter (mouse)|mSLC22A5|solute carrier family 22 member 5 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1329012			UniProtKB:Q9Z0E8	
+PR:Q9Z0E8-1	mSLC22A5/iso:1	organic cation/carnitine transporter 2 isoform 1 (mouse)	mSLC22A5/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1329012			UniProtKB:Q9Z0E8-1	
+PR:Q9Z2J0	mSLC23A1	solute carrier family 23 member 1 (mouse)	mSLC23A1|Na(+)/L-ascorbic acid transporter 1 (mouse)|sodium-dependent vitamin C transporter 1 (mouse)|yolk sac permease-like molecule 3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1341903			UniProtKB:Q9Z2J0	
+PR:Q9Z2B2	mSLC25A14	brain mitochondrial carrier protein 1 (mouse)	mSLC25A14|BMCP-1 (mouse)|mitochondrial uncoupling protein 5 (mouse)|solute carrier family 25 member 14 (mouse)|UCP 5 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330823			UniProtKB:Q9Z2B2	
+PR:Q9Z2B2-1	mSLC25A14/iso:1	brain mitochondrial carrier protein 1 isoform 1 (mouse)	mSLC25A14/iso:1|brain mitochondrial carrier protein 1 isoform UCP5L (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330823			UniProtKB:Q9Z2B2-1	
+PR:Q9Z2B2-2	mSLC25A14/iso:2	brain mitochondrial carrier protein 1 isoform 2 (mouse)	mSLC25A14/iso:2|brain mitochondrial carrier protein 1 isoform UCP5S (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1330823			UniProtKB:Q9Z2B2-2	
+PR:Q9Z2Z6	mSLC25A20	mitochondrial carnitine/acylcarnitine carrier protein (mouse)	CAC (mouse)|CACT (mouse)|carnitine/acylcarnitine translocase (mouse)|mCAC|mSLC25A20|solute carrier family 25 member 20 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1928738			UniProtKB:Q9Z2Z6	
+PR:Q9Z2Z6-1	mSLC25A20/iso:1	mitochondrial carnitine/acylcarnitine carrier protein isoform 1 (mouse)	mSLC25A20/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1928738			UniProtKB:Q9Z2Z6-1	
+PR:Q9Z127	mSLC7A5	large neutral amino acids transporter small subunit 1 (mouse)	mSLC7A5|4F2 LC (mouse)|4F2 light chain (mouse)|4F2LC (mouse)|L-type amino acid transporter 1 (mouse)|solute carrier family 7 member 5 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1298205			UniProtKB:Q9Z127	
+PR:Q9Z127-1	mSLC7A5/iso:1	large neutral amino acids transporter small subunit 1 isoform 1 (mouse)	mSLC7A5/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1298205			UniProtKB:Q9Z127-1	
+PR:Q9Z1K8	mSLC7A7	Y+L amino acid transporter 1 (mouse)	mSLC7A7|solute carrier family 7 member 7 (mouse)|y(+)L-type amino acid transporter 1 (mouse)|y+LAT-1 (mouse)|Y+LAT1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1337120			UniProtKB:Q9Z1K8	
+PR:Q9Z0I7	mSlfn1	Schlafen family member 1 (mouse)	mSlfn1|Schlafen-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1313259			UniProtKB:Q9Z0I7	
+PR:Q9Z0I6	mSlfn2	Schlafen family member 2 (mouse)	mSlfn2|Schlafen-2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1313258			UniProtKB:Q9Z0I6	
+PR:Q9Z0K7	mSLURP1	secreted Ly-6/uPAR-related protein 1 (mouse)	mSLURP1|ARS component B (mouse)|SLURP-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1930923			UniProtKB:Q9Z0K7	
+PR:Q9Z0H3	mSMARCB1	SWI/SNF-related matrix-associated actin-dependent regulator of chromatin subfamily B member 1 (mouse)	mSMARCB1|BAF47 (mouse)|BRG1-associated factor 47 (mouse)|integrase interactor 1 protein (mouse)|mSNF5|SNF5 homolog (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1328366			UniProtKB:Q9Z0H3	
+PR:Q9Z0H3-1	mSMARCB1/iso:A	SWI/SNF-related matrix-associated actin-dependent regulator of chromatin subfamily B member 1 isoform A (mouse)	mSMARCB1/iso:A|SWI/SNF-related matrix-associated actin-dependent regulator of chromatin subfamily B member 1 isoform INI1A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1328366			UniProtKB:Q9Z0H3-1	
+PR:Q9Z0H3-2	mSMARCB1/iso:B	SWI/SNF-related matrix-associated actin-dependent regulator of chromatin subfamily B member 1 isoform B (mouse)	mSMARCB1/iso:B|SWI/SNF-related matrix-associated actin-dependent regulator of chromatin subfamily B member 1 isoform INI1B (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1328366			UniProtKB:Q9Z0H3-2	
+PR:Q9Z266	mSNAPIN	SNARE-associated protein Snapin (mouse)	mSNAPIN|biogenesis of lysosome-related organelles complex 1 subunit 7 (mouse)|BLOC-1 subunit 7 (mouse)|SNAP-associated protein (mouse)|synaptosomal-associated protein 25-binding protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333745			UniProtKB:Q9Z266	
+PR:Q9Z266-1	mSNAPIN/iso:1	SNARE-associated protein Snapin isoform 1 (mouse)	mSNAPIN/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333745			UniProtKB:Q9Z266-1	
+PR:Q9Z266-2	mSNAPIN/iso:m2	SNARE-associated protein Snapin isoform m2 (mouse)	mSNAPIN/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1333745			UniProtKB:Q9Z266-2	
+PR:Q9Z0F7	mSNCG	gamma-synuclein (mouse)	mSNCG|persyn (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1298397			UniProtKB:Q9Z0F7	
+PR:Q9Z0F7-1	mSNCG/iso:1	gamma-synuclein isoform 1 (mouse)	mSNCG/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1298397			UniProtKB:Q9Z0F7-1	
+PR:Q9Z0G2	mSRPK3	SRSF protein kinase 3 (mouse)	mSRPK3|MSSK-1 (mouse)|muscle-specific serine kinase 1 (mouse)|serine/arginine-rich protein-specific kinase 3 (mouse)|serine/threonine-protein kinase 23 (mouse)|SR-protein-specific kinase 3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1891338			UniProtKB:Q9Z0G2	
+PR:Q9Z108	mSTAU1	double-stranded RNA-binding protein Staufen homolog 1 (mouse)	mSTAU1	PR:000000001	NCBITaxon:10090	MGI:MGI:1338864			UniProtKB:Q9Z108	
+PR:Q9Z2W1	mSTK25	serine/threonine-protein kinase 25 (mouse)	mSTK25|SOK-1 (mouse)|Ste20-like kinase (mouse)|Ste20/oxidant stress response kinase 1 (mouse)|sterile 20/oxidant stress-response kinase 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1891699			UniProtKB:Q9Z2W1	
+PR:Q9Z2W1-1	mSTK25/iso:1	serine/threonine-protein kinase 25 isoform 1 (mouse)	mSTK25/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1891699			UniProtKB:Q9Z2W1-1	
+PR:Q9Z1W9	mSTK39	STE20/SPS1-related proline-alanine-rich protein kinase (mouse)	mSTK39|serine/threonine-protein kinase 39 (mouse)|Ste-20-related kinase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858416			UniProtKB:Q9Z1W9	
+PR:Q9Z1W9-1	mSTK39/iso:1	STE20/SPS1-related proline-alanine-rich protein kinase isoform 1 (mouse)	mSTK39/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1858416			UniProtKB:Q9Z1W9-1	
+PR:000044370	mSTK39/iso:3	STE20/SPS1-related proline-alanine-rich protein kinase isoform 3 (mouse)	mSTK39/iso:3|UniProtKB:Q9Z1W9, 115-556	PR:000000001	NCBITaxon:10090	MGI:MGI:1858416				
+PR:Q9Z1Z2	mSTRAP	serine-threonine kinase receptor-associated protein (mouse)	mSTRAP|UNR-interacting protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1329037			UniProtKB:Q9Z1Z2	
+PR:Q9Z1Z2-1	mSTRAP/iso:1	serine-threonine kinase receptor-associated protein isoform 1 (mouse)	mSTRAP/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1329037			UniProtKB:Q9Z1Z2-1	
+PR:Q9Z2I9	mSUCLA2	succinate--CoA ligase [ADP-forming] subunit beta, mitochondrial (mouse)	mSUCLA2|A-SCS (mouse)|ATP-specific succinyl-CoA synthetase subunit beta (mouse)|SCS-betaA (mouse)|succinyl-CoA synthetase beta-A chain (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1306775			UniProtKB:Q9Z2I9	
+PR:Q9Z2I9-1	mSUCLA2/iso:1	succinate--CoA ligase [ADP-forming] subunit beta, mitochondrial isoform 1 (mouse)	mSUCLA2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1306775			UniProtKB:Q9Z2I9-1	
+PR:000027783	mSUCLA2/iso:1/Phos:1	succinate--CoA ligase [ADP-forming] subunit beta, mitochondrial isoform 1 phosphorylated 1 (mouse)	mSUCLA2/iso:1/Phos:1|UniProtKB:Q9Z2I9-1, Ser-279, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:1306775				
+PR:Q9Z2I8	mSUCLG2	succinate--CoA ligase [GDP-forming] subunit beta, mitochondrial (mouse)	mSUCLG2|G-SCS (mouse)|GTP-specific succinyl-CoA synthetase subunit beta (mouse)|GTPSCS (mouse)|SCS-betaG (mouse)|succinyl-CoA synthetase beta-G chain (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1306824			UniProtKB:Q9Z2I8	
+PR:Q9Z2I8-1	mSUCLG2/iso:1	succinate--CoA ligase [GDP-forming] subunit beta, mitochondrial isoform 1 (mouse)	mSUCLG2/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1306824			UniProtKB:Q9Z2I8-1	
+PR:Q9Z2I8-2	mSUCLG2/iso:m2	succinate--CoA ligase [GDP-forming] subunit beta, mitochondrial isoform m2 (mouse)	mSUCLG2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1306824			UniProtKB:Q9Z2I8-2	
+PR:Q9Z0P7	mSUFU	suppressor of fused homolog (mouse)	mSUFU	PR:000000001	NCBITaxon:10090	MGI:MGI:1345643			UniProtKB:Q9Z0P7	
+PR:Q9Z0P7-1	mSUFU/iso:1	suppressor of fused homolog isoform 1 (mouse)	mSUFU/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1345643			UniProtKB:Q9Z0P7-1	
+PR:Q9Z0P7-3	mSUFU/iso:3	suppressor of fused homolog isoform 3 (mouse)	mSUFU/iso:3	PR:000000001	NCBITaxon:10090	MGI:MGI:1345643			UniProtKB:Q9Z0P7-3	
+PR:Q9Z0P7-4	mSUFU/iso:4	suppressor of fused homolog isoform 4 (mouse)	mSUFU/iso:4|suppressor of fused homolog isoform SU(FU)-XL (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1345643			UniProtKB:Q9Z0P7-4	
+PR:Q9Z0P7-2	mSUFU/iso:m2	suppressor of fused homolog isoform m2 (mouse)	mSUFU/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1345643			UniProtKB:Q9Z0P7-2	
+PR:Q9Z172	mSumo3	small ubiquitin-related modifier 3 (mouse)	mSumo3|SMT3 homolog 1 (mouse)|Smt3A (mouse)|SUMO-3 (mouse)|ubiquitin-like protein SMT3A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1336201			UniProtKB:Q9Z172	
+PR:Q9Z172-1	mSumo3/iso:m1	small ubiquitin-related modifier 3 isoform m1 (mouse)	mSumo3/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1336201			UniProtKB:Q9Z172-1	
+PR:Q9Z172-2	mSumo3/iso:m2	small ubiquitin-related modifier 3 isoform m2 (mouse)	mSumo3/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1336201			UniProtKB:Q9Z172-2	
+PR:Q9Z199	mSupt4h2	transcription elongation factor SPT4-B (mouse)	mSupt4h2|DRB sensitivity-inducing factor small subunit 2 (mouse)|DSIF small subunit 2 (mouse)|transcription elongation factor SPT4 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1335090			UniProtKB:Q9Z199	
+PR:Q9Z1L2	mSYNGR4	synaptogyrin-4 (mouse)	mSYNGR4	PR:000000001	NCBITaxon:10090	MGI:MGI:1928903			UniProtKB:Q9Z1L2	
+PR:Q9Z1A9	mTBC1D8	TBC1 domain family member 8 (mouse)	mTBC1D8|BUB2-like protein 1 (mouse)|vascular Rab-GAP/TBC-containing protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1927225			UniProtKB:Q9Z1A9	
+PR:Q9Z1J1	mTCF7L1	transcription factor 7-like 1 (mouse)	mTCF7L1|HMG box transcription factor 3 (mouse)|mTCF-3	PR:000000001	NCBITaxon:10090	MGI:MGI:1202876			UniProtKB:Q9Z1J1	
+PR:Q9Z1T2	mTHBS4	thrombospondin-4 (mouse)	mTHBS4	PR:000000001	NCBITaxon:10090	MGI:MGI:1101779			UniProtKB:Q9Z1T2	
+PR:Q9Z1T2-1	mTHBS4/iso:1	thrombospondin-4 isoform 1 (mouse)	mTHBS4/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1101779			UniProtKB:Q9Z1T2-1	
+PR:Q9Z0V8	mTIMM17A	mitochondrial import inner membrane translocase subunit Tim17-A (mouse)	mTIMM17A|inner membrane preprotein translocase Tim17a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1343131			UniProtKB:Q9Z0V8	
+PR:Q9Z0V8-1	mTIMM17A/iso:1	mitochondrial import inner membrane translocase subunit Tim17-A isoform 1 (mouse)	mTIMM17A/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1343131			UniProtKB:Q9Z0V8-1	
+PR:Q9Z0V7	mTIMM17B	mitochondrial import inner membrane translocase subunit Tim17-B (mouse)	mTIMM17B	PR:000000001	NCBITaxon:10090	MGI:MGI:1343176			UniProtKB:Q9Z0V7	
+PR:Q9Z0V7-1	mTIMM17B/iso:1	mitochondrial import inner membrane translocase subunit Tim17-B isoform 1 (mouse)	mTIMM17B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1343176			UniProtKB:Q9Z0V7-1	
+PR:Q9Z0U1	mTJP2	tight junction protein ZO-2 (mouse)	mTJP2|tight junction protein 2 (mouse)|zona occludens protein 2 (mouse)|zonula occludens protein 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1341872			UniProtKB:Q9Z0U1	
+PR:Q9Z321	mTOP3B	DNA topoisomerase 3-beta-1 (mouse)	mTOP3B|DNA topoisomerase III beta-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1333803			UniProtKB:Q9Z321	
+PR:Q9Z321-1	mTOP3B/iso:1	DNA topoisomerase 3-beta-1 isoform 1 (mouse)	mTOP3B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1333803			UniProtKB:Q9Z321-1	
+PR:Q9Z0L0	mTPBG	trophoblast glycoprotein (mouse)	mTPBG|5T4 oncofetal trophoblast glycoprotein (mouse)|5T4 oncotrophoblast glycoprotein (mouse)|WAIF1 (mouse)|Wnt-activated inhibitory factor 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1341264			UniProtKB:Q9Z0L0	
+PR:Q9Z0L0-1	mTPBG/iso:1	trophoblast glycoprotein isoform 1 (mouse)	mTPBG/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1341264			UniProtKB:Q9Z0L0-1	
+PR:Q9Z1Y4	mTRIP6	thyroid receptor-interacting protein 6 (mouse)	mTRIP6|TR-interacting protein 6 (mouse)|TRIP-6 (mouse)|ZRP-1 (mouse)|zyxin-related protein 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1343458			UniProtKB:Q9Z1Y4	
+PR:Q9Z2S7	mTSC22D3	TSC22 domain family protein 3 (mouse)	mTSC22D3|glucocorticoid-induced leucine zipper protein (mouse)|Tilz3 (mouse)|TSC22-related-inducible leucine zipper 3 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1196284			UniProtKB:Q9Z2S7	
+PR:Q9Z2S7-1	mTSC22D3/iso:1	TSC22 domain family protein 3 isoform 1 (mouse)	mTSC22D3/iso:1|Tilz3b (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1196284			UniProtKB:Q9Z2S7-1	
+PR:Q9Z2S7-2	mTSC22D3/iso:2	TSC22 domain family protein 3 isoform 2 (mouse)	mTSC22D3/iso:2|Tilz3a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1196284			UniProtKB:Q9Z2S7-2	
+PR:Q9Z2S7-3	mTSC22D3/iso:3	TSC22 domain family protein 3 isoform 3 (mouse)	mTSC22D3/iso:3|Tilz3c (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1196284			UniProtKB:Q9Z2S7-3	
+PR:000037434	mTSC22D3/iso:3/Phos:1	TSC22 domain family protein 3 isoform 3 phosphorylated 1 (mouse)	mTSC22D3/iso:3/Phos:1|UniProtKB:Q9Z2S7-3, Ser-37, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:1196284				
+PR:000037435	mTSC22D3/iso:3/Phos:2	TSC22 domain family protein 3 isoform 3 phosphorylated 2 (mouse)	mTSC22D3/iso:3/Phos:2|UniProtKB:Q9Z2S7-3, Ser-40, MOD:00046	PR:000000001	NCBITaxon:10090	MGI:MGI:1196284				
+PR:Q9Z2S7-4	mTSC22D3/iso:4	TSC22 domain family protein 3 isoform 4 (mouse)	mTSC22D3/iso:4|L-GLITZ (mouse)|Long glucocorticoid-induced leucine zipper protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1196284			UniProtKB:Q9Z2S7-4	
+PR:Q9Z273	mTULP1	tubby-related protein 1 (mouse)	mTULP1|tubby-like protein 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:109571			UniProtKB:Q9Z273	
+PR:Q9Z0P5	mTWF2	twinfilin-2 (mouse)	mTWF2|A6-related protein (mouse)|mA6RP|twinfilin-1-like protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1346078			UniProtKB:Q9Z0P5	
+PR:Q9Z0P5-1	mTWF2/iso:1	twinfilin-2 isoform 1 (mouse)	mTWF2/iso:1|twinfilin-2 isoform Twf2a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1346078			UniProtKB:Q9Z0P5-1	
+PR:Q9Z0P5-2	mTWF2/iso:m2	twinfilin-2 isoform m2 (mouse)	mTWF2/iso:m2|twinfilin-2 isoform Twf2b (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1346078			UniProtKB:Q9Z0P5-2	
+PR:Q9Z1F9	mUBA2	SUMO-activating enzyme subunit 2 (mouse)	mUBA2|anthracycline-associated resistance ARX (mouse)|ubiquitin-like 1-activating enzyme E1B (mouse)|ubiquitin-like modifier-activating enzyme 2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858313			UniProtKB:Q9Z1F9	
+PR:Q9Z255	mUBE2A	ubiquitin-conjugating enzyme E2 A (mouse)	mUBE2A|E2 ubiquitin-conjugating enzyme A (mouse)|HR6A (mouse)|mHR6A|RAD6 homolog A (mouse)|ubiquitin carrier protein A (mouse)|ubiquitin-protein ligase A (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:102959			UniProtKB:Q9Z255	
+PR:Q9Z255-1	mUBE2A/iso:1	ubiquitin-conjugating enzyme E2 A isoform 1 (mouse)	mUBE2A/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:102959			UniProtKB:Q9Z255-1	
+PR:Q9Z2M6	mUBL3	ubiquitin-like protein 3 (mouse)	mUBL3|membrane-anchored ubiquitin-fold protein (mouse)|MmMUB|MUB (mouse)|protein HCG-1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1344373			UniProtKB:Q9Z2M6	
+PR:Q9Z2M6-1	mUBL3/iso:1	ubiquitin-like protein 3 isoform 1 (mouse)	mUBL3/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1344373			UniProtKB:Q9Z2M6-1	
+PR:Q9Z2R6	mUNC119	protein unc-119 homolog A (mouse)	mUNC119|mRG4|retinal protein 4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1328357			UniProtKB:Q9Z2R6	
+PR:Q9Z2R6-1	mUNC119/iso:1	protein unc-119 homolog A isoform 1 (mouse)	mUNC119/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1328357			UniProtKB:Q9Z2R6-1	
+PR:Q9Z1N9	mUNC13B	protein unc-13 homolog B (mouse)	mUNC13B|munc13 (mouse)|Munc13-2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1342278			UniProtKB:Q9Z1N9	
+PR:Q9Z1N9-1	mUNC13B/iso:m1	protein unc-13 homolog B isoform m1 (mouse)	mUNC13B/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1342278			UniProtKB:Q9Z1N9-1	
+PR:Q9Z1N9-2	mUNC13B/iso:m2	protein unc-13 homolog B isoform m2 (mouse)	mUNC13B/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1342278			UniProtKB:Q9Z1N9-2	
+PR:Q9Z1N9-3	mUNC13B/iso:m3	protein unc-13 homolog B isoform m3 (mouse)	mUNC13B/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1342278			UniProtKB:Q9Z1N9-3	
+PR:Q9Z2C6	mUPK1B	uroplakin-1b (mouse)	mUPK1B|UP1b (mouse)|UPIb (mouse)|uroplakin Ib (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:98912			UniProtKB:Q9Z2C6	
+PR:Q9Z2C6-1	mUPK1B/iso:1	uroplakin-1b isoform 1 (mouse)	mUPK1B/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:98912			UniProtKB:Q9Z2C6-1	
+PR:Q9Z1Z0	mUSO1	general vesicular transport factor p115 (mouse)	mUSO1|protein USO1 homolog (mouse)|transcytosis-associated protein (mouse)|vesicle-docking protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1929095			UniProtKB:Q9Z1Z0	
+PR:Q9Z1Z0-1	mUSO1/iso:1	general vesicular transport factor p115 isoform 1 (mouse)	mUSO1/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1929095			UniProtKB:Q9Z1Z0-1	
+PR:Q9Z1Z0-2	mUSO1/iso:m2	general vesicular transport factor p115 isoform m2 (mouse)	mUSO1/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1929095			UniProtKB:Q9Z1Z0-2	
+PR:Q9Z1Z0-3	mUSO1/iso:m3	general vesicular transport factor p115 isoform m3 (mouse)	mUSO1/iso:m3	PR:000000001	NCBITaxon:10090	MGI:MGI:1929095			UniProtKB:Q9Z1Z0-3	
+PR:Q9Z1Z0-4	mUSO1/iso:m4	general vesicular transport factor p115 isoform m4 (mouse)	mUSO1/iso:m4	PR:000000001	NCBITaxon:10090	MGI:MGI:1929095			UniProtKB:Q9Z1Z0-4	
+PR:Q9Z2P8	mVAMP5	vesicle-associated membrane protein 5 (mouse)	mVAMP5|myobrevin (mouse)|VAMP-5 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1858622			UniProtKB:Q9Z2P8	
+PR:Q9Z2P8-1	mVAMP5/iso:1	vesicle-associated membrane protein 5 isoform 1 (mouse)	mVAMP5/iso:1	PR:000000001	NCBITaxon:10090	MGI:MGI:1858622			UniProtKB:Q9Z2P8-1	
+PR:Q9Z1Q9	mVARS	valine--tRNA ligase (mouse)	mVARS|protein G7a (mouse)|ValRS (mouse)|valyl-tRNA synthetase (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:90675			UniProtKB:Q9Z1Q9	
+PR:Q9Z0K8	mVNN1	pantetheinase (mouse)	mVNN1|pantetheine hydrolase (mouse)|vanin-1 (mouse)|vascular non-inflammatory molecule 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:108395			UniProtKB:Q9Z0K8	
+PR:Q9Z109	mVSIG2	V-set and immunoglobulin domain-containing protein 2 (mouse)	cortical thymocyte-like protein (mouse)|CT-like protein (mouse)|mVSIG2	PR:000000001	NCBITaxon:10090	MGI:MGI:1928009			UniProtKB:Q9Z109	
+PR:Q9Z109-1	mVSIG2/iso:m1	V-set and immunoglobulin domain-containing protein 2 isoform m1 (mouse)	mVSIG2/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1928009			UniProtKB:Q9Z109-1	
+PR:Q9Z109-2	mVSIG2/iso:m2	V-set and immunoglobulin domain-containing protein 2 isoform m2 (mouse)	mVSIG2/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1928009			UniProtKB:Q9Z109-2	
+PR:Q9Z0H1	mWDR46	WD repeat-containing protein 46 (mouse)	mWDR46|WD repeat-containing protein BING4 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1931871			UniProtKB:Q9Z0H1	
+PR:Q9Z0U0	mXPR1	solute carrier family 53 member 1 (mouse)	Rmc-1 (mouse)|mXPR1|phosphate exporter SLC53A1 (mouse)|protein SYG1 homolog (mouse)|xenotropic and polytropic retrovirus receptor 1 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:97932			UniProtKB:Q9Z0U0	
+PR:Q9Z0U0-1	mXPR1/iso:m1	solute carrier family 53 member 1 isoform m1 (mouse)	mXPR1/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:97932			UniProtKB:Q9Z0U0-1	
+PR:Q9Z0U0-2	mXPR1/iso:m2	solute carrier family 53 member 1 isoform m2 (mouse)	mXPR1/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:97932			UniProtKB:Q9Z0U0-2	
+PR:Q9Z2C8	mYBX2	Y-box-binding protein 2 (mouse)	mYBX2|FRGY2 homolog (mouse)|germ cell-specific Y-box-binding protein (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1096372			UniProtKB:Q9Z2C8	
+PR:Q9Z2C8-1	mYBX2/iso:m1	Y-box-binding protein 2 isoform m1 (mouse)	mYBX2/iso:m1|Y-box-binding protein 2 isoform Msy2 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1096372			UniProtKB:Q9Z2C8-1	
+PR:Q9Z2C8-2	mYBX2/iso:m2	Y-box-binding protein 2 isoform m2 (mouse)	mYBX2/iso:m2|Y-box-binding protein 2 isoform Msy2a (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1096372			UniProtKB:Q9Z2C8-2	
+PR:Q9Z0G7	mZBTB22	zinc finger and BTB domain-containing protein 22 (mouse)	mZBTB22|protein BING1 (mouse)|zinc finger protein 297 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1931870			UniProtKB:Q9Z0G7	
+PR:Q9Z1D8	mZKSCAN5	zinc finger protein with KRAB and SCAN domains 5 (mouse)	mZKSCAN5|zfp-95 (mouse)|zinc finger protein 95 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:107533			UniProtKB:Q9Z1D8	
+PR:Q9Z2U2	mZNF292	zinc finger protein 292 (mouse)	mZNF292|zfp-15 (mouse)|zinc finger protein 15 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1353423			UniProtKB:Q9Z2U2	
+PR:Q9Z2U2-1	mZNF292/iso:m1	zinc finger protein 292 isoform m1 (mouse)	mZNF292/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1353423			UniProtKB:Q9Z2U2-1	
+PR:Q9Z2U2-2	mZNF292/iso:m2	zinc finger protein 292 isoform m2 (mouse)	mZNF292/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1353423			UniProtKB:Q9Z2U2-2	
+PR:Q9Z1D9	mZNF394	zinc finger protein 394 (mouse)	mZNF394|zfp-94 (mouse)|zinc finger protein 94 (mouse)|zinc finger protein with KRAB and SCAN domains 14 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1914485			UniProtKB:Q9Z1D9	
+PR:Q9Z1D7	mZSCAN12	zinc finger and SCAN domain-containing protein 12 (mouse)	mZSCAN12|zfp-96 (mouse)|zinc finger protein 96 (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1099444			UniProtKB:Q9Z1D7	
+MGI:MGI:1918925	Sanbr	SANT and BTB domain regulator of CSR	0610010F05Rik	SO:0001217	NCBITaxon:10090				UniProtKB:Q68FF0	
+PR:Q68FF0	mSANBR	SANT and BTB domain regulator of class switch recombination (mouse)	mSANBR|SANT and BTB domain regulator of CSR (mouse)	PR:000000001	NCBITaxon:10090	MGI:MGI:1918925			UniProtKB:Q68FF0	
+PR:Q68FF0-1	mSANBR/iso:m1	SANT and BTB domain regulator of class switch recombination isoform m1 (mouse)	mSANBR/iso:m1	PR:000000001	NCBITaxon:10090	MGI:MGI:1918925			UniProtKB:Q68FF0-1	
+PR:Q68FF0-2	mSANBR/iso:m2	SANT and BTB domain regulator of class switch recombination isoform m2 (mouse)	mSANBR/iso:m2	PR:000000001	NCBITaxon:10090	MGI:MGI:1918925			UniProtKB:Q68FF0-2	
+EMBL:AI786733	AI786733			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BC079876	BC079876			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BB522605	BB522605			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:AK142320	AK142320			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BB469274	BB469274			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:AK053838	AK053838			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BC072622	BC072622			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:W30094	W30094			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:AK029538	AK029538			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BB283770	BB283770			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:AK002465	AK002465			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BC055049	BC055049			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:AV277980	AV277980			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:AK129454	AK129454			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:AI785881	AI785881			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:AI642567	AI642567			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BC065122	BC065122			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BP759684	BP759684			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+EMBL:BY712751	BY712751			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+RefSeq:NR_156450	NR_156450			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+RefSeq:NM_001347242	NM_001347242			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+RefSeq:NM_027860	NM_027860			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+ENSEMBL:ENSMUST00000123909	ENSMUST00000123909			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+ENSEMBL:ENSMUST00000043356	ENSMUST00000043356			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+ENSEMBL:ENSMUST00000131612	ENSMUST00000131612			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+ENSEMBL:ENSMUST00000141353	ENSMUST00000141353			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+ENSEMBL:ENSMUST00000093267	ENSMUST00000093267			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+ENSEMBL:ENSMUST00000155903	ENSMUST00000155903			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
+ENSEMBL:ENSMUST00000180260	ENSMUST00000180260			SO:0000234	NCBITaxon:10090	MGI:MGI:1918925				
