@@ -736,7 +736,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                     matching_gpi_path = unzip_simple(matching_gpi_path)
                 gpi_list.append(matching_gpi_path)
 
-        print("matching gpi path", matching_gpi_path)
+        click.echo("matching gpi path", matching_gpi_path)
 
         noctua_gpad_src = check_and_download_mixin_source(noctua_metadata, group_metadata["id"], dataset, target,
                                                           base_download_url=base_download_url,
@@ -756,14 +756,14 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
 
-        print("fixing isoforms", matching_gpi_path)
+        click.echo("fixing isoforms", matching_gpi_path)
 
         output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
         isoform_fixed_gaf = fix_isoforms(end_gaf, matching_gpi_path, ontology_graph, output_gaf_path)
 
-        click.echo(end_gaf)
+        click.echo(isoform_fixed_gaf)
 
-        make_ttls(dataset, end_gaf, products, ontology_graph)
+        make_ttls(dataset, isoform_fixed_gaf, products, ontology_graph)
 
 
 def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_file_path: str) -> str:
@@ -778,12 +778,21 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
     """
     fixed_associations = []
     gpiparser = GpiParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
-    # Parse the GPI file line by line
+    # Parse the GPI file, creating a map of identifiers to GPI entries
+    gpis = gpiparser.parse(gpi_file, None)
+    gpi_map = {}
+    for gpi_entry in gpis:
+        gpi_map[gpi_entry.get('id')] = {"encoded_by": gpi_entry.get('encoded_by'),
+                                        "full_name": gpi_entry.get('full_name'),
+                                        "label": gpi_entry.get('label'),
+                                        "synonyms": gpi_entry.get('synonyms'),
+                                        "type": gpi_entry.get('db_object_type')}
+        pprint(gpi_map[gpi_entry.get('id')])
+
     gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     gafwriter = GafWriter(file=open(output_file_path, "w"), source="test", version=gafparser.version)
-    parsed_entries = gpiparser.parse(gpi_file, None)
-    gpi_lookup = {}
-    substituted_entries = []
+
+    # these are statistic parameters that record when a substitution is made.
     substitution_count = 0
     no_substitution_count = 0
 
@@ -794,27 +803,26 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
                 if isinstance(source_assoc, dict):
                     continue  # skip the header
                 if source_assoc.subject.id.namespace.startswith("PR"):
-                    click.echo("found a PR identifier")
-                    click.echo(source_assoc.subject.id)
-                    pprint("old subject", source_assoc.subject)
                     # TODO: right now we get the first encoded_by result -- this is what the original script from Chris did??
-                    old_subject_id_details = gpi_lookup[str(source_assoc.subject.id)]
-                    print(old_subject_id_details)
-                    source_assoc.subject.id.namespace = gpi_lookup[source_assoc.subject.id].get("encoded_by")[0].split(":")[0]
-                    source_assoc.subject.id.identity = gpi_lookup[source_assoc.subject.id].get("encoded_by")[0].split(":")[1]
-                    print("new namespace", source_assoc.subject.id.namespace)
-                    print("new identity", source_assoc.subject.id.identity)
-                    source_assoc.subject.full_name = gpi_lookup[(source_assoc.subject.id).get("encoded_by")[0]].get("full_name")
-                    print("new fullname", source_assoc.subject.id.full_name)
-                    source_assoc.subject.label = gpi_lookup[(source_assoc.subject.id).get("encoded_by")[0]].get("label")
-                    print("new label", source_assoc.subject.id.label)
-                    source_assoc.subject.synonyms = gpi_lookup[(source_assoc.subject.id).get("encoded_by")[0]].get("synonyms")
+                    full_old_identifier = source_assoc.subject.id.namespace + ":" + source_assoc.subject.id.identity
+                    if "MGI" == gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]:
+                        source_assoc.subject.id.namespace = gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]
+                        source_assoc.subject.id.identity = "MGI:" + gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[2]
+                    else:
+                        source_assoc.subject.id.namespace = \
+                        gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]
+                        source_assoc.subject.id.identity = \
+                        gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[1]
+                    full_new_identifier = source_assoc.subject.id.namespace + ":" + source_assoc.subject.id.identity
+                    source_assoc.subject.full_name = gpi_map[full_new_identifier].get("full_name")
+                    source_assoc.subject.label = gpi_map[full_new_identifier].get("label")
+                    source_assoc.subject.synonyms = gpi_map[full_new_identifier].get("synonyms")
+                    source_assoc.subject.type = gpi_map[full_new_identifier].get("type")
                     substitution_count += 1
                 else:
                     no_substitution_count += 1
 
                 # Join fields back into a string and write to output file
-
                 fixed_associations.append(source_assoc)
 
     gafwriter.write(fixed_associations)

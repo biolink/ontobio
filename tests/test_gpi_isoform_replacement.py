@@ -12,4 +12,4 @@ def test_fix_isoforms():
     with open(output_file_path, 'r') as f:
         lines = f.readlines()
     for line in lines:
-        print(line)
+        assert not line.startswith("PR")
