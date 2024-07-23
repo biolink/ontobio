@@ -33,6 +33,7 @@ travis_test:
 		tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
 		tests/test_collections.py \
 		tests/test_gocamgen.py; \
+		tests/test_gpi_isoform_replacement.py \
 	else \
 		pytest tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
 		tests/test_rdfgen.py tests/test_phenosim_engine.py tests/test_ontol.py \
@@ -41,6 +42,7 @@ travis_test:
 		tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
 		tests/test_collections.py \
 		tests/test_gocamgen.py; \
+		tests/test_gpi_isoform_replacement.py \
 	fi
 
 cleandist:
