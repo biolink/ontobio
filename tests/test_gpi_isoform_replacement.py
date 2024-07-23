@@ -13,3 +13,5 @@ def test_fix_isoforms():
         lines = f.readlines()
     for line in lines:
         assert not line.startswith("PR")
+    assert len(lines) > 20
+
