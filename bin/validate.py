@@ -26,7 +26,7 @@ from ontobio.io.gpadparser import GpadParser
 from ontobio.io.entityparser import GpiParser
 from ontobio.io.assocwriter import GafWriter
 from ontobio.io.assocwriter import GpadWriter
-from ontobio.model.association import Curie
+from ontobio.model.association import Curie, ExtensionUnit
 from ontobio.io import assocparser
 from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
@@ -758,17 +758,21 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
 
         click.echo("fixing isoforms", matching_gpi_path)
 
+        # run the resulting gaf through one last parse and replace, to handle the isoforms
+        # see: https://github.com/geneontology/go-site/issues/2291
         output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
-        isoform_fixed_gaf = fix_isoforms(end_gaf, matching_gpi_path, ontology_graph, output_gaf_path)
-
+        isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, matching_gpi_path, ontology_graph, output_gaf_path)
         click.echo(isoform_fixed_gaf)
 
+        # create ttl fils
         make_ttls(dataset, isoform_fixed_gaf, products, ontology_graph)
 
 
-def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_file_path: str) -> str:
+def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_file_path: str) -> str:
     """
-    Given a GAF file and a GPI file, fix the GAF file by converting isoform annotations to gene annotations.
+    Given a GAF file and a GPI file, fix the GAF file by converting isoform annotations to gene annotations. Storing
+    the isoforms back in subject_extensions collection, changing the full_name, synonyms, label, and type back to the
+    gene in the GPI file. 
 
     :param gaf_file_to_fix: The path to the GAF file to fix
     :param gpi_file: The path to the GPI file
@@ -803,10 +807,10 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
                 if isinstance(source_assoc, dict):
                     continue  # skip the header
                 if source_assoc.subject.id.namespace.startswith("PR"):
-                    # TODO: right now we get the first encoded_by result -- this is what the original script from Chris did??
                     full_old_identifier = source_assoc.subject.id.namespace + ":" + source_assoc.subject.id.identity
                     old_namespace = source_assoc.subject.id.namespace
                     old_identity = source_assoc.subject.id.identity
+                    # TODO: right now we get the FIRST encoded_by result -- this is what the original script from Chris did??
                     if "MGI" == gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]:
                         source_assoc.subject.id.namespace = gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]
                         source_assoc.subject.id.identity = "MGI:" + gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[2]
@@ -820,10 +824,15 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
                     source_assoc.subject.label = gpi_map[full_new_identifier].get("label")
                     source_assoc.subject.synonyms = gpi_map[full_new_identifier].get("synonyms")
                     source_assoc.subject.type = gpi_map[full_new_identifier].get("type")
-                    source_assoc.subject_extensions[0].term = Curie(
-                            namespace=old_identity,
-                            identity=old_namespace,
-                        )
+
+                    # we need to put the isoform currently being swapped, back into "Column 17" which is a
+                    # subject_extension member.
+                    isoform_term = Curie(namespace=old_identity, identity=old_namespace)
+                    isoform_relation = Curie(namespace="RO", identity="0002327")
+                    new_subject_extension = ExtensionUnit(relation=isoform_relation, term=isoform_term)
+                    source_assoc.subject_extensions.append(new_subject_extension)
+
+                    # count the substitution here for reporting later
                     substitution_count += 1
                 else:
                     no_substitution_count += 1
