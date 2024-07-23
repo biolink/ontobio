@@ -122,10 +122,10 @@ class GpiParser(EntityParser):
         else:
             return self.default_version
 
-    def parse_line(self, line):
+    def parse_line(self, line) -> (str, List[Dict]):
         """Parses a single line of a GPI.
 
-        Return a tuple `(processed_line, entities)`. Typically
+        Return a tuple `(processed_line, entities)`. Typically,
         there will be a single entity, but in some cases there
         may be none (invalid line) or multiple (disjunctive clause in
         annotation extensions)

@@ -3,22 +3,14 @@
 import click
 import json
 import os
-import yaml
 import requests
 import gzip
 import urllib
 import shutil
-import re
-import glob
 import logging
-import sys
 import traceback
-from typing import Dict, List
-import yamldown
-
-from functools import wraps
-
-# from ontobio.util.user_agent import get_user_agent
+from ontobio.model.association import Curie, ExtensionUnit
+from ontobio.io.entityparser import GpiParser
 from ontobio.ontol_factory import OntologyFactory
 from ontobio.io.gafparser import GafParser
 from ontobio.io.gpadparser import GpadParser
@@ -33,7 +25,6 @@ from ontobio.rdfgen.gocamgen.gocam_builder import GoCamBuilder, AssocExtractor
 from ontobio.validation import metadata
 from ontobio.validation import tools
 from ontobio.validation import rules
-
 
 from typing import Dict, Set
 
@@ -224,7 +215,8 @@ Produce validated gaf using the gaf parser/
 
 @tools.gzips
 def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False, group="unknown", rule_metadata=None,
-                goref_metadata=None, ref_species_metadata=None, db_type_name_regex_id_syntax=None, retracted_pub_set=None, db_entities=None, group_idspace=None,
+                goref_metadata=None, ref_species_metadata=None, db_type_name_regex_id_syntax=None,
+                retracted_pub_set=None, db_entities=None, group_idspace=None,
                 format="gaf", suppress_rule_reporting_tags=[], annotation_inferences=None, group_metadata=None,
                 extensions_constraints=None, rule_contexts=[], gaf_output_version="2.2",
                 rule_set=assocparser.RuleSet.ALL) -> list[str]:
@@ -613,7 +605,8 @@ def cli(ctx, verbose):
 @click.option("--only-dataset", default=None)
 @click.option("--gaf-output-version", default="2.2", type=click.Choice(["2.1", "2.2"]))
 @click.option("--rule-set", "-l", "rule_set", default=[assocparser.RuleSet.ALL], multiple=True)
-@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False, help="Path to retracted publications file")
+@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False,
+              help="Path to retracted publications file")
 def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target, ontology, exclude, base_download_url,
             suppress_rule_reporting_tag, skip_existing_files, gaferencer_file, only_dataset, gaf_output_version,
             rule_set, retracted_pub_set):
@@ -676,7 +669,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
 
     db_entities = metadata.database_entities(absolute_metadata)
     group_ids = metadata.groups(absolute_metadata)
-    extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)    
+    extensions_constraints = metadata.extensions_constraints_file(absolute_metadata)
 
     gaferences = None
     if gaferencer_file:
@@ -685,21 +678,20 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
     # Default comes through as single-element tuple
     if rule_set == (assocparser.RuleSet.ALL,):
         rule_set = assocparser.RuleSet.ALL
-        
+
     db_type_name_regex_id_syntax = metadata.database_type_name_regex_id_syntax(absolute_metadata)
 
-    retracted_pubs = None
     if retracted_pub_set:
         retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
     else:
-       retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)  
+        retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)
 
     for dataset_metadata, source_gaf in downloaded_gaf_sources:
         dataset = dataset_metadata["dataset"]
         # Set paint to True when the group is "paint".
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group,
         # like for paint_other.
-        click.echo("source_gaf: {}".format(source_gaf))
+        click.echo("Producing GAF by passing through validation rules... {}".format(dataset))
         valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph,
                                 paint=(group == "paint"),
                                 group=group,
@@ -719,10 +711,14 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                 rule_set=rule_set
                                 )[0]
 
+        click.echo("Producing GPI from GAF files...")
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph, gpad_gpi_output_version)
 
         gpi_list = [gpi]
-        # Try to find other GPIs in metadata and merge
+
+        matching_gpi_path = None
+        click.echo("Try to find other GPIs in metadata and merge...")
+
         for ds in group_metadata["datasets"]:
             # Where type=GPI for the same dataset (e.g. "zfin", "goa_cow")
             if ds["type"] == "gpi" and ds["dataset"] == dataset and ds.get("source"):
@@ -732,6 +728,9 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                     matching_gpi_path = unzip_simple(matching_gpi_path)
                 gpi_list.append(matching_gpi_path)
 
+        click.echo("Found the matching gpi path...{}".format(matching_gpi_path))
+
+        click.echo("Downloading the noctua and paint GPAD files...")
         noctua_gpad_src = check_and_download_mixin_source(noctua_metadata, group_metadata["id"], dataset, target,
                                                           base_download_url=base_download_url,
                                                           replace_existing_files=not skip_existing_files)
@@ -740,6 +739,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                                          replace_existing_files=not skip_existing_files)
                          if paint_metadata else None)
 
+        click.echo("Executing 'make_gpads' in validate.produce with all the assembled GAF files...")
         make_gpads(dataset, valid_gaf, products,
                    ontology_graph, noctua_gpad_src, paint_gaf_src,
                    gpi, gpad_gpi_output_version)
@@ -750,9 +750,92 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
 
-        click.echo(end_gaf)
+        click.echo("Executing the isoform fixing step in validate.produce...")
+        # run the resulting gaf through one last parse and replace, to handle the isoforms
+        # see: https://github.com/geneontology/go-site/issues/2291
+        output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
+        isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, matching_gpi_path, ontology_graph, output_gaf_path)
+        click.echo(isoform_fixed_gaf)
 
-        make_ttls(dataset, end_gaf, products, ontology_graph)
+        click.echo("Creating ttl files...")
+        make_ttls(dataset, isoform_fixed_gaf, products, ontology_graph)
+
+
+def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_file_path: str) -> str:
+    """
+    Given a GAF file and a GPI file, fix the GAF file by converting isoform annotations to gene annotations. Storing
+    the isoforms back in subject_extensions collection, changing the full_name, synonyms, label, and type back to the
+    gene in the GPI file.
+    :param gaf_file_to_fix: The path to the GAF file to fix
+    :param gpi_file: The path to the GPI file
+    :param ontology_graph: The ontology graph to use for parsing the associations
+    :param output_file_path: The path to write the fixed GAF file to
+    :return: The path to the fixed GAF file
+    """
+    fixed_associations = []
+    gpiparser = GpiParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+    # Parse the GPI file, creating a map of identifiers to GPI entries
+    gpis = gpiparser.parse(gpi_file, None)
+    gpi_map = {}
+    for gpi_entry in gpis:
+        gpi_map[gpi_entry.get('id')] = {"encoded_by": gpi_entry.get('encoded_by'),
+                                        "full_name": gpi_entry.get('full_name'),
+                                        "label": gpi_entry.get('label'),
+                                        "synonyms": gpi_entry.get('synonyms'),
+                                        # GPI spec says this is single valued, but GpiParser returns this as a list.
+                                        "type": gpi_entry.get('type')[0],
+                                        "id": gpi_entry.get('id')}
+
+    gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+    gafwriter = GafWriter(file=open(output_file_path, "w"), source="test", version=gafparser.version)
+
+    # these are statistic parameters that record when a substitution is made.
+    substitution_count = 0
+    no_substitution_count = 0
+
+    with open(gaf_file_to_fix, "r") as file:
+        for line in file:
+            annotation = gafparser.parse_line(line)
+            for source_assoc in annotation.associations:
+                if isinstance(source_assoc, dict):
+                    continue  # skip the header
+                if source_assoc.subject.id.namespace.startswith("PR"):
+                    full_old_identifier = source_assoc.subject.id.namespace + ":" + source_assoc.subject.id.identity
+                    old_namespace = source_assoc.subject.id.namespace
+                    old_identity = source_assoc.subject.id.identity
+                    # TODO: right now we get the FIRST encoded_by result -- this is what the original script from Chris did??
+                    if "MGI" == gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]:
+                        source_assoc.subject.id.namespace = gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]
+                        source_assoc.subject.id.identity = "MGI:" + gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[2]
+                    else:
+                        source_assoc.subject.id.namespace = \
+                        gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]
+                        source_assoc.subject.id.identity = \
+                        gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[1]
+                    full_new_identifier = source_assoc.subject.id.namespace + ":" + source_assoc.subject.id.identity
+                    source_assoc.subject.full_name = gpi_map[full_new_identifier].get("full_name")
+                    source_assoc.subject.label = gpi_map[full_new_identifier].get("label")
+                    source_assoc.subject.synonyms = gpi_map[full_new_identifier].get("synonyms")
+                    source_assoc.subject.type = gpi_map[full_new_identifier].get("type")
+
+                    # we need to put the isoform currently being swapped, back into "Column 17" which is a
+                    # subject_extension member.
+                    isoform_term = Curie(namespace=old_identity, identity=old_namespace)
+                    isoform_relation = Curie(namespace="RO", identity="0002327")
+                    new_subject_extension = ExtensionUnit(relation=isoform_relation, term=isoform_term)
+                    source_assoc.subject_extensions.append(new_subject_extension)
+
+                    # count the substitution here for reporting later
+                    substitution_count += 1
+                else:
+                    no_substitution_count += 1
+
+                # Join fields back into a string and write to output file
+                fixed_associations.append(source_assoc)
+
+    gafwriter.write(fixed_associations)
+    click.echo(f"Substituted {substitution_count} entries in {gaf_file_to_fix} "
+               f"and left {no_substitution_count} entries unchanged.")
 
 
 @cli.command()
@@ -808,14 +891,14 @@ def paint(group, dataset, metadata, target, ontology):
     absolute_target = os.path.abspath(target)
     os.makedirs(os.path.join(absolute_target, "groups"), exist_ok=True)
     paint_metadata = metadata.dataset_metadata_file(absolute_metadata, "paint")
-    
+
     paint_src_gaf = check_and_download_mixin_source(paint_metadata, dataset, absolute_target)
 
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology)
 
     gpi_path = os.path.join(absolute_target, "groups", dataset, "{}.gpi".format(dataset))
-    click.echo("Using GPI at {}".format(gpi_path))  
+    click.echo("Using GPI at {}".format(gpi_path))
     paint_gaf = produce_gaf("paint_{}".format(dataset), paint_src_gaf, ontology_graph, gpipath=gpi_path)
 
 
@@ -825,7 +908,8 @@ def paint(group, dataset, metadata, target, ontology):
 @click.option("--ontology", type=click.Path(), required=True)
 @click.option("--gaferencer-file", "-I", type=click.Path(exists=True), default=None, required=False,
               help="Path to Gaferencer output to be used for inferences")
-@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False, help="Path to retracted publications file")
+@click.option("--retracted_pub_set", type=click.Path(exists=True), default=None, required=False,
+              help="Path to retracted publications file")
 def rule(metadata_dir, out, ontology, gaferencer_file, retracted_pub_set):
     absolute_metadata = os.path.abspath(metadata_dir)
 
@@ -840,8 +924,7 @@ def rule(metadata_dir, out, ontology, gaferencer_file, retracted_pub_set):
     if retracted_pub_set:
         retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
     else:
-       retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)     
-    
+        retracted_pubs = metadata.retracted_pub_set_from_meta(absolute_metadata)
 
     click.echo("Found {} GO Rules".format(len(gorule_metadata.keys())))
 
