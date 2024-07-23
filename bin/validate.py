@@ -786,8 +786,7 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
                                         "full_name": gpi_entry.get('full_name'),
                                         "label": gpi_entry.get('label'),
                                         "synonyms": gpi_entry.get('synonyms'),
-                                        "type": gpi_entry.get('db_object_type')}
-        pprint(gpi_map[gpi_entry.get('id')])
+                                        "type": gpi_entry.get('type')}
 
     gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     gafwriter = GafWriter(file=open(output_file_path, "w"), source="test", version=gafparser.version)
