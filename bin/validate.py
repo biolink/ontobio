@@ -691,7 +691,6 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         
     db_type_name_regex_id_syntax = metadata.database_type_name_regex_id_syntax(absolute_metadata)
 
-    retracted_pubs = None
     if retracted_pub_set:
         retracted_pubs = metadata.retracted_pub_set(retracted_pub_set)
     else:
@@ -703,6 +702,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         # This will prevent filtering of IBA (GO_RULE:26) when paint is being treated as a top level group,
         # like for paint_other.
         click.echo("source_gaf: {}".format(source_gaf))
+        click.echo("Producing GAF by passing through validation rules... ")
         valid_gaf = produce_gaf(dataset, source_gaf, ontology_graph,
                                 paint=(group == "paint"),
                                 group=group,
@@ -722,11 +722,12 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                 rule_set=rule_set
                                 )[0]
 
+        click.echo("Producing GPI from GAF files...")
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph, gpad_gpi_output_version)
-
         gpi_list = [gpi]
-        # Try to find other GPIs in metadata and merge
         matching_gpi_path = None
+
+        click.echo("Try to find other GPIs in metadata and merge...")
         for ds in group_metadata["datasets"]:
             # Where type=GPI for the same dataset (e.g. "zfin", "goa_cow")
             if ds["type"] == "gpi" and ds["dataset"] == dataset and ds.get("source"):
@@ -736,16 +737,19 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                     matching_gpi_path = unzip_simple(matching_gpi_path)
                 gpi_list.append(matching_gpi_path)
 
-        click.echo("matching gpi path", matching_gpi_path)
+        click.echo("Found the matching gpi path", matching_gpi_path)
 
+        click.echo("Downloading the noctua and paint GPAD files...")
         noctua_gpad_src = check_and_download_mixin_source(noctua_metadata, group_metadata["id"], dataset, target,
                                                           base_download_url=base_download_url,
                                                           replace_existing_files=not skip_existing_files)
+
         paint_gaf_src = (check_and_download_mixin_source(paint_metadata, group_metadata["id"], dataset, target,
                                                          base_download_url=base_download_url,
                                                          replace_existing_files=not skip_existing_files)
                          if paint_metadata else None)
 
+        click.echo("Executing 'make_gpads' in validate.produce with all the assembled GAF files...")
         make_gpads(dataset, valid_gaf, products,
                    ontology_graph, noctua_gpad_src, paint_gaf_src,
                    gpi, gpad_gpi_output_version)
@@ -756,15 +760,14 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
 
-        click.echo("fixing isoforms", matching_gpi_path)
-
+        click.echo("Executing the isoform fixing step in validate.produce...")
         # run the resulting gaf through one last parse and replace, to handle the isoforms
         # see: https://github.com/geneontology/go-site/issues/2291
         output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
         isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, matching_gpi_path, ontology_graph, output_gaf_path)
         click.echo(isoform_fixed_gaf)
 
-        # create ttl fils
+        click.echo("Creating ttl files...")
         make_ttls(dataset, isoform_fixed_gaf, products, ontology_graph)
 
 
@@ -772,7 +775,7 @@ def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str, gpi_file: str, ontology_graph,
     """
     Given a GAF file and a GPI file, fix the GAF file by converting isoform annotations to gene annotations. Storing
     the isoforms back in subject_extensions collection, changing the full_name, synonyms, label, and type back to the
-    gene in the GPI file. 
+    gene in the GPI file.
 
     :param gaf_file_to_fix: The path to the GAF file to fix
     :param gpi_file: The path to the GPI file
