@@ -793,7 +793,8 @@ def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str, gpi_file: str, ontology_graph,
                                         "full_name": gpi_entry.get('full_name'),
                                         "label": gpi_entry.get('label'),
                                         "synonyms": gpi_entry.get('synonyms'),
-                                        "type": gpi_entry.get('type'),
+                                        # GPI spec says this is single valued, but GpiParser returns this as a list.
+                                        "type": gpi_entry.get('type')[0],
                                         "id": gpi_entry.get('id')}
 
     gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
