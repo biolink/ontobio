@@ -12,6 +12,7 @@ import re
 import glob
 import logging
 import sys
+from pprint import pprint
 import traceback
 from typing import Dict, List
 import yamldown
@@ -25,6 +26,7 @@ from ontobio.io.gpadparser import GpadParser
 from ontobio.io.entityparser import GpiParser
 from ontobio.io.assocwriter import GafWriter
 from ontobio.io.assocwriter import GpadWriter
+from ontobio.model.association import GoAssociation
 from ontobio.io import assocparser
 from ontobio.io import gafgpibridge
 from ontobio.io import entitywriter
@@ -774,57 +776,48 @@ def fix_isoforms(gaf_file_to_fix: str, gpi_file: str, ontology_graph, output_fil
     :param output_file_path: The path to write the fixed GAF file to
     :return: The path to the fixed GAF file
     """
-
+    fixed_associations = []
     gpiparser = GpiParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     # Parse the GPI file line by line
+    gafparser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+    gafwriter = GafWriter(file=open(output_file_path, "w"), source="test", version=gafparser.version)
     parsed_entries = gpiparser.parse(gpi_file, None)
-
-    gpi_lookup = {entry.get('db_object_id'): entry for entry in parsed_entries if entry.get('encoded_by')}
-
+    gpi_lookup = {}
     substituted_entries = []
     substitution_count = 0
     no_substitution_count = 0
 
-    with open(gaf_file_to_fix, 'r') as file, open(output_file_path, 'w') as output_file:
+    with open(gaf_file_to_fix, "r") as file:
         for line in file:
-            # Skip comment lines starting with '!' and empty lines
-            if line.startswith('!') or not line.strip():
-                output_file.write(line)
-                continue
-
-            # Split the line by tab and strip any trailing newline characters
-            fields = line.strip().split('\t')
-
-            # Construct the full ID to match with GPI
-            db, local_id = fields[0], fields[1]
-            full_id = f"{db}:{local_id}"
-
-            if db == 'PR':
-                if full_id in gpi_lookup:
-                    # Get the corresponding GPI entry
-                    gpi_entry = gpi_lookup[full_id]
-
-                    # Handle multiple ':' in Encoded_By
-                    encoded_by_parts = gpi_entry['encoded_by'].split(':')
-                    if len(encoded_by_parts) > 1:
-                        encoded_by_db = encoded_by_parts[0]
-                        encoded_by_local_id = ':'.join(
-                            encoded_by_parts[1:])  # Rejoin any additional parts that might include ':'
-                        fields[0], fields[1] = encoded_by_db, encoded_by_local_id  # Substitute DB and ID
-                        fields[2] = gpi_entry['db_object_symbol']  # Substitute Symbol
-                        fields[9] = gpi_entry['db_object_name']  # Substitute Full Name
-                        fields[10] = gpi_entry['db_object_synonyms'] if gpi_entry[
-                            'db_object_synonyms'] else ''  # Substitute Synonyms
-                        fields[11] = gpi_entry['db_object_type']  # Substitute Type
-                        substitution_count += 1
+            annotation = gafparser.parse_line(line)
+            for source_assoc in annotation.associations:
+                if isinstance(source_assoc, dict):
+                    continue  # skip the header
+                if source_assoc.subject.id.namespace.startswith("PR"):
+                    click.echo("found a PR identifier")
+                    click.echo(source_assoc.subject.id)
+                    pprint("old subject", source_assoc.subject)
+                    # TODO: right now we get the first encoded_by result -- this is what the original script from Chris did??
+                    old_subject_id_details = gpi_lookup[str(source_assoc.subject.id)]
+                    print(old_subject_id_details)
+                    source_assoc.subject.id.namespace = gpi_lookup[source_assoc.subject.id].get("encoded_by")[0].split(":")[0]
+                    source_assoc.subject.id.identity = gpi_lookup[source_assoc.subject.id].get("encoded_by")[0].split(":")[1]
+                    print("new namespace", source_assoc.subject.id.namespace)
+                    print("new identity", source_assoc.subject.id.identity)
+                    source_assoc.subject.full_name = gpi_lookup[(source_assoc.subject.id).get("encoded_by")[0]].get("full_name")
+                    print("new fullname", source_assoc.subject.id.full_name)
+                    source_assoc.subject.label = gpi_lookup[(source_assoc.subject.id).get("encoded_by")[0]].get("label")
+                    print("new label", source_assoc.subject.id.label)
+                    source_assoc.subject.synonyms = gpi_lookup[(source_assoc.subject.id).get("encoded_by")[0]].get("synonyms")
+                    substitution_count += 1
                 else:
                     no_substitution_count += 1
 
-            # Join fields back into a string and write to output file
-            processed_line = '\t'.join(fields)
-            output_file.write(processed_line + '\n')
-            substituted_entries.append(processed_line)
+                # Join fields back into a string and write to output file
 
+                fixed_associations.append(source_assoc)
+
+    gafwriter.write(fixed_associations)
     click.echo(f"Substituted {substitution_count} entries in {gaf_file_to_fix} "
                f"and left {no_substitution_count} entries unchanged.")
 

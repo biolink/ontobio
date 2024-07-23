@@ -17,6 +17,7 @@ jsonpath_rw>=0.0
 PyShEx>=0.7.11
 pytest>=0.0
 pytest_logging>=0.0
+pytest-mock
 pydotplus>=0.0
 plotly>=2.0.7
 pyyaml
