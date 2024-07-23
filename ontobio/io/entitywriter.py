@@ -2,7 +2,7 @@
 import re
 from datetime import datetime
 
-from ontobio.model.association import gp_type_label_to_curie
+from ontobio.model.association import map_gp_type_label_to_curie
 
 external_taxon = re.compile("taxon:([0-9]+)")
 internal_taxon = re.compile("NCBITaxon:([0-9]+)")
@@ -101,8 +101,8 @@ class GpiWriter(EntityWriter):
         if self.file:
             if self.version == "2.0":
                 self.file.write("!gpi-version: 2.0\n")
-                self.file.write("!date_generated: {}\n".format(str(datetime.now().strftime("%Y-%m-%dT%H:%M"))))
-                self.file.write("!generated_by: {}\n".format("GO Central"))
+                self.file.write("!date_generated: " + datetime.now().strftime("%Y-%m-%dT%H:%M") + "\n")
+                self.file.write("!generated_by: GO Central\n")
             else:
                 self.file.write("!gpi-version: 1.2\n")
 
@@ -154,7 +154,7 @@ class GpiWriter(EntityWriter):
                 entity.get('full_name'),  # DB_Object_Name
                 entity.get('synonyms'),  # DB_Object_Synonyms
                 # GPI spec says this is single valued, GpiParser returns list, so take the first element here.
-                gp_type_label_to_curie(entity.get('type')[0]),  # DB_Object_Type to curie vs. label
+                str(map_gp_type_label_to_curie(entity.get('type')[0])),  # DB_Object_Type to curie vs. label
                 taxon,  # DB_Object_Taxon, normalized to NCBITaxon prefix
                 "",  # Encoded_by
                 entity.get('parents'),  # Parent_Protein

@@ -287,7 +287,9 @@ def map_gp_type_label_to_curie(type_label: str) -> Curie:
     global __repair_entity_type_to_curie_mapping
     if type_label not in __default_entity_type_to_curie_mapping and type_label in __repair_entity_type_to_curie_mapping:
         return __repair_entity_type_to_curie_mapping.get(type_label)
+    # if the value type_label is not in the default dictionary, then return gene_product identifier/curie.
     return __default_entity_type_to_curie_mapping.get(type_label, __default_entity_type_to_curie_mapping["gene_product"])
+
 
 def gp_type_label_to_curie(type: Curie) -> str:
     """
@@ -296,9 +298,11 @@ def gp_type_label_to_curie(type: Curie) -> str:
     global __default_entity_type_to_curie_mapping
     return __default_entity_type_to_curie_mapping.inverse.get(type, "gene_product")
 
+
 def map_gp_type_label_to_repair_curie(type_label: str) -> Curie:
     global __repair_entity_type_to_curie_mapping
     return __repair_entity_type_to_curie_mapping.get(type_label)
+
 
 @dataclass(unsafe_hash=True)
 class Term:
