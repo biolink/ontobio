@@ -62,12 +62,13 @@ def test_gpi_2_0_writer():
     gpiwriter20.write_entity(entity)
     outlines = out.getvalue().split("\n")
 
-    expected_lines = [
+    expected_header_strings = [
         "!gpi-version: 2.0",
+        "!date_generated:"
         "MGI:MGI:1918911\t0610005C13Rik\tRIKEN cDNA 0610005C13 gene\t\tSO:0000000\ttaxon:10090\t\t\t\t\t",
-        ""
     ]
-    assert expected_lines == outlines
+    for line in expected_header_strings:
+        assert line in outlines
 
 
 def test_gpi_1_2_writer():

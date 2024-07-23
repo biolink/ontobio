@@ -301,6 +301,7 @@ class GpiParser(EntityParser):
         for entity in entity_dicts:
             entity_types = []
             if self.gpi_version() == "2.0":
+
                 entity_types = [association.Curie.from_str(t) for t in entity["type"]]
                 if any(c.is_error() for c in entity_types):
                     logger.error("Skipping `{}` due to malformed CURIE in entity type: `{}`".format(line, entity["type"]))

@@ -737,7 +737,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                     matching_gpi_path = unzip_simple(matching_gpi_path)
                 gpi_list.append(matching_gpi_path)
 
-        click.echo("Found the matching gpi path", matching_gpi_path)
+        click.echo("Found the matching gpi path...{}".format(matching_gpi_path))
 
         click.echo("Downloading the noctua and paint GPAD files...")
         noctua_gpad_src = check_and_download_mixin_source(noctua_metadata, group_metadata["id"], dataset, target,

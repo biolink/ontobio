@@ -10,6 +10,7 @@ from ontobio.io import assocparser, gafparser, gpadparser, entityparser
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class BioEntities:
     entities: Dict[Curie, Subject]
@@ -43,13 +44,12 @@ class BioEntities:
 
     @classmethod
     def load_from_file(BioEntities, path: str):
-        entities = dict() # type: Dict[Curie, Subject]
+        entities = dict()  # type: Dict[Curie, Subject]
         print("loading from {}".format(path))
         try:
             gpi_parser = entityparser.GpiParser()
             with open(path) as gpi:
                 for line in gpi:
-
                     ents = gpi_parser.line_as_entity_subject(line)
                     if ents is None:
                         continue
@@ -59,13 +59,15 @@ class BioEntities:
                         entities[entity_id] = entity
 
         except Exception as e:
-            logger.error("Failed to read GPI file: {}".format(str(e)))
+            print("Failed to read GPI file: {}".format(str(e)))
 
         return BioEntities(entities)
+
 
 @dataclass
 class GoAssociations:
     associations: List[GoAssociation]
+
 
 @dataclass
 class AssociationCollection:
@@ -79,7 +81,8 @@ class AssociationCollection:
         return AssociationCollection([], GoAssociations([]), BioEntities(dict()), assocparser.Report())
 
 
-def create_parser_from_header(line: str, config: assocparser.AssocParserConfig, group="unknown", dataset="unknown", bio_entities=None) -> Optional[assocparser.AssocParser]:
+def create_parser_from_header(line: str, config: assocparser.AssocParserConfig, group="unknown", dataset="unknown",
+                              bio_entities=None) -> Optional[assocparser.AssocParser]:
     parser = None
     parsed_version = parser_version_regex.findall(line)
     if len(parsed_version) == 1:
@@ -96,7 +99,8 @@ def create_parser_from_header(line: str, config: assocparser.AssocParserConfig, 
     return parser
 
 
-def construct_collection(annotation_path: Optional[str], gpi_paths: List[str], config: assocparser.AssocParserConfig) -> AssociationCollection:
+def construct_collection(annotation_path: Optional[str], gpi_paths: List[str],
+                         config: assocparser.AssocParserConfig) -> AssociationCollection:
     entities = BioEntities(dict())
     for gpi in gpi_paths:
         entities.merge(BioEntities.load_from_file(gpi))
@@ -125,6 +129,7 @@ class NoVersionInFile(Exception):
 
     def __str__(self):
         return "NoVersionInFile: {}".format(self.message)
+
 
 @dataclass
 class GeneralAssocParser(assocparser.AssocParser):

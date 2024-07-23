@@ -153,7 +153,8 @@ class GpiWriter(EntityWriter):
                 entity.get('label'),  # DB_Object_symbol
                 entity.get('full_name'),  # DB_Object_Name
                 entity.get('synonyms'),  # DB_Object_Synonyms
-                gp_type_label_to_curie(entity.get('type')),  # DB_Object_Type to curie vs. label
+                # GPI spec says this is single valued, GpiParser returns list, so take the first element here.
+                gp_type_label_to_curie(entity.get('type')[0]),  # DB_Object_Type to curie vs. label
                 taxon,  # DB_Object_Taxon, normalized to NCBITaxon prefix
                 "",  # Encoded_by
                 entity.get('parents'),  # Parent_Protein
@@ -167,9 +168,9 @@ class GpiWriter(EntityWriter):
                 prefix,  # DB
                 local_id,  # DB_Object_ID
                 entity.get('label'),  # DB_Object_Symbol
-                entity.get('full_name'),  # DB_Object_Symbol
-                entity.get('synonyms'),  # DB_Object_Name
-                entity.get('type'),  # DB_Object_Synonyms
+                entity.get('full_name'),  # DB_Object_Full_Name
+                entity.get('synonyms'),  # DB_Object_Synonyms
+                entity.get('type'),  # DB_Object_Type
                 normalize_taxon(entity.get("taxon").get("id")),  # taxon in gpi 1.2 was prefixed by `taxon:`
                 entity.get('parents'),  # Parent_Object_ID
                 entity.get('xrefs'),  # DB_Xref(s)
