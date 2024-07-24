@@ -773,6 +773,7 @@ def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str, gpi_file: str, ontology_graph,
     :return: The path to the fixed GAF file
     """
     fixed_associations = []
+    print(gaf_file_to_fix)
     gpiparser = GpiParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     # Parse the GPI file, creating a map of identifiers to GPI entries
     gpis = gpiparser.parse(gpi_file, None)
