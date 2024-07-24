@@ -122,10 +122,10 @@ class GpiParser(EntityParser):
         else:
             return self.default_version
 
-    def parse_line(self, line):
+    def parse_line(self, line) -> (str, List[Dict]):
         """Parses a single line of a GPI.
 
-        Return a tuple `(processed_line, entities)`. Typically
+        Return a tuple `(processed_line, entities)`. Typically,
         there will be a single entity, but in some cases there
         may be none (invalid line) or multiple (disjunctive clause in
         annotation extensions)
@@ -301,6 +301,7 @@ class GpiParser(EntityParser):
         for entity in entity_dicts:
             entity_types = []
             if self.gpi_version() == "2.0":
+
                 entity_types = [association.Curie.from_str(t) for t in entity["type"]]
                 if any(c.is_error() for c in entity_types):
                     logger.error("Skipping `{}` due to malformed CURIE in entity type: `{}`".format(line, entity["type"]))
