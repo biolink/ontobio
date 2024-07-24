@@ -46,11 +46,11 @@ def test_gpi_2_0_writer():
         'label': "0610005C13Rik",  # db_object_symbol,
         'full_name': "RIKEN cDNA 0610005C13 gene",  # db_object_name,
         'synonyms': [],
-        'type': ["SO:0000000"],  # db_object_type,
+        'type': ["gene"],  # db_object_type,
         'taxon': {"id": "NCBITaxon:10090"},
-        'encoded_by': "", # encoded_by
+        'encoded_by': "",  # encoded_by
         'parents': "",
-        'protein_containing_complex_members': "", # protein_containing_complex_members
+        'protein_containing_complex_members': "",  # protein_containing_complex_members
         'xrefs': "",
         'properties': ""
     }
@@ -62,12 +62,16 @@ def test_gpi_2_0_writer():
     gpiwriter20.write_entity(entity)
     outlines = out.getvalue().split("\n")
 
-    expected_lines = [
+    expected_header_prefixes = [
         "!gpi-version: 2.0",
-        "MGI:MGI:1918911\t0610005C13Rik\tRIKEN cDNA 0610005C13 gene\t\tSO:0000000\ttaxon:10090\t\t\t\t\t",
-        ""
+        "!date_generated:",
+        "!generated_by: GO Central",
     ]
-    assert expected_lines == outlines
+
+    for prefix in expected_header_prefixes:
+        assert any(line.startswith(prefix) for line in outlines), f"Missing expected header: {prefix}"
+
+    assert "MGI:MGI:1918911\t0610005C13Rik\tRIKEN cDNA 0610005C13 gene\t\tSO:0000704\tNCBITaxon:10090\t\t\t\t\t" in outlines
 
 
 def test_gpi_1_2_writer():
