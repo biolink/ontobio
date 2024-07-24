@@ -1,9 +1,12 @@
-"""
-Classes for exporting entities.
-
-So far only one implementation
-"""
+"""Classes for exporting entities."""
 import re
+from datetime import datetime
+
+from ontobio.model.association import map_gp_type_label_to_curie
+
+external_taxon = re.compile("taxon:([0-9]+)")
+internal_taxon = re.compile("NCBITaxon:([0-9]+)")
+
 
 def stringify(s):
     if s is None:
@@ -13,8 +16,6 @@ def stringify(s):
     else:
         return s
 
-external_taxon = re.compile("taxon:([0-9]+)")
-internal_taxon = re.compile("NCBITaxon:([0-9]+)")
 
 def normalize_taxon(taxon):
     global internal_taxon
@@ -100,6 +101,8 @@ class GpiWriter(EntityWriter):
         if self.file:
             if self.version == "2.0":
                 self.file.write("!gpi-version: 2.0\n")
+                self.file.write("!date_generated: " + datetime.now().strftime("%Y-%m-%dT%H:%M") + "\n")
+                self.file.write("!generated_by: GO Central\n")
             else:
                 self.file.write("!gpi-version: 1.2\n")
 
@@ -140,14 +143,19 @@ class GpiWriter(EntityWriter):
 
         """
 
+        taxon = entity.get("taxon").get("id")
+        if normalize_taxon(taxon).startswith("taxon:"):
+            taxon = taxon.replace("taxon:", "NCBITaxon:")
+
         if self.version == "2.0":
             vals = [
                 entity.get('id'),  # DB_Object_ID
                 entity.get('label'),  # DB_Object_symbol
                 entity.get('full_name'),  # DB_Object_Name
                 entity.get('synonyms'),  # DB_Object_Synonyms
-                entity.get('type'),  # DB_Object_Type
-                normalize_taxon(entity.get("taxon").get("id")),  # DB_Object_Taxon
+                # GPI spec says this is single valued, GpiParser returns list, so take the first element here.
+                str(map_gp_type_label_to_curie(entity.get('type')[0])),  # DB_Object_Type to curie vs. label
+                taxon,  # DB_Object_Taxon, normalized to NCBITaxon prefix
                 "",  # Encoded_by
                 entity.get('parents'),  # Parent_Protein
                 "",  # Protein_Containing_Complex_Members
@@ -160,10 +168,10 @@ class GpiWriter(EntityWriter):
                 prefix,  # DB
                 local_id,  # DB_Object_ID
                 entity.get('label'),  # DB_Object_Symbol
-                entity.get('full_name'),  # DB_Object_Symbol
-                entity.get('synonyms'),  # DB_Object_Name
-                entity.get('type'),  # DB_Object_Synonyms
-                normalize_taxon(entity.get("taxon").get("id")),  # taxon
+                entity.get('full_name'),  # DB_Object_Full_Name
+                entity.get('synonyms'),  # DB_Object_Synonyms
+                entity.get('type'),  # DB_Object_Type
+                normalize_taxon(entity.get("taxon").get("id")),  # taxon in gpi 1.2 was prefixed by `taxon:`
                 entity.get('parents'),  # Parent_Object_ID
                 entity.get('xrefs'),  # DB_Xref(s)
                 entity.get('properties')  # Properties
