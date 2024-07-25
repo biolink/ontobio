@@ -149,10 +149,10 @@ class GafWriter(AssocWriter):
     This converts an association dictionary object as produced in GafParser or
     GpadParser into a GAF line.
 
-    The GAF Writer now assumes that it is writing out GAF version 2.1 style
+    The GAF Writer now assumes that it is writing out GAF version 2.2 style
     annotations. The version can be set when creating a new GafWriter to 2.2
     with `version=2.2`. If any version other than 2.1 or 2.2, GafWriter will
-    default to 2.1.
+    default to 2.2.
 
     The only difference in 2.1 and 2.2 are how qualifiers (column 4) are handled.
     GAF 2.1 allows empty or only `NOT` qualifier values, and only allows
@@ -167,12 +167,12 @@ class GafWriter(AssocWriter):
     written out, or if the qualifier is empty and 2.2 is being written.
     """
 
-    def __init__(self, file=None, source=None, version="2.1"):
+    def __init__(self, file=None, source=None, version="2.2"):
         self.file = file
-        if version in ["2.1", "2.2"]:
+        if version in ["2.2"]:
             self.version = version
         else:
-            self.version = "2.1"
+            self.version = "2.2"
 
         self._write("!gaf-version: {}\n".format(self.version))
         self._write("!\n")
