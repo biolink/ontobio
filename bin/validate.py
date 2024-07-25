@@ -754,11 +754,19 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         click.echo("Executing the isoform fixing step in validate.produce...")
         # run the resulting gaf through one last parse and replace, to handle the isoforms
         # see: https://github.com/geneontology/go-site/issues/2291
-        temp_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
+        temp_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}_temp.gaf".format(dataset))
+        print("temp_output_gaf_path: ", temp_output_gaf_path)
         isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, matching_gpi_path, ontology_graph, temp_output_gaf_path)
+        print("isoform_fixed_gaf: ", isoform_fixed_gaf)
+
+        final_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
+
+        click.echo("Rename the temporary isoform fixed file to the final GAF...")
+        os.rename(temp_output_gaf_path, final_output_gaf_path)
+        print("final_output_gaf_path: ", final_output_gaf_path)
 
         click.echo("Creating ttl files...")
-        make_ttls(dataset, isoform_fixed_gaf, products, ontology_graph)
+        make_ttls(dataset, final_output_gaf_path, products, ontology_graph)
 
 
 def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str,
@@ -823,7 +831,7 @@ def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str,
 
                     # we need to put the isoform currently being swapped, back into "Column 17" which is a
                     # subject_extension member.
-                    isoform_term = Curie(namespace=old_identity, identity=old_namespace)
+                    isoform_term = Curie(namespace=old_namespace, identity=old_identity)
                     isoform_relation = Curie(namespace="RO", identity="0002327")
                     new_subject_extension = ExtensionUnit(relation=isoform_relation, term=isoform_term)
                     source_assoc.subject_extensions.append(new_subject_extension)
