@@ -711,10 +711,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                 rule_set=rule_set
                                 )[0]
 
-        click.echo("Producing GPI from GAF files...")
-        gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph, gpad_gpi_output_version)
-
-        gpi_list = [gpi]
+        gpi_list = []
 
         matching_gpi_path = None
         click.echo("Try to find other GPIs in metadata and merge...")
@@ -739,6 +736,9 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                                          replace_existing_files=not skip_existing_files)
                          if paint_metadata else None)
 
+        click.echo("Producing GPI for use in creating GPADs...")
+        gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph, gpad_gpi_output_version)
+
         click.echo("Executing 'make_gpads' in validate.produce with all the assembled GAF files...")
         make_gpads(dataset, valid_gaf, products,
                    ontology_graph, noctua_gpad_src, paint_gaf_src,
@@ -755,15 +755,18 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         # run the resulting gaf through one last parse and replace, to handle the isoforms
         # see: https://github.com/geneontology/go-site/issues/2291
         temp_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}_temp.gaf".format(dataset))
-        print("temp_output_gaf_path: ", temp_output_gaf_path)
+        click.echo("temp_output_gaf_path: {}".format(temp_output_gaf_path))
         isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, matching_gpi_path, ontology_graph, temp_output_gaf_path)
-        print("isoform_fixed_gaf: ", isoform_fixed_gaf)
+        click.echo("isoform_fixed_gaf: ".format(isoform_fixed_gaf))
 
         final_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
 
         click.echo("Rename the temporary isoform fixed file to the final GAF...")
         os.rename(temp_output_gaf_path, final_output_gaf_path)
-        print("final_output_gaf_path: ", final_output_gaf_path)
+        click.echo("final_output_gaf_path: ".format(final_output_gaf_path))
+
+        click.echo("Producing final GPI after all GAF corrections...")
+        final_gpi = produce_gpi(dataset, absolute_target, final_output_gaf_path, ontology_graph, gpad_gpi_output_version)
 
         click.echo("Creating ttl files...")
         make_ttls(dataset, final_output_gaf_path, products, ontology_graph)
