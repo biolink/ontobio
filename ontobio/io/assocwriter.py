@@ -172,10 +172,10 @@ class GafWriter(AssocWriter):
 
     def __init__(self, file=None, source=None, version="2.2"):
         self.file = file
-        if version in ["2.2"]:
+        if version in ["2.1", "2.2"]:
             self.version = version
         else:
-            self.version = "2.2"
+            self.version = "2.1"
 
         self._write("!gaf-version: {}\n".format(self.version))
         self._write("!\n")
