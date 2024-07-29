@@ -146,6 +146,7 @@ def test_gpad_qualifier_removed_in_gaf_2_1():
     gpad_to_gaf_line = [line for line in out.getvalue().split("\n") if not line.startswith("!")][0]
     assert gpad_to_gaf_line.split("\t")[3] == "NOT"
 
+
 def test_gaf2_2_qualifier_to_gaf2_1():
     # Qualifier is `part_of` and should be returned blank instead of removing the whole line
     line = "WB\tWBGene00000001\taap-1\tinvolved_in\tGO:0008286\tWB_REF:WBPaper00005614|PMID:12393910\tIMP\t\tP\t\tY110A7A.10\tgene\ttaxon:6239\t20060302\tWB\t\t"
