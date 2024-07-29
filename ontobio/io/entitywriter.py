@@ -105,6 +105,8 @@ class GpiWriter(EntityWriter):
                 self.file.write("!generated-by: GOC\n")  # following conventions in assocwriter for now.
             else:
                 self.file.write("!gpi-version: 1.2\n")
+                self.file.write("!date_generated: " + datetime.now().strftime("%Y-%m-%dT%H:%M") + "\n")
+                self.file.write("!generated-by: GOC\n")  # following conventions in assocwriter for now.
 
     def write_entity(self, entity):
         """

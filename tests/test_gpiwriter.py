@@ -65,7 +65,7 @@ def test_gpi_2_0_writer():
     expected_header_prefixes = [
         "!gpi-version: 2.0",
         "!date_generated:",
-        "!generated_by: GO Central",
+        "!generated_by: GOC",
     ]
 
     for prefix in expected_header_prefixes:
