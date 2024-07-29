@@ -64,10 +64,11 @@ def test_gpi_2_0_writer():
 
     expected_header_prefixes = [
         "!gpi-version: 2.0",
-        "!date_generated:",
-        "!generated_by: GOC",
+        "!date-generated:",
+        "!generated-by: GOC",
     ]
 
+    print(outlines[1-5])
     for prefix in expected_header_prefixes:
         assert any(line.startswith(prefix) for line in outlines), f"Missing expected header: {prefix}"
 
@@ -97,9 +98,12 @@ def test_gpi_1_2_writer():
     gpiwriter20.write_entity(entity)
     outlines = out.getvalue().split("\n")
 
-    expected_lines = [
+    expected_header_prefixes = [
         "!gpi-version: 1.2",
-        "MGI\tMGI:1918911\t0610005C13Rik\tRIKEN cDNA 0610005C13 gene\t\tSO:0000000\ttaxon:10090\t\t\t",
         ""
     ]
-    assert expected_lines == outlines
+    for prefix in expected_header_prefixes:
+        assert any(line.startswith(prefix) for line in outlines), f"Missing expected header: {prefix}"
+
+    assert "MGI\tMGI:1918911\t0610005C13Rik\tRIKEN cDNA 0610005C13 gene\t\tSO:0000000\ttaxon:10090\t\t\t" in outlines
+

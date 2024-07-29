@@ -119,12 +119,15 @@ class GpadWriter(AssocWriter):
         click.echo("Writing GPAD version: {}".format(version))
         if version in [GPAD_1_2, GPAD_2_0]:
             self.version = version
+            if version == GPAD_1_2:
+                self._write("!gpa-version: {}\n".format(self.version))
+            else:
+                self._write("!gpad-version: {}\n".format(self.version))
         else:
             self.version = GPAD_1_2
+            self._write("!gpa-version: {}\n".format(self.version))
 
-        self._write("!gpad-version: {}\n".format(self.version))
-        click.echo("Writing GPAD version: {}".format(self.version))
-        self._write("!generated-by: {}\n".format("GO Central"))
+        self._write("!generated-by: {}\n".format("GOC"))
         self._write("!date-generated: {}\n".format(str(datetime.datetime.now().strftime("%Y-%m-%dT%H:%M"))))
         self.ecomap = ecomap.EcoMap()
 
@@ -169,7 +172,7 @@ class GafWriter(AssocWriter):
 
     def __init__(self, file=None, source=None, version="2.2"):
         self.file = file
-        if version in ["2.2"]:
+        if version in ["2.1", "2.2"]:
             self.version = version
         else:
             self.version = "2.2"
