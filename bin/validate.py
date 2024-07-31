@@ -738,7 +738,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
 
         click.echo("Producing GPI for use in creating GPADs...")
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph, gpad_gpi_output_version)
-
+        gpi_list.append(gpi)
         click.echo("Executing 'make_gpads' in validate.produce with all the assembled GAF files...")
         make_gpads(dataset, valid_gaf, products,
                    ontology_graph, noctua_gpad_src, paint_gaf_src,
