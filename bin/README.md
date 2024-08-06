@@ -8,6 +8,7 @@ Note: snapshot below in the URL can be changed to any pipeline branch; its liste
 poetry install
 poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/snapshot/" --only-dataset mgi MGI --gpad-gpi-output-version 2.0
 poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/snapshot/" --only-dataset goa_chicken goa --gpad-gpi-output-version 2.0
+poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/snapshot/" --only-dataset zfin ZFIN --gpad-gpi-output-version 2.0
 ```
 
 
