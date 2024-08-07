@@ -1,0 +1,50 @@
+id: mgi
+label: Mouse Genome Informatics
+description: "GO data for Mouse Genome Informatics"
+project_name: "Mouse Genome Informatics (MGI)"
+contact_email: "mgi-help@jax.org"
+project_url: "http://www.informatics.jax.org/"
+funding_source: "NHGRI of US National Institutes of Health"
+email_report: "harold.drabkin@jax.org"
+filter_out:
+  evidence:
+    - ECO:0000501
+    - ECO:0000318
+    - ECO:0000266
+  evidence_reference:
+    - evidence: ECO:0000320
+      reference: PMID:21873635
+  annotation_properties:
+    - noctua-model-id
+datasets:
+ -
+   id: mgi.gaf
+   label: "mgi gaf file"
+   description: "gaf file for mgi from Mouse Genome Informatics"
+   url: https://current.geneontology.org/annotations/mgi.gaf.gz
+   type: gaf
+   dataset: mgi
+   submitter: mgi
+   compression: gzip
+   source: https://mirror.geneontology.io/mgi-p2go-homology.gaf.gz
+   entity_type:
+   status: active
+   species_code: Mmus
+   taxa:
+    - NCBITaxon:10090
+
+ -
+   id: mgi.gpi
+   label: "mgi gpi file"
+   description: "gpi file for mgi from Mouse Genome Informatics"
+   url: https://current.geneontology.org/annotations/mgi.gpi.gz
+   type: gpi
+   dataset: mgi
+   submitter: mgi
+   compression: gzip
+   source: http://www.informatics.jax.org/downloads/reports/mgi.gpi.gz
+   entity_type:
+   status: active
+   species_code: Mmus
+   taxa:
+    - NCBITaxon:10090
