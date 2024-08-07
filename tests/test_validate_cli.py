@@ -9,8 +9,7 @@ import requests
 from ontobio import OntologyFactory
 from ontobio.io import assocparser
 from ontobio.io.gafparser import GafParser
-ontology = "go"
-ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
+
 
 @pytest.fixture
 def runner():
@@ -42,7 +41,7 @@ def test_fast_function():
     assert True
 
 
-@pytest.fixture(params=[("goa_chicken", "goa")])
+@pytest.fixture(params=[("goa_cow", "goa")], scope='session')
 def gaf_setup(request, runner, go_json):
     dataset, group = request.param
     # Ensure that the required files are created
@@ -65,20 +64,45 @@ def gaf_setup(request, runner, go_json):
     print(result.stdout)
     assert os.path.exists(Path(__file__).parent / "groups" / "goa")
 
-    gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     zipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
-
     assert os.path.exists(zipped_gaf)
-    unzipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
-    results = gaf_parser.parse(unzipped_gaf)
-    print(results[:10])
-    assert len(results) > 0
-    assert gaf_parser.version == "2.2"
-    print(metadata)
+    return dataset, group, metadata
 
 
 @pytest.mark.slow
 def test_validate_resulting_gaf(gaf_setup):
+    dataset = gaf_setup[0]
+    group = gaf_setup[1]
     base_path = Path(__file__).parent / "resources"
+    ontology = "go"
+    ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
     metadata = base_path / "metadata"
     datasets = metadata / "datasets"
+    assert os.path.exists(datasets)
+    assert os.path.exists(metadata)
+
+    gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+    zipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
+
+    assert os.path.exists(zipped_gaf)
+    unzipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf"
+    results = gaf_parser.parse(unzipped_gaf)
+    assert len(results) > 0
+    print(metadata)
+
+
+def test_validate_gaf():
+    dataset = "goa_chicken"
+    group = "goa"
+    ontology_graph = OntologyFactory().create("go", ignore_cache=True)
+    gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+    zipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
+
+    assert os.path.exists(zipped_gaf)
+    unzipped_gaf = str(Path(__file__).parent / "groups" / group / f"{dataset}.gaf")
+    results = gaf_parser.parse(unzipped_gaf)
+    assert gaf_parser.version == "2.2"
+    assert len(results) > 0
+    for result in results:
+        assert not result.startswith("PR")
+    
