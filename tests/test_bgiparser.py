@@ -6,7 +6,7 @@ BGI = "tests/resources/fb-bgi.json"
     
 def test_parse_gpi():
     p = BgiParser()
-    results = p.parse(open(BGI,"r"))
+    results = p.parse(open(BGI, "r"))
     for r in results:
         print(r)
     r1 = results[0]

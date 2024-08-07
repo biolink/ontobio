@@ -1,9 +1,11 @@
+from pathlib import Path
+
 import pytest
 from click.testing import CliRunner
 from bin.validate import produce
 import os
 import requests
-import shutil
+
 
 
 @pytest.fixture
@@ -37,20 +39,23 @@ def test_fast_function():
 
 
 @pytest.mark.slow
-def test_produce_with_required_options(runner, go_json):
+@pytest.mark.parametrize("group_a", "group_b",  [("goa_chicken", "goa"), ("zfin", "ZFIN")])
+def test_produce_with_required_options(runner, go_json, group_a, group_b):
     # Ensure that the required files are created
-    metadata = os.getcwd() + '/resources/metadata/datasets'
+    base_path = Path(__file__).parent / "resources"
+    metadata = base_path / "metadata"
+    datasets = metadata / "datasets"
     assert os.path.exists(metadata), f"Metadata directory does not exist: {metadata}"
     assert os.path.exists(go_json), f"go-basic.json file does not exist: {go_json}"
 
     result = runner.invoke(produce, [
-        '-m', 'resources/metadata',
+        '-m', metadata,
         '--gpad',
         '-t', '.',
         '-o', 'go-basic.json',
         '--base-download-url', 'http://skyhook.berkeleybop.org/snapshot/',
-        '--only-dataset', 'goa_chicken',
-        'goa',
+        '--only-dataset', group_a,
+        group_b,
         '--gpad-gpi-output-version', '2.0'
     ])
     print(result.exit_code)
