@@ -1,0 +1,25 @@
+rdfs: 'http://www.w3.org/2000/01/rdf-schema#'
+xsd: 'http://www.w3.org/2001/XMLSchema#'
+nickname: 'rdfs:label'
+label: 'rdfs:label'
+comment: 'rdfs:comment'
+shorthand:
+  '@id': 'http://www.geneontology.org/formats/oboInOwl#shorthand'
+  '@type': 'xsd:string'
+xref: 
+  '@id': 'http://www.geneontology.org/formats/oboInOwl#hasDbXref'
+  '@type': 'xsd:string'
+uri: '@id'
+id: '@id'
+GOC: 'http://purl.obolibrary.org/obo/go/users/'
+organization: 
+  '@id': 'http://www.w3.org/2006/vcard/ns#organization-name'
+  '@type': 'xsd:string'
+groups: 
+  '@id': 'http://purl.obolibrary.org/obo/ERO_0000066'
+  '@type': '@id'
+#accounts: '@nest'
+github: 'http://purl.obolibrary.org/obo/go/account/github'
+orcid: 'http://purl.obolibrary.org/obo/go/account/orcid'
+google-plus: 'hhttp://purl.obolibrary.org/obo/go/account/google-plus'
+#TODO if desired: authorizations

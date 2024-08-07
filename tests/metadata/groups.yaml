@@ -1,0 +1,553 @@
+####
+#### Metadata on GOC groups.
+#### See the README.md in this directory for more details.
+####
+-
+  label: 'LBL'
+  id: http://lbl.gov
+  shorthand: LBL
+  parent_group: GOC
+-
+  label: 'GO Central'
+  id: http://geneontology.org
+  shorthand: GO_Central
+-
+  label: 'GOC'
+  id: http://geneontology.org/page/about
+  shorthand: GOC
+  parent_group: GOC
+-
+  label: 'Planteome'
+  id: http://planteome.org
+  shorthand: Planteome
+  parent_group: GOC
+-
+  label: 'Berkeley BOP'
+  id: http://berkeleybop.org
+  shorthand: BerkeleyBOP
+  parent_group: GOC
+-
+  label: 'ZFIN'
+  id: http://zfin.org
+  shorthand: ZFIN
+  parent_group: GOC
+-
+  label: 'MGI'
+  id: http://informatics.jax.org
+  shorthand: MGI
+  parent_group: GOC
+-
+  label: 'RGD'
+  id: http://rgd.mcw.edu
+  shorthand: RGD
+  parent_group: GOC
+-
+  label: 'ARUK-UCL'
+  id: https://www.ucl.ac.uk/functional-gene-annotation/neurological
+  shorthand: ARUK-UCL
+  parent_group: GOC
+-
+  label: 'BHF-UCL'
+  id: http://www.ucl.ac.uk/functional-gene-annotation/cardiovascular
+  shorthand: BHF-UCL
+  parent_group: GOC
+-
+  label: 'SynGO-UCL'
+  id: https://www.ucl.ac.uk/functional-gene-annotation/neurological/syngo
+  shorthand: SynGO-UCL
+  parent_group: GOC
+-
+  label: 'HGNC-UCL'
+  id: http://www.ucl.ac.uk/functional-gene-annotation
+  shorthand: HGNC-UCL
+  parent_group: GOC
+-
+  label: 'neXtProt'
+  id: https://www.nextprot.org
+  shorthand: nextProt
+  parent_group: GOC
+-
+  label: 'SGD'
+  id: http://www.yeastgenome.org
+  shorthand: SGD
+  parent_group: GOC
+-
+  label: 'PomBase'
+  id: http://www.pombase.org
+  shorthand: PomBase
+  parent_group: GOC
+-
+  label: 'TAIR'
+  id: http://www.arabidopsis.org
+  shorthand: TAIR
+  parent_group: GOC
+-
+  label: 'dictyBase'
+  id: http://dictybase.org
+  shorthand: dictyBase
+  parent_group: GOC
+-
+  label: 'WB'
+  id: http://www.wormbase.org
+  shorthand: WB
+  parent_group: GOC
+-
+  label: 'IntAct'
+  id: https://www.ebi.ac.uk/intact
+  shorthand: IntAct
+  parent_group: GOC
+-
+  label: 'SPOT (EBI)'
+  id: http://www.ebi.ac.uk/spot
+  shorthand: 'SPOT'
+  parent_group: GOC
+-
+  label: EMBL-EBI
+  id: http://www.ebi.ac.uk
+  shorthand: EBI
+  parent_group: GOC
+-
+  label: 'FlyBase'
+  id: http://flybase.org
+  shorthand: FlyBase
+  parent_group: GOC
+-
+  label: 'UniProt'
+  id: https://www.uniprot.org
+  shorthand: UniProt
+  parent_group: GOC
+-
+  label: 'Xenbase'
+  id: http://www.xenbase.org
+  shorthand: Xenbase
+  parent_group: GOC
+-
+  label: 'Monarch Initiative'
+  id: http://monarchinitiative.org
+  shorthand: Monarch_Initiative
+  parent_group: GOC
+-
+  label: 'NCATS Data Translator'
+  id: https://ncats.nih.gov/translator
+  shorthand: NCATS_Data_Translator
+  parent_group: GOC
+-
+  label: 'SynGO'
+  id: https://syngo.vu.nl
+  shorthand: SynGO
+  parent_group: GOC
+-
+  label: UCSD
+  id: http://ucsd.edu
+  shorthand: UCSD
+  parent_group: GOC
+-
+  label: AgBase
+  id: http://www.agbase.msstate.edu
+  shorthand: AgBase
+  parent_group: GOC
+-
+  label: AspGD
+  id: http://www.aspgd.org
+  shorthand: AspGD
+  parent_group: GOC
+-
+  label: CGD
+  id: http://candidagenome.org
+  shorthand: CGD
+  parent_group: GOC
+-
+  label: University of Toronto
+  id: http://www.utoronto.ca
+  shorthand: UoT
+  parent_group: GOC
+-
+  label: CALIPHO
+  id: http://web.expasy.org/groups/calipho
+  shorthand: CALIPHO
+  parent_group: GOC
+-
+  label: EcoCyc
+  id: http://ecocyc.org
+  shorthand: EcoCyc
+  parent_group: GOC
+-
+  label: GOA
+  id: http://www.ebi.ac.uk/GOA
+  shorthand: GOA
+  parent_group: GOC
+-
+  label: OHSU
+  id: http://www.ohsu.edu
+  shorthand: OHSU
+  parent_group: GOC
+-
+  label: OSU
+  id: http://oregonstate.edu
+  shorthand: OSU
+  parent_group: GOC
+-
+  label: SIB
+  id: http://www.sib.swiss
+  shorthand: SIB
+  parent_group: GOC
+-
+  label: EBI Microme Project
+  id: http://www.microme.eu
+  shorthand: Microme
+  parent_group: GOC
+-
+  label: Reactome
+  id: https://reactome.org
+  shorthand: Reactome
+  parent_group: GOC
+-
+  label: University at Buffalo
+  id: http://www.buffalo.edu
+  shorthand: UB
+  parent_group: GOC
+-
+  label: ParkinsonsUK-UCL
+  id: http://www.ucl.ac.uk/functional-gene-annotation/neurological/projects/parkinsons
+  shorthand: ParkinsonsUK-UCL
+  parent_group: GOC
+-
+  label: UC Davis
+  id: http://www.ucdavis.edu
+  shorthand: UCD
+  parent_group: GOC
+-
+  label: PAMGO
+  id: http://pamgo.vbi.vt.edu
+  shorthand: PAMGO
+  parent_group: GOC
+-
+  label: MetaCyc
+  id: http://metacyc.org
+  shorthand: MetaCyc
+  parent_group: GOC
+-
+  label: Eisai
+  id: http://www.eisai.com
+  shorthand: Eisai
+  parent_group: GOC
+-
+  label: MaizeGDB
+  id: http://www.maizegdb.org
+  shorthand: MaizeGDB
+  parent_group: GOC
+-
+  label: VBI
+  id: https://www.bi.vt.edu
+  shorthand: VBI
+  parent_group: GOC
+-
+  label: Ronin Institute
+  id: http://ronininstitute.org
+  shorthand: Ronin_Institute
+  parent_group: GOC
+-
+  label: PhenotypeRCN
+  id: http://www.phenotypercn.org
+  shorthand: PhenotypeRCN
+  parent_group: GOC
+-
+  label: USD
+  id: http://www.sandiego.edu
+  shorthand: USD
+  parent_group: GOC
+-
+  label: EMBO
+  id: http://www.embo.org
+  shorthand: EMBO
+  parent_group: GOC
+-
+  label: AWI
+  id: https://www.awi.de
+  shorthand: AWI
+  parent_group: GOC
+-
+  label: Harvard T.H. Chan School of Public Health
+  id: https://www.hsph.harvard.edu
+  shorthand: HSPH
+  parent_group: GOC
+-
+  label: UALR
+  id: http://ualr.edu
+  shorthand: UALR
+  parent_group: GOC
+-
+  label: MGH
+  id: http://www.massgeneral.org
+  shorthand: MGH
+  parent_group: GOC
+-
+  label: Roswell Park Cancer Institute
+  id: https://www.roswellpark.org
+  shorthand: RPCI
+  parent_group: GOC
+-
+  label: CGIAR
+  id: https://www.cgiar.org
+  shorthand: CGIAR
+  parent_group: GOC
+-
+  label: NCSU
+  id: https://www.ncsu.edu
+  shorthand: NCSU
+  parent_group: GOC
+-
+  label: ADM
+  id: https://www.adm.com
+  shorthand: ADM
+  parent_group: GOC
+-
+  label: US EPA
+  id: https://www.epa.gov
+  shorthand: US_EPA
+  parent_group: GOC
+-
+  label: Crick
+  id: https://www.crick.ac.uk
+  shorthand: Crick
+  parent_group: GOC
+-
+  label: NIDASH
+  id: http://nidm.nidash.org
+  shorthand: NIDASH
+  parent_group: GOC
+-
+  label: IGS
+  id: http://www.igs.umaryland.edu
+  shorthand: IGS
+  parent_group: GOC
+-
+  label: NTNU
+  id: https://www.ntnu.edu
+  shorthand: NTNU_SB
+  parent_group: GOC
+-
+  label: Bioversity International
+  id: https://www.bioversityinternational.org
+  shorthand: BioversityInt
+  parent_group: GOC
+-
+  label: USDA
+  id: https://www.usda.gov
+  shorthand: USDA
+  parent_group: GOC
+-
+  label: E. coli
+  id: http://www.bio.tamu.edu
+  shorthand: E_coli
+  parent_group: GOC
+-
+  label: GeneDB
+  id: http://www.genedb.org
+  shorthand: GeneDB
+  parent_group: GOC
+-
+  label: EuPathDB
+  id: http://eupathdb.org
+  shorthand: EuPathDB
+  parent_group: GOC
+-
+  label: CONACYT
+  id: http://www.conacyt.gob.mx/index.php/el-conacyt/desarrollo-cientifico/catedrasconacyt
+  shorthand: CONACYT
+  parent_group: GOC
+-
+  label: INER
+  id: http://www.iner.salud.gob.mx
+  shorthand: INER
+  parent_group: GOC
+-
+  label: YuBioLab
+  id: http://citgenedb.yubiolab.org
+  shorthand: YuBioLab
+  parent_group: GOC
+-
+  label: RNAcentral
+  id: http://rnacentral.org
+  shorthand: RNAcentral
+  parent_group: GOC
+-
+  label: Complex Portal
+  id: https://www.ebi.ac.uk/complexportal
+  shorthand: ComplexPortal
+  parent_group: GOC
+-
+  label: 'SIGNOR'
+  id: 'https://signor.uniroma2.it'
+  shorthand: 'SIGNOR'
+  parent_group: GOC
+-
+  label: The EUROFUNG Consortium
+  id: 'http://mikrobiologie.eurofung.tu-berlin.de'
+  shorthand: Eurofung
+  parent_group: GOC
+-
+  label: InterPro
+  id: https://www.ebi.ac.uk/interpro
+  shorthand: InterPro
+  parent_group: GOC
+-
+  label: CACAO
+  id: http://ecoliwiki.net/colipedia/index.php/CACAO_0.1
+  shorthand: CACAO
+  parent_group: GOC
+-
+  label: Biofunction Prediction
+  id: https://biofunctionprediction.org/cafa
+  shorthand: CAFA
+  parent_group: GOC
+-
+  label: CollecTF
+  id: http://www.collectf.org/browse/home
+  shorthand: COLLECTF
+  parent_group: GOC
+-
+  label: EcoliWiki
+  id: http://ecoliwiki.net/colipedia/index.php/Welcome_to_EcoliWiki
+  shorthand: EcoliWiki
+  parent_group: GOC
+-
+  label: refGenome
+  id: http://wiki.geneontology.org/index.php/Phylogenetic_Annotation_Project
+  shorthand: REFGENOME
+  parent_group: GOC
+-
+  label: Ensembl Genome Browser
+  id: https://www.ensembl.org/index.html
+  shorthand: Ensembl
+  parent_group: GOC
+-
+  label: HUGO Gene Nomenclature Committee
+  id: https://www.genenames.org
+  shorthand: HGNC
+  parent_group: GOC
+-
+  label: Alzheimers University_of_Toronto
+  id: "https://tanz.med.utoronto.ca/page/alzheimer%E2%80%99s-disease-research"
+  shorthand: Alzheimers_University_of_Toronto
+  parent_group: GOC
+-
+  label: Developmental FunctionaL Annotation at Tufts
+  id: http://dflat.cs.tufts.edu
+  shorthand: DFLAT
+  parent_group: GOC
+-
+  label: The Human Protein Atlas
+  id: https://www.proteinatlas.org
+  shorthand: HPA
+  parent_group: GOC
+-
+  label: LIFEdb
+  id: https://www.dkfz.de/en/mga/Groups/LIFEdb-Database.html
+  shorthand: LIFEdb
+  parent_group: GOC
+-
+  label: MTBBASE
+  id: http://www.ark.in-berlin.de/Site/MTBbase.html
+  shorthand: MTBBASE
+  parent_group: GOC
+-
+  label: Proteome Inc
+  id: https://www.proteomics.com
+  shorthand: PINC
+  parent_group: GOC
+-
+  label: GONUTS
+  id: https://gowiki.tamu.edu/wiki/index.php
+  shorthand: GONUTS
+  parent_group: GOC
+-
+  label: Gramene
+  id: http://www.gramene.org
+  shorthand: GR
+  parent_group: GOC
+-
+  label: Rice Genome Annotation Project
+  id: http://rice.plantbiology.msu.edu
+  shorthand: TIGR
+  parent_group: GOC
+-
+  label: ASAP
+  id: https://www.genome.wisc.edu/tools/asap.htm
+  shorthand: ASAP
+  parent_group: GOC
+-
+  label: The Pseudomonas Community Annotation Project
+  id: http://www.pseudomonas.com/pseudocap
+  shorthand: PseudoCAP
+  parent_group: GOC
+-
+  label: Sol Genomics Network
+  id: https://solgenomics.net
+  shorthand: SGN
+  parent_group: GOC
+-
+  label: JCVI_CMR
+  id: http://blast.jcvi.org/cmr-blast
+  shorthand: JCVI_CMR
+  parent_group: GOC
+-
+  label: JCVI
+  id: https://www.jcvi.org
+  shorthand: JCVI
+  parent_group: GOC
+-
+  label: Roslin Institute
+  id: https://www.ed.ac.uk/roslin
+  shorthand: Roslin_Institute
+  parent_group: GOC
+-
+  label: GREEKC
+  id: http://greekc.org
+  shorthand: GREEKC
+  parent_group: GOC
+-
+  label: DiBest-Unical
+  id: https://www.unical.it/portale/strutture/dipartimenti_240/dibest
+  shorthand: DIBU
+  parent_group: GOC
+-
+  label: Karadeniz Teknik Universitesi
+  id: https://www.ktu.edu.tr/bmi-cancermodelingresearchgroup
+  shorthand: KTU
+  parent_group: GOC
+-
+  label: 'JaponicusDB'
+  id: https://www.japonicusdb.org
+  shorthand: JaponicusDB
+  parent_group: GOC
+-
+  label: 'RHEA'
+  id: https://www.rhea-db.org
+  shorthand: RHEA
+  parent_group: GOC
+-
+  label: 'DisProt'
+  id: https://disprot.org
+  shorthand: DisProt
+  parent_group: GOC
+-
+  label: 'Cornell University'
+  id: https://www.cornell.edu
+  shorthand: CU
+  parent_group: GOC
+-
+  label: 'University of Florida Orphan Proteins Project'
+  id: https://www.ufl.edu
+  shorthand: UF_OPP
+  parent_group: PomBase
+-
+  label: 'iBeetleBase'
+  id: https://ibeetle-base.uni-goettingen.de
+  shorthand: iBB
+  parent_group: GOC
+-
+  label: 'Max Planck Institute for Evolutionary Biology'
+  id: https://www.evolbio.mpg.de
+  shorthand: IMPRS-EB
+  parent_group: GOC

@@ -1,0 +1,166 @@
+Group,Contact for Annotation Review,Contact name & Contact GitHub ID,Role,Curation Tool,Expertise/Domains of interest
+,,,,< ! > = No automatic replacement of obsolete terms,
+AgBase,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,
+Alzheimers_University_of_Toronto,@RLovering, Ruth Lovering @RLovering,Curation,P2GO, 
+ARUK-UCL,@RLovering,Ruth Lovering @RLovering,Curation,P2GO,
+ASAP,,,Curation (inactive),P2GO,
+AspGD,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,Aspergillus Genome Database
+BHF-UCL,@RLovering, Ruth Lovering @RLovering,Curation,P2GO, 
+CACAO,,,,,
+° CACAO,@dsiegele,Debbie Siegle @dsiegele,Curation,P2GO,
+° CACAO,,Jolene Ramsey @jrr-cpt,Curation,P2GO,
+CAFA,@Antonialock,,Curation,P2GO,Training sets for CAFA competition
+CGD,@jlewsmith,Jodi Lew-Smith @jlewsmith,Curation,< ! > In-house< ! >,chromatin/gene silencing/cellular aging
+CHEMBL,@Zdrazil,Barbara Zdrazil @Zdrazil,CHEMBL Subset,,ChEMBL subset
+CollectTF,@ivanerill,Ivan Erill @ivanerill,Curation (inactive),< ! > In-house< ! >,General email:collectf@umbc.edu
+Complex Portal,@sandraorchard,Sandra Orchard @sandraorchard,Curation,< ! > In-house< ! >,
+Cornell University,,Gaurav Moghe @moghelab,,, Plant biology
+DFLAT,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,
+DIBU - DiBest-Unical,@simonapanni,Simona Panni @simonapanni,Curation,< ! > In-house< ! >,
+dictyBase,,,,,
+° dictyBase,@pfey03, Petra Fey @pfey03,Curation,P2GO |  Noctua,
+° dictyBase,,Robert Dodson @rjdodson,Curation,P2GO | Noctua,
+DisProt,,,,,
+° DisProt,@federicaquaglia, Federica Quaglia @federicaquaglia,Curation,< ! > In-house< ! >,biocuration | stucture | functions 
+° DisProt,@victorianugnes, Victoria Nugnes @victorianugnes,Curation,< ! > In-house< ! >,biocuration | stucture | intrinsically disordered regions (IDRs) 
+EAWAG-BBD (ETH Zurich),,,,,
+° EAWAG-BBD (ETH Zurich),,Emanuel Schmid @emanuel-schmid,UM-BBD mappings,,biodegradation | databases | webservices
+° EAWAG-BBD (ETH Zurich),,Kathrin Fenner Kathrin.Fenner - at - eawag.ch,UM-BBD mappings,,biodegradation | PI | enviPath.org
+ECO - Evidence and Conclusion Ontology,,,,,
+° ECO,,Michelle Giglio @mgiglio99,ECO development,,
+° ECO,,Suvvi Nadendla @nsuvarnaiari,ECO development,,
+EcoCyc,,,,,
+° EcoCyc,@amandamackie,Amanda Mackie @amandamackie,Curation,< ! > In-house < ! >,
+° EcoCyc,,Lisa Moore @lmoore207,Curation,< ! > In-house < ! >,
+° EcoCyc,,Markus Krummenacker,Technical,,EcoCyc pipeline
+EcoliWiki,@dsiegele,Debby Siegele @dsiegele,Curation,< ! > In-house < ! >,
+Ensembl,,,Curation,,
+Eurofung,,,Curation,P2GO,
+FlyBase,,,,,
+° FlyBase,@hattrill,Helen Attrill @hattrill,Curation,P2GO | Noctua,
+° FlyBase,@gantonazzo,Giulia Antonazzo @gantonazzo,Curation,P2GO | Noctua,
+° FlyBase,,Steven Marygold @sjm41,Curation & Ontology development,P2GO | Noctua,
+° FlyBase,,Rossana Zaru @rozaru,Curation,P2GO | Noctua,
+GDB,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,
+GeneDB (EuPathDB),,,,,
+° GeneDB,@uliboehme, Ulrike Boehme @uliboehme,Curation,< ! > In-house < ! >,Plasmodium curator | TriTryp
+° GeneDB,,F.Silva-Franco F.Silva-Franco at liverpool.ac.uk,Curation,< ! > In-house < ! >,TBRU curator
+GO_Central,,,,,
+° GO_Central,,Chris Mungall @cmungall,GO PI,,GO PI | All things technical and ontology-related
+° GO_Central,,Paul Thomas @thomaspd,GO PI,PAINT | Noctua,Ontology | Phylogenetics | PAINT|Panther
+° GO_Central,@pgaudet,Pascale Gaudet @pgaudet,Curation,PAINT | P2GO | Noctua,ontology development | PAINT | transcription | multiorganism processes | cellular biology| pipeline QC
+° GO_Central,,Huaiyu Mi @huaiyumi,Curation,PAINT,
+° GO_Central,,Dustin Ebert @dustine32,GOC Technical,,PAINT pipeline|GO pipeline
+° GO_Central,,Anushya Muruganujan @mugitty,GOC Technical,,PAINT software developer
+° GO_Central,,Tremayne @tmushayahama,GOC Technical,,Noctua UI
+° GO_Central,,Seth Carbon @kltm,GOC Technical,,Noctua | Data pipeline  |AmiGO|  GO Website
+° GO_Central,,Patrick Kalita @@pkalita-lbl,GOC Technical,,
+° GO_Central,,Sierra Moxon @sierra-moxon,GOC Technical,,Pipeline and data
+° GO_Central,,Mark A. Miller @turbomam,GOC Technical,,microbial proteomics | 16S metagenomics | biomedical semantics
+GOC,@pgaudet,,Curation,,Automatic inferences
+GOC-OWL,@pgaudet,,,,Automatic inferences
+GR,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,Gramene Database - contact Pankaj Jaiswal @jaiswalp for queries
+GREEKC,,Colin Logie @colinlog,Domain expert,,Transcription
+HGNC,@sartweedie,Susan Tweedie @sartweedie,Curation,< ! > In-house < ! >,
+HGNC-UCL,@RLovering, Ruth Lovering @RLovering,Curation,P2GO, 
+HPA,emma.lundberg AT scilifelab.se,Emma Lundberg emma.lundberg AT scilifelab.se,Curation,< ! > In-house < ! >,
+IMPRS-EB,@IvanTsers,Ivan Tsers @IvanTsers,Curation,Noctua,phytopathology | comparative genomics | gene functional classification
+IntAct,,,,,
+° IntAct,,Kalpana Panneerselvam @kalpanap,Curation,< ! > In-house < ! >,
+° IntAct,@sandraorchard,Sandra Orchard @sandraorchard,Curation,< ! > In-house < ! >,
+InterPro,,,,,
+° InterPro,@lsw26,Lowri Williams @lsw26,InterPro Mappings,< ! > In-house < ! >,
+° InterPro,@sarach06,Sara Chuguransky @sarach06,InterPro Mappings,< ! > In-house < ! >,
+° InterPro,@blazaropinto,Beatriz Lazaro Pinto @blazaropinto,InterPro Mappings,< ! > In-house < ! >,
+° InterPro,@tony787 ,Antonina Andreeva (Toni) @tony787 | aea-at- ebi.ac.uk,InterPro Mappings,< ! > In-house < ! >,
+JaponicusDB,,,,,
+° JaponicusDB,,Snezka Oliferenko @snezhkaoliferenko,Curation,< ! > In-house < ! >,
+° JaponicusDB,@ValWood,Val Wood @ValWood,Curation,< ! > In-house < ! >,
+JCVI,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,contact @mgiglio99 for queries
+LIFEdb,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation,P2GO,contact Stefan Wiemann s.wiemann AT dkfz-heidelberg.de for queries
+MENGO,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,contact @mgiglio99 for queries
+MGI,,,,,
+° MGI,,Karen Christie @krchristie,Curation,Noctua,
+° MGI,@LiNiMGI,Li Ni @LiNiMGI,Curation,Noctua,
+° MGI,,David Hill @ukemi,Curation,Noctua,Development | GO-CAM Modeling | MGI Data & Pipeline issues
+MTBBASE,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,no contact person
+NTNU_SB,,,,,
+° NTNU_SB,,Astrid Lægreid,Curation (inactive),P2GO,Transcription
+° NTNU_SB,@mlacencio,Marcio Acencio @mlacencio,Curation (inactive),P2GO,Transcription
+PAMGO_GAT,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,contact @mgiglio99 for queries
+PAMGO_MGG,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),P2GO,contact @mgiglio99 for queries
+PAMGO_VMD,,,Curation (inactive),,
+ParkinsonsUK-UCL,@RLovering, Ruth Lovering @RLovering,Curation,P2GO, 
+PHI-base,,,Curation,< ! > In-house < ! >,
+PINC (ProtInc),@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation, (inactive)P2GO,no contact person
+PomBase,,,,,
+° PomBase,,general GitHub account @pombase-admin,,< ! > In-house < ! >,
+° PomBase,@valwood,ValWood @valwood,Curation,< ! > In-house < ! > | Noctua,Annotation Review
+° PomBase,,Pascal Carme @PCarme,Curation,< ! > In-house < ! > | Noctua,curator
+° PomBase,,Kim Rutherford @kimrutherford,Technical,,
+Protein Ontology,,Darren Natale @nataled,PRO development,,
+PseudoCAP,,,,,
+° PseudoCAP,@glwinsor,Geoff Winsor @glwinsor,Curation,< ! > In-house < ! >,
+° PseudoCAP,,Fiona Brinkman @fionabrinkman,Curation,< ! > In-house < ! >,
+° PseudoCAP,,General Group @brinkmanlab,,< ! > In-house < ! >,
+Reactome,,,,,
+° Reactome,@deustp01,Peter D'Eustachio @deustp01,Curation 6 Reactome mappings,< ! > In-house < ! >,
+° Reactome,,Adam Wright @adamjohnwright,Technical,,
+Rfam,@blakesweeney,Blake Sweeney @blakesweeney,Rfam Mappings,< ! > In-house < ! >,
+RGD,,,,,
+° RGD,@slaulederkind,Stan Laulederkind @slaulederkind,Curation,In-house,Contact for Annotation Review
+° RGD,@gthayman,Tom Hayman @gthayman,Curation,In-house,Contact for Annotation Review
+° RGD,,Mary Kaldunski @mlkaldunski,Curation,In-house,curation | annotation | physiology
+° RGD,,Jennifer Smith @jrsjrs,Pipeline and data,In-house,Project Manager| pipeline and data
+° RGD,,Marek Tutaj @tutajm,Pipeline and data,In-house,import and export pipelines
+RHEA,,,,,
+° RHEA,,Kristian Axelson @kaxelsen,RHEA development,,RHEA and Swiss-Prot curator
+° RHEA,,Anne Morgat @amorgat,RHEA development,,
+° RHEA,,Arnaud Kerhornou @arnaudxk,Pipeline and data,,Swiss-Prot & Rhea developer
+RNA Central,,,,,
+° RNAcentral,,Alex Bateman,Curation,< ! > In-house < ! >,PI
+° RNAcentral,@blakesweeney, Blake Sweeny @blakesweeney,Curation,< ! > In-house < ! >,
+Roslin_Institute,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation (inactive),<P2GO,no contact person
+SGD,,,,,
+° SGD,@srengel,Stacia Engel @srengel,Curation,<Noctua,Contact for Annotation Review
+° SGD,,Suzi Aleksander @suzialeksander,Curation,<Noctua,
+SGN,@lukasmueller,Lukas Mueller @lukasmueller,Curation,< ! > In-house < ! >,
+SynGO,@ftwkoopmans,Frank Koopmans @ftwkoopmans,Curation,< ! > In-house < ! >,
+SynGO-UCL,@RLovering, Ruth Lovering @RLovering,Curation,<P2GO, 
+SYSCILIA_CCNET,@krchristie,Karen Christie @krchristie,Curation,<P2GO?,
+TAIR,,,,,
+° TAIR,@tberardini,Tanya Berardini @tberardini,Curation,<In-house>,Plant biology 
+° TAIR,,Leonore Reiser @lreiser,Curation,<In-house>,Plant biology
+° TAIR,,Erica Bakker @ebakker2,Curation,<In-house>,Plant biology
+TIGR,@Antonialock @pgaudet @vanaukenk,Not actively maintainted/GO_Central,Curation,< (inactive)P2GO,contact @mgiglio99 for queries
+UF_OPP,, Colbie Reed @dexink,,, microbes
+UniProt,,,,,
+° UniProt (EBI),,Alex Ignatchenko @alexsign,Pipeline and data,,Software & pipeline
+° UniProt (EBI),@Antonialock,Antonia Lock @Antonialock,Curation,P2GO, GOA contact for GO
+° UniProt (EBI),,Michelle Magrane @magrane,Curation,P2GO,
+° UniProt (EBI),,Sandra Orchard @sandraorchard,Curation,P2GO,
+° UniProt (EBI),Rizwan Ishtiaq @rizwan-ishtiaq,QuickGO java backend,QuickGO backend,,
+° UniProt (PIR),,Kati Laiho @laihokati,Curation,P2GO,
+° UniProt (Swiss-Prot/Geneva),,Lucila Aimo @aimol,Curation,P2GO,lipid metabolism
+° UniProt (Swiss-Prot/Geneva),,Andrea Auchincloss @AndreaAuchincloss,Curation,P2GO,Bacteria
+° UniProt (Swiss-Prot/Geneva),,Kristian Axelsen @kaxelsen,Curation,P2GO,enzymes
+° UniProt (Swiss-Prot/Geneva),,Cristina Casals Casa @ccasalsc,Curation,P2GO | Noctua, Cell Biology | Transcription
+° UniProt (Swiss-Prot/Geneva),,Marc Feuermann @marcfeuermann,Curation,PAINT | P2GO | Noctua,fungi | enzymes
+° UniProt (Swiss-Prot/Geneva),,Florence Jungo @FJungo,Curation,P2GO,Venoms
+° UniProt (Swiss-Prot/Geneva),,Nevila Nouspikel nnouspikel,Curation,P2GO,lipids | immunology | cancer
+° UniProt (Swiss-Prot/Geneva),@sylvainpoux, Sylvain Poux @sylvainpoux,Curation,P2GO | Noctua,
+° UniProt (Swiss-Prot/Geneva),@pedruzzi, Ivo Pedruzzi @pedruzzi,HAMAP Mappings,< ! > In-house < ! >,
+° UniProt (EBI),@esperetta,Elena Speretta @esperetta, UniRules Mappings,< ! > In-house < ! >,
+° UniProt (EBI),@PedroRaposo,Pedro Raposo @PedroRaposo, UniRules Mappings,< ! > In-house < ! >,
+WB - WormBase,@vanaukenk,Kimberly Van Auken @vanaukenk,Curation,P2GO  |Noctua,C.elegans | Noctua | GO-CAM
+Wikidata,,,,,
+° Wikidata,,Andrew Su @andrewsu,,,
+° Wikidata,,Derek @cdjow2019 ,,,
+Xenbase,@malcolmfisher103,Malcolm Fisher @malcolmfisher103,Curation,Noctua,Xenopus
+YuBioLab,,,,,
+ZFIN,,,,,
+° ZFIN,,Doug Howe @doughowe,Curation,Noctua,Zebra fish
+° ZFIN,,Leyla Ruzicka @LeylaR,Pipeline and data,Noctua,ZFIN technical
+° ZFIN,@sramachand,Sridhar Ramanchandran @sramachand,Curation,Noctua,ZFIN curation
+,Domain expert,,Alex Diehl @addiehl (Buffalo University),,immunology
+,Domain expert,,@khybiske,,Chlamydia

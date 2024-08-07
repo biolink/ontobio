@@ -1,0 +1,74 @@
+####
+#### Use kwalify and this schema to validate the config files.
+#### Example:
+####    kwalify -E -m ./metadata/eco-usage-constraints.schema.yaml
+####    kwalify -E -f ./metadata/eco-usage-constraints.schema.yaml ./metadata/eco-usage-constraints.yaml
+####
+#### To convert to JSON once passed:
+####    ./node_modules/yamljs/bin/yaml2json -p ./metadata/eco-usage-constraints.yaml > ./metadata/eco-usage-constraints.json
+####
+type: map
+mapping:
+  "entity_types":
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          "id":
+            type: str
+            required: true
+          "name":
+            type: str
+            required: true
+  "eco_usage_constraints":
+    type: seq
+    sequence:
+      - type: map
+        mapping:
+          "eco_id":
+            type: str
+            required: true
+            unique: true
+            pattern: /ECO:[0-9]{7}/
+          "go_evidence":
+            type: str
+            required: false
+            enum: [ EXP, IBA, IBD, IC, IDA, IEA, IEP, IGC, IGI, IKR, IMP, IPI, IRD, ISA, ISM, ISO, ISS, NAS, ND, RCA, TAS ]
+          "with_presence":
+            type: str
+            required: true
+            enum: [ mandatory, optional, disallowed, conditional, recommended ]
+          "with_presence_condition":
+            type: map
+            required: false
+            mapping:
+              "condition":
+                type: str
+                required: true
+              "when_true":
+                type: str
+                required: true
+                enum: [ mandatory, optional, disallowed, recommended ]
+              "when_false":
+                type: str
+                required: true
+                enum: [ mandatory, optional, disallowed , recommended ]
+          "with_structure":
+            type: str
+            required: false
+            enum: [ simple, compound ]
+          "with_entities":
+            type: seq
+            required: false
+            sequence:
+              - type: map
+                mapping:
+                  "entity_type":
+                    type: map
+                    mapping:
+                      "id":
+                        type: str
+                        required: true
+                      "name":
+                        type: str
+                        required: true

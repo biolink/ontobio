@@ -1,0 +1,109 @@
+type: map
+mapping:
+  "layout":
+    type: str
+    required: true
+    enum: [rule]
+  "id":
+    type: str
+    required: true
+    pattern: /GORULE:[0-9]{7}/
+  "title":
+    type: str
+    required: true
+  "contact":
+    type: str
+    required: true
+    pattern: /[^\s]+@[^\s]+\.[^\s]+/
+  "type":
+    type: str
+    required: true
+    enum: [filter, report, repair]
+  "status":
+    type: str
+    required: true
+    enum: [implemented, proposed, approved, deprecated, legacy]
+  "fail_mode":
+    type: str
+    required: true
+    enum: ["hard", "soft"]
+  "tags":
+    type: seq
+    required: false
+    sequence:
+      - type: str
+        enum: [ "silent", "context-import" ]
+        unique: true
+  "issues":
+    required: false
+    type: any
+  "implementations":
+    type: seq
+    required: false
+    sequence:
+      - type: map
+        mapping:
+          "language":
+            type: str
+            required: true
+          "source":
+            type: str
+            required: false
+          "code":
+            type: str
+            required: false
+  "examples":
+    type: map
+    required: false
+    mapping:
+      "pass":
+        type: seq
+        required: false
+        sequence:
+          - type: map
+            mapping:
+              "comment":
+                type: str
+                required: true
+              "format":
+                type: str
+                required: true
+                enum: ["rdf", "gaf", "gpad"]
+              "input":
+                type: str
+                required: true
+      "fail":
+        type: seq
+        required: false
+        sequence:
+          - type: map
+            mapping:
+              "comment":
+                type: str
+                required: true
+              "format":
+                type: str
+                required: true
+                enum: ["rdf", "gaf", "gpad"]
+              "input":
+                type: str
+                required: true
+      "repair":
+        type: seq
+        required: false
+        sequence:
+          - type: map
+            mapping:
+              "comment":
+                type: str
+                required: true
+              "format":
+                type: str
+                required: true
+                enum: ["rdf", "gaf", "gpad"]
+              "input":
+                type: str
+                required: true
+              "output":
+                type: str
+                required: true

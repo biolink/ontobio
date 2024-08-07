@@ -1,0 +1,149 @@
+####
+#### Use kwalify and this schema to validate the config files.
+#### Example:
+####    kwalify -E -m ./metadata/datasets.schema.yaml
+####    kwalify -E -f ./metadata/datasets.schema.yaml ./metadata/FOO.yaml
+####
+#### To convert to JSON once passed:
+####    ./node_modules/yamljs/bin/yaml2json -p ./metadata/datasets.yaml > ./metadata/datasets.json
+####
+type: map
+mapping:
+  "id":
+    type: str
+    required: true
+    unique: true
+  "label":
+    type: str
+    required: true
+    unique: true
+  "description":
+    type: str
+    required: true
+    unique: true
+  "project_name":
+    type: str
+    required: false
+    unique: false
+  "contact_email":
+    type: str
+    required: false
+    unique: false
+  "project_url":
+    type: str
+    required: false
+    unique: false
+  "funding_source":
+    type: str
+    required: false
+    unique: false
+  "email_report":
+    type: str
+    required: false
+    unique: false
+  "filter_out":
+    type: map
+    required: false
+    mapping:
+      "evidence":
+        type: seq
+        required: false
+        sequence:
+          - type: str
+            pattern: /ECO:[0-9]{7}/
+      "evidence_reference":
+        type: seq
+        required: false
+        sequence:
+          - type: map
+            mapping:
+              "evidence":
+                type: str
+                required: true
+                pattern: /ECO:[0-9]{7}/
+              "reference":
+                type: str
+                required: true
+      "annotation_properties":
+        type: seq
+        required: false
+        sequence:
+          - type: str
+  "datasets":
+    type: seq
+    required: true
+    sequence:
+      - type: map
+        mapping:
+          "id":
+            type: str
+            required: true
+            unique: true
+          "label":
+            type: str
+            required: true
+            unique: true
+          "description":
+            type: str
+            required: true
+            unique: true
+          "url":
+            type: str
+            required: false
+            unique: true
+          "type":
+            type: str
+            required: true
+            unique: false
+          "dataset":
+            type: str
+            required: true
+            unique: false
+          "submitter":
+            type: str
+            required: true
+            unique: false
+          "compression":
+            type: str
+            required: false
+            unique: false
+            enum: ['', gzip]
+          "source":
+            type: str
+            required: false
+            unique: false
+          "mirror_of":
+            type: str
+            required: false
+            unique: false
+          "species_code":
+            type: str
+            required: false
+            unique: false
+          "merges_into":
+            type: str
+            required: false
+            unique: false
+          "import":
+            type: bool
+            required: false
+          "entity_type":
+            type: str
+            required: false
+            unique: false
+          "aggregates":
+            type: str
+            required: false
+            unique: false
+          "status":
+            type: str
+            required: false
+            unique: false
+          "taxa":
+            type: seq
+            required: false
+            sequence:
+              - type: str
+          "exclude":
+            type: bool
+            required: false

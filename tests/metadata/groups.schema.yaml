@@ -1,0 +1,49 @@
+####
+#### Use kwalify and this schema to validate the config files.
+####
+#### Examples:
+####    kwalify -f ./metadata/groups.schema.yaml ./metadata/groups.yaml
+####    kwalify -f ./metadata/groups.schema.yaml ./metadata/groups.yaml | grep INVALID; test $? -ne 0
+####
+type: seq
+sequence:
+  - type: map
+    mapping:
+      "id":
+        type: str
+        required: true
+        unique: true
+        ## Pattern lookahead to prevent trailing slashes.
+        pattern: /^((ht|f)tp(s?)\:\/\/\w[\/\.\:\[\]\=\?\&\+\-\,\%\(\)\|\;\_\~\w]+)$/
+      "label":
+        type: str
+        required: true
+        unique: true
+      "parent_group":
+        type: str
+        required: false
+        unique: false
+      "shorthand":
+        type: str
+        required: false
+        unique: true
+      "active-from":
+        type: str
+        required: false
+        pattern: /^\d\d\d\d\-\d\d\-\d\d$/
+      "active-to":
+        type: str
+        required: false
+        pattern: /^\d\d\d\d\-\d\d\-\d\d$/
+      "synonyms":
+        type: seq
+        required: false
+        sequence:
+          - type: str
+#      "contacts":
+#        type: seq
+#        required: false
+#        sequence:
+#          - type: str
+#            ## Pattern lookahead to prevent trailing slashes.
+#            pattern: /^(http(s?)\:\/\/\w[\/\.\-\:\w]+)(?<!\/)$/

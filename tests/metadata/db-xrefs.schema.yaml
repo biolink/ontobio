@@ -1,0 +1,63 @@
+####
+#### Use kwalify and this schema to validate the config files.
+#### Example:
+####    kwalify -E -m ./metadata/db-xrefs.schema.yaml
+####    kwalify -E -f ./metadata/db-xrefs.schema.yaml ./metadata/db-xrefs.yaml
+####
+#### To convert to JSON once passed:
+####    ./node_modules/yamljs/bin/yaml2json -p ./metadata/db-xrefs.yaml > ./metadata/db-xrefs.json
+####
+type: seq
+sequence:
+  - type: map
+    mapping:
+      "database":
+        type: str
+        required: true
+        unique: true
+      "synonyms":
+        type: seq
+        required: false
+        sequence:
+          - type: str
+      "name":
+        type: str
+        required: true
+      "description":
+        type: str
+        required: false
+      "rdf_uri_prefix":
+        type: str
+        required: false
+      "generic_urls":
+        type: seq
+        required: true
+        sequence:
+          - type: str
+            pattern: /^((ht|f)tp(s?)\:\/\/\w[\/\.\:\[\]\=\?\&\+\-\,\%\(\)\|\;\_\~\w]+)$/
+      "entity_types":
+        type: seq
+        required: false
+        sequence:
+          - type: map
+            mapping:
+              "type_id":
+                type: str
+                required: true
+              "type_name":
+                type: str
+                required: true
+              "id_syntax":
+                type: str
+                required: false
+              "url_syntax":
+                type: str
+                pattern: /^((ht|f)tp(s?)\:\/\/\w[\/\.\:\[\]\=\?\&\+\-\,\%\(\)\|\;\_\~\w]+)$/
+                required: false
+              "example_id":
+                type: str
+                required: false
+              "example_url":
+                type: str
+                pattern: /^((ht|f)tp(s?)\:\/\/\w[\/\.\:\[\]\=\?\&\+\-\,\%\(\)\|\;\_\~\w]+)$/
+                required: false
