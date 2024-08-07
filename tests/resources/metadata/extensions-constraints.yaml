@@ -1,0 +1,756 @@
+- relation: occurs_in
+  namespaces:
+    - GO
+    - CL
+    - UBERON
+    - EMAPA
+    - WBbt
+  primary_root_terms:
+    - GO:0003674
+    - GO:0008150
+  cardinality: 1
+- relation: has_input
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - CHEBI
+    - PR
+    - SO
+    - CL
+    - GO
+    - WBbt
+  primary_root_terms:
+    - GO:0003674
+    - GO:0008150
+- relation: has_direct_input
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - CHEBI
+    - PR
+    - SO
+    - CL
+    - GO
+    - WBbt
+  primary_root_terms:
+    - GO:0003674
+    - GO:0008150
+- relation: part_of
+  namespaces:
+    - GO
+    - GO
+  primary_root_terms:
+    - GO:0003674
+    - GO:0008150
+  cardinality: 1
+- relation: has_part
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0032991
+- relation: has_regulation_target
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0003674
+    - GO:0008150
+  cardinality: 1
+- relation: happens_during
+  namespaces:
+    - GO
+    - WBls
+  primary_root_terms:
+    - GO:0003674
+    - GO:0008150
+  cardinality: 1
+- relation: activated_by
+  namespaces:
+    - CHEBI
+  primary_root_terms:
+    - GO:0003674
+  cardinality: 1
+- relation: inhibited_by
+  namespaces:
+    - CHEBI
+  primary_root_terms:
+    - GO:0003674
+  cardinality: 1
+- relation: part_of
+  namespaces:
+    - GO
+    - CL
+    - UBERON
+    - EMAPA
+    - WBbt
+  primary_root_terms:
+    - GO:0005575
+  cardinality: 1
+- relation: has_participant
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+    - CHEBI
+  primary_root_terms:
+    - GO:0008150
+- relation: has_participant
+  namespaces:
+    - CL
+    - WBbt
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: results_in_development_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0048856
+- relation: results_in_development_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0048468
+- relation: has_regulation_target
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+    - SO
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates_o_occurs_in
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+    - CL
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates_o_occurs_in
+  namespaces:
+    - CL
+  primary_root_terms:
+    - GO:0003674
+- relation: regulates_o_results_in_division_of
+  namespaces:
+    - CL
+  primary_root_terms:
+    - GO:0050789
+- relation: regulates_o_transports_or_maintains_localization_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0050789
+- relation: results_in_acquisition_of_feature_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0030154
+- relation: has_output_o_axis_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0007389
+- relation: has_output_o_axis_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates_o_acts_on_population_of
+  namespaces:
+    - CL
+  primary_root_terms:
+    - GO:0042127
+    - GO:0048872
+    - GO:0098727
+    - GO:0019827
+- relation: regulates_o_acts_on_population_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0008283
+- relation: regulates_o_acts_on_population_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:1903429
+- relation: regulates_o_results_in_acquisition_of_features_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0045595
+- relation: results_in_acquisition_of_features_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0030154
+- relation: regulates_o_has_participant
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - CL
+    - CHEBI
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: results_in_formation_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0048646
+- relation: regulates_o_has_agent
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates_o_has_agent
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0060284
+    - GO:0003674
+- relation: acts_on_population_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0008283
+    - GO:0098727
+    - GO:0048872
+- relation: acts_on_population_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0008150
+- relation: results_in_movement_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0040011
+- relation: results_in_movement_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: transports_or_maintains_localization_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - CHEBI
+    - GO
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates_o_results_in_movement_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0030334
+    - GO:0050789
+- relation: regulates_o_results_in_movement_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - EMAPA
+    - UBERON
+    - WBbt
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: results_in_morphogenesis_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0009653
+- relation: results_in_morphogenesis_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0000902
+- relation: regulates_o_results_in_development_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0050793
+- relation: regulates_o_results_in_development_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0060284
+- relation: regulates_o_has_output
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - GO
+    - CHEBI
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: results_in_maturation_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0048469
+- relation: results_in_maturation_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0071695
+- relation: regulates_o_results_in_formation_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0022603
+- relation: adjacent_to
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0005576
+    - GO:0005615
+    - GO:0031012
+- relation: exists_during
+  namespaces:
+    - GO
+    - WBls
+  primary_root_terms:
+    - GO:0005575
+- relation: results_in_commitment_to
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0045165
+- relation: regulates_transcription_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:1903506
+- relation: regulates_o_has_input
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: regulates_o_has_input
+  namespaces:
+    - CL
+    - WBbt
+    - CHEBI
+    - SO
+  primary_root_terms:
+    - GO:0008150
+- relation: has_agent
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0008150
+- relation: part_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - GO
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: part_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0010453
+- relation: part_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: results_in_specification_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0001708
+- relation: negatively_regulates
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: negatively_regulates
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0008150
+- relation: negatively_regulates
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0005488
+- relation: regulates
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0003674
+- relation: regulates_o_results_in_morphogenesis_of
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0022603
+- relation: regulates_o_results_in_morphogenesis_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0022604
+- relation: happens_during
+  namespaces:
+    - GO
+    - WBls
+  primary_root_terms:
+    - GO:0008150
+- relation: occurs_at
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+    - GO
+    - CL
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: occurs_at
+  namespaces:
+    - SO
+  primary_root_terms:
+    - GO:0003674
+- relation: results_in_determination_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0008150
+- relation: gene_product_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: has_output_o_product_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: results_in_division_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0051301
+- relation: has_output
+  namespaces:
+    - PR
+    - EMAPA
+    - UBERON
+    - WBbt
+    - GO
+  primary_root_terms:
+    - GO:0008150
+- relation: has_output
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: regulates_o_results_in_specification_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0042659
+- relation: regulates_o_results_in_commitment_to
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0010453
+- relation: occurs_in
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:0010453
+- relation: occurs_in
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - EMAPA
+    - UBERON
+    - WBbt
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates_activity_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0003674
+    - GO:0065009
+- relation: enabled_by
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: has_target_end_location
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - GO
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: positively_regulates
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: positively_regulates
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0008150
+- relation: positively_regulates
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0005488
+- relation: regulates_level_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates_level_of
+  namespaces:
+    - CHEBI
+  primary_root_terms:
+    - GO:0048878
+- relation: in_presence_of
+  namespaces:
+    - MGI
+    - WB
+    - PR
+    - UniProtKB
+    - PR
+  primary_root_terms:
+    - GO:0008150
+- relation: in_presence_of
+  namespaces:
+    - CHEBI
+  primary_root_terms:
+    - GO:0003674
+- relation: activated_by
+  namespaces:
+    - CHEBI
+  primary_root_terms:
+    - GO:0008150
+- relation: during
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0008150
+- relation: regulates_o_results_in_maturation_of
+  namespaces:
+    - CL
+    - WBbt
+  primary_root_terms:
+    - GO:1903429
+- relation: imports
+  namespaces:
+    - GO
+    - CHEBI
+  primary_root_terms:
+    - GO:0006810
+- relation: not_occurs_in
+  namespaces:
+    - EMAPA
+    - UBERON
+    - WBbt
+  primary_root_terms:
+    - GO:0006810
+- relation: causally_upstream_of
+  namespaces:
+    - GO
+    - GO
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: causally_upstream_of_negative_effect
+  namespaces:
+    - GO
+    - GO
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: causally_upstream_of_positive_effect
+  namespaces:
+    - GO
+    - GO
+  primary_root_terms:
+    - GO:0008150
+    - GO:0003674
+- relation: causally_upstream_of_or_within
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0003674
+- relation: causally_upstream_of_or_within_negative_effect
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0003674
+- relation: causally_upstream_of_or_within_positive_effect
+  namespaces:
+    - GO
+  primary_root_terms:
+    - GO:0003674
+- relation: overlaps
+  namespaces:
+    - CL
+    - EMAPA
+    - WBbt
+    - UBERON
+  primary_root_terms:
+    - GO:0005575

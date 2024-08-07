@@ -49,12 +49,7 @@ def test_produce_with_required_options(runner, go_json):
     # assert "Loading ontology" in result.output
     print(metadata)
 
-    # # Remove the "metadata" directory and all its contents
-    # metadata_dir = "metadata"
-    # if os.path.exists(metadata_dir):
-    #     shutil.rmtree(metadata_dir)
-    #
-    # # Remove the "go-basic.json" file
-    # json_file = "go-basic.json"
-    # if os.path.exists(json_file):
-    #     os.remove(json_file)
+    # Remove the "go-basic.json" file
+    json_file = "go-basic.json"
+    if os.path.exists(json_file):
+        os.remove(json_file)
