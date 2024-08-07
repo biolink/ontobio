@@ -8,22 +8,45 @@ PACKAGES = ontobio prefixcommons
 subpackage_tests: $(patsubst %,test-%,$(PACKAGES))
 
 test:
-	pytest tests/*.py tests/unit/
+	pytest -m "not slow" tests/*.py tests/unit/
 
 debug_test:
-	pytest -s -vvvv tests/*.py
+	pytest -m "not slow" -s -vvvv tests/*.py
 
 t-%:
-	pytest tests/test_$*.py
+	pytest -m "not slow" tests/test_$*.py
 
 tv-%:
-	pytest -s tests/test_$*.py
+	pytest -m "not slow" -s tests/test_$*.py
 
 foo:
 	which pytest
 
 # only run local tests
 travis_test:
+	@if [ -d ".venv" ] && [ -f "pyproject.toml" ]; then \
+		echo "Running tests in Poetry environment..."; \
+		poetry run pytest -m "not slow" tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
+		tests/test_rdfgen.py tests/test_phenosim_engine.py tests/test_ontol.py \
+		tests/test_validation_rules.py tests/unit/test_annotation_scorer.py \
+		tests/test_goassociation_model.py tests/test_relations.py \
+		tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
+		tests/test_collections.py \
+		tests/test_gocamgen.py \
+		tests/test_gpi_isoform_replacement.py; \
+	else \
+		pytest -m "not slow" tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
+		tests/test_rdfgen.py tests/test_phenosim_engine.py tests/test_ontol.py \
+		tests/test_validation_rules.py tests/unit/test_annotation_scorer.py \
+		tests/test_goassociation_model.py tests/test_relations.py \
+		tests/unit/test_golr_search_query.py tests/unit/test_owlsim2_api.py \
+		tests/test_collections.py \
+		tests/test_gocamgen.py \
+		tests/test_gpi_isoform_replacement.py; \
+	fi
+
+
+travis_test_full:
 	@if [ -d ".venv" ] && [ -f "pyproject.toml" ]; then \
 		echo "Running tests in Poetry environment..."; \
 		poetry run pytest tests/test_*local*.py tests/test_*parse*.py tests/test*writer*.py tests/test_qc.py \
@@ -44,6 +67,7 @@ travis_test:
 		tests/test_gocamgen.py \
 		tests/test_gpi_isoform_replacement.py; \
 	fi
+
 
 cleandist:
 	rm dist/* || true

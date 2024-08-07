@@ -25,6 +25,18 @@ def go_json():
     return file_path
 
 
+@pytest.mark.slow
+def test_slow_function():
+    import time
+    time.sleep(10)  # Simulate a slow test
+    assert True
+
+
+def test_fast_function():
+    assert True
+
+
+@pytest.mark.slow
 def test_produce_with_required_options(runner, go_json):
     # Ensure that the required files are created
     metadata = os.getcwd() + '/resources/metadata/datasets'
