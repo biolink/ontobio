@@ -1,7 +1,9 @@
 import pytest
 from click.testing import CliRunner
 from bin.validate import produce
-import os, requests
+import os
+import requests
+import shutil
 
 
 @pytest.fixture
@@ -9,45 +11,7 @@ def runner():
     return CliRunner()
 
 
-@pytest.fixture
-def metadata(scope='session'):
-    # GitHub repository details
-    repo_owner = 'geneontology'
-    repo_name = 'go-site'
-    directory_path = 'metadata'
-    base_url = f'https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{directory_path}'
-
-    # Local directory to save the files
-    local_directory = os.path.join(os.getcwd(), 'metadata')
-
-    # Create the local directory if it doesn't exist
-    if not os.path.exists(local_directory):
-        os.makedirs(local_directory)
-
-    # Get the list of files in the directory
-    response = requests.get(base_url)
-    if response.status_code == 200:
-        files = response.json()
-        for file in files:
-            if file['type'] == 'file':
-                file_url = file['download_url']
-                file_name = file['name']
-                file_path = os.path.join(local_directory, file_name)
-
-                # Download and save the file
-                file_response = requests.get(file_url)
-                if file_response.status_code == 200:
-                    with open(file_path, 'wb') as f:
-                        f.write(file_response.content)
-                    print(f'Downloaded: {file_name}')
-                else:
-                    print(f'Failed to download: {file_name}')
-    else:
-        print(f'Failed to retrieve directory contents. Status code: {response.status_code}')
-    return local_directory
-
-
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def go_json():
     url = 'http://snapshot.geneontology.org/ontology/go-basic.json'
     file_path = os.path.join(os.getcwd(), 'go-basic.json')
@@ -61,13 +25,14 @@ def go_json():
     return file_path
 
 
-@pytest.mark.skipif(
-    not os.path.exists('metadata') and not os.path.exists('go-basic.json'),
-    reason="Required files go-site/metadata and go-basic.json do not exist",
-)
-def test_produce_with_required_options(runner, metadata, go_json):
+def test_produce_with_required_options(runner, go_json):
+    # Ensure that the required files are created
+    metadata = os.getcwd() + '/resources/metadata/datasets'
+    assert os.path.exists(metadata), f"Metadata directory does not exist: {metadata}"
+    assert os.path.exists(go_json), f"go-basic.json file does not exist: {go_json}"
+
     result = runner.invoke(produce, [
-        '-m', 'metadata',
+        '-m', 'resources/metadata',
         '--gpad',
         '-t', '.',
         '-o', 'go-basic.json',
@@ -83,13 +48,13 @@ def test_produce_with_required_options(runner, metadata, go_json):
     # assert "Products will go in" in result.output
     # assert "Loading ontology" in result.output
     print(metadata)
-    os.removedirs("metadata")
-    os.remove("go-basic.json")
 
-
-
-
-
-
-
-
+    # # Remove the "metadata" directory and all its contents
+    # metadata_dir = "metadata"
+    # if os.path.exists(metadata_dir):
+    #     shutil.rmtree(metadata_dir)
+    #
+    # # Remove the "go-basic.json" file
+    # json_file = "go-basic.json"
+    # if os.path.exists(json_file):
+    #     os.remove(json_file)

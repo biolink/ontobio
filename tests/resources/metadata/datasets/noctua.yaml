@@ -1,0 +1,109 @@
+id: noctua
+label: Noctua
+description: "GO-CAM data from Noctua"
+datasets:
+  - id: noctua_mgi.gpad
+    label: "noctua_mgi gpad file"
+    description: "GPAD file for MGI from Noctua"
+    type: gpad
+    dataset: noctua_mgi
+    submitter: GOC
+    compression: gzip
+    source: ./products/upstream_and_raw_data/noctua_mgi-src.gpad.gz
+    entity_type:
+    status: active
+    merges_into: mgi
+    species_code: Mmus
+    taxa:
+      - NCBITaxon:5476
+
+  - id: noctua_fb.gpad
+    label: "noctua_fb gpad file"
+    description: "GPAD file for FB from Noctua"
+    type: gpad
+    dataset: noctua_fb
+    submitter: GOC
+    compression: gzip
+    source: ./products/upstream_and_raw_data/noctua_fb.gpad.gz
+    entity_type:
+    status: inactive
+    species_code: Dmel
+    taxa:
+      - NCBITaxon:7227
+
+  - id: noctua_rgd.gpad
+    label: "noctua_rgd gpad file"
+    description: "GPAD file for RGD from Noctua"
+    type: gpad
+    dataset: noctua_rgd
+    submitter: GOC
+    compression: gzip
+    source: ./products/upstream_and_raw_data/noctua_rgd.gpad.gz
+    entity_type:
+    status: inactive
+    species_code: Rnor
+    taxa:
+      - NCBITaxon:10116
+
+  - id: noctua_sgd.gpad
+    label: "noctua_sgd gpad file"
+    description: "GPAD file for SGD from Noctua"
+    type: gpad
+    dataset: noctua_sgd
+    submitter: GOC
+    compression: gzip
+    source: ./products/upstream_and_raw_data/noctua_sgd.gpad.gz
+    entity_type:
+    status: inactive
+    species_code: Scer
+    taxa:
+      - NCBITaxon:285006
+      - NCBITaxon:307796
+      - NCBITaxon:41870
+      - NCBITaxon:4932
+      - NCBITaxon:559292
+
+  - id: noctua_wb.gpad
+    label: "noctua_wb gpad file"
+    description: "GPAD file for WB from Noctua"
+    type: gpad
+    dataset: noctua_wb
+    submitter: GOC
+    compression: gzip
+    source: ./products/upstream_and_raw_data/noctua_wb.gpad.gz
+    entity_type:
+    status: inactive
+    species_code: Cele
+    taxa:
+      - NCBITaxon:6239
+
+  - id: noctua_xenbase.gpad
+    label: "noctua_xenbase gpad file"
+    description: "GPAD file for Xenbase from Noctua"
+    type: gpad
+    dataset: noctua_xenbase
+    submitter: GOC
+    compression: gzip
+    source: ./products/upstream_and_raw_data/noctua_xenbase-src.gpad.gz
+    entity_type:
+    status: active
+    merges_into: xenbase
+    species_code: Xenopus
+    taxa:
+      - NCBITaxon:8364
+      - NCBITaxon:8355
+
+  - id: noctua_zfin.gpad
+    label: "noctua_zfin gpad file"
+    description: "GPAD file for ZFIN from Noctua"
+    type: gpad
+    dataset: noctua_zfin
+    submitter: GOC
+    compression: gzip
+    source: ./products/upstream_and_raw_data/noctua_zfin-src.gpad.gz
+    entity_type:
+    status: active
+    merges_into: zfin
+    species_code: Drer
+    taxa:
+      - NCBITaxon:7955

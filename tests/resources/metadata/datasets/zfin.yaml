@@ -1,0 +1,39 @@
+id: zfin
+label: Zebrafish Information Network
+description: "GO data for Zebrafish Information Network"
+project_name: "The Zebrafish Information Network"
+contact_email: "zfinadmin@zfin.org"
+project_url: "https://zfin.org/"
+funding_source: "NIH (P41 HG002659)"
+email_report: "dhowe@zfin.org"
+datasets:
+ -
+   id: zfin.gaf
+   label: "zfin gaf file"
+   description: "gaf file for zfin from Zebrafish Information Network"
+   url: https://current.geneontology.org/annotations/zfin.gaf.gz
+   type: gaf
+   dataset: zfin
+   submitter: zfin
+   compression: gzip
+   source: https://zfin.org/downloads/gene_association2.2_automated_only.zfin.gz
+   entity_type:
+   status: active
+   species_code: Drer
+   taxa:
+    - NCBITaxon:7955
+ -
+   id: zfin.gpi
+   label: "zfin gpi file"
+   description: "gpi file for zfin from Zebrafish Information Network"
+   url: https://current.geneontology.org/annotations/zfin.gpi.gz
+   type: gpi
+   dataset: zfin
+   submitter: zfin
+   compression: gzip
+   source: https://zfin.org/downloads/zfin.gpi.gz
+   entity_type:
+   status: active
+   species_code: Drer
+   taxa:
+    - NCBITaxon:7955
