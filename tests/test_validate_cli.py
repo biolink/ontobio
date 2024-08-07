@@ -6,7 +6,11 @@ from bin.validate import produce
 import os
 import requests
 
-
+from ontobio import OntologyFactory
+from ontobio.io import assocparser
+from ontobio.io.gafparser import GafParser
+ontology = "go"
+ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
 
 @pytest.fixture
 def runner():
@@ -39,8 +43,11 @@ def test_fast_function():
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("group_a", "group_b",  [("goa_chicken", "goa"), ("zfin", "ZFIN")])
-def test_produce_with_required_options(runner, go_json, group_a, group_b):
+@pytest.mark.parametrize("group, dataset", [
+    ("goa_chicken", "goa"),
+    ("zfin", "ZFIN")
+])
+def test_produce_with_required_options(runner, go_json, group, dataset):
     # Ensure that the required files are created
     base_path = Path(__file__).parent / "resources"
     metadata = base_path / "metadata"
@@ -54,16 +61,24 @@ def test_produce_with_required_options(runner, go_json, group_a, group_b):
         '-t', '.',
         '-o', 'go-basic.json',
         '--base-download-url', 'http://skyhook.berkeleybop.org/snapshot/',
-        '--only-dataset', group_a,
-        group_b,
+        '--only-dataset', group,
+        dataset,
         '--gpad-gpi-output-version', '2.0'
     ])
     print(result.exit_code)
     print(result.stdout)
-    # assert result.exit_code == 0
-    # assert "Making products" in result.output
-    # assert "Products will go in" in result.output
-    # assert "Loading ontology" in result.output
+    assert os.path.exists(Path(__file__).parent / "groups" / group)
+
+    gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+    zipped_gaf = Path(__file__).parent / "groups" / group / f"{group}.gaf.gz"
+
+    assert os.path.exists(zipped_gaf)
+    unzipped_gaf = Path(__file__).parent / "groups" / group / f"{group}.gaf"
+    results = gaf_parser.parse(unzipped_gaf)
+    print(results[:10])
+    assert len(results) > 0
+    assert gaf_parser.version == "2.2"
+
     print(metadata)
 
     # Remove the "go-basic.json" file
