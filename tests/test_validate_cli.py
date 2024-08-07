@@ -83,6 +83,8 @@ def test_produce_with_required_options(runner, metadata, go_json):
     # assert "Products will go in" in result.output
     # assert "Loading ontology" in result.output
     print(metadata)
+    os.removedirs("metadata")
+    os.remove("go-basic.json")
 
 
 
