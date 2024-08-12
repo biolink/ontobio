@@ -13,11 +13,13 @@ from ontobio.io.gpadparser import GpadParser
 
 
 @pytest.fixture
+@pytest.mark.slow
 def runner():
     return CliRunner()
 
 
 @pytest.fixture()
+@pytest.mark.slow
 def go_json():
     url = 'http://snapshot.geneontology.org/ontology/go-basic.json'
     file_path = os.path.join(os.getcwd(), 'go-basic.json')
@@ -42,7 +44,7 @@ def test_fast_function():
     assert True
 
 
-@pytest.fixture(params=[("goa_cow", "goa"), ("mgi", "MGI"), ("zfin", "ZFIN")], scope='session')
+@pytest.fixture(params=[("goa_cow", "goa"), ("goa_chicken", "goa"), ("mgi", "MGI"), ("zfin", "ZFIN")], scope='session')
 @pytest.mark.slow
 def gaf_setup(request, runner, go_json):
     dataset, group = request.param
@@ -95,7 +97,7 @@ def test_validate_resulting_gaf(gaf_setup):
 
 @pytest.mark.slow
 def test_validate_gaf():
-    dataset = "goa_cow"
+    dataset = "goa_chicken"
     group = "goa"
     ontology_graph = OntologyFactory().create("go", ignore_cache=True)
     gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
@@ -113,11 +115,11 @@ def test_validate_gaf():
     assert len(results) > 0
     for result in results:
         if hasattr(result, 'subject'):
-            assert not result.subject.id.startswith("PR:")
+            assert not result.subject.id.namespace == "PR"
 
     assert gpad_parser.version == '2.0'
     assert len(gpad_results) > 0
     for gpad_result in gpad_results:
         if hasattr(gpad_result, 'subject'):
-            assert not gpad_result.subject.id.startswith("PR:")
+            assert not gpad_result.subject.id.namespace == "PR"
 
