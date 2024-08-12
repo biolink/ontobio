@@ -7,9 +7,11 @@ make test_travis_full
 ```
 
 This makefile target will run the full validate.produce command using goa_cow, mgi, zfin, and goa_chicken sources,
-producing GPAD, GAF files in the groups subdirectory and then do a check of the content of these products.
+producing GPAD, GAF files in the groups subdirectory and then do a check of the content of these products.  These
+tests only run manually, not via CI because they take minutes to run.
 
-alternatively, you can run the following commands to test the validate.produce command on a particular source:
+alternatively, you can run the following commands to test the validate.produce command on a particular source, locally:
+
 ```bash
 Note: snapshot below in the URL can be changed to any pipeline branch; its listed here for ease of cp/paste.
 ```bash
