@@ -9,6 +9,7 @@ import requests
 from ontobio import OntologyFactory
 from ontobio.io import assocparser
 from ontobio.io.gafparser import GafParser
+from ontobio.io.gpadparser import GpadParser
 
 
 @pytest.fixture
@@ -41,7 +42,8 @@ def test_fast_function():
     assert True
 
 
-@pytest.fixture(params=[("goa_cow", "goa")], scope='session')
+@pytest.fixture(params=[("goa_cow", "goa"), ("mgi", "MGI"), ("zfin", "ZFIN")], scope='session')
+@pytest.mark.slow
 def gaf_setup(request, runner, go_json):
     dataset, group = request.param
     # Ensure that the required files are created
@@ -91,18 +93,31 @@ def test_validate_resulting_gaf(gaf_setup):
     print(metadata)
 
 
+@pytest.mark.slow
 def test_validate_gaf():
-    dataset = "goa_chicken"
+    dataset = "goa_cow"
     group = "goa"
     ontology_graph = OntologyFactory().create("go", ignore_cache=True)
     gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+    gpad_parser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     zipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
 
     assert os.path.exists(zipped_gaf)
+
     unzipped_gaf = str(Path(__file__).parent / "groups" / group / f"{dataset}.gaf")
+    assert os.path.exists(unzipped_gaf)
+    assert os.path.exists(Path(__file__).parent / "groups" / group / f"{dataset}.gpad")
+    gpad_results = gpad_parser.parse(str(Path(__file__).parent / "groups" / group / f"{dataset}.gpad"))
     results = gaf_parser.parse(unzipped_gaf)
     assert gaf_parser.version == "2.2"
     assert len(results) > 0
     for result in results:
-        assert not result.startswith("PR")
-    
+        if hasattr(result, 'subject'):
+            assert not result.subject.id.startswith("PR:")
+
+    assert gpad_parser.version == '2.0'
+    assert len(gpad_results) > 0
+    for gpad_result in gpad_results:
+        if hasattr(gpad_result, 'subject'):
+            assert not gpad_result.subject.id.startswith("PR:")
+
