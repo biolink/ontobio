@@ -46,7 +46,11 @@ click = "^8.1.7"
 chardet = "^5.2.0"
 pytest-mock = "^3.14.0"
 
-
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "pep440"
