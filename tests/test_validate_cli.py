@@ -44,7 +44,7 @@ def test_fast_function():
     assert True
 
 
-@pytest.fixture(params=[("goa_cow", "goa"), ("goa_chicken", "goa"), ("mgi", "MGI"), ("zfin", "ZFIN")], scope='session')
+@pytest.fixture(params=[("goa_cow", "goa"), ("goa_chicken", "goa"), ("mgi", "MGI"), ("zfin", "ZFIN")])
 @pytest.mark.slow
 def gaf_setup(request, runner, go_json):
     dataset, group = request.param
