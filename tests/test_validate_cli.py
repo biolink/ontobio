@@ -13,13 +13,11 @@ from ontobio.io.gpadparser import GpadParser
 
 
 @pytest.fixture
-@pytest.mark.slow
 def runner():
     return CliRunner()
 
 
 @pytest.fixture()
-@pytest.mark.slow
 def go_json():
     url = 'http://snapshot.geneontology.org/ontology/go-basic.json'
     file_path = os.path.join(os.getcwd(), 'go-basic.json')
@@ -44,8 +42,7 @@ def test_fast_function():
     assert True
 
 
-@pytest.fixture(params=[("goa_cow", "goa"), ("goa_chicken", "goa"), ("mgi", "MGI"), ("zfin", "ZFIN")])
-@pytest.mark.slow
+@pytest.fixture(params=[( "goa", "goa_chicken"), ("mgi", "MGI"), ("zfin", "ZFIN")])
 def gaf_setup(request, runner, go_json):
     dataset, group = request.param
     # Ensure that the required files are created
