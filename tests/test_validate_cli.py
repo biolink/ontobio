@@ -46,7 +46,7 @@ datasets_to_test = [("zfin", "ZFIN"), ("fb", "FlyBase"), ("mgi", "MGI"), ("rgd",
 
 
 # Test function that uses the fixtures
-@pytest.mark.parametrize("dataset,group", [("ZFIN", "zfin")])
+@pytest.mark.parametrize("dataset,group", datasets_to_test)
 @pytest.mark.slow
 def test_gaf_setup(dataset, group, runner, go_json):
     # Ensure that the required files are created
