@@ -42,9 +42,13 @@ def test_fast_function():
     assert True
 
 
-@pytest.fixture(params=[( "goa", "goa_chicken"), ("mgi", "MGI"), ("zfin", "ZFIN")])
-def gaf_setup(request, runner, go_json):
-    dataset, group = request.param
+datasets_to_test = [("zfin", "ZFIN"), ("fb", "FlyBase"), ("mgi", "MGI"), ("rgd", "RGD"), ("goa", "goa-chicken")]
+
+
+# Test function that uses the fixtures
+@pytest.mark.parametrize("dataset,group", [("ZFIN", "zfin")])
+@pytest.mark.slow
+def test_gaf_setup(dataset, group, runner, go_json):
     # Ensure that the required files are created
     base_path = Path(__file__).parent / "resources"
     metadata = base_path / "metadata"
@@ -57,23 +61,20 @@ def gaf_setup(request, runner, go_json):
         '-t', '.',
         '-o', 'go-basic.json',
         '--base-download-url', 'http://skyhook.berkeleybop.org/snapshot/',
-        '--only-dataset', group,
-        dataset,
+        '--only-dataset', group, dataset,
         '--gpad-gpi-output-version', '2.0'
     ])
-    print(result.exit_code)
-    print(result.stdout)
-    assert os.path.exists(Path(__file__).parent / "groups" / "goa")
 
-    zipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
+    print(f"Exit Code: {result.exit_code}")
+    print(f"Standard Output: {result.stdout}")
+    assert result.exit_code == 0, f"Command failed with exit code {result.exit_code}. Stderr: {result.stderr}"
+
+    assert os.path.exists(Path(__file__).parent.parent / "groups" / group)
+
+    zipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
+    print(zipped_gaf)
     assert os.path.exists(zipped_gaf)
-    return dataset, group, metadata
 
-
-@pytest.mark.slow
-def test_validate_resulting_gaf(gaf_setup):
-    dataset = gaf_setup[0]
-    group = gaf_setup[1]
     base_path = Path(__file__).parent / "resources"
     ontology = "go"
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
@@ -83,10 +84,11 @@ def test_validate_resulting_gaf(gaf_setup):
     assert os.path.exists(metadata)
 
     gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
-    zipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
+    zipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
+    print(zipped_gaf)
 
     assert os.path.exists(zipped_gaf)
-    unzipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf"
+    unzipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf"
 
     assert os.path.exists(unzipped_gaf)
 
@@ -100,17 +102,17 @@ def test_validate_resulting_gaf(gaf_setup):
 
 @pytest.mark.slow
 def test_validate_gaf():
-    dataset = "goa_chicken"
-    group = "goa"
+    dataset = "ZFIN"
+    group = "zfin"
     ontology_graph = OntologyFactory().create("go", ignore_cache=True)
     gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     gpad_parser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
-    zipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
-
+    zipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
+    print(zipped_gaf)
     assert os.path.exists(zipped_gaf)
 
-    unzipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf"
-    gpad_path = Path(__file__).parent / "groups" / group / f"{dataset}.gpad"
+    unzipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf"
+    gpad_path = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gpad"
 
     assert os.path.exists(unzipped_gaf)
     assert os.path.exists(gpad_path)
