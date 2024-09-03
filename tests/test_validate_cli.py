@@ -87,7 +87,13 @@ def test_validate_resulting_gaf(gaf_setup):
 
     assert os.path.exists(zipped_gaf)
     unzipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf"
-    results = gaf_parser.parse(unzipped_gaf)
+
+    assert os.path.exists(unzipped_gaf)
+
+    # Open the GAF file and pass the file object to the parser
+    with unzipped_gaf.open('r') as gaf_file:
+        results = gaf_parser.parse(gaf_file)
+
     assert len(results) > 0
     print(metadata)
 
@@ -103,11 +109,20 @@ def test_validate_gaf():
 
     assert os.path.exists(zipped_gaf)
 
-    unzipped_gaf = str(Path(__file__).parent / "groups" / group / f"{dataset}.gaf")
+    unzipped_gaf = Path(__file__).parent / "groups" / group / f"{dataset}.gaf"
+    gpad_path = Path(__file__).parent / "groups" / group / f"{dataset}.gpad"
+
     assert os.path.exists(unzipped_gaf)
-    assert os.path.exists(Path(__file__).parent / "groups" / group / f"{dataset}.gpad")
-    gpad_results = gpad_parser.parse(str(Path(__file__).parent / "groups" / group / f"{dataset}.gpad"))
-    results = gaf_parser.parse(unzipped_gaf)
+    assert os.path.exists(gpad_path)
+
+    # Open the GPAD file and parse
+    with gpad_path.open('r') as gpad_file:
+        gpad_results = gpad_parser.parse(gpad_file)
+
+    # Open the GAF file and parse
+    with unzipped_gaf.open('r') as gaf_file:
+        results = gaf_parser.parse(gaf_file)
+
     assert gaf_parser.version == "2.2"
     assert len(results) > 0
     for result in results:
