@@ -132,16 +132,13 @@ def download_source_gafs(group_metadata,
 
     gaf_urls = []
     if only_dataset is None:
-        print("only_dataset is None")
         gaf_urls = [(data, data["source"]) for data in group_metadata["datasets"] if
                     data["type"] == "gaf" and data["dataset"] not in exclusions and not data.get("exclude", False)]
     else:
-        print("only_dataset is not None")
-        print("only_dataset: {}".format(only_dataset))
         gaf_urls = [(data, data["source"]) for data in group_metadata["datasets"] if data["dataset"] == only_dataset]
     # List of dataset metadata to gaf download url
 
-    print("Found gaf_urls {}".format(", ".join([kv[0]["dataset"] for kv in gaf_urls])))
+    logger.info("Found gaf_urls {}".format(", ".join([kv[0]["dataset"] for kv in gaf_urls])))
     downloaded_paths = []
     for dataset_metadata, gaf_url in gaf_urls:
         dataset = dataset_metadata["dataset"]
@@ -157,7 +154,7 @@ def download_source_gafs(group_metadata,
             # otherwise file is coming in uncompressed. But we want to make sure
             # to zip up the original source also
             tools.zipup(path)
-        print("Downloaded {}".format(path))
+        logger.info("Downloaded {}".format(path))
         downloaded_paths.append((dataset_metadata, path))
 
     return downloaded_paths
@@ -663,7 +660,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                                   replace_existing_files=not skip_existing_files,
                                                   only_dataset=only_dataset)
 
-    print("Downloaded GAF sources: {}".format(downloaded_gaf_sources))
+    click.echo("Downloaded GAF sources: {}".format(downloaded_gaf_sources))
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
