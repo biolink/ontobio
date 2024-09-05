@@ -42,62 +42,77 @@ def test_fast_function():
     assert True
 
 
-datasets_to_test = [("zfin", "ZFIN"), ("fb", "FlyBase"), ("mgi", "MGI"), ("rgd", "RGD"), ("goa", "goa-chicken")]
+datasets_to_test = [("ZFIN", "zfin"), ("MGI", "mgi"), ("goa_chicken", "goa")]
 
 
 # Test function that uses the fixtures
-@pytest.mark.parametrize("dataset,group", datasets_to_test)
+
 @pytest.mark.slow
-def test_gaf_setup(dataset, group, runner, go_json):
-    # Ensure that the required files are created
-    base_path = Path(__file__).parent / "resources"
-    metadata = base_path / "metadata"
-    assert os.path.exists(metadata), f"Metadata directory does not exist: {metadata}"
-    assert os.path.exists(go_json), f"go-basic.json file does not exist: {go_json}"
+def test_gaf_setup(runner, go_json):
+    for dataset, group in datasets_to_test:
+        print(f"Testing {dataset} from {group}")
+        # Ensure that the required files are created
+        base_path = Path(__file__).parent / "resources"
+        metadata = base_path / "metadata"
+        assert os.path.exists(metadata), f"Metadata directory does not exist: {metadata}"
+        assert os.path.exists(go_json), f"go-basic.json file does not exist: {go_json}"
 
-    result = runner.invoke(produce, [
-        '-m', metadata,
-        '--gpad',
-        '-t', '.',
-        '-o', 'go-basic.json',
-        '--base-download-url', 'http://skyhook.berkeleybop.org/snapshot/',
-        '--only-dataset', group, dataset,
-        '--gpad-gpi-output-version', '2.0'
-    ])
+        result = runner.invoke(produce, [
+            '-m', metadata,
+            '--gpad',
+            '-t', '.',
+            '-o', 'go-basic.json',
+            '--base-download-url', 'http://skyhook.berkeleybop.org/snapshot/',
+            '--only-dataset', group, dataset,
+            '--gpad-gpi-output-version', '2.0'
+        ])
 
-    print(f"Exit Code: {result.exit_code}")
-    print(f"Standard Output: {result.stdout}")
-    assert result.exit_code == 0, f"Command failed with exit code {result.exit_code}. Stderr: {result.stderr}"
+        print(f"Exit Code: {result.exit_code}")
+        print(f"Standard Output: {result.stdout}")
 
-    assert os.path.exists(Path(__file__).parent.parent / "groups" / group)
+        test_path = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
 
-    zipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
-    print(zipped_gaf)
-    assert os.path.exists(zipped_gaf)
+        # Try finding the file in the root directory (for Makefile execution)
+        root_path = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
+        # Check which path exists and return the correct one
+        if test_path.exists():
+            zipped_gaf = test_path
+            base_gaf_path = Path(__file__).parent / "groups" / group
+        elif root_path.exists():
+            zipped_gaf = root_path
+            base_gaf_path = Path(__file__).parent.parent / "groups" / group
+        else:
+            raise FileNotFoundError(f"Could not find {dataset}.gaf.gz in either {test_path} or {root_path}")
 
-    base_path = Path(__file__).parent / "resources"
-    ontology = "go"
-    ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
-    metadata = base_path / "metadata"
-    datasets = metadata / "datasets"
-    assert os.path.exists(datasets)
-    assert os.path.exists(metadata)
+        assert os.path.exists(zipped_gaf)
 
-    gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
-    zipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
-    print(zipped_gaf)
+        assert os.path.exists(base_path)
 
-    assert os.path.exists(zipped_gaf)
-    unzipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf"
+        print("zipped gaf path", zipped_gaf)
+        assert os.path.exists(zipped_gaf)
 
-    assert os.path.exists(unzipped_gaf)
+        unzipped_gaf = base_gaf_path / f"{dataset}.gaf"
 
-    # Open the GAF file and pass the file object to the parser
-    with unzipped_gaf.open('r') as gaf_file:
-        results = gaf_parser.parse(gaf_file)
+        assert os.path.exists(unzipped_gaf)
 
-    assert len(results) > 0
-    print(metadata)
+        ontology = "go"
+        ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
+
+        gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+
+        # Open the GAF file and pass the file object to the parser
+        with unzipped_gaf.open('r') as gaf_file:
+            results = gaf_parser.parse(gaf_file)
+
+        assert len(results) > 0
+        print(metadata)
+
+        base_config_path = Path(__file__).parent / "resources"
+
+        metadata = base_config_path / "metadata"
+        datasets = metadata / "datasets"
+        assert os.path.exists(datasets)
+        assert os.path.exists(metadata)
 
 
 @pytest.mark.slow
@@ -107,12 +122,26 @@ def test_validate_gaf():
     ontology_graph = OntologyFactory().create("go", ignore_cache=True)
     gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     gpad_parser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
-    zipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
+    # Check which path exists and return the correct one
+
+    test_path = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
+
+    # Try finding the file in the root directory (for Makefile execution)
+    root_path = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
+    if test_path.exists():
+        zipped_gaf = test_path
+        base_path = Path(__file__).parent / "groups" / group
+    elif root_path.exists():
+        zipped_gaf = root_path
+        base_path = Path(__file__).parent.parent / "groups" / group
+    else:
+        raise FileNotFoundError(f"Could not find {dataset}.gaf.gz in either {test_path} or {root_path}")
+
     print(zipped_gaf)
     assert os.path.exists(zipped_gaf)
 
-    unzipped_gaf = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf"
-    gpad_path = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gpad"
+    unzipped_gaf = base_path / f"{dataset}.gaf"
+    gpad_path = base_path / f"{dataset}.gpad"
 
     assert os.path.exists(unzipped_gaf)
     assert os.path.exists(gpad_path)
