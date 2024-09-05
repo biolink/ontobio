@@ -1,0 +1,38 @@
+id: cgd
+label: Candida Genome Database
+description: "GO data for Candida Genome Database"
+project_name: "Candida Genome Database (CGD)"
+contact_email: "candida-curator@lists.stanford.edu"
+project_url: "http://www.candidagenome.org/"
+funding_source: "NIDCR at US NIH, grant number 1-R01-DE015873-01"
+email_report: "candida-curator@lists.stanford.edu"
+datasets:
+ -
+   id: cgd.gaf
+   label: "cgd gaf file"
+   description: "gaf file for cgd from Candida Genome Database"
+   url: https://current.geneontology.org/annotations/cgd.gaf.gz
+   type: gaf
+   dataset: cgd
+   submitter: cgd
+   compression: gzip
+   source: http://www.candidagenome.org/download/go/gene_association.cgd.gz
+   entity_type:
+   status: active
+   species_code: 
+   taxa:
+    - NCBITaxon:5476
+    - NCBITaxon:5478
+    - NCBITaxon:5480
+    - NCBITaxon:1136231
+    - NCBITaxon:284592
+    - NCBITaxon:294746
+    - NCBITaxon:294747
+    - NCBITaxon:294748
+    - NCBITaxon:306902
+    - NCBITaxon:379508
+    - NCBITaxon:42374
+    - NCBITaxon:573826
+    - NCBITaxon:284593
+    - NCBITaxon:578454
+    - NCBITaxon:237561

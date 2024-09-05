@@ -42,7 +42,13 @@ def test_fast_function():
     assert True
 
 
-datasets_to_test = [("ZFIN", "zfin"), ("MGI", "mgi"), ("goa_chicken", "goa")]
+datasets_to_test = [
+    # ("ZFIN", "zfin"),
+    ("MGI", "mgi"),
+    ("goa_cow", "goa"),
+    # ("rgd", "rgd"),
+    ("cgd", "cgd"),
+]
 
 
 # Test function that uses the fixtures
@@ -117,52 +123,51 @@ def test_gaf_setup(runner, go_json):
 
 @pytest.mark.slow
 def test_validate_gaf():
-    dataset = "ZFIN"
-    group = "zfin"
-    ontology_graph = OntologyFactory().create("go", ignore_cache=True)
-    gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
-    gpad_parser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
-    # Check which path exists and return the correct one
+    for dataset, group in datasets_to_test:
+        ontology_graph = OntologyFactory().create("go", ignore_cache=True)
+        gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+        gpad_parser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
+        # Check which path exists and return the correct one
 
-    test_path = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
+        test_path = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
 
-    # Try finding the file in the root directory (for Makefile execution)
-    root_path = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
-    if test_path.exists():
-        zipped_gaf = test_path
-        base_path = Path(__file__).parent / "groups" / group
-    elif root_path.exists():
-        zipped_gaf = root_path
-        base_path = Path(__file__).parent.parent / "groups" / group
-    else:
-        raise FileNotFoundError(f"Could not find {dataset}.gaf.gz in either {test_path} or {root_path}")
+        # Try finding the file in the root directory (for Makefile execution)
+        root_path = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
+        if test_path.exists():
+            zipped_gaf = test_path
+            base_path = Path(__file__).parent / "groups" / group
+        elif root_path.exists():
+            zipped_gaf = root_path
+            base_path = Path(__file__).parent.parent / "groups" / group
+        else:
+            raise FileNotFoundError(f"Could not find {dataset}.gaf.gz in either {test_path} or {root_path}")
 
-    print(zipped_gaf)
-    assert os.path.exists(zipped_gaf)
+        print(zipped_gaf)
+        assert os.path.exists(zipped_gaf)
 
-    unzipped_gaf = base_path / f"{dataset}.gaf"
-    gpad_path = base_path / f"{dataset}.gpad"
+        unzipped_gaf = base_path / f"{dataset}.gaf"
+        gpad_path = base_path / f"{dataset}.gpad"
 
-    assert os.path.exists(unzipped_gaf)
-    assert os.path.exists(gpad_path)
+        assert os.path.exists(unzipped_gaf)
+        assert os.path.exists(gpad_path)
 
-    # Open the GPAD file and parse
-    with gpad_path.open('r') as gpad_file:
-        gpad_results = gpad_parser.parse(gpad_file)
+        # Open the GPAD file and parse
+        with gpad_path.open('r') as gpad_file:
+            gpad_results = gpad_parser.parse(gpad_file)
 
-    # Open the GAF file and parse
-    with unzipped_gaf.open('r') as gaf_file:
-        results = gaf_parser.parse(gaf_file)
+        # Open the GAF file and parse
+        with unzipped_gaf.open('r') as gaf_file:
+            results = gaf_parser.parse(gaf_file)
 
-    assert gaf_parser.version == "2.2"
-    assert len(results) > 0
-    for result in results:
-        if hasattr(result, 'subject'):
-            assert not result.subject.id.namespace == "PR"
+        assert gaf_parser.version == "2.2"
+        assert len(results) > 0
+        for result in results:
+            if hasattr(result, 'subject'):
+                assert not result.subject.id.namespace == "PR"
 
-    assert gpad_parser.version == '2.0'
-    assert len(gpad_results) > 0
-    for gpad_result in gpad_results:
-        if hasattr(gpad_result, 'subject'):
-            assert not gpad_result.subject.id.namespace == "PR"
+        assert gpad_parser.version == '2.0'
+        assert len(gpad_results) > 0
+        for gpad_result in gpad_results:
+            if hasattr(gpad_result, 'subject'):
+                assert not gpad_result.subject.id.namespace == "PR"
 

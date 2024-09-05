@@ -1,0 +1,24 @@
+id: rgd
+label: Rat Genome Database
+description: "GO data for Rat Genome Database"
+project_name: "Rat Genome Database (RGD)"
+contact_email: "slaulede@mcw.edu"
+project_url: "http://rgd.mcw.edu/"
+funding_source: "NHLBI at US NIH, grant number 2R01HL064541"
+email_report: "rgd.developers@mcw.edu, rgd.pipelines@mcw.edu"
+datasets:
+ -
+   id: rgd.gaf
+   label: "rgd gaf file"
+   description: "gaf file for rgd from Rat Genome Database"
+   url: https://current.geneontology.org/annotations/rgd.gaf.gz
+   type: gaf
+   dataset: rgd
+   submitter: rgd
+   compression: gzip
+   source: https://github.com/rat-genome-database/rgd-annotation-files/raw/master/gene_association.rgd.gz
+   entity_type:
+   status: active
+   species_code: Rnor
+   taxa:
+    - NCBITaxon:10116
