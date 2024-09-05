@@ -651,6 +651,8 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
     click.echo("Products will go in {}".format(absolute_target))
     absolute_metadata = os.path.abspath(metadata_dir)
 
+    print("group", group)
+    print("dataset", )
     group_metadata = metadata.dataset_metadata_file(absolute_metadata, group)
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)

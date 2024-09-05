@@ -42,12 +42,13 @@ def test_fast_function():
     assert True
 
 
+# (dataset, group) tuples, adjust as needed for full testing
 datasets_to_test = [
     # ("ZFIN", "zfin"),
     ("MGI", "mgi"),
     ("goa_cow", "goa"),
-    # ("rgd", "rgd"),
     ("cgd", "cgd"),
+    ("tair", "tair"),
 ]
 
 
@@ -69,8 +70,9 @@ def test_gaf_setup(runner, go_json):
             '-t', '.',
             '-o', 'go-basic.json',
             '--base-download-url', 'http://skyhook.berkeleybop.org/snapshot/',
-            '--only-dataset', group, dataset,
-            '--gpad-gpi-output-version', '2.0'
+            '--only-dataset', dataset,
+            '--gpad-gpi-output-version', '2.0',
+            group
         ])
 
         print(f"Exit Code: {result.exit_code}")
