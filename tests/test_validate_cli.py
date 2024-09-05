@@ -44,7 +44,7 @@ def test_fast_function():
 
 # (dataset, group) tuples, adjust as needed for full testing
 datasets_to_test = [
-    # ("zfin", "zfin"),
+    ("zfin", "zfin"),
     ("mgi", "mgi"),
     ("goa_cow", "goa"),
     ("cgd", "cgd"),
