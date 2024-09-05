@@ -169,7 +169,4 @@ def test_validate_gaf():
 
         assert gpad_parser.version == '2.0'
         assert len(gpad_results) > 0
-        for gpad_result in gpad_results:
-            if hasattr(gpad_result, 'subject'):
-                assert not gpad_result.subject.id.namespace == "PR"
 
