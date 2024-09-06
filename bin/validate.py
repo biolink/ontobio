@@ -116,14 +116,20 @@ def download_a_dataset_source(group, dataset_metadata, target_dir, source_url, b
     return path
 
 
-def download_source_gafs(group_metadata, target_dir, exclusions=[], base_download_url=None, replace_existing_files=True,
+def download_source_gafs(group_metadata,
+                         target_dir,
+                         exclusions=[],
+                         base_download_url=None,
+                         replace_existing_files=True,
                          only_dataset=None):
     """
     This looks at a group metadata dictionary and downloads each GAF source that is not in the exclusions list.
     For each downloaded file, keep track of the path of the file. If the file is zipped, it will unzip it here.
     This function returns a list of tuples of the dataset dictionary mapped to the downloaded source path.
     """
-    # Grab all datasets in a group, excluding non-gaf, datasets that are explicitely excluded from an option, and excluding datasets with the `exclude key` set to true
+    # Grab all datasets in a group, excluding non-gaf, datasets that are explicitly excluded
+    # from an option, and excluding datasets with the `exclude key` set to true
+
     gaf_urls = []
     if only_dataset is None:
         gaf_urls = [(data, data["source"]) for data in group_metadata["datasets"] if
@@ -132,7 +138,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
         gaf_urls = [(data, data["source"]) for data in group_metadata["datasets"] if data["dataset"] == only_dataset]
     # List of dataset metadata to gaf download url
 
-    click.echo("Found {}".format(", ".join([kv[0]["dataset"] for kv in gaf_urls])))
+    logger.info("Found gaf_urls {}".format(", ".join([kv[0]["dataset"] for kv in gaf_urls])))
     downloaded_paths = []
     for dataset_metadata, gaf_url in gaf_urls:
         dataset = dataset_metadata["dataset"]
@@ -148,7 +154,7 @@ def download_source_gafs(group_metadata, target_dir, exclusions=[], base_downloa
             # otherwise file is coming in uncompressed. But we want to make sure
             # to zip up the original source also
             tools.zipup(path)
-
+        logger.info("Downloaded {}".format(path))
         downloaded_paths.append((dataset_metadata, path))
 
     return downloaded_paths
@@ -645,6 +651,8 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
     click.echo("Products will go in {}".format(absolute_target))
     absolute_metadata = os.path.abspath(metadata_dir)
 
+    print("group", group)
+    print("dataset", )
     group_metadata = metadata.dataset_metadata_file(absolute_metadata, group)
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
@@ -654,6 +662,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                                   replace_existing_files=not skip_existing_files,
                                                   only_dataset=only_dataset)
 
+    click.echo("Downloaded GAF sources: {}".format(downloaded_gaf_sources))
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))

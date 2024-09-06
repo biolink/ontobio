@@ -1,0 +1,24 @@
+id: tair
+label: The Arabidopsis Information Resource
+description: "GO data for The Arabidopsis Information Resource"
+project_name: "The Arabidopsis Information Resource (TAIR)"
+contact_email: "curator@arabidopsis.org"
+project_url: "http://www.arabidopsis.org"
+funding_source: "The TAIR project is funded by academic institutional, corporate, and individual subscriptions. TAIR is administered by the 501(c)(3) non-profit Phoenix Bioinformatics."
+email_report: "curator@arabidopsis.org"
+datasets:
+ -
+   id: tair.gaf
+   label: "tair gaf file"
+   description: "gaf file for tair from The Arabidopsis Information Resource"
+   url: https://current.geneontology.org/annotations/tair.gaf.gz
+   type: gaf
+   dataset: tair
+   submitter: tair
+   compression: gzip
+   source: https://www.arabidopsis.org/api/download-files/download?filePath=GO_and_PO_Annotations/Gene_Ontology_Annotations/gene_association.tair.gz
+   entity_type:
+   status: active
+   species_code: Atal
+   taxa:
+    - NCBITaxon:3702

@@ -1,0 +1,248 @@
+id: paint
+label: PAINT
+description: "GO data for PAINT"
+datasets:
+ -
+   id: paint_cgd.gaf
+   label: "paint_cgd gaf file"
+   description: "gaf file for paint_cgd from PAINT"
+   type: gaf
+   dataset: paint_cgd
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_cgd.gaf.gz
+   entity_type:
+   status: active
+   species_code: Calb
+   taxa:
+    - NCBITaxon:5476
+   merges_into: cgd
+
+ -
+   id: paint_dictybase.gaf
+   label: "paint_dictybase gaf file"
+   description: "gaf file for paint_dictybase from PAINT"
+   type: gaf
+   dataset: paint_dictybase
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_dictyBase.gaf.gz
+   entity_type:
+   status: active
+   species_code: Ddis
+   taxa:
+    - NCBITaxon:352472
+    - NCBITaxon:366501
+    - NCBITaxon:44689
+    - NCBITaxon:5782
+   merges_into: dictybase
+
+ -
+   id: paint_ecocyc.gaf
+   label: "paint_ecocyc gaf file"
+   description: "gaf file for paint_ecocyc from PAINT"
+   type: gaf
+   dataset: paint_ecocyc
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_ecocyc.gaf.gz
+   entity_type:
+   status: active
+   species_code: Ecol
+   taxa:
+    - NCBITaxon:83333
+   merges_into: ecocyc
+
+ -
+   id: paint_fb.gaf
+   label: "paint_fb gaf file"
+   description: "gaf file for paint_fb from PAINT"
+   type: gaf
+   dataset: paint_fb
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_fb.gaf.gz
+   entity_type:
+   status: active
+   species_code: Dmel
+   taxa:
+    - NCBITaxon:7227
+   merges_into: fb
+
+ -
+   id: paint_goa_chicken.gaf
+   label: "paint_goa_chicken gaf file"
+   description: "gaf file for paint_goa_chicken from PAINT"
+   type: gaf
+   dataset: paint_goa_chicken
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_chicken.gaf.gz
+   entity_type: chicken
+   status: active
+   species_code: Ggal
+   taxa:
+   merges_into: goa_chicken
+
+ -
+   id: paint_goa_human.gaf
+   label: "paint_goa_human gaf file"
+   description: "gaf file for paint_goa_human from PAINT"
+   type: gaf
+   dataset: paint_goa_human
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_human.gaf.gz
+   entity_type: human
+   status: active
+   species_code: Hsap
+   taxa:
+   merges_into: goa_human
+
+ -
+   id: paint_mgi.gaf
+   label: "paint_mgi gaf file"
+   description: "gaf file for paint_mgi from PAINT"
+   type: gaf
+   dataset: paint_mgi
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_mgi.gaf.gz
+   entity_type:
+   status: active
+   species_code: Mmus
+   taxa:
+    - NCBITaxon:10090
+   merges_into: mgi
+
+ -
+   id: paint_other.gaf
+   label: "paint_other gaf file"
+   description: "gaf file for paint_other from PAINT"
+   type: gaf
+   dataset: paint_other
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_other.gaf.gz
+   entity_type:
+   status: active
+   species_code:
+   taxa: []
+
+ -
+   id: paint_pombase.gaf
+   label: "paint_pombase gaf file"
+   description: "gaf file for paint_pombase from PAINT"
+   type: gaf
+   dataset: paint_pombase
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_pombase.gaf.gz
+   entity_type:
+   status: active
+   species_code: Spom
+   taxa:
+    - NCBITaxon:284812
+    - NCBITaxon:4896
+   merges_into: pombase
+
+ -
+   id: paint_rgd.gaf
+   label: "paint_rgd gaf file"
+   description: "gaf file for paint_rgd from PAINT"
+   type: gaf
+   dataset: paint_rgd
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_rgd.gaf.gz
+   entity_type:
+   status: active
+   species_code: Rnor
+   taxa:
+    - NCBITaxon:10116
+   merges_into: rgd
+
+ -
+   id: paint_sgd.gaf
+   label: "paint_sgd gaf file"
+   description: "gaf file for paint_sgd from PAINT"
+   type: gaf
+   dataset: paint_sgd
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_sgd.gaf.gz
+   entity_type:
+   status: active
+   species_code: Scer
+   taxa:
+    - NCBITaxon:285006
+    - NCBITaxon:307796
+    - NCBITaxon:41870
+    - NCBITaxon:4932
+    - NCBITaxon:559292
+   merges_into: sgd
+
+ -
+   id: paint_tair.gaf
+   label: "paint_tair gaf file"
+   description: "gaf file for paint_tair from PAINT"
+   type: gaf
+   dataset: paint_tair
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_tair.gaf.gz
+   entity_type:
+   status: active
+   species_code: Atal
+   taxa:
+    - NCBITaxon:3702
+   merges_into: tair
+
+ -
+   id: paint_wb.gaf
+   label: "paint_wb gaf file"
+   description: "gaf file for paint_wb from PAINT"
+   type: gaf
+   dataset: paint_wb
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_wb.gaf.gz
+   entity_type:
+   status: active
+   species_code: Cele
+   taxa:
+    - NCBITaxon:6239
+   merges_into: wb
+
+ -
+   id: paint_xenbase.gaf
+   label: "paint_xenbase gaf file"
+   description: "gaf file for paint_xenbase from PAINT"
+   type: gaf
+   dataset: paint_xenbase
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_xenbase.gaf.gz
+   entity_type:
+   status: active
+   species_code: Xenopus
+   taxa:
+    - NCBITaxon:8364
+    - NCBITaxon:8355
+   merges_into: xenbase
+
+ -
+   id: paint_zfin.gaf
+   label: "paint_zfin gaf file"
+   description: "gaf file for paint_zfin from PAINT"
+   type: gaf
+   dataset: paint_zfin
+   submitter: paint
+   compression: gzip
+   source: ftp://ftp.pantherdb.org/downloads/paint/presubmission/gene_association.paint_zfin.gaf.gz
+   entity_type:
+   status: active
+   species_code: Drer
+   taxa:
+    - NCBITaxon:7955
+   merges_into: zfin

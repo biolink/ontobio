@@ -141,7 +141,7 @@ def run_sparql(q):
     # TODO: select endpoint based on ontology
     #sparql = SPARQLWrapper("http://rdf.geneontology.org/sparql")
     logger.info("Connecting to sparql endpoint...")
-    sparql = SPARQLWrapper("http://sparql.hegroup.org/sparql")
+    sparql = SPARQLWrapper("http://rdf.geneontology.org/sparql")
     logger.info("Made wrapper: {}".format(sparql))
     # TODO: iterate over large sets?
     full_q = q + ' LIMIT 250000'
