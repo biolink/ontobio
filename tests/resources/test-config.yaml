@@ -11,7 +11,7 @@ amigo_solr_search:
   url: "http://golr.geneontology.org/solr"
   timeout: 2
 sparql:
-  url: "http://sparql.hegroup.org/sparql"
+  url: "http://rdf.geneontology.org/sparql"
   timeout: 2
 scigraph_ontology:
   url: "https://scigraph-ontology.monarchinitiative.org/scigraph/"
