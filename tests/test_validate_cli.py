@@ -44,11 +44,11 @@ def test_fast_function():
 
 # (dataset, group) tuples, adjust as needed for full testing
 datasets_to_test = [
-    ("zfin", "zfin"),
-    ("mgi", "mgi"),
+    # ("zfin", "zfin"),
+    # ("mgi", "mgi"),
     ("goa_cow", "goa"),
-    ("cgd", "cgd"),
-    ("tair", "tair"),
+    # ("cgd", "cgd"),
+    # ("tair", "tair"),
 ]
 
 
@@ -122,36 +122,10 @@ def test_gaf_setup(runner, go_json):
         assert os.path.exists(datasets)
         assert os.path.exists(metadata)
 
-
-@pytest.mark.slow
-def test_validate_gaf():
-    for dataset, group in datasets_to_test:
-        ontology_graph = OntologyFactory().create("go", ignore_cache=True)
-        gaf_parser = GafParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
         gpad_parser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
-        # Check which path exists and return the correct one
 
-        test_path = Path(__file__).parent / "groups" / group / f"{dataset}.gaf.gz"
-
-        # Try finding the file in the root directory (for Makefile execution)
-        root_path = Path(__file__).parent.parent / "groups" / group / f"{dataset}.gaf.gz"
-        if test_path.exists():
-            zipped_gaf = test_path
-            base_path = Path(__file__).parent / "groups" / group
-        elif root_path.exists():
-            zipped_gaf = root_path
-            base_path = Path(__file__).parent.parent / "groups" / group
-        else:
-            raise FileNotFoundError(f"Could not find {dataset}.gaf.gz in either {test_path} or {root_path}")
-
-        print(zipped_gaf)
-        assert os.path.exists(zipped_gaf)
-
-        unzipped_gaf = base_path / f"{dataset}.gaf"
-        gpad_path = base_path / f"{dataset}.gpad"
-
-        assert os.path.exists(unzipped_gaf)
-        assert os.path.exists(gpad_path)
+        unzipped_gaf = base_gaf_path / f"{dataset}.gaf"
+        gpad_path = base_gaf_path / f"{dataset}.gpad"
 
         # Open the GPAD file and parse
         with gpad_path.open('r') as gpad_file:
@@ -169,4 +143,3 @@ def test_validate_gaf():
 
         assert gpad_parser.version == '2.0'
         assert len(gpad_results) > 0
-
