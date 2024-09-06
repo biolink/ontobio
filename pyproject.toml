@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "ontobio"
-version = "0.0.0"
+version = "2.9.8"
 description = ""
 authors = ["Gene Ontology Consortium <helpdesk@geneontology.org>"]
 readme = "README.rst"
+license = "BSD"
 
 packages = [
     { include = "bin" },
@@ -51,6 +52,6 @@ requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry-dynamic-versioning]
-enable = true
+enable = false
 vcs = "git"
 style = "pep440"

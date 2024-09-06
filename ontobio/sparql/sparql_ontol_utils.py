@@ -38,7 +38,6 @@ logger = logging.getLogger(__name__)
 
 class EOntology(Enum):
     GO = "http://rdf.geneontology.org/sparql"
-    HEGROUP = "http://sparql.hegroup.org/sparql"
     UNIPROT = "https://sparql.uniprot.org/sparql/"
 
 class EDocState(Enum):
@@ -51,7 +50,6 @@ class EDocState(Enum):
 # for now we assume ontobee
 ontol_sources = {
     'go': "http://rdf.geneontology.org/sparql",
-    '': "http://sparql.hegroup.org/sparql"
     }
 
 OIO_SYNS = dict(
