@@ -46,8 +46,8 @@ def test_fast_function():
 datasets_to_test = [
     # ("zfin", "zfin"),
     # ("mgi", "mgi"),
-    ("goa_cow", "goa"),
-    # ("cgd", "cgd"),
+    # ("goa_cow", "goa"),
+    ("cgd", "cgd"),
     # ("tair", "tair"),
 ]
 

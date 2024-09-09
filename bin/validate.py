@@ -459,7 +459,9 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_v
                 if entity not in gpi_cache and entity is not None:
                     # If the entity is not in the cache, add it and write it out
                     gpi_cache.add(entity)
+                    click.echo("Writing entity to gpi: {}".format(entity))
                     gpiwriter.write_entity(entity)
+    click.echo("Wrote gpi to disk: {}".format(gpi_path))
     return gpi_path
 
 
@@ -747,7 +749,9 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
 
         click.echo("Producing GPI for use in creating GPADs...")
         gpi = produce_gpi(dataset, absolute_target, valid_gaf, ontology_graph, gpad_gpi_output_version)
+        click.echo("GPI file produced first time...{}".format(gpi))
         gpi_list.append(gpi)
+        click.echo("GPI list...{}".format(gpi_list))
         click.echo("Executing 'make_gpads' in validate.produce with all the assembled GAF files...")
         make_gpads(dataset, valid_gaf, products,
                    ontology_graph, noctua_gpad_src, paint_gaf_src,
@@ -765,7 +769,9 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         # see: https://github.com/geneontology/go-site/issues/2291
         temp_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}_temp.gaf".format(dataset))
         click.echo("temp_output_gaf_path: {}".format(temp_output_gaf_path))
-        isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, matching_gpi_path, ontology_graph, temp_output_gaf_path)
+        click.echo("matching_gpi_path".format(gpi))
+
+        isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, gpi, ontology_graph, temp_output_gaf_path)
         click.echo("isoform_fixed_gaf: ".format(isoform_fixed_gaf))
 
         final_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
@@ -796,6 +802,8 @@ def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str,
     :return: The path to the fixed GAF file
     """
     fixed_associations = []
+    if gpi_file is None:
+        raise ValueError("GPI file is required to fix the GAF file.", gpi_file)
     gpiparser = GpiParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
     # Parse the GPI file, creating a map of identifiers to GPI entries
     gpis = gpiparser.parse(gpi_file, None)
@@ -826,7 +834,7 @@ def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str,
                     full_old_identifier = source_assoc.subject.id.namespace + ":" + source_assoc.subject.id.identity
                     old_namespace = source_assoc.subject.id.namespace
                     old_identity = source_assoc.subject.id.identity
-                    # TODO: right now we get the FIRST encoded_by result -- this is what the original script from Chris did??
+                    # TODO: right now we get the FIRST encoded_by result -- this is what the original script did?
                     if "MGI" == gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]:
                         source_assoc.subject.id.namespace = gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[0]
                         source_assoc.subject.id.identity = "MGI:" + gpi_map[full_old_identifier].get("encoded_by")[0].split(":")[2]
