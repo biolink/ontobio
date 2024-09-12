@@ -811,7 +811,7 @@ class AssocParser(object):
 
         if allowed_ids is not None and id_prefix not in allowed_ids:
             # For now we will just issue a warning here, and we won't filter out the annotation here
-            self.report.warning(line.line, Report.INVALID_ID_DBXREF, id_prefix, "allowed: {}".format(allowed_ids), rule=27)
+            self.report.warning(line.line, Report.INVALID_ID_DBXREF, id_prefix, "{} is not present in DB xrefs file".format(id_prefix), rule=27)
 
         # ensure that the ID space of the annotation class (e.g. GO)
         # conforms to what is expected
@@ -824,14 +824,15 @@ class AssocParser(object):
         if self.config.db_type_name_regex_id_syntax is not None:
             if id_prefix in self.config.db_type_name_regex_id_syntax:
                 type_name_regex_patterns = self.config.db_type_name_regex_id_syntax[id_prefix]
-                identity_matches_pattern = False
-                for regex in type_name_regex_patterns.values():
-                    if regex.fullmatch(right):
-                        identity_matches_pattern = True
-                        break
-                if identity_matches_pattern == False:
-                    self.report.warning(line.line, Report.INVALID_ID, id,
-                    "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(right, id_prefix), taxon=line.taxon, rule=27)
+                if type_name_regex_patterns is not None and len(type_name_regex_patterns) > 0:
+                    identity_matches_pattern = False
+                    for regex in type_name_regex_patterns.values():
+                        if regex.fullmatch(right):
+                            identity_matches_pattern = True
+                            break
+                    if identity_matches_pattern == False:
+                        self.report.warning(line.line, Report.INVALID_ID, id,
+                        "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(right, id_prefix), taxon=line.taxon, rule=27)
             else:
                 self.report.warning(line.line, Report.INVALID_ID, id,
                     "GORULE:0000027: {} not found in list of database names in dbxrefs".format(id_prefix), taxon=line.taxon, rule=27)  

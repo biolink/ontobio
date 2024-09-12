@@ -165,9 +165,8 @@ def database_type_name_regex_id_syntax(metadata):
         entity_types = entity.get("entity_types", {})
         for et in entity_types:
             if "id_syntax" in et and "type_name" in et:
-                type_names[et["type_name"]] = re.compile(et["id_syntax"])
-        if len(type_names) > 0:        
-            d[entity["database"]] = type_names
+                type_names[et["type_name"]] = re.compile(et["id_syntax"])      
+        d[entity["database"]] = type_names
 
     return d    
 
