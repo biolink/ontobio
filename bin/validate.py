@@ -281,7 +281,7 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
     report_json_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.json".format(dataset))
     click.echo("About to write json report to {}".format(report_json_path))
     with open(report_json_path, "w") as report_json:
-        logger.click.echo("Opened for writing {}".format(report_json_path))
+        click.echo("Opened for writing {}".format(report_json_path))
         report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
 
     click.echo("json {} written out".format(report_markdown_path))
@@ -760,12 +760,13 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                   ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
                                   rule_metadata=rule_metadata, replace_existing_files=not skip_existing_files,
                                   gaf_output_version=gaf_output_version)
+        click.echo("Merged mixin datasets into the final GAF...{}".format(end_gaf))
 
         click.echo("Pre-isoform fix gaf file...{}".format(end_gaf))
         click.echo("Executing the isoform fixing step in validate.produce...")
         # run the resulting gaf through one last parse and replace, to handle the isoforms
         # see: https://github.com/geneontology/go-site/issues/2291
-        click.echo("path to end gaf _temp.gaf")
+        click.echo("path to end gaf _temp.gaf: {}".format(end_gaf))
         click.echo(os.path)
 
         click.echo(os.path.split(end_gaf)[0])
