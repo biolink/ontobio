@@ -774,7 +774,9 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         click.echo("temp_output_gaf_path: {}".format(temp_output_gaf_path))
         click.echo("matching_gpi_path: {}".format(gpi))
 
-        isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, gpi, ontology_graph, temp_output_gaf_path)
+        if matching_gpi_path is None:
+            matching_gpi_path = gpi
+        isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, matching_gpi_path, ontology_graph, temp_output_gaf_path)
         click.echo("isoform_fixed_gaf: {}".format(isoform_fixed_gaf))
 
         final_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
