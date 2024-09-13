@@ -138,7 +138,7 @@ def download_source_gafs(group_metadata,
         gaf_urls = [(data, data["source"]) for data in group_metadata["datasets"] if data["dataset"] == only_dataset]
     # List of dataset metadata to gaf download url
 
-    logger.info("Found gaf_urls {}".format(", ".join([kv[0]["dataset"] for kv in gaf_urls])))
+    click.echo("Found gaf_urls {}".format(", ".join([kv[0]["dataset"] for kv in gaf_urls])))
     downloaded_paths = []
     for dataset_metadata, gaf_url in gaf_urls:
         dataset = dataset_metadata["dataset"]
@@ -459,9 +459,8 @@ def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_v
                 if entity not in gpi_cache and entity is not None:
                     # If the entity is not in the cache, add it and write it out
                     gpi_cache.add(entity)
-                    click.echo("Writing entity to gpi: {}".format(entity))
                     gpiwriter.write_entity(entity)
-    click.echo("Wrote gpi to disk: {}".format(gpi_path))
+    print("Wrote gpi to disk: {}".format(gpi_path))
     return gpi_path
 
 
@@ -654,7 +653,6 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
     absolute_metadata = os.path.abspath(metadata_dir)
 
     print("group", group)
-    print("dataset", )
     group_metadata = metadata.dataset_metadata_file(absolute_metadata, group)
     click.echo("Loading ontology: {}...".format(ontology))
     ontology_graph = OntologyFactory().create(ontology, ignore_cache=True)
@@ -767,6 +765,10 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         click.echo("Executing the isoform fixing step in validate.produce...")
         # run the resulting gaf through one last parse and replace, to handle the isoforms
         # see: https://github.com/geneontology/go-site/issues/2291
+        click.echo("path to end gaf _temp.gaf")
+        click.echo(os.path)
+
+        click.echo(os.path.split(end_gaf)[0])
         temp_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}_temp.gaf".format(dataset))
         click.echo("temp_output_gaf_path: {}".format(temp_output_gaf_path))
         click.echo("matching_gpi_path".format(gpi))
@@ -802,6 +804,7 @@ def fix_pro_isoforms_in_gaf(gaf_file_to_fix: str,
     :return: The path to the fixed GAF file
     """
     fixed_associations = []
+    print("gpi_file", gpi_file)
     if gpi_file is None:
         raise ValueError("GPI file is required to fix the GAF file.", gpi_file)
     gpiparser = GpiParser(config=assocparser.AssocParserConfig(ontology=ontology_graph))
