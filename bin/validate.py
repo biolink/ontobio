@@ -154,7 +154,7 @@ def download_source_gafs(group_metadata,
             # otherwise file is coming in uncompressed. But we want to make sure
             # to zip up the original source also
             tools.zipup(path)
-        logger.info("Downloaded {}".format(path))
+        click.echo("Downloaded {}".format(path))
         downloaded_paths.append((dataset_metadata, path))
 
     return downloaded_paths
@@ -268,28 +268,28 @@ def produce_gaf(dataset, source_gaf, ontology_graph, gpipaths=None, paint=False,
     filtered_associations.close()
 
     report_markdown_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.md".format(dataset))
-    logger.info("About to write markdown report to {}".format(report_markdown_path))
+    click.echo("About to write markdown report to {}".format(report_markdown_path))
     with open(report_markdown_path, "w") as report_md:
-        logger.info("Opened for writing {}".format(report_markdown_path))
+        click.echo("Opened for writing {}".format(report_markdown_path))
         report_md.write(parser.report.to_markdown())
 
-    logger.info("markdown {} written out".format(report_markdown_path))
-    logger.info("Markdown current stack:")
-    if logger.getEffectiveLevel() == logging.INFO:
-        traceback.print_stack()
+    click.echo("markdown {} written out".format(report_markdown_path))
+    # click.echo("Markdown current stack:")
+    # if logger.getEffectiveLevel() == logging.INFO:
+    #     traceback.print_stack()
 
     report_json_path = os.path.join(os.path.split(source_gaf)[0], "{}.report.json".format(dataset))
-    logger.info("About to write json report to {}".format(report_json_path))
+    click.echo("About to write json report to {}".format(report_json_path))
     with open(report_json_path, "w") as report_json:
-        logger.info("Opened for writing {}".format(report_json_path))
+        logger.click.echo("Opened for writing {}".format(report_json_path))
         report_json.write(json.dumps(parser.report.to_report_json(), indent=4))
 
-    logger.info("json {} written out".format(report_markdown_path))
-    logger.info("gorule-13 first 10 messages: {}".format(
+    click.echo("json {} written out".format(report_markdown_path))
+    click.echo("gorule-13 first 10 messages: {}".format(
         json.dumps(parser.report.to_report_json()["messages"].get("gorule-0000013", [])[:10], indent=4)))
-    logger.info("json current Stack:")
-    if logger.getEffectiveLevel() == logging.INFO:
-        traceback.print_stack()
+    # logger.info("json current Stack:")
+    # if logger.getEffectiveLevel() == logging.INFO:
+    #     traceback.print_stack()
 
     return [validated_gaf_path, filtered_associations.name]
 
