@@ -771,19 +771,20 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         click.echo(os.path.split(end_gaf)[0])
         temp_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}_temp.gaf".format(dataset))
         click.echo("temp_output_gaf_path: {}".format(temp_output_gaf_path))
-        click.echo("matching_gpi_path".format(gpi))
+        click.echo("matching_gpi_path: {}".format(gpi))
 
         isoform_fixed_gaf = fix_pro_isoforms_in_gaf(end_gaf, gpi, ontology_graph, temp_output_gaf_path)
-        click.echo("isoform_fixed_gaf: ".format(isoform_fixed_gaf))
+        click.echo("isoform_fixed_gaf: {}".format(isoform_fixed_gaf))
 
         final_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}.gaf".format(dataset))
 
         click.echo("Rename the temporary isoform fixed file to the final GAF...")
         os.rename(temp_output_gaf_path, final_output_gaf_path)
-        click.echo("final_output_gaf_path: ".format(final_output_gaf_path))
+        click.echo("final_output_gaf_path: {}".format(final_output_gaf_path))
 
         click.echo("Producing final GPI after all GAF corrections...")
         final_gpi = produce_gpi(dataset, absolute_target, final_output_gaf_path, ontology_graph, gpad_gpi_output_version)
+        click.echo("final_gpi: {}".format(final_gpi))
 
         click.echo("Creating ttl files...")
         make_ttls(dataset, final_output_gaf_path, products, ontology_graph)
