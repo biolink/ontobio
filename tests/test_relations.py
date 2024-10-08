@@ -9,8 +9,8 @@ def test_lookup_label():
     expected_curie = 'RO:0002630'
     # Call the function and check the return value
     result = lookup_label(label)
-    curie = relations.obo_uri_to_curie(result)
-    assert curie == expected_curie
+    curie = str(relations.obo_uri_to_curie(result))
+    assert curie == expected_curie, f"Expected {expected_curie}, but got {curie}"
     assert result == expected_url, f"Expected {expected_url}, but got {result}"
 
 
