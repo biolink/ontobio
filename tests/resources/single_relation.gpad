@@ -1,0 +1,2 @@
+!gpa-version: 1.2
+UniProtKB	P46934	enables	GO:0004842	PMID:17996703	ECO:0000315			20180501	WB	part_of(GO:0006511),part_of(GO:0006974),occurs_in(GO:0005634),has_input(UniProtKB:P24928),directly_negatively_regulates(GO:0001055)	model-state=production|noctua-model-id=gomodel:5323da1800000002|contributor=https://orcid.org/0000-0002-1706-4196

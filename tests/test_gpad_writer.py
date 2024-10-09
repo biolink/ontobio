@@ -3,7 +3,33 @@ from pathlib import Path
 
 from ontobio.io import assocparser
 from ontobio.io import gafparser
+from ontobio.io import gpadparser
 from ontobio.io import assocwriter
+
+
+def test_gpad_relation_writing():
+    out = io.StringIO()
+    parser = gpadparser.GpadParser()
+    parser.config = assocparser.AssocParserConfig(
+        paint=True
+    )
+    writer = assocwriter.GpadWriter(file=out, version="2.0")
+
+    base_path = Path(__file__).parent / "resources"
+
+    # single_relation.gpad is a one line GPAD file in 1.2 format
+    gpad_1_2_input_path = base_path / "single_relation.gpad"
+    for assoc in parser.association_generator(skipheader=True, file=open(gpad_1_2_input_path)):
+        writer.write_assoc(assoc)
+
+    outlines = out.getvalue().split("\n")
+
+    assert outlines[0] == "!gpad-version: 2.0"
+    assert outlines[1] == "!generated-by: GOC"
+    assert outlines[2].startswith("!date-generated:")
+    assert outlines[3] == "UniProtKB:P46934\t\tRO:0002327\tGO:0004842\tPMID:17996703\tECO:0000315\t\t\t2018-05-01\tWB\tBFO:0000050(GO:0006511),BFO:0000050(GO:0006974),BFO:0000066(GO:0005634),RO:0002233(UniProtKB:P24928),RO:0002630(GO:0001055)\tmodel-state=production|noctua-model-id=gomodel:5323da1800000002|contributor=https://orcid.org/0000-0002-1706-4196"
+
+
 
 
 def test_gpad_iba_writing():
@@ -12,7 +38,7 @@ def test_gpad_iba_writing():
     parser.config = assocparser.AssocParserConfig(
         paint=True
     )
-    writer = assocwriter.GpadWriter(file=out)
+    writer = assocwriter.GpadWriter(file=out, version="1.2")
 
     base_path = Path(__file__).parent / "resources"
 
