@@ -9,6 +9,8 @@ import urllib
 import shutil
 import logging
 import traceback
+
+from ontobio.io.assocparser import Report
 from ontobio.model.association import Curie, ExtensionUnit
 from ontobio.io.entityparser import GpiParser
 from ontobio.ontol_factory import OntologyFactory
@@ -26,7 +28,7 @@ from ontobio.validation import metadata
 from ontobio.validation import tools
 from ontobio.validation import rules
 
-from typing import Dict, Set
+from typing import Dict, Set, List
 
 # logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s: %(message)s", level=logging.WARNING)
 
@@ -366,21 +368,25 @@ def make_gpads(dataset, gaf_path, products, ontology_graph,
     # Open the file once and keep it open for all operations within this block
     with open(gpad_file_path, "w") as outfile:
         gpadwriter = GpadWriter(file=outfile, version=gpad_gpi_output_version)
-
-        # If there's a noctua gpad file, process it
+        headers = []
+        # If there's a noctua gpad file, process it, return the parsing Report so we can get its headers for
+        # the final file provenance
         if noctua_gpad_file:
             click.echo("Making noctua gpad products...{}".format(noctua_gpad_file))
             # Process noctua gpad file
-            process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi)
+            parsing_report = process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi)
+            header = parsing_report.header
+            headers.append(header)
+        # Process the GAF file, store the report object so we can get its headers for the final file provenance
+        gaf_parsing_report = process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src)
 
-        # Process the GAF file
-        process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src)
+        for report in gaf_parsing_report:
+            headers.append(report.header)
 
     # The file will be automatically closed here, after exiting the 'with' block
     return [gpad_file_path]
 
-
-def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi):
+def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi) -> Report:
     """
     Process a noctua gpad file and write the associations to the gpad writer.
 
@@ -396,14 +402,16 @@ def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi):
         gpadparser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph,
                                                                      paint=False,
                                                                      rule_set="all"))
+
         click.echo("Making noctua gpad products...")
         with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
             for association in associations:
                 # If the association is an isoform annotation, convert it to a gene annotation
                 gpadwriter.write_assoc(association)
+        return gpadparser.report
 
 
-def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
+def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src) -> List[Report]:
     """
     Process a gaf file and write the associations to the gpad writer.
 
@@ -412,7 +420,9 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
     :param ontology_graph: The ontology graph to use for parsing the associations
     :param paint_gaf_src: The source of the paint gaf file
 
+    :return: The headers from the variious gaf files in a list of Report objects
     """
+    headers = []
     with open(gaf_path) as gf:
         lines = sum(1 for line in gf)
         gf.seek(0)  # Reset file pointer to the beginning after counting lines
@@ -423,6 +433,7 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
         with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
             for association in associations:
                 gpadwriter.write_assoc(association)
+        headers.append(gafparser.report.header)
 
     if paint_gaf_src is not None:
         with open(paint_gaf_src) as pgf:
@@ -436,6 +447,9 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
                 for association in associations:
                     gpadwriter.write_assoc(association)
 
+            headers.append(gafparser.report.header)
+
+    return headers
 
 @tools.gzips
 def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_version):

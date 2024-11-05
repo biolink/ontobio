@@ -103,6 +103,16 @@ def test_parse():
     print(p.report.to_markdown())
 
 
+def test_gpad_association_generator_header_report():
+    p = GpadParser(config=assocparser.AssocParserConfig(group_metadata=yaml.load(open("tests/resources/mgi.dataset.yaml"),
+                                                                                 Loader=yaml.FullLoader)))
+    test_gpad_file = "tests/resources/mgi.test.gpad"
+    assert len(p.report.header) == 0
+    for a in p.association_generator(open(test_gpad_file, "r")):
+        continue
+    assert len(p.report.header) > 0
+
+
 def test_parse_1_2():
     report = assocparser.Report(group="unknown", dataset="unknown")
     vals = [
