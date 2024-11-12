@@ -365,6 +365,10 @@ def make_gpads(dataset, gaf_path, products, ontology_graph,
 
     if not products["gpad"]:
         return []
+    noctua_header = None
+    all_gaf_headers = None
+    noctua_associations = []
+    all_gaf_associations = []
 
     # Open the file once and keep it open for all operations within this block
     with open(gpad_file_path, "w") as outfile:
@@ -373,27 +377,32 @@ def make_gpads(dataset, gaf_path, products, ontology_graph,
         # If there's a noctua gpad file, process it, return the parsing Report so we can get its headers for
         # the final file provenance
         if noctua_gpad_file:
-            click.echo("Making noctua gpad products...{}".format(noctua_gpad_file))
+            click.echo("Making noctua gpad products...")
             # Process noctua gpad file
             (noctua_associations, noctua_header) = process_noctua_gpad_file(noctua_gpad_file, ontology_graph)
             headers.append(noctua_header)
         # Process the GAF file, store the report object so we can get its headers for the final file provenance
         (all_gaf_associations, all_gaf_headers) = process_gaf_file(gaf_path, ontology_graph, paint_gaf_src)
 
-        for header in noctua_header:
-            for header_line in header:
-                print(header_line)
-                gpadwriter._write(header_line)
-        for header in all_gaf_headers:
-            for header_line in header:
-                print(header_line)
-                gpadwriter._write(header_line)
+        if noctua_header:
+            for header in noctua_header:
+                gpadwriter._write("!Header from source noctua GPAD file\n")
+                gpadwriter._write("!=================================\n")
+                gpadwriter._write(header)
+        if all_gaf_headers:
+            for header in all_gaf_headers:
+                gpadwriter._write("!Header from source GAF file(s)\n")
+                gpadwriter._write("!=================================\n")
+                for header_line in header:
+                    gpadwriter._write(header_line+"\n")
 
-        click.echo("Wrote all headers for GPAD, now writing associations..{}".format(outfile))
-        for assoc in noctua_associations:
-            gpadwriter.write_assoc(assoc)
-        for assoc in all_gaf_associations:
-            gpadwriter.write_assoc(assoc)
+        click.echo("Wrote all headers for GPAD, now writing associations...")
+        if noctua_associations:
+            for assoc in noctua_associations:
+                gpadwriter.write_assoc(assoc)
+        if all_gaf_associations:
+            for assoc in all_gaf_associations:
+                gpadwriter.write_assoc(assoc)
 
     # The file will be automatically closed here, after exiting the 'with' block
     return [gpad_file_path]
@@ -687,7 +696,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                                   replace_existing_files=not skip_existing_files,
                                                   only_dataset=only_dataset)
 
-    click.echo("Downloaded GAF sources: {}".format(downloaded_gaf_sources))
+    click.echo("Downloaded GAF sources")
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
@@ -794,8 +803,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         click.echo("Executing the isoform fixing step in validate.produce...")
         # run the resulting gaf through one last parse and replace, to handle the isoforms
         # see: https://github.com/geneontology/go-site/issues/2291
-        click.echo("path to end gaf _temp.gaf: {}".format(end_gaf))
-        click.echo(os.path)
+        click.echo("path to end gaf _temp.gaf")
 
         click.echo(os.path.split(end_gaf)[0])
         temp_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}_temp.gaf".format(dataset))
