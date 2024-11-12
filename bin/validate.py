@@ -10,7 +10,7 @@ import shutil
 import logging
 import traceback
 
-from build.lib.ontobio.model.association import GoAssociation
+from ontobio.model.association import GoAssociation
 from ontobio.io.assocparser import Report
 from ontobio.model.association import Curie, ExtensionUnit
 from ontobio.io.entityparser import GpiParser
