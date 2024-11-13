@@ -8,10 +8,8 @@ import gzip
 import urllib
 import shutil
 import logging
-import traceback
 
 from ontobio.model.association import GoAssociation
-from ontobio.io.assocparser import Report
 from ontobio.model.association import Curie, ExtensionUnit
 from ontobio.io.entityparser import GpiParser
 from ontobio.ontol_factory import OntologyFactory
@@ -788,8 +786,6 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         make_gpads(dataset, valid_gaf, products,
                    ontology_graph, noctua_gpad_src, paint_gaf_src,
                    gpi, gpad_gpi_output_version)
-
-
 
 
         end_gaf = mixin_a_dataset(valid_gaf, [noctua_metadata, paint_metadata],
