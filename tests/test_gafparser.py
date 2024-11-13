@@ -17,7 +17,7 @@ import pytest
 import io
 import json
 import re
-
+import yaml
 ecomap = EcoMap()
 ecomap.mappings()
 
@@ -89,6 +89,16 @@ def test_parse_gaf():
 def test_parse_gpad():
     parse_with(POMBASE_GPAD, GpadParser())
 
+
+def test_gaf_association_generator_header_report():
+    p = GpadParser(config=assocparser.AssocParserConfig(group_metadata=yaml.load(open("tests/resources/mgi.dataset.yaml"),
+                                                                                 Loader=yaml.FullLoader)))
+    test_gaf_file = "tests/resources/test-qualifiers-2.2.gaf"
+    assert len(p.report.header) == 0
+    for a in p.association_generator(open(test_gaf_file, "r")):
+        continue
+    assert len(p.report.header) > 0
+    print(p.report.header)
 
 def parse_with(f, p):
     p.config.ecomap = EcoMap()

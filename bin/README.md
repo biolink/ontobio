@@ -16,9 +16,9 @@ alternatively, you can run the following commands to test the validate.produce c
 Note: snapshot below in the URL can be changed to any pipeline branch; its listed here for ease of cp/paste.
 ```bash
 poetry install
-poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/snapshot/" --only-dataset mgi MGI --gpad-gpi-output-version 2.0
-poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/snapshot/" --only-dataset goa_chicken goa --gpad-gpi-output-version 2.0
-poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://skyhook.berkeleybop.org/snapshot/" --only-dataset zfin ZFIN --gpad-gpi-output-version 2.0
+poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://snapshot.geneontology.org/" --only-dataset mgi MGI --gpad-gpi-output-version 2.0
+poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://snapshot.geneontology.org/" --only-dataset goa_chicken goa --gpad-gpi-output-version 2.0
+poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://snapshot.geneontology..org/" --only-dataset zfin ZFIN --gpad-gpi-output-version 2.0
 ```
 
 To test whether a GAF file is valid (passes all the GORules):
