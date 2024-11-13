@@ -74,7 +74,7 @@ __relation_label_lookup = bidict({
     "has regulation target": "http://purl.obolibrary.org/obo/GOREL_0000015",
     "not happens during": "http://purl.obolibrary.org/obo/GOREL_0000025",
     "not exists during": "http://purl.obolibrary.org/obo/GOREL_0000026",
-    "directly negatively regulates": "http://purl.obolibrary.org/obo/RO_0002449",
+    "directly negatively regulates": "http://purl.obolibrary.org/obo/RO_0002630",
     "inhibited by": "http://purl.obolibrary.org/obo/GOREL_0000508",
     "activated by": "http://purl.obolibrary.org/obo/GOREL_0000507",
     "regulates o acts on population of": "http://purl.obolibrary.org/obo/GOREL_0001008",
