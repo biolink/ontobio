@@ -1429,7 +1429,7 @@ class GolrAssociationQuery(GolrAbstractQuery):
 
         return params
 
-    def exec(self, **kwargs):
+    def exec(self, **kwargs) -> dict:
         """
         Execute solr query
 

@@ -252,8 +252,45 @@ class LazyRemoteSparqlOntology(RemoteSparqlOntology):
     Local or remote ontology
     """
 
-    def __init__(self):
-        self.all_logical_definitions = [] ## TODO
+    def __init__(self, handle=None):
+        """
+        initializes based on an ontology name
+        """
+        self.id = get_named_graph(handle)
+        self.handle = handle
+        logger.info("Creating lazy-remote-sparql from "+str(handle))
+        g = get_digraph(handle, None, True)
+        logger.info("Graph:"+str(g))
+        if len(g.nodes()) == 0 and len(g.edges()) == 0:
+            logger.error("Empty graph for '{}' - did you use the correct id?".
+                         format(handle))
+        self.graph = g
+        self.graph_name = get_named_graph(handle)
+        self.xref_graph = get_xref_graph(handle)
+        self.all_logical_definitions = []
+        self.all_synonyms_cache = None
+        self.all_text_definitions_cache = None
+        self.all_obsoletes_cache = None
+        logger.info("Graph: {} LDs: {}".format(self.graph, self.all_logical_definitions))
 
+    def __str__(self):
+        return "h:{} g:{}".format(self.handle, self.graph)
+
+    def node(self, id: str) -> dict:
+        """
+        override for ontol.node
+
+        :param id:
+        :return:
+        """
+        iri = expand_uri(id, strict=False)
+        query = f"""
+        SELECT ?label WHERE {{
+        <{iri}> rdfs:label ?label
+        }}
+        """
+        bindings = run_sparql(query)
+        rows = [r['label']['value'] for r in bindings]
+        return {'id': id, 'label': rows[0][0]}
 
     
