@@ -8,7 +8,8 @@ import gzip
 import urllib
 import shutil
 import logging
-import traceback
+
+from ontobio.model.association import GoAssociation
 from ontobio.model.association import Curie, ExtensionUnit
 from ontobio.io.entityparser import GpiParser
 from ontobio.ontol_factory import OntologyFactory
@@ -26,7 +27,7 @@ from ontobio.validation import metadata
 from ontobio.validation import tools
 from ontobio.validation import rules
 
-from typing import Dict, Set
+from typing import Dict, Set, List
 
 # logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s: %(message)s", level=logging.WARNING)
 
@@ -342,7 +343,7 @@ def make_ttls(dataset, gaf_path, products, ontology_graph):
 
 @tools.gzips
 def make_gpads(dataset, gaf_path, products, ontology_graph,
-               noctua_gpad_file, paint_gaf_src, gpi, gpad_gpi_output_version):
+               noctua_gpad_file, paint_gaf_src, gpi, gpad_gpi_output_version) -> (List[GoAssociation], List[str]):
     """
     Using the gaf files and the noctua gpad file, produce a gpad file that contains both kinds of annotations
     without any loss.
@@ -355,64 +356,92 @@ def make_gpads(dataset, gaf_path, products, ontology_graph,
     :param paint_gaf_src: The source of the paint gaf file
     :param gpi: The path to the gpi file -- needed to convert isoform annotations from Noctua files
                                             to gene annotations in GAF outputs.
-    :return: The path to the gpad file
+    :return: (The path to the gpad file, the headers from all the files that contributed to the final GPAD file)
 
     """
     gpad_file_path = os.path.join(os.path.split(gaf_path)[0], f"{dataset}.gpad")
 
     if not products["gpad"]:
         return []
+    noctua_header = None
+    all_gaf_headers = None
+    noctua_associations = []
+    all_gaf_associations = []
 
     # Open the file once and keep it open for all operations within this block
     with open(gpad_file_path, "w") as outfile:
         gpadwriter = GpadWriter(file=outfile, version=gpad_gpi_output_version)
-
-        # If there's a noctua gpad file, process it
+        headers = []
+        # If there's a noctua gpad file, process it, return the parsing Report so we can get its headers for
+        # the final file provenance
         if noctua_gpad_file:
-            click.echo("Making noctua gpad products...{}".format(noctua_gpad_file))
+            click.echo("Making noctua gpad products...")
             # Process noctua gpad file
-            process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi)
+            (noctua_associations, noctua_header) = process_noctua_gpad_file(noctua_gpad_file, ontology_graph)
+            headers.append(noctua_header)
+        # Process the GAF file, store the report object so we can get its headers for the final file provenance
+        (all_gaf_associations, all_gaf_headers) = process_gaf_file(gaf_path, ontology_graph, paint_gaf_src)
 
-        # Process the GAF file
-        process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src)
+        if noctua_header:
+            for header in noctua_header:
+                gpadwriter._write("!Header from source noctua GPAD file\n")
+                gpadwriter._write("!=================================\n")
+                gpadwriter._write(header)
+        if all_gaf_headers:
+            for header in all_gaf_headers:
+                gpadwriter._write("!Header from source GAF file(s)\n")
+                gpadwriter._write("!=================================\n")
+                for header_line in header:
+                    gpadwriter._write(header_line+"\n")
+
+        click.echo("Wrote all headers for GPAD, now writing associations...")
+        if noctua_associations:
+            for assoc in noctua_associations:
+                gpadwriter.write_assoc(assoc)
+        if all_gaf_associations:
+            for assoc in all_gaf_associations:
+                gpadwriter.write_assoc(assoc)
 
     # The file will be automatically closed here, after exiting the 'with' block
     return [gpad_file_path]
 
-
-def process_noctua_gpad_file(noctua_gpad_file, gpadwriter, ontology_graph, gpi):
+def process_noctua_gpad_file(noctua_gpad_file, ontology_graph) -> (List[GoAssociation], List[str]):
     """
     Process a noctua gpad file and write the associations to the gpad writer.
 
     :param noctua_gpad_file: The path to the noctua gpad file
-    :param gpadwriter: The gpad writer to write the associations to
     :param ontology_graph: The ontology graph to use for parsing the associations
-    :param gpi: The path to the gpi file -- needed to convert isoform annotations from Noctua files
     """
 
+    processed_associations = []
     with open(noctua_gpad_file) as nf:
         lines = sum(1 for line in nf)
         nf.seek(0)  # Reset file pointer to the beginning after counting lines
         gpadparser = GpadParser(config=assocparser.AssocParserConfig(ontology=ontology_graph,
                                                                      paint=False,
                                                                      rule_set="all"))
+
         click.echo("Making noctua gpad products...")
         with click.progressbar(iterable=gpadparser.association_generator(file=nf), length=lines) as associations:
             for association in associations:
                 # If the association is an isoform annotation, convert it to a gene annotation
-                gpadwriter.write_assoc(association)
+                processed_associations.append(association)
+
+    return processed_associations, gpadparser.report.header
 
 
-def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
+def process_gaf_file(gaf_path, ontology_graph, paint_gaf_src) -> (List[GoAssociation], List[str]):
     """
     Process a gaf file and write the associations to the gpad writer.
 
     :param gaf_path: The path to the gaf file
-    :param gpadwriter: The gpad writer to write the associations to
     :param ontology_graph: The ontology graph to use for parsing the associations
     :param paint_gaf_src: The source of the paint gaf file
 
+    :return: The headers from the variious gaf files in a list of Report objects
     """
+    headers = []
+    associations = []
     with open(gaf_path) as gf:
         lines = sum(1 for line in gf)
         gf.seek(0)  # Reset file pointer to the beginning after counting lines
@@ -420,9 +449,10 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
                                                                    paint=True,
                                                                    rule_set="all"))
         click.echo("Merging in source gaf to gpad product...")
-        with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as associations:
-            for association in associations:
-                gpadwriter.write_assoc(association)
+        with click.progressbar(iterable=gafparser.association_generator(file=gf), length=lines) as gaf_assocs:
+            for association in gaf_assocs:
+                associations.append(association)
+        headers.append(gafparser.report.header)
 
     if paint_gaf_src is not None:
         with open(paint_gaf_src) as pgf:
@@ -432,10 +462,12 @@ def process_gaf_file(gaf_path, gpadwriter, ontology_graph, paint_gaf_src):
                                                                        paint=True,
                                                                        rule_set="all"))
             click.echo("Merging in paint gaf to gpad product...")
-            with click.progressbar(iterable=gafparser.association_generator(file=pgf), length=lines) as associations:
-                for association in associations:
-                    gpadwriter.write_assoc(association)
+            with click.progressbar(iterable=gafparser.association_generator(file=pgf), length=lines) as paint_assocs:
+                for association in paint_assocs:
+                    associations.append(association)
+            headers.append(gafparser.report.header)
 
+    return associations, headers
 
 @tools.gzips
 def produce_gpi(dataset, target_dir, gaf_path, ontology_graph, gpad_gpi_output_version):
@@ -626,7 +658,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
     :param metadata_dir: The directory containing the metadata files
     :param gpad: Produce GPAD files
     :param gpad_gpi_output_version: The version of the GPAD and GPI files to produce
-    :param ttl: Produce TTL files
+    :param ttl:  TTL files
     :param target: The directory to put the files in
     :param ontology: The ontology to use for validation
     :param exclude: Datasets to exclude
@@ -662,7 +694,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                                                   replace_existing_files=not skip_existing_files,
                                                   only_dataset=only_dataset)
 
-    click.echo("Downloaded GAF sources: {}".format(downloaded_gaf_sources))
+    click.echo("Downloaded GAF sources")
     # extract the titles for the go rules, this is a dictionary comprehension
     rule_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "rules"))
     goref_metadata = metadata.yamldown_lookup(os.path.join(absolute_metadata, "gorefs"))
@@ -755,6 +787,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
                    ontology_graph, noctua_gpad_src, paint_gaf_src,
                    gpi, gpad_gpi_output_version)
 
+
         end_gaf = mixin_a_dataset(valid_gaf, [noctua_metadata, paint_metadata],
                                   group_metadata["id"], dataset, absolute_target,
                                   ontology_graph, gpipaths=gpi_list, base_download_url=base_download_url,
@@ -766,8 +799,7 @@ def produce(ctx, group, metadata_dir, gpad, gpad_gpi_output_version, ttl, target
         click.echo("Executing the isoform fixing step in validate.produce...")
         # run the resulting gaf through one last parse and replace, to handle the isoforms
         # see: https://github.com/geneontology/go-site/issues/2291
-        click.echo("path to end gaf _temp.gaf: {}".format(end_gaf))
-        click.echo(os.path)
+        click.echo("path to end gaf _temp.gaf")
 
         click.echo(os.path.split(end_gaf)[0])
         temp_output_gaf_path = os.path.join(os.path.split(end_gaf)[0], "{}_temp.gaf".format(dataset))
