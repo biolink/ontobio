@@ -1,4 +1,6 @@
-from ontobio.obograph_util import convert_json_object, obograph_to_assoc_results
+from pprint import pprint
+
+from ontobio.obograph_util import convert_json_object, obograph_to_assoc_results, convert_json_file
 from ontobio.golr.golr_query import GolrAssociationQuery
 from unittest.mock import MagicMock
 
@@ -45,3 +47,14 @@ class TestEvidenceTable():
         expected_results = json.dumps(json.load(open(expected_fh)))
 
         assert results == expected_results
+
+    def test_obograph_to_digraph_null_properties(self):
+        expected_fh = os.path.join(os.path.dirname(__file__),
+                                   'resources/goslim_generic_missing_components.json')
+        with open(expected_fh, 'r') as f:
+            json_dict = json.load(f)
+        result = convert_json_object(json_dict, reverse_edges=False)
+        assert result is not None
+        assert result['graph'] is not None
+
+
