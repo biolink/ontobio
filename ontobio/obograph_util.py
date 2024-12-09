@@ -43,17 +43,17 @@ class OboJsonMapper(object):
         Converts a single obograph to Digraph edges and adds to an existing networkx DiGraph
         """
         digraph = self.digraph
-        logger.info("NODES: {}".format(len(og['nodes'])))
+        logger.info("NODES: {}".format(len(og.get('nodes', []))))
 
-        # if client passes an xref_graph we must parse metadata
+        # If client passes an xref_graph, we must parse metadata
         if xref_graph is not None:
             parse_meta = True
 
-        for node in og['nodes']:
-            is_obsolete = 'is_obsolete' in node and node['is_obsolete'] == 'true'
+        for node in og.get('nodes', []):
+            is_obsolete = node.get('is_obsolete') == 'true'
             if is_obsolete:
                 continue
-            if node_type is not None and ('type' not in node or node['type'] != node_type):
+            if node_type is not None and node.get('type') != node_type:
                 continue
             id = self.contract_uri(node['id'])
             digraph.add_node(id, **node)
@@ -64,46 +64,56 @@ class OboJsonMapper(object):
                     node['meta'] = {}
                 meta = self.transform_meta(node['meta'])
                 if xref_graph is not None and 'xrefs' in meta:
-                    for x in meta['xrefs']:
-                        xref_graph.add_edge(self.contract_uri(x['val']), id, source=id)
-        logger.info("EDGES: {}".format(len(og['edges'])))
-        for edge in og['edges']:
-            sub = self.contract_uri(edge['sub'])
-            obj = self.contract_uri(edge['obj'])
-            pred = self.contract_uri(edge['pred'])
+                    for x in meta.get('xrefs', []):
+                        xref_graph.add_edge(self.contract_uri(x.get('val')), id, source=id)
+
+        logger.info("EDGES: {}".format(len(og.get('edges', []))))
+        for edge in og.get('edges', []):
+            sub = self.contract_uri(edge.get('sub'))
+            obj = self.contract_uri(edge.get('obj'))
+            pred = self.contract_uri(edge.get('pred'))
             pred = map_legacy_pred(pred)
             if pred == 'is_a':
                 pred = 'subClassOf'
             if predicates is None or pred in predicates:
-                meta = edge['meta'] if 'meta' in edge else {}
+                meta = edge.get('meta', {})
                 if reverse_edges:
                     digraph.add_edge(obj, sub, pred=pred, **meta)
                 else:
                     digraph.add_edge(sub, obj, pred=pred, **meta)
 
         if 'equivalentNodesSets' in og:
-            nslist = og['equivalentNodesSets']
+            nslist = og.get('equivalentNodesSets', [])
             logger.info("CLIQUES: {}".format(len(nslist)))
             for ns in nslist:
-                equivNodeIds = ns['nodeIds']
-                for i in ns['nodeIds']:
+                equivNodeIds = ns.get('nodeIds', [])
+                for i in equivNodeIds:
                     ix = self.contract_uri(i)
-                    for j in ns['nodeIds']:
+                    for j in equivNodeIds:
                         if i != j:
                             jx = self.contract_uri(j)
                             digraph.add_edge(ix, jx, pred='equivalentTo')
-        if logical_definitions is not None and 'logicalDefinitionAxioms' in og:
-            for a in og['logicalDefinitionAxioms']:
-                ld = LogicalDefinition(self.contract_uri(a['definedClassId']),
-                                       [self.contract_uri(x) for x in a['genusIds']],
-                                       [(self.contract_uri(x['propertyId']),
-                                         self.contract_uri(x['fillerId'])) for x in a['restrictions'] if x is not None])
-                logical_definitions.append(ld)
-        if property_chain_axioms is not None and 'propertyChainAxioms' in og:
-            for a in og['propertyChainAxioms']:
-                pca = PropertyChainAxiom(predicate_id=self.contract_uri(a['predicateId']),
-                                         chain_predicate_ids=[self.contract_uri(x) for x in a['chainPredicateIds']])
-                property_chain_axioms.append(pca)
+
+        if logical_definitions is not None:
+            for a in og.get('logicalDefinitionAxioms', []):
+                defined_class_id = a.get('definedClassId')
+                genus_ids = [self.contract_uri(x) for x in a.get('genusIds', [])]
+                restrictions = [
+                    (self.contract_uri(x.get('propertyId')), self.contract_uri(x.get('fillerId')))
+                    for x in a.get('restrictions', []) if x is not None
+                ]
+                if defined_class_id:
+                    ld = LogicalDefinition(self.contract_uri(defined_class_id), genus_ids, restrictions)
+                    logical_definitions.append(ld)
+
+        if property_chain_axioms is not None:
+            for a in og.get('propertyChainAxioms', []):
+                predicate_id = a.get('predicateId')
+                chain_predicate_ids = [self.contract_uri(x) for x in a.get('chainPredicateIds', [])]
+                if predicate_id:
+                    pca = PropertyChainAxiom(predicate_id=self.contract_uri(predicate_id),
+                                             chain_predicate_ids=chain_predicate_ids)
+                    property_chain_axioms.append(pca)
 
     def transform_meta(self, meta):
         if 'basicPropertyValues' in meta:
