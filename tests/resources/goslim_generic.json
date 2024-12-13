@@ -4835,6 +4835,21 @@
       "type" : "CLASS",
       "lbl" : "hydrolase activity, acting on carbon-nitrogen (but not peptide) bonds"
     }, {
+      "id" : "http://purl.obolibrary.org/obo/GO_0099531",
+      "meta" : {
+        "definition" : {
+          "val" : "The pathway leading to secretion of a neurotransmitter from the presynapse as part of synaptic transmission.",
+          "xrefs" : [ "GOC:dos" ]
+        },
+        "subsets" : [ "http://purl.obolibrary.org/obo/go#gocheck_obsoletion_candidate", "http://purl.obolibrary.org/obo/go#goslim_synapse" ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "biological_process"
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "presynaptic process involved in chemical synaptic transmission"
+    }, {
       "id" : "http://purl.obolibrary.org/obo/GO_0005929",
       "meta" : {
         "definition" : {

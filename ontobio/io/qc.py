@@ -954,7 +954,31 @@ class GoRule64(GoRule):
             return self._result(False)
 
         return self._result(True)
+    
+class GoRule65(GoRule):
 
+    def __init__(self):
+        super().__init__("GORULE:0000065", "Annotations to term that are candidates for obsoletion should be removed", FailMode.SOFT)
+        self.candidate_for_obsoletion = None
+
+    def test(self, annotation: association.GoAssociation, config: assocparser.AssocParserConfig, group=None) -> TestResult:
+        # Cache the subsets
+        if config.ontology is None:
+            return self._result(True)
+
+        if self.candidate_for_obsoletion is None and config.ontology is not None:
+            self.candidate_for_obsoletion = set(config.ontology.extract_subset("gocheck_obsoletion_candidate"))
+        elif self.candidate_for_obsoletion is None and config.ontology is None:
+            self.candidate_for_obsoletion = []
+
+        goid = str(annotation.object.id)
+
+        annotated_to_obsoletion_candidate = goid in self.candidate_for_obsoletion
+        not_obsoletion_candidate = not(annotated_to_obsoletion_candidate)
+
+        t = result(not_obsoletion_candidate, self.fail_mode)
+        return TestResult(t, self.title, not_obsoletion_candidate)
+    
 GoRules = enum.Enum("GoRules", {
     "GoRule02": GoRule02(),
     "GoRule05": GoRule05(),    
@@ -982,7 +1006,8 @@ GoRules = enum.Enum("GoRules", {
     "GoRule58": GoRule58(),
     "GoRule61": GoRule61(),
     "GoRule63": GoRule63(),
-    "GoRule64": GoRule64(),    
+    "GoRule64": GoRule64(),
+    "GoRule65": GoRule65(),         
     # GoRule13 at the bottom in order to make all other rules clean up an annotation before reaching 13
     "GoRule13": GoRule13()
 })
