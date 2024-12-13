@@ -345,6 +345,10 @@ def test_id_syntax():
     pombase_types['entity'] = re.compile('S\\w+(\\.)?\\w+(\\.)?')
     database_id_syntax_lookups['PomBase'] = pombase_types
     
+    mgi_types = {}
+    mgi_types['entity'] = re.compile('MGI:[0-9]{5,}')
+    database_id_syntax_lookups['MGI'] = mgi_types    
+    
     eco_types = {}
     eco_types['entity'] = re.compile(pattern)
     database_id_syntax_lookups['ECO'] = eco_types
@@ -396,7 +400,31 @@ def test_id_syntax():
     assert len(result.associations) == 1
     assert result.skipped == False  
     messages = p.report.to_report_json()["messages"]
-    assert "gorule-0000027" not in messages     
+    assert "gorule-0000027" not in messages
+    
+    vals = ["PomBase",
+            "SPAC25A8.01c",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "MGI:MGI:1298204",
+            "ECO:0000305",
+            "GO:0005913",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "PomBase"
+            ]
+
+    config = assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(ALT_ID_ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups)
+    p = GpadParser(config=config)
+    result = p.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+    assert result.skipped == False  
+    messages = p.report.to_report_json()["messages"]
+    assert "gorule-0000027" not in messages    
+         
     
     vals = ["PomBase",
             "SPAC25A8.01c",
@@ -486,6 +514,28 @@ def test_id_syntax():
     messages = p.report.to_report_json()["messages"]
     assert len(messages["gorule-0000027"]) == 1
     assert messages["gorule-0000027"][0]["obj"] == "BLA:15494018"   
+    
+    vals = ["PomBase",
+            "SPAC25A8.01c",
+            "acts_upstream_of_or_within",
+            "GO:0007155",
+            "MGI:15494018",
+            "ECO:0000305",
+            "GO:0005913",
+            "",
+            "20041026",
+            "ZFIN",
+            "",
+            "PomBase"
+            ]
+    p = GpadParser(config=config)
+    result = p.parse_line("\t".join(vals))
+    assert len(result.associations) == 1
+    assert result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "MGI:15494018"       
+    
     
 def test_gpi_check():
     report = assocparser.Report(group="unknown", dataset="unknown")
