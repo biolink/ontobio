@@ -800,9 +800,11 @@ class AssocParser(object):
             return False
 
         (id_prefix, right) = id.split(":", maxsplit=1)
+        mgi_id = None
         if right.startswith("MGI:"):
             ## See ticket https://github.com/geneontology/go-site/issues/91
             ## For purposes of determining allowed IDs in DB XREF, MGI IDs shall look like `MGI:12345`
+            mgi_id = right
             right = right[4:]
 
         if id_prefix == "" or right == "":
@@ -830,9 +832,16 @@ class AssocParser(object):
                         if regex.fullmatch(right):
                             identity_matches_pattern = True
                             break
-                    if identity_matches_pattern == False:
+                        # check syntax for mgi using id instead of internal representation
+                        if mgi_id is not None and regex.fullmatch(mgi_id):
+                            identity_matches_pattern = True
+                            break
+                    if identity_matches_pattern == False and mgi_id is None:
                         self.report.warning(line.line, Report.INVALID_ID, id,
                         "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(right, id_prefix), taxon=line.taxon, rule=27)
+                    elif identity_matches_pattern == False and mgi_id is not None:
+                        self.report.warning(line.line, Report.INVALID_ID, id,
+                        "GORULE:0000027: {} does not match any id_syntax patterns for {} in dbxrefs".format(mgi_id, id_prefix), taxon=line.taxon, rule=27)    
             else:
                 self.report.warning(line.line, Report.INVALID_ID, id,
                     "GORULE:0000027: {} not found in list of database names in dbxrefs".format(id_prefix), taxon=line.taxon, rule=27)  

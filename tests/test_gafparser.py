@@ -633,7 +633,11 @@ def test_id_syntax():
     database_id_syntax_lookups['PomBase'] = pombase_types
     
     wb_ref_types = {}
-    database_id_syntax_lookups['WB_REF'] = wb_ref_types 
+    database_id_syntax_lookups['WB_REF'] = wb_ref_types
+    
+    mgi_types = {}
+    mgi_types['entity'] = re.compile('MGI:[0-9]{5,}')
+    database_id_syntax_lookups['MGI'] = mgi_types
         
     p = GafParser(config=assocparser.AssocParserConfig(
         ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))
@@ -648,7 +652,13 @@ def test_id_syntax():
     assert len(assoc_result.associations) == 1
     assert assoc_result.skipped == False
     messages = p.report.to_report_json()["messages"]
-    assert "gorule-0000027" not in messages    
+    assert "gorule-0000027" not in messages
+    
+    assoc_result = p.parse_line("PomBase\tSPBC1289.03c\tspi1\t\tGO:0005515\tWB_REF:WBPaper00006408|PMID:18422602\tIPI\tMGI:MGI:1298204\tF\tRan GTPase Spi1\t\tprotein\ttaxon:4896\t20080718\tPomBase\t")
+    assert len(assoc_result.associations) == 1
+    assert assoc_result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert "gorule-0000027" not in messages        
 
     p = GafParser(config=assocparser.AssocParserConfig(
         ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))
@@ -685,6 +695,15 @@ def test_id_syntax():
     messages = p.report.to_report_json()["messages"]    
     assert len(messages["gorule-0000027"]) == 1
     assert messages["gorule-0000027"][0]["obj"] == "BLA:18422602" 
+
+    p = GafParser(config=assocparser.AssocParserConfig(
+        ontology=OntologyFactory().create(ONT), db_type_name_regex_id_syntax=database_id_syntax_lookups))    
+    assoc_result = p.parse_line("PomBase\tSPBC1289.03c\tspi1\t\tGO:0005515\tWB_REF:WBPaper00006408|PMID:18422602\tIPI\tMGI:1298204\tF\tRan GTPase Spi1\t\tprotein\ttaxon:4896\t20080718\tPomBase\t")
+    assert len(assoc_result.associations) == 1
+    assert assoc_result.skipped == False
+    messages = p.report.to_report_json()["messages"]
+    assert len(messages["gorule-0000027"]) == 1
+    assert messages["gorule-0000027"][0]["obj"] == "MGI:1298204"  
 
 
 def test_gaf_gpi_bridge():
