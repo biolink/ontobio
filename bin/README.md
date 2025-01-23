@@ -21,6 +21,24 @@ poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json 
 poetry run validate produce -m ../go-site/metadata --gpad -t . -o go-basic.json --base-download-url "http://snapshot.geneontology..org/" --only-dataset zfin ZFIN --gpad-gpi-output-version 2.0
 ```
 
+a secondary step, is to test the new release via the go-site repository that is running from the GO pipeline
+
+```bash
+cd ../go-site
+git pull origin master
+cd pipeline
+mkdir -p target
+python3 -m venv env
+. env/bin/activate
+pip install -r requirements.txt  # if need be, update to latest ontobio release to test new code changes.
+touch target/groups/rnacentral/rnacentral.gaferences.json
+rm -f target/go-ontology.json 
+BRANCH_NAME=snapshot 
+ONTOLOGY=http://skyhook.berkeleybop.org/snapshot/ontology/go.json 
+make target/groups/rnacentral/rnacentral.group
+```
+
+
 To test whether a GAF file is valid (passes all the GORules):
 ```bash
 poetry install
