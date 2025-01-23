@@ -280,7 +280,7 @@ def goassoc_fieldmap(relationship_type=ACTS_UPSTREAM_OF_OR_WITHIN):
         M.OBJECT_TAXON_LABEL: 'taxon_label',
         M.OBJECT_TAXON_CLOSURE: 'taxon_closure',
         M.OBJECT_CATEGORY: None,
-        M.EVIDENCE_OBJECT_CLOSURE: 'evidence_subset_closure',
+        M.EVIDENCE_OBJECT_CLOSURE: 'evidence_closure',
         M.IS_DEFINED_BY: 'assigned_by'
     }
 
